@@ -1,0 +1,16 @@
+PODS:
+  - JPImageresizerView (0.1.0)
+
+DEPENDENCIES:
+  - JPImageresizerView (from `../`)
+
+EXTERNAL SOURCES:
+  JPImageresizerView:
+    :path: ../
+
+SPEC CHECKSUMS:
+  JPImageresizerView: 02d0942457ec939da44e8c3491862ffc6a8f17b6
+
+PODFILE CHECKSUM: d4592ca9b8332f2381dee8f989ad49cde9853087
+
+COCOAPODS: 1.3.1

@@ -1,0 +1,6 @@
+framework module JPImageresizerView {
+  umbrella header "JPImageresizerView-umbrella.h"
+
+  export *
+  module * { export * }
+}

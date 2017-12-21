@@ -1,0 +1,22 @@
+{
+  "name": "JPImageresizerView",
+  "version": "0.1.0",
+  "summary": "A short description of JPImageresizerView.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/ZhouJianPing/JPImageresizerView",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "ZhouJianPing": "zhoujianping24@hotmail.com"
+  },
+  "source": {
+    "git": "https://github.com/ZhouJianPing/JPImageresizerView.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "JPImageresizerView/Classes/**/*"
+}
