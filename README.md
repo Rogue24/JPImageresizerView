@@ -37,6 +37,8 @@ self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
 self.imageresizerView.resizeWHScale = 16.0 / 9.0;
 ```
 #### 边框样式
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
 ```ruby
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
