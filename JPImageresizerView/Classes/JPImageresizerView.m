@@ -27,6 +27,10 @@
 
 #pragma mark - setter
 
+- (void)setFrameType:(JPImageresizerFrameType)frameType {
+    [self.frameView updateFrameType:frameType];
+}
+
 - (void)setBgColor:(UIColor *)bgColor {
     if (bgColor == [UIColor clearColor]) bgColor = [UIColor blackColor];
     self.backgroundColor = bgColor;
@@ -73,6 +77,10 @@
 
 #pragma mark - getter
 
+- (JPImageresizerFrameType)frameType {
+    return self.frameView.frameType;
+}
+
 - (UIColor *)bgColor {
     return self.backgroundColor;
 }
@@ -100,6 +108,7 @@
                                     resizeWHScale:(CGFloat)resizeWHScale
                         imageresizerIsCanRecovery:(void (^)(BOOL))imageresizerIsCanRecovery {
     return [[self alloc] initWithFrame:frame
+                             frameType:JPConciseFrameType 
                            resizeImage:resizeImage
                            strokeColor:[UIColor whiteColor]
                                bgColor:[UIColor blackColor]
@@ -111,6 +120,7 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
+                    frameType:(JPImageresizerFrameType)frameType
                   resizeImage:(UIImage *)resizeImage
                   strokeColor:(UIColor *)strokeColor
                       bgColor:(UIColor *)bgColor
@@ -126,7 +136,11 @@
         [self setupBase];
         [self setupScorllView];
         [self setupImageViewWithImage:resizeImage];
-        [self setupFrameViewWithStrokeColor:strokeColor maskAlpha:maskAlpha resizeWHScale:resizeWHScale isCanRecoveryBlock:imageresizerIsCanRecovery];
+        [self setupFrameViewWithFrameType:frameType
+                              strokeColor:strokeColor
+                                maskAlpha:maskAlpha
+                            resizeWHScale:resizeWHScale
+                       isCanRecoveryBlock:imageresizerIsCanRecovery];
     }
     return self;
 }
@@ -183,9 +197,14 @@
     self.scrollView.contentOffset = CGPointMake(-_horizontalInset, -_verticalInset);
 }
 
-- (void)setupFrameViewWithStrokeColor:(UIColor *)strokeColor maskAlpha:(CGFloat)maskAlpha resizeWHScale:(CGFloat)resizeWHScale isCanRecoveryBlock:(void(^)(BOOL isCanRecovery))isCanRecoveryBlock {
+- (void)setupFrameViewWithFrameType:(JPImageresizerFrameType)frameType
+                        strokeColor:(UIColor *)strokeColor
+                            maskAlpha:(CGFloat)maskAlpha
+                        resizeWHScale:(CGFloat)resizeWHScale
+                   isCanRecoveryBlock:(void(^)(BOOL isCanRecovery))isCanRecoveryBlock {
     JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+                                             frameType:frameType
                                            strokeColor:strokeColor
                                              fillColor:self.bgColor
                                              maskAlpha:maskAlpha

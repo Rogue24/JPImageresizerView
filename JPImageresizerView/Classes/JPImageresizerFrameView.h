@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class JPImageMaskView;
+#import "JPImageresizerView.h"
 
 typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
     JPImageresizerVerticalUpDirection = 0,
@@ -19,6 +19,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
+                    frameType:(JPImageresizerFrameType)frameType
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
                     maskAlpha:(CGFloat)maskAlpha
@@ -39,9 +40,13 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, copy) void (^imageresizerIsCanRecovery)(BOOL isCanRecovery);
 
+@property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
+
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
+
+- (void)updateFrameType:(JPImageresizerFrameType)frameType;
 
 - (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin;
 

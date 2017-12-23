@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
+    JPConciseFrameType,
+    JPClassicFrameType
+};
+
 @interface JPImageresizerView : UIView
 
 /*!
@@ -27,6 +32,7 @@
  @discussion 自行配置参数
  */
 - (instancetype)initWithFrame:(CGRect)frame
+                    frameType:(JPImageresizerFrameType)frameType
                   resizeImage:(UIImage *)resizeImage
                   strokeColor:(UIColor *)strokeColor
                       bgColor:(UIColor *)bgColor
@@ -36,6 +42,8 @@
                 resizeWHScale:(CGFloat)resizeWHScale
     imageresizerIsCanRecovery:(void(^)(BOOL isCanRecovery))imageresizerIsCanRecovery;
 
+/** 边框样式 */
+@property (nonatomic) JPImageresizerFrameType frameType;
 /** 裁剪的图片 */
 @property (nonatomic) UIImage *resizeImage;
 /** 裁剪线颜色 */

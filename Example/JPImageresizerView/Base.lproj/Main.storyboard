@@ -21,19 +21,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23z-V1-CXO">
-                                <rect key="frame" x="20" y="547" width="98.5" height="30"/>
+                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I9g-rc-cKc">
+                                <rect key="frame" x="20" y="40" width="335" height="487"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bmh-GN-dI9">
+                                <rect key="frame" x="20" y="547" width="69" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="jtx-J9-EjR"/>
-                                </constraints>
-                                <state key="normal" title="旋转"/>
+                                <state key="normal" title="更换样式"/>
                                 <connections>
-                                    <action selector="rotate:" destination="whP-gf-Uak" eventType="touchUpInside" id="uaM-WC-hmI"/>
+                                    <action selector="changeFrameType:" destination="whP-gf-Uak" eventType="touchUpInside" id="bDF-Nq-1sd"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Q2-Zj-NPf">
-                                <rect key="frame" x="138.5" y="547" width="98" height="30"/>
+                                <rect key="frame" x="197.5" y="547" width="69" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="XOv-95-U7d"/>
@@ -44,7 +44,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gfg-EW-TwQ">
-                                <rect key="frame" x="256.5" y="547" width="98.5" height="30"/>
+                                <rect key="frame" x="286.5" y="547" width="68.5" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="luG-Ph-lIk"/>
@@ -87,20 +87,6 @@
                                     <action selector="sixteen2nine:" destination="whP-gf-Uak" eventType="touchUpInside" id="GEh-1B-W5x"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTM-rw-zlm">
-                                <rect key="frame" x="286.5" y="597" width="68.5" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="BS6-tH-roq"/>
-                                </constraints>
-                                <state key="normal" title="更换图片"/>
-                                <connections>
-                                    <action selector="replaceImage:" destination="whP-gf-Uak" eventType="touchUpInside" id="KcA-LT-EnU"/>
-                                </connections>
-                            </button>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I9g-rc-cKc">
-                                <rect key="frame" x="20" y="40" width="335" height="487"/>
-                            </imageView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bF7-ro-Qg6">
                                 <rect key="frame" x="152.5" y="547" width="70" height="30"/>
                                 <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -113,10 +99,33 @@
                                     <action selector="goBack:" destination="whP-gf-Uak" eventType="touchUpInside" id="1Ma-1c-VCj"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTM-rw-zlm">
+                                <rect key="frame" x="286.5" y="597" width="68.5" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="BS6-tH-roq"/>
+                                </constraints>
+                                <state key="normal" title="更换图片"/>
+                                <connections>
+                                    <action selector="replaceImage:" destination="whP-gf-Uak" eventType="touchUpInside" id="KcA-LT-EnU"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23z-V1-CXO">
+                                <rect key="frame" x="109" y="547" width="68.5" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="jtx-J9-EjR"/>
+                                </constraints>
+                                <state key="normal" title="旋转"/>
+                                <connections>
+                                    <action selector="rotate:" destination="whP-gf-Uak" eventType="touchUpInside" id="uaM-WC-hmI"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="gfg-EW-TwQ" firstAttribute="width" secondItem="23z-V1-CXO" secondAttribute="width" id="0l5-aT-QjY"/>
+                            <constraint firstItem="23z-V1-CXO" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" id="2n6-bl-LYj"/>
                             <constraint firstItem="gFY-kS-d4M" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="3gp-NH-Iaa"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="7YP-11-YGd"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="leading" secondItem="LCH-xS-0qk" secondAttribute="trailing" constant="20" id="95S-0z-r6v"/>
@@ -126,6 +135,7 @@
                             <constraint firstItem="bF7-ro-Qg6" firstAttribute="top" secondItem="I9g-rc-cKc" secondAttribute="bottom" constant="20" id="NAc-wf-Y9m"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="O05-ui-gVp"/>
                             <constraint firstAttribute="trailing" secondItem="I9g-rc-cKc" secondAttribute="trailing" constant="20" id="SIU-Ij-VPy"/>
+                            <constraint firstItem="23z-V1-CXO" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="UNM-Dn-kel"/>
                             <constraint firstItem="gFY-kS-d4M" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="XaB-2E-03e"/>
                             <constraint firstItem="Mvr-aV-6Um" firstAttribute="top" secondItem="LCH-xS-0qk" secondAttribute="bottom" constant="40" id="Y8G-4k-4Ql"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="Zga-WL-TvR"/>
@@ -136,15 +146,17 @@
                             <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerY" secondItem="23z-V1-CXO" secondAttribute="centerY" id="emC-nY-48s"/>
                             <constraint firstItem="gfg-EW-TwQ" firstAttribute="leading" secondItem="3Q2-Zj-NPf" secondAttribute="trailing" constant="20" id="hxK-Jh-kc1"/>
                             <constraint firstItem="23z-V1-CXO" firstAttribute="top" secondItem="I9g-rc-cKc" secondAttribute="bottom" constant="20" id="iLS-jw-Oor"/>
+                            <constraint firstItem="Bmh-GN-dI9" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" id="lJj-JR-VTR"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="leading" secondItem="gFY-kS-d4M" secondAttribute="trailing" constant="20" id="mHZ-UZ-JrS"/>
                             <constraint firstItem="bF7-ro-Qg6" firstAttribute="centerX" secondItem="TpU-gO-2f1" secondAttribute="centerX" id="nwK-CL-vQf"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="pyE-sd-tJK"/>
                             <constraint firstItem="LCH-xS-0qk" firstAttribute="top" secondItem="23z-V1-CXO" secondAttribute="bottom" constant="20" id="qsa-mP-37m"/>
                             <constraint firstAttribute="trailing" secondItem="gfg-EW-TwQ" secondAttribute="trailing" constant="20" id="r6G-0Y-qT4"/>
                             <constraint firstItem="gFY-kS-d4M" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="rGV-v1-yy1"/>
+                            <constraint firstItem="23z-V1-CXO" firstAttribute="leading" secondItem="Bmh-GN-dI9" secondAttribute="trailing" constant="20" id="rx6-GP-MwR"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="scE-Zp-5WH"/>
-                            <constraint firstItem="23z-V1-CXO" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" id="tgQ-hB-UcP"/>
                             <constraint firstAttribute="trailing" secondItem="JTM-rw-zlm" secondAttribute="trailing" constant="20" id="tiY-6f-Wdm"/>
+                            <constraint firstItem="23z-V1-CXO" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="ujj-1r-NId"/>
                             <constraint firstItem="3Q2-Zj-NPf" firstAttribute="width" secondItem="23z-V1-CXO" secondAttribute="width" id="xbf-CA-YQm"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="xs1-Qw-V3n"/>
                             <constraint firstItem="gfg-EW-TwQ" firstAttribute="height" secondItem="23z-V1-CXO" secondAttribute="height" id="yDn-8o-1u4"/>

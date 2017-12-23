@@ -34,6 +34,7 @@
     __weak typeof(self) weakSelf = self;
     JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                                             initWithFrame:frame
+                                            frameType:JPConciseFrameType
                                             resizeImage:[UIImage imageNamed:@"Girl.jpg"]
                                             strokeColor:[UIColor whiteColor]
                                             bgColor:[UIColor blackColor]
@@ -48,6 +49,17 @@
     }];
     [self.view addSubview:imageresizerView];
     self.imageresizerView = imageresizerView;
+}
+
+- (IBAction)changeFrameType:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    JPImageresizerFrameType frameType;
+    if (sender.selected) {
+        frameType = JPClassicFrameType;
+    } else {
+        frameType = JPConciseFrameType;
+    }
+    self.imageresizerView.frameType = frameType;
 }
 
 - (IBAction)rotate:(id)sender {
