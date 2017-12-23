@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-@class JPImageMaskView;
 
 @interface JPImageresizerView : UIView
 
@@ -45,7 +44,7 @@
 @property (nonatomic) UIColor *bgColor;
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic) CGFloat maskAlpha;
-/** 裁剪宽高比 */
+/** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
 @property (nonatomic) CGFloat resizeWHScale;
 /** 裁剪图片的垂直边距 */
 @property (nonatomic, assign) CGFloat verBaseMargin;
@@ -82,9 +81,4 @@
  */
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
 
-@end
-
-@interface JPImageMaskView : UIImageView
-- (void)showMaskWithMaskFrame:(CGRect)maskFrame maskColor:(UIColor *)maskColor;
-- (void)hideMask;
 @end

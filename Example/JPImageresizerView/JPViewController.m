@@ -32,7 +32,16 @@
                               [UIScreen mainScreen].bounds.size.height - 40 - 30 - 20 - 30 - 20 - 10);
     
     __weak typeof(self) weakSelf = self;
-    JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithFrame:frame resizeImage:[UIImage imageNamed:@"Girl.jpg"] resizeWHScale:0 imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+    JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
+                                            initWithFrame:frame
+                                            resizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                                            strokeColor:[UIColor whiteColor]
+                                            bgColor:[UIColor blackColor]
+                                            maskAlpha:0.75
+                                            verBaseMargin:10
+                                            horBaseMargin:10
+                                            resizeWHScale:0
+                                            imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         strongSelf.recoveryBtn.enabled = isCanRecovery;

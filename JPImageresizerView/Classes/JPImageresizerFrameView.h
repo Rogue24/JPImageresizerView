@@ -22,10 +22,11 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
                     maskAlpha:(CGFloat)maskAlpha
-               maxResizeFrame:(CGRect)maxResizeFrame
+                verBaseMargin:(CGFloat)verBaseMargin
+                horBaseMargin:(CGFloat)horBaseMargin
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
-                    imageView:(JPImageMaskView *)imageView
+                    imageView:(UIImageView *)imageView
     imageresizerIsCanRecovery:(void(^)(BOOL isCanRecovery))imageresizerIsCanRecovery;
 
 @property (nonatomic, strong) UIColor *strokeColor;
@@ -36,22 +37,18 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
-@property (nonatomic, assign) CGRect maxResizeFrame;
-
 @property (nonatomic, copy) void (^imageresizerIsCanRecovery)(BOOL isCanRecovery);
-
-@property (nonatomic, assign) CGRect imageresizerFrame;
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 
+- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin;
+
 - (void)startImageresizer;
 - (void)endedImageresizer;
 
-- (void)willRotationWithImageMaskFrame:(CGRect)imageMaskFrame;
-- (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection;
-- (void)endedRotation;
+- (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration;
 
 - (void)willRecovery;
 - (void)recovery;

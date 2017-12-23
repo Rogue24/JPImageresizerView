@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JPImageresizerView'
-  s.version          = '0.1.0'
-  s.summary          = 'Hope you like JPImageresizerView'
+  s.version          = '0.1.1'
+  s.summary          = '仿微信的裁剪图片功能的小框架'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-类似微信的裁剪图片功能的实现，自适应裁剪区域的缩放，高度自定义设定，支持8个方向进行拖拽。
+仿微信的裁剪图片功能的小框架，自适应裁剪区域的缩放，高度自定义设定，目前最多支持8个方向进行拖拽，以后会实现苹果的拖拽控制方向效果。
                        DESC
 
   s.homepage         = 'https://github.com/Rogue24/JPImageresizerView'
