@@ -11,45 +11,53 @@
 ## 如何使用
 
 #### 初始化
+```ruby
 // 使用工厂方法配置参数（frame、图片、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比，可否重置的回调）
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-initWithFrame:frame
-resizeImage:[UIImage imageNamed:@"Girl.jpg"]
-strokeColor:[UIColor whiteColor]
-bgColor:[UIColor blackColor]
-maskAlpha:0.75
-verBaseMargin:10
-horBaseMargin:10
-resizeWHScale:0
-imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-// 可在这里监听到是否可以重置
-// 注意循环引用
-}];
+                                            initWithFrame:frame
+                                            resizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                                            strokeColor:[UIColor whiteColor]
+                                            bgColor:[UIColor blackColor]
+                                            maskAlpha:0.75
+                                            verBaseMargin:10
+                                            horBaseMargin:10
+                                            resizeWHScale:0
+                                            imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+                                            // 可在这里监听到是否可以重置
+                                            // 注意循环引用
+                                        }];
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
 // 创建后也可以随意修改以上参数
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
 self.imageresizerView.resizeWHScale = 16.0 / 9.0;
+```
 
 #### 旋转
+```ruby
 // 默认逆时针旋转，旋转角度为90°
 [self.imageresizerView rotation];
 
 // 若需要顺时针旋转可设置isClockwiseRotation属性为YES
 self.imageresizerView.isClockwiseRotation = YES;
+```
 
 #### 重置
+```ruby
 // 重置为初始状态，方向垂直向上
 [self.imageresizerView recovery];
+```
 
 #### 裁剪
+```ruby
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 调用可添加提示...
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-// 裁剪完成，resizeImage为裁剪后的图片
-// 注意循环引用
+    // 裁剪完成，resizeImage为裁剪后的图片
+    // 注意循环引用
 }];
+```
 
 ## 安装
 
