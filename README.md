@@ -8,7 +8,7 @@
 ## 简介
 仿微信裁剪图片的一个小框架，自适应裁剪区域的缩放，高自由度的参数设定，目前支持最多8个方向进行拖拽和4个方向的旋转。以后会更新Swift版本，并陆续添加别的样式和实现苹果系统的裁剪中的自由拖拽控制方向效果。
 
-![image](https://github.com/Rogue24/JPImageresizerView/Cover/JPImageresizerViewCover.png)
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/JPImageresizerViewCover.png)
 
 ## 如何使用
 
