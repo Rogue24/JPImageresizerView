@@ -212,8 +212,15 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
+    if (resizeWHScale > 0) {
+        if (self.rotationDirection == JPImageresizerHorizontalLeftDirection ||
+            self.rotationDirection == JPImageresizerHorizontalRightDirection) {
+            resizeWHScale = 1.0 / resizeWHScale;
+        }
+    }
     if (_resizeWHScale == resizeWHScale) return;
     _resizeWHScale = resizeWHScale;
+    
     _isArbitrarily = resizeWHScale <= 0;
     
     if (_frameType == JPConciseFrameType) {
@@ -634,11 +641,22 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     if (_isArbitrarily) {
         self.imageresizerFrame = self.originImageFrame;
     } else {
-        CGFloat w = self.originImageFrame.size.width;
-        CGFloat h = w / _resizeWHScale;
-        if (h > self.maxResizeH) {
-            h = self.maxResizeH;
+        CGFloat w = 0;
+        CGFloat h = 0;
+        if (_baseImageW >= _baseImageH) {
+            h = _baseImageH;
             w = h * _resizeWHScale;
+            if (w > self.maxResizeW) {
+                w = self.maxResizeW;
+                h = w / _resizeWHScale;
+            }
+        } else {
+            w = _baseImageW;
+            h = w / _resizeWHScale;
+            if (h > self.maxResizeH) {
+                h = self.maxResizeH;
+                w = h * _resizeWHScale;
+            }
         }
         CGFloat x = self.maxResizeX + (self.maxResizeW - w) * 0.5;
         CGFloat y = self.maxResizeY + (self.maxResizeH - h) * 0.5;
@@ -761,7 +779,9 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     _verSizeScale = 1.0;
     _horSizeScale = self.superview.bounds.size.width / self.scrollView.bounds.size.height;
     _diffHalfW = (self.bounds.size.width - self.superview.bounds.size.width) * 0.5;
-    self.originImageFrame = [self.imageView convertRect:self.imageView.bounds toView:self];
+    CGFloat x = (self.bounds.size.width - _baseImageW) * 0.5;
+    CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
+    self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     [self resetImageresizerFrame];
     [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];

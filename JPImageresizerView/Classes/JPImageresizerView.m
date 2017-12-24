@@ -298,33 +298,12 @@
     self.scrollView.minimumZoomScale = 1;
     self.directionIndex = 0;
     
-    CGFloat scale = self.scrollView.bounds.size.height / self.frame.size.width;
-    CGFloat angele = 0;
-    if (self.frameView.rotationDirection == JPImageresizerHorizontalLeftDirection) {
-        angele = M_PI * 0.5;
-    } else if (self.frameView.rotationDirection == JPImageresizerHorizontalRightDirection) {
-        angele = M_PI * 0.5 * 3;
-    } else {
-        scale = 1;
-        if (self.frameView.rotationDirection == JPImageresizerVerticalDownDirection) {
-            angele = M_PI;
-        }
-    }
-    
-    CATransform3D svTransform = self.scrollView.layer.transform;
-    svTransform = CATransform3DScale(svTransform, scale, scale, 1);
-    svTransform = CATransform3DRotate(svTransform, angele, 0, 0, 1);
-    
-    CATransform3D fvTransform = self.frameView.layer.transform;
-    fvTransform = CATransform3DScale(fvTransform, scale, scale, 1);
-    fvTransform = CATransform3DRotate(fvTransform, angele, 0, 0, 1);
-    
     [UIView animateWithDuration:0.35 animations:^{
         self.scrollView.contentInset = UIEdgeInsetsMake(_verticalInset, _horizontalInset, _verticalInset, _horizontalInset);
         self.scrollView.zoomScale = 1;
-        self.scrollView.layer.transform = svTransform;
+        self.scrollView.layer.transform = CATransform3DIdentity;
         self.frameView.layer.opacity = 0;
-        self.frameView.layer.transform = fvTransform;
+        self.frameView.layer.transform = CATransform3DIdentity;
     } completion:^(BOOL finished) {
         [self.frameView recovery];
     }];
