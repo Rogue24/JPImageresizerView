@@ -19,7 +19,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
-                    frameType:(JPImageresizerFrameType)frameType
+                     maskType:(JPImageresizerMaskType)maskType
+                    frameType:(JPImageresizerFrameType)frameType 
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
                     maskAlpha:(CGFloat)maskAlpha
@@ -28,7 +29,13 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
-    imageresizerIsCanRecovery:(void(^)(BOOL isCanRecovery))imageresizerIsCanRecovery;
+    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery;
+
+@property (nonatomic, assign, readonly) JPImageresizerMaskType maskType;
+
+@property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
+
+@property (nonatomic, assign) JPAnimationCurve animationCurve;
 
 @property (nonatomic, strong) UIColor *strokeColor;
 
@@ -38,9 +45,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
-@property (nonatomic, copy) void (^imageresizerIsCanRecovery)(BOOL isCanRecovery);
-
-@property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
+@property (nonatomic, copy) JPImageresizerIsCanRecoveryBlock imageresizerIsCanRecovery;
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 

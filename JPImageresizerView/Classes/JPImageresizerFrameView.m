@@ -85,11 +85,16 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 - (CGSize)imageViewSzie;
 
 - (BOOL)isShowMidDot;
+
+@property (nonatomic, weak) UIView *blurContentView;
+@property (nonatomic, weak) UIVisualEffectView *blurEffectView;
 @end
 
 @implementation JPImageresizerFrameView
 {
     NSTimeInterval _defaultDuration;
+    NSString *_kCAMediaTimingFunction;
+    UIViewAnimationOptions _animationOption;
     
     CGFloat _dotWH;
     CGFloat _arrLineW;
@@ -103,12 +108,6 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGFloat _startResizeW;
     CGFloat _startResizeH;
     
-    BOOL _isArbitrarily;
-    
-    struct JPRGBAColor _fillRgba;
-    UIColor *_clearColor;
-    BOOL _isHasFillColor;
-    
     CGFloat _originWHScale;
     
     CGFloat _verBaseMargin;
@@ -118,6 +117,17 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGFloat _verSizeScale;
     CGFloat _horSizeScale;
     CGFloat _diffHalfW;
+    
+    BOOL _isArbitrarily;
+    
+    struct JPRGBAColor _fillRgba;
+    UIColor *_clearColor;
+    
+    BOOL _isHideBlurEffect;
+    BOOL _isHideFrameLine;
+    
+    CGFloat _diffRotLength;
+    CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
 }
 
 #pragma mark - setter
@@ -128,26 +138,40 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)setFillColor:(UIColor *)fillColor {
+    if (self.maskType == JPLightBlurMaskType) {
+        fillColor = [UIColor whiteColor];
+    } else if (self.maskType == JPDarkBlurMaskType) {
+        fillColor = [UIColor blackColor];
+    }
     _fillRgba = [self createRgbaWithColor:fillColor];
-    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a];
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * _maskAlpha];
     _clearColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:0];
+    if (self.blurContentView) {
+        self.blurContentView.backgroundColor = _fillColor;
+    } else {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.bgLayer.fillColor = _fillColor.CGColor;
+        [CATransaction commit];
+    }
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
-    if (_maskAlpha == maskAlpha) return;
     _maskAlpha = maskAlpha;
     if (maskAlpha == 0) {
-        _isHasFillColor = NO;
         _fillColor = _clearColor;
     } else {
-        _isHasFillColor = YES;
-        _fillRgba.jp_a = maskAlpha;
-        _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a];
+        _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * _maskAlpha];
     }
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    self.bgLayer.fillColor = _fillColor.CGColor;
-    [CATransaction commit];
+    
+    if (self.blurContentView) {
+        self.blurContentView.backgroundColor = _fillColor;
+    } else {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.bgLayer.fillColor = _fillColor.CGColor;
+        [CATransaction commit];
+    }
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
@@ -247,6 +271,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         [_horBottomLine removeFromSuperlayer];
         [_verLeftLine removeFromSuperlayer];
         [_verRightLine removeFromSuperlayer];
+        _isHideFrameLine = NO;
     } else {
         [self horTopLine];
         [self horBottomLine];
@@ -262,6 +287,28 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     self.leftBottomDot.lineWidth = lineW;
     self.rightTopDot.lineWidth = lineW;
     self.rightBottomDot.lineWidth = lineW;
+}
+
+- (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
+    _animationCurve = animationCurve;
+    switch (animationCurve) {
+        case JPAnimationCurveEaseInOut:
+            _kCAMediaTimingFunction = kCAMediaTimingFunctionEaseInEaseOut;
+            _animationOption = UIViewAnimationOptionCurveEaseInOut;
+            break;
+        case JPAnimationCurveEaseIn:
+            _kCAMediaTimingFunction = kCAMediaTimingFunctionEaseIn;
+            _animationOption = UIViewAnimationOptionCurveEaseIn;
+            break;
+        case JPAnimationCurveEaseOut:
+            _kCAMediaTimingFunction = kCAMediaTimingFunctionEaseOut;
+            _animationOption = UIViewAnimationOptionCurveEaseOut;
+            break;
+        case JPAnimationCurveLinear:
+            _kCAMediaTimingFunction = kCAMediaTimingFunctionLinear;
+            _animationOption = UIViewAnimationOptionCurveLinear;
+            break;
+    }
 }
 
 #pragma mark - getter
@@ -378,6 +425,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 #pragma mark - init
 
 - (instancetype)initWithFrame:(CGRect)frame
+                     maskType:(JPImageresizerMaskType)maskType
                     frameType:(JPImageresizerFrameType)frameType
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
@@ -387,11 +435,12 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
-    imageresizerIsCanRecovery:(void(^)(BOOL isCanRecovery))imageresizerIsCanRecovery {
+    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
     
     if (self = [super initWithFrame:frame]) {
+        self.clipsToBounds = NO;
         
-        _defaultDuration = 0.25;
+        _defaultDuration = 0.28;
         _dotWH = 10.0;
         _arrLineW = 2.5;
         _arrLength = 20.0;
@@ -399,13 +448,42 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         _minImageWH = 70.0;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         
+        _maskType = maskType;
         _horBaseMargin = horBaseMargin;
         _verBaseMargin = verBaseMargin;
         _imageresizerIsCanRecovery = [imageresizerIsCanRecovery copy];
         
-        CAShapeLayer *bgLayer = [self createShapeLayer:0];
-        bgLayer.fillRule = kCAFillRuleEvenOdd;
-        self.bgLayer = bgLayer;
+        _diffRotLength = 1000;
+        _bgFrame = CGRectMake(self.bounds.origin.x - _diffRotLength,
+                              self.bounds.origin.y - _diffRotLength,
+                              self.bounds.size.width + _diffRotLength * 2,
+                              self.bounds.size.height + _diffRotLength * 2);
+        if (maskType != JPNormalMaskType) {
+            UIView *blurContentView = [[UIView alloc] initWithFrame:_bgFrame];
+            [self addSubview:blurContentView];
+            self.blurContentView = blurContentView;
+            
+            UIBlurEffect *blurEffect;
+            if (maskType == JPLightBlurMaskType) {
+                blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+            } else {
+                blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+            }
+            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            blurEffectView.frame = blurContentView.bounds;
+            [blurContentView addSubview:blurEffectView];
+            self.blurEffectView = blurEffectView;
+            
+            CAShapeLayer *bgLayer = [CAShapeLayer layer];
+            bgLayer.frame = blurContentView.bounds;
+            bgLayer.fillColor = [UIColor blackColor].CGColor;
+            blurContentView.layer.mask = bgLayer;
+            self.bgLayer = bgLayer;
+        } else {
+            self.bgLayer = [self createShapeLayer:0];
+            
+        }
+        self.bgLayer.fillRule = kCAFillRuleEvenOdd;
         
         CAShapeLayer *frameLayer = [self createShapeLayer:1.0];
         frameLayer.fillColor = [UIColor clearColor].CGColor;
@@ -416,10 +494,9 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         self.scrollView = scrollView;
         self.imageView = imageView;
         
-        self.strokeColor = strokeColor;
+        _maskAlpha = maskAlpha;
         self.fillColor = fillColor;
-        if (maskAlpha == _maskAlpha) _maskAlpha = maskAlpha - 1.0;
-        self.maskAlpha = maskAlpha;
+        self.strokeColor = strokeColor;
         
         if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale - 1.0;
         self.resizeWHScale = resizeWHScale;
@@ -589,31 +666,35 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     rgba.jp_r = r;
     rgba.jp_g = g;
     rgba.jp_b = b;
-    rgba.jp_a = a * _maskAlpha;
+    rgba.jp_a = a;
     return rgba;
 }
 
-- (void)hideOrShowFillColor:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
-    if (_isHasFillColor == !isHide) return;
-    _isHasFillColor = !isHide;
-    UIColor *toColor = isHide ? _clearColor : _fillColor;
-    if (duration > 0 && ![self imageresizerFrameIsFullImageViewFrame]) {
-        UIColor *fromColor = isHide ? _fillColor : _clearColor;
-        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:aKeyPath(self.bgLayer, fillColor)];
+- (void)hideOrShowBlurEffect:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
+    if (self.maskType == JPNormalMaskType) return;
+    if (_isHideBlurEffect == isHide) return;
+    _isHideBlurEffect = isHide;
+    CGFloat toOpacity = isHide ? 0 : 1;
+    if (duration > 0 && ((_blurContentView != nil) || (_blurContentView == nil && ![self imageresizerFrameIsFullImageViewFrame]))) {
+        CGFloat fromOpacity = isHide ? 1 : 0;
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:aKeyPath(self.blurEffectView.layer, opacity)];
         anim.fillMode = kCAFillModeBackwards;
-        anim.fromValue = fromColor;
-        anim.toValue = toColor;
+        anim.fromValue = @(fromOpacity);
+        anim.toValue = @(toOpacity);
         anim.duration = duration;
-        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-        [self.bgLayer addAnimation:anim forKey:@"fillColor"];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
+        [self.blurEffectView.layer addAnimation:anim forKey:@"opacity"];
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    self.bgLayer.fillColor = toColor.CGColor;
+    self.blurEffectView.layer.opacity = toOpacity;
     [CATransaction commit];
 }
 
 - (void)hideOrShowFrameLine:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
+    if (self.frameType != JPClassicFrameType) return;
+    if (_isHideFrameLine == isHide) return;
+    _isHideFrameLine = isHide;
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0) {
         CGFloat fromOpacity = isHide ? 1 : 0;
@@ -622,7 +703,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         anim.fromValue = @(fromOpacity);
         anim.toValue = @(toOpacity);
         anim.duration = duration;
-        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
         [_horTopLine addAnimation:anim forKey:@"opacity"];
         [_horBottomLine addAnimation:anim forKey:@"opacity"];
         [_verLeftLine addAnimation:anim forKey:@"opacity"];
@@ -716,9 +797,18 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         verRightLinePath = [self linePathWithLinePosition:VerticalRight location:CGPointMake(imageresizerX + oneThirdW * 2, imageresizerY) length:imageresizerH];
     }
     
-    UIBezierPath *bgPath = [UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x - 1000, self.bounds.origin.y - 1000, self.bounds.size.width + 2000, self.bounds.size.height + 2000)];
+    UIBezierPath *bgPath;
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRect:imageresizerFrame];
-    [bgPath appendPath:framePath];
+    if (self.blurContentView) {
+        bgPath = [UIBezierPath bezierPathWithRect:self.blurContentView.bounds];
+        CGRect frame = imageresizerFrame;
+        frame.origin.x += _diffRotLength;
+        frame.origin.y += _diffRotLength;
+        [bgPath appendPath:[UIBezierPath bezierPathWithRect:frame]];
+    } else {
+        bgPath = [UIBezierPath bezierPathWithRect:_bgFrame];
+        [bgPath appendPath:framePath];
+    }
     
     if (duration > 0) {
         void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
@@ -727,7 +817,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             anim.fromValue = [UIBezierPath bezierPathWithCGPath:layer.path];
             anim.toValue = path;
             anim.duration = duration;
-            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
             [layer addAnimation:anim forKey:@"path"];
         };
         
@@ -957,13 +1047,11 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     };
     
     self.window.userInteractionEnabled = NO;
-//    [self hideOrShowFillColor:NO animateDuration:duration];
+    [self hideOrShowBlurEffect:NO animateDuration:duration];
+    [self hideOrShowFrameLine:NO animateDuration:duration];
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
-    if (self.frameType == JPClassicFrameType) {
-        [self hideOrShowFrameLine:NO animateDuration:duration];
-    }
     if (duration > 0) {
-        [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+        [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
             zoomBlock();
         } completion:^(BOOL finished) {
             completeBlock();
@@ -1014,10 +1102,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 
 - (void)startImageresizer {
     [self removeTimer];
-//    [self hideOrShowFillColor:YES animateDuration:0.2];
-    if (self.frameType == JPClassicFrameType) {
-        [self hideOrShowFrameLine:YES animateDuration:0.2];
-    }
+    [self hideOrShowBlurEffect:YES animateDuration:0.2];
+    [self hideOrShowFrameLine:YES animateDuration:0.2];
 }
 
 - (void)endedImageresizer {

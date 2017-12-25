@@ -7,7 +7,6 @@
 //
 
 #import "JPViewController.h"
-#import "JPImageresizerView.h"
 
 @interface JPViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
@@ -26,29 +25,25 @@
     
     self.recoveryBtn.enabled = NO;
     
-    CGRect frame = CGRectMake(0,
-                              20,
-                              [UIScreen mainScreen].bounds.size.width,
-                              [UIScreen mainScreen].bounds.size.height - 40 - 30 - 20 - 30 - 20 - 10);
-    
     __weak typeof(self) weakSelf = self;
-    JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                                            initWithFrame:frame
-                                            frameType:JPConciseFrameType
-                                            resizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                                            strokeColor:[UIColor whiteColor]
-                                            bgColor:[UIColor blackColor]
-                                            maskAlpha:0.75
-                                            verBaseMargin:10
-                                            horBaseMargin:10
-                                            resizeWHScale:0
-                                            imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+    JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         strongSelf.recoveryBtn.enabled = isCanRecovery;
     }];
-    [self.view addSubview:imageresizerView];
+    [self.view insertSubview:imageresizerView aboveSubview:self.imageView];
     self.imageresizerView = imageresizerView;
+    self.configure = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 - (IBAction)changeFrameType:(UIButton *)sender {
@@ -124,6 +119,10 @@
     
     self.recoveryBtn.enabled = YES;
     [self.imageresizerView recovery];
+}
+
+- (IBAction)pop:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
 		1A601A361FEBA7D6004B39A1 /* Girl.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A341FEBA7D5004B39A1 /* Girl.jpg */; };
 		1A601A371FEBA7D6004B39A1 /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A351FEBA7D5004B39A1 /* Kobe.jpg */; };
 		1A601A3A1FEBB523004B39A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README.md */; };
@@ -41,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
+		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
 		1A601A341FEBA7D5004B39A1 /* Girl.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl.jpg; sourceTree = "<group>"; };
 		1A601A351FEBA7D5004B39A1 /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A601A381FEBB523004B39A1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -153,6 +156,8 @@
 				1A601A351FEBA7D5004B39A1 /* Kobe.jpg */,
 				6003F59C195388D20070C39A /* JPAppDelegate.h */,
 				6003F59D195388D20070C39A /* JPAppDelegate.m */,
+				1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */,
+				1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */,
 				6003F5A5195388D20070C39A /* JPViewController.h */,
 				6003F5A6195388D20070C39A /* JPViewController.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
@@ -421,6 +426,7 @@
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* JPViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,33 +6,65 @@
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
 ## 简介
-仿微信裁剪图片的一个小框架，能自适应裁剪区域的缩放，高自由度的参数设定，目前支持最多8个拖拽方向和4个旋转方向。以后会更新Swift版本，并陆续添加新的样式和实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
+仿微信裁剪图片的一个小框架。能自适应裁剪区域的缩放，高自由度的参数设定。目前支持最多8个拖拽方向和4个旋转方向。以后会更新Swift版本，并陆续添加新的样式和实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
+
+## 更新内容
+
+1.新增高斯模糊的遮罩样式
+2.可设置动画曲线
+3.可设置裁剪区域的内边距
+4.新增JPImageresizerConfigure类，更加方便设定参数
 
 ## 如何使用
 
 #### 初始化
 ```ruby
-// 使用工厂方法配置参数（frame、边框样式、图片、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比，可否重置的回调）
+// 方式一：使用工厂方法配置参数（裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调）
+
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                                            initWithFrame:frame
-                                            frameType:JPConciseFrameType
-                                            resizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                                            strokeColor:[UIColor whiteColor]
-                                            bgColor:[UIColor blackColor]
-                                            maskAlpha:0.75
-                                            verBaseMargin:10
-                                            horBaseMargin:10
-                                            resizeWHScale:0
-                                            imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-                                            // 可在这里监听到是否可以重置
-                                            // 注意循环引用
-                                        }];
+                                    initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                                    frame:frame
+                                    maskType:JPConciseFrameType
+                                    frameType:JPConciseFrameType
+                                    animationCurve:JPAnimationCurveLinear
+                                    strokeColor:[UIColor whiteColor]
+                                    bgColor:[UIColor blackColor]
+                                    maskAlpha:0.75
+                                    verBaseMargin:10
+                                    horBaseMargin:10
+                                    resizeWHScale:0
+                                    contentInsets:UIEdgeInsetsZero
+                                    imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+                                        // 可在这里监听到是否可以重置
+                                        // 注意循环引用
+                                    }];
+
+// 方式二：使用JPImageresizerConfigure配置好参数再创建
+
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
+    // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
+    configure.jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"]).
+    jp_maskAlpha(0.5).
+    jp_strokeColor([UIColor yellowColor]).
+    jp_frameType(JPClassicFrameType).
+    jp_contentInsets(contentInsets).
+    jp_bgColor([UIColor orangeColor]).
+    jp_isClockwiseRotation(YES).
+    jp_animationCurve(JPAnimationCurveEaseOut);
+}];
+
+JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+    // 可在这里监听到是否可以重置
+    // 注意循环引用
+}];
+
+// 添加到视图上
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
-// 创建后也可以随意修改以上参数
+// 创建后也可以修改以上部分参数（除了maskType和contentInsets）
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
 self.imageresizerView.resizeWHScale = 16.0 / 9.0;
 ```
@@ -86,3 +118,4 @@ pod 'JPImageresizerView'
 ## License
 
 JPImageresizerView is available under the MIT license. See the LICENSE file for more info.
+

@@ -23,6 +23,8 @@
 {
     CGFloat _verticalInset;
     CGFloat _horizontalInset;
+    UIEdgeInsets _contentInsets;
+    UIViewAnimationOptions _animationOption;
 }
 
 #pragma mark - setter
@@ -34,7 +36,7 @@
 - (void)setBgColor:(UIColor *)bgColor {
     if (bgColor == [UIColor clearColor]) bgColor = [UIColor blackColor];
     self.backgroundColor = bgColor;
-    if (_frameView) _frameView.fillColor = bgColor;
+    if (_frameView) [_frameView setFillColor:bgColor];
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
@@ -75,7 +77,30 @@
     }
 }
 
+- (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
+    _animationCurve = animationCurve;
+    self.frameView.animationCurve = animationCurve;
+    switch (animationCurve) {
+        case JPAnimationCurveEaseInOut:
+            _animationOption = UIViewAnimationOptionCurveEaseInOut;
+            break;
+        case JPAnimationCurveEaseIn:
+            _animationOption = UIViewAnimationOptionCurveEaseIn;
+            break;
+        case JPAnimationCurveEaseOut:
+            _animationOption = UIViewAnimationOptionCurveEaseOut;
+            break;
+        case JPAnimationCurveLinear:
+            _animationOption = UIViewAnimationOptionCurveLinear;
+            break;
+    }
+}
+
 #pragma mark - getter
+
+- (JPImageresizerMaskType)maskType {
+    return self.frameView.maskType;
+}
 
 - (JPImageresizerFrameType)frameType {
     return self.frameView.frameType;
@@ -103,44 +128,57 @@
 
 #pragma mark - init
 
-+ (JPImageresizerView *)imageresizerViewWithFrame:(CGRect)frame
-                                      resizeImage:(UIImage *)resizeImage
-                                    resizeWHScale:(CGFloat)resizeWHScale
-                        imageresizerIsCanRecovery:(void (^)(BOOL))imageresizerIsCanRecovery {
-    return [[self alloc] initWithFrame:frame
-                             frameType:JPConciseFrameType 
-                           resizeImage:resizeImage
-                           strokeColor:[UIColor whiteColor]
-                               bgColor:[UIColor blackColor]
-                             maskAlpha:0.75
-                         verBaseMargin:10
-                         horBaseMargin:10
-                         resizeWHScale:resizeWHScale
-             imageresizerIsCanRecovery:imageresizerIsCanRecovery];
++ (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
+                    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
+    return [[self alloc] initWithResizeImage:configure.resizeImage
+                                       frame:configure.viewFrame
+                                    maskType:configure.maskType
+                                   frameType:configure.frameType
+                              animationCurve:configure.animationCurve
+                                 strokeColor:configure.strokeColor
+                                     bgColor:configure.bgColor
+                                   maskAlpha:configure.maskAlpha
+                               verBaseMargin:configure.verBaseMargin
+                               horBaseMargin:configure.horBaseMargin
+                               resizeWHScale:configure.resizeWHScale
+                               contentInsets:configure.contentInsets
+                   imageresizerIsCanRecovery:imageresizerIsCanRecovery];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-                    frameType:(JPImageresizerFrameType)frameType
-                  resizeImage:(UIImage *)resizeImage
-                  strokeColor:(UIColor *)strokeColor
-                      bgColor:(UIColor *)bgColor
-                    maskAlpha:(CGFloat)maskAlpha
-                verBaseMargin:(CGFloat)verBaseMargin
-                horBaseMargin:(CGFloat)horBaseMargin
-                resizeWHScale:(CGFloat)resizeWHScale
-    imageresizerIsCanRecovery:(void(^)(BOOL isCanRecovery))imageresizerIsCanRecovery {
+- (instancetype)initWithResizeImage:(UIImage *)resizeImage
+                              frame:(CGRect)frame
+                           maskType:(JPImageresizerMaskType)maskType
+                          frameType:(JPImageresizerFrameType)frameType
+                     animationCurve:(JPAnimationCurve)animationCurve
+                        strokeColor:(UIColor *)strokeColor
+                            bgColor:(UIColor *)bgColor
+                          maskAlpha:(CGFloat)maskAlpha
+                      verBaseMargin:(CGFloat)verBaseMargin
+                      horBaseMargin:(CGFloat)horBaseMargin
+                      resizeWHScale:(CGFloat)resizeWHScale
+                      contentInsets:(UIEdgeInsets)contentInsets
+          imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
     if (self = [super initWithFrame:frame]) {
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
-        self.bgColor = bgColor;
+        _contentInsets = contentInsets;
+        if (maskType == JPLightBlurMaskType) {
+            self.bgColor = [UIColor whiteColor];
+        } else if (maskType == JPDarkBlurMaskType) {
+            self.bgColor = [UIColor blackColor];
+        } else {
+            self.bgColor = bgColor;
+        }
         [self setupBase];
         [self setupScorllView];
         [self setupImageViewWithImage:resizeImage];
-        [self setupFrameViewWithFrameType:frameType
+        [self setupFrameViewWithMaskType:maskType
+                               frameType:frameType
                               strokeColor:strokeColor
                                 maskAlpha:maskAlpha
                             resizeWHScale:resizeWHScale
                        isCanRecoveryBlock:imageresizerIsCanRecovery];
+        self.animationCurve = animationCurve;
     }
     return self;
 }
@@ -155,11 +193,14 @@
 }
 
 - (void)setupScorllView {
-    CGFloat h = self.frame.size.height;
-    CGFloat w = h * h / self.frame.size.width;
-    CGFloat x = (self.frame.size.width - w) * 0.5;
+    CGFloat width = (self.frame.size.width - _contentInsets.left - _contentInsets.right);
+    CGFloat height = (self.frame.size.height - _contentInsets.top - _contentInsets.bottom);
+    CGFloat h = height;
+    CGFloat w = h * h / width;
+    CGFloat x = _contentInsets.left + (self.frame.size.width - w) * 0.5;
+    CGFloat y = _contentInsets.top;
     UIScrollView *scrollView = [[UIScrollView alloc] init];
-    scrollView.frame = CGRectMake(x, 0, w, h);
+    scrollView.frame = CGRectMake(x, y, w, h);
     scrollView.delegate = self;
     scrollView.minimumZoomScale = 1.0;
     scrollView.maximumZoomScale = 10.0;
@@ -175,8 +216,10 @@
 }
 
 - (void)setupImageViewWithImage:(UIImage *)image {
-    CGFloat maxW = self.frame.size.width - 2 * self.horBaseMargin;
-    CGFloat maxH = self.frame.size.height - 2 * self.verBaseMargin;
+    CGFloat width = (self.frame.size.width - _contentInsets.left - _contentInsets.right);
+    CGFloat height = (self.frame.size.height - _contentInsets.top - _contentInsets.bottom);
+    CGFloat maxW = width - 2 * self.horBaseMargin;
+    CGFloat maxH = height - 2 * self.verBaseMargin;
     CGFloat whScale = image.size.width / image.size.height;
     CGFloat w = maxW;
     CGFloat h = w / whScale;
@@ -197,13 +240,15 @@
     self.scrollView.contentOffset = CGPointMake(-_horizontalInset, -_verticalInset);
 }
 
-- (void)setupFrameViewWithFrameType:(JPImageresizerFrameType)frameType
+- (void)setupFrameViewWithMaskType:(JPImageresizerMaskType)maskType
+                         frameType:(JPImageresizerFrameType)frameType
                         strokeColor:(UIColor *)strokeColor
                             maskAlpha:(CGFloat)maskAlpha
                         resizeWHScale:(CGFloat)resizeWHScale
-                   isCanRecoveryBlock:(void(^)(BOOL isCanRecovery))isCanRecoveryBlock {
+                   isCanRecoveryBlock:(JPImageresizerIsCanRecoveryBlock)isCanRecoveryBlock {
     JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+                                              maskType:maskType
                                              frameType:frameType
                                            strokeColor:strokeColor
                                              fillColor:self.bgColor
@@ -284,7 +329,7 @@
     
     NSTimeInterval duration = 0.17;
     [self.frameView rotationWithDirection:direction rotationDuration:duration];
-    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
         self.frameView.layer.transform = fvTransform;
     } completion:nil];
@@ -337,6 +382,128 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
     [self.frameView endedImageresizer];
+}
+
+@end
+
+@implementation JPImageresizerConfigure
+
++ (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [[self alloc] init];
+    configure.resizeImage = resizeImage;
+    configure.viewFrame = [UIScreen mainScreen].bounds;
+    configure.maskAlpha = JPNormalMaskType;
+    configure.frameType = JPConciseFrameType;
+    configure.animationCurve = JPAnimationCurveLinear;
+    configure.strokeColor = [UIColor whiteColor];
+    configure.bgColor = [UIColor blackColor];
+    configure.maskAlpha = 0.75;
+    configure.verBaseMargin = 10.0;
+    configure.horBaseMargin = 10.0;
+    configure.resizeWHScale = 0.0;
+    configure.contentInsets = UIEdgeInsetsZero;
+    !make ? : make(configure);
+    return configure;
+}
+
++ (instancetype)blurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage isLight:(BOOL)isLight make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerMaskType maskType = isLight ? JPLightBlurMaskType : JPDarkBlurMaskType;
+    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
+        configure.jp_maskType(maskType).jp_maskAlpha(0.3);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
+
+- (JPImageresizerConfigure *(^)(UIImage *resizeImage))jp_resizeImage {
+    return ^(UIImage *resizeImage) {
+        self.resizeImage = resizeImage;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGRect viewFrame))jp_viewFrame {
+    return ^(CGRect viewFrame) {
+        self.viewFrame = viewFrame;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(JPImageresizerMaskType maskType))jp_maskType {
+    return ^(JPImageresizerMaskType maskType) {
+        self.maskType = maskType;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(JPImageresizerFrameType frameType))jp_frameType {
+    return ^(JPImageresizerFrameType frameType) {
+        self.frameType = frameType;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(JPAnimationCurve animationCurve))jp_animationCurve {
+    return ^(JPAnimationCurve animationCurve) {
+        self.animationCurve = animationCurve;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIColor *strokeColor))jp_strokeColor {
+    return ^(UIColor *strokeColor) {
+        self.strokeColor = strokeColor;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIColor *bgColor))jp_bgColor {
+    return ^(UIColor *bgColor) {
+        self.bgColor = bgColor;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat maskAlpha))jp_maskAlpha {
+    return ^(CGFloat maskAlpha) {
+        self.maskAlpha = maskAlpha;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat resizeWHScale))jp_resizeWHScale {
+    return ^(CGFloat resizeWHScale) {
+        self.resizeWHScale = resizeWHScale;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat verBaseMargin))jp_verBaseMargin {
+    return ^(CGFloat verBaseMargin) {
+        self.verBaseMargin = verBaseMargin;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat horBaseMargin))jp_horBaseMargin {
+    return ^(CGFloat horBaseMargin) {
+        self.horBaseMargin = horBaseMargin;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIEdgeInsets contentInsets))jp_contentInsets {
+    return ^(UIEdgeInsets contentInsets) {
+        self.contentInsets = contentInsets;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL isClockwiseRotation))jp_isClockwiseRotation {
+    return ^(BOOL isClockwiseRotation) {
+        self.isClockwiseRotation = isClockwiseRotation;
+        return self;
+    };
 }
 
 @end

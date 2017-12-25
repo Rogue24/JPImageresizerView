@@ -7,7 +7,8 @@
 //
 
 @import UIKit;
+#import "JPImageresizerView.h"
 
 @interface JPViewController : UIViewController
-
+@property (nonatomic, strong) JPImageresizerConfigure *configure;
 @end
