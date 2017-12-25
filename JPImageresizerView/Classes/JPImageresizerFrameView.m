@@ -511,12 +511,11 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
-    [self updateImageOriginFrameWithDirection:_rotationDirection];
+    if (self.superview) [self updateImageOriginFrameWithDirection:_rotationDirection];
 }
 
 - (void)dealloc {
-    self.window.userInteractionEnabled = YES;
-    [self removeTimer];
+    [self willDie];
 }
 
 #pragma mark - timer
@@ -540,6 +539,11 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 #pragma mark - assist method
+
+- (void)willDie {
+    self.window.userInteractionEnabled = YES;
+    [self removeTimer];
+}
 
 - (CAShapeLayer *)createShapeLayer:(CGFloat)lineWidth {
     CAShapeLayer *shapeLayer = [CAShapeLayer layer];
@@ -1007,43 +1011,50 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGRect zoomFrame = CGRectMake(convertX, convertY, convertW, convertH);
     zoomFrame = [self convertRect:zoomFrame toView:self.imageView];
     
+    __weak typeof(self) wSelf = self;
+    
     void (^zoomBlock)(void) = ^{
-        self.scrollView.contentInset = contentInset;
-        self.scrollView.contentOffset = contentOffset;
-        [self.scrollView zoomToRect:zoomFrame animated:NO];
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        sSelf.scrollView.contentInset = contentInset;
+        sSelf.scrollView.contentOffset = contentOffset;
+        [sSelf.scrollView zoomToRect:zoomFrame animated:NO];
     };
     
     void (^completeBlock)(void) = ^{
-        self.window.userInteractionEnabled = YES;
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        
+        sSelf.window.userInteractionEnabled = YES;
         
         CGFloat minZoomScale = 1;
         if (adjustResizeW >= adjustResizeH) {
-            minZoomScale = adjustResizeW / _baseImageW;
-            CGFloat imageH = _baseImageH * minZoomScale;
+            minZoomScale = adjustResizeW / sSelf->_baseImageW;
+            CGFloat imageH = sSelf->_baseImageH * minZoomScale;
             CGFloat trueImageH = adjustResizeH;
             if (imageH < trueImageH) {
                 minZoomScale *= (trueImageH / imageH);
             }
         } else {
-            minZoomScale = adjustResizeH / _baseImageH;
-            CGFloat imageW = _baseImageW * minZoomScale;
+            minZoomScale = adjustResizeH / sSelf->_baseImageH;
+            CGFloat imageW = sSelf->_baseImageW * minZoomScale;
             CGFloat trueImageW = adjustResizeW;
             if (imageW < trueImageW) {
                 minZoomScale *= (trueImageW / imageW);
             }
         }
-        self.scrollView.minimumZoomScale = minZoomScale;
+        sSelf.scrollView.minimumZoomScale = minZoomScale;
         
-        CGPoint convertCenter = [self convertPoint:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds)) toView:self.imageView];
-        CGPoint imageViewCenter = CGPointMake(CGRectGetMidX(self.imageView.bounds), CGRectGetMidY(self.imageView.bounds));
+        CGPoint convertCenter = [sSelf convertPoint:CGPointMake(CGRectGetMidX(sSelf.bounds), CGRectGetMidY(sSelf.bounds)) toView:sSelf.imageView];
+        CGPoint imageViewCenter = CGPointMake(CGRectGetMidX(sSelf.imageView.bounds), CGRectGetMidY(sSelf.imageView.bounds));
         BOOL isSameCenter = (labs((NSInteger)convertCenter.x - (NSInteger)imageViewCenter.x) <= 1 &&
                              labs((NSInteger)convertCenter.y - (NSInteger)imageViewCenter.y) <= 1);
-        BOOL isOriginFrame = (self.rotationDirection == JPImageresizerVerticalUpDirection &&
-                              [self imageresizerFrameIsEqualImageViewFrame] &&
-                              self.scrollView.zoomScale == 1);
+        BOOL isOriginFrame = (sSelf.rotationDirection == JPImageresizerVerticalUpDirection &&
+                              [sSelf imageresizerFrameIsEqualImageViewFrame] &&
+                              sSelf.scrollView.zoomScale == 1);
         
-        _isCanRecovery = !isOriginFrame || !isSameCenter;
-        !self.imageresizerIsCanRecovery ? : self.imageresizerIsCanRecovery(_isCanRecovery);
+        sSelf->_isCanRecovery = !isOriginFrame || !isSameCenter;
+        !sSelf.imageresizerIsCanRecovery ? : sSelf.imageresizerIsCanRecovery(sSelf->_isCanRecovery);
     };
     
     self.window.userInteractionEnabled = NO;
