@@ -10,7 +10,7 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
-## 更新内容
+## 0.2.0更新内容
 
     1.新增高斯模糊的遮罩样式
     2.可设置动画曲线

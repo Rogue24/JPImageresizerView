@@ -68,7 +68,7 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
  @brief 工厂方法
  @param verBaseMargin --- imageView与scrollView的水平间距
  @param horBaseMargin --- imageView与scrollView的垂直间距
- @param contentInsets --- scrollView和frameView与父视图的内边距
+ @param contentInsets --- scrollView和frameView与父视图的内边距，目前初始化后不可再更改
  @param imageresizerIsCanRecovery --- 是否可以重置的回调
  @discussion 自行配置参数
  */
@@ -86,7 +86,7 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
                       contentInsets:(UIEdgeInsets)contentInsets
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery;
 
-/** 遮罩样式，初始化后不可再更改 */
+/** 遮罩样式，目前初始化后不可再更改 */
 @property (nonatomic, readonly) JPImageresizerMaskType maskType;
 /** 边框样式 */
 @property (nonatomic) JPImageresizerFrameType frameType;
