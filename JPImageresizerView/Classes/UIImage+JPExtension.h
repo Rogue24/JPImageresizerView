@@ -8,5 +8,5 @@
 #import <UIKit/UIKit.h>
 
 @interface UIImage (JPExtension)
-
+- (UIImage *)jp_fixOrientation;
 @end

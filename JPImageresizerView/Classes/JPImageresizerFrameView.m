@@ -8,6 +8,7 @@
 
 #import "JPImageresizerFrameView.h"
 #import "JPImageresizerView.h"
+#import "UIImage+JPExtension.h"
 
 /** keypath */
 #define aKeyPath(objc, keyPath) @(((void)objc.keyPath, #keyPath))
@@ -281,7 +282,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         [_rightMidDot removeFromSuperlayer];
         [_topMidDot removeFromSuperlayer];
         [_bottomMidDot removeFromSuperlayer];
-        lineW = _arrLineW;
+        lineW = _arrLineW / _sizeScale;
     }
     self.leftTopDot.lineWidth = lineW;
     self.leftBottomDot.lineWidth = lineW;
@@ -446,6 +447,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         _arrLength = 20.0;
         _scopeWH = 50.0;
         _minImageWH = 70.0;
+        _sizeScale = 1.0;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         
         _maskType = maskType;
@@ -558,13 +560,16 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
-    UIBezierPath *dotPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - _dotWH * 0.5, position.y - _dotWH * 0.5, _dotWH, _dotWH)];
+    CGFloat dotWH = _dotWH / _sizeScale;
+    UIBezierPath *dotPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - dotWH * 0.5, position.y - dotWH * 0.5, dotWH, dotWH)];
     return dotPath;
 }
 
 - (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(RectHorn)horn {
+    CGFloat arrLineW = _arrLineW / _sizeScale;
+    CGFloat arrLength = _arrLength / _sizeScale;;
     UIBezierPath *path = [UIBezierPath bezierPath];
-    CGFloat halfArrLineW = _arrLineW * 0.5;
+    CGFloat halfArrLineW = arrLineW * 0.5;
     CGPoint firstPoint = CGPointZero;
     CGPoint secondPoint = CGPointZero;
     CGPoint thirdPoint = CGPointZero;
@@ -573,8 +578,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         {
             position.x -= halfArrLineW;
             position.y -= halfArrLineW;
-            firstPoint = CGPointMake(position.x, position.y + _arrLength);
-            thirdPoint = CGPointMake(position.x + _arrLength, position.y);
+            firstPoint = CGPointMake(position.x, position.y + arrLength);
+            thirdPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
             
@@ -582,8 +587,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         {
             position.x -= halfArrLineW;
             position.y += halfArrLineW;
-            firstPoint = CGPointMake(position.x, position.y - _arrLength);
-            thirdPoint = CGPointMake(position.x + _arrLength, position.y);
+            firstPoint = CGPointMake(position.x, position.y - arrLength);
+            thirdPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
             
@@ -591,8 +596,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         {
             position.x += halfArrLineW;
             position.y -= halfArrLineW;
-            firstPoint = CGPointMake(position.x - _arrLength, position.y);
-            thirdPoint = CGPointMake(position.x, position.y + _arrLength);
+            firstPoint = CGPointMake(position.x - arrLength, position.y);
+            thirdPoint = CGPointMake(position.x, position.y + arrLength);
             break;
         }
             
@@ -600,8 +605,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         {
             position.x += halfArrLineW;
             position.y += halfArrLineW;
-            firstPoint = CGPointMake(position.x - _arrLength, position.y);
-            thirdPoint = CGPointMake(position.x, position.y - _arrLength);
+            firstPoint = CGPointMake(position.x - arrLength, position.y);
+            thirdPoint = CGPointMake(position.x, position.y - arrLength);
             break;
         }
             
@@ -922,6 +927,20 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         h = self.bounds.size.height - 2 * y;
     }
     self.maxResizeFrame = CGRectMake(x, y, w, h);
+    
+    _frameLayer.lineWidth = 1.0 / _sizeScale;
+    CGFloat lineW = 0;
+    if (_frameType == JPClassicFrameType) lineW = _arrLineW / _sizeScale;
+    _leftTopDot.lineWidth = lineW;
+    _leftBottomDot.lineWidth = lineW;
+    _rightTopDot.lineWidth = lineW;
+    _rightBottomDot.lineWidth = lineW;
+    
+    lineW = 0.5 / _sizeScale;
+    _horTopLine.lineWidth = lineW;
+    _horBottomLine.lineWidth = lineW;
+    _verLeftLine.lineWidth = lineW;
+    _verRightLine.lineWidth = lineW;
 }
 
 - (void)updateImageresizerFrameWithAnimateDuration:(NSTimeInterval)duration isAdjustResize:(BOOL)adjustResize {
@@ -1150,9 +1169,6 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
      * UIImageOrientationLeft,          // 90 deg CCW
      * UIImageOrientationRight,         // 90 deg CW
      */
-//    self.pictureImage = [self.pictureImage fixOrientation];
-    
-    UIImage *image = self.imageView.image;
     
     UIImageOrientation orientation;
     switch (self.rotationDirection) {
@@ -1173,6 +1189,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
     }
     
+    UIImage *image = self.imageView.image;
+    
     CGRect cropFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
     
     // 宽高比不变，所以宽度高度的比例是一样
@@ -1184,13 +1202,14 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     CGRect cropRect = CGRectMake(orgX, orgY, width, height);
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) return;
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
         
-        CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
+        UIImage *fixedImage = [image jp_fixOrientation];
         
+        CGImageRef imgRef = CGImageCreateWithImageInRect(fixedImage.CGImage, cropRect);
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm
@@ -1207,7 +1226,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         CGContextDrawImage(context, CGRectMake(0, 0, cropFrame.size.width, cropFrame.size.height), imgRef);
         
         UIImage *newImg = UIGraphicsGetImageFromCurrentImageContext();
-        newImg = [strongSelf getTargetDirectionImage:newImg];
+        newImg = [sSelf getTargetDirectionImage:newImg];
         
         CGImageRelease(imgRef);
         UIGraphicsEndImageContext();
