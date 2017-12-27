@@ -10,12 +10,17 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
-## 0.2.0更新内容
+## 0.2.2 更新内容
 
-    1.新增高斯模糊的遮罩样式
-    2.可设置动画曲线
-    3.可设置裁剪区域的内边距
-    4.新增JPImageresizerConfigure类，更加方便设定参数
+    1.修复相册图片方向错乱的bug；
+    2.修复水平方向边框点和线有所缩小的问题。
+
+## 0.2.0 更新内容
+
+    1.新增高斯模糊的遮罩样式；
+    2.可设置动画曲线；
+    3.可设置裁剪区域的内边距；
+    4.新增JPImageresizerConfigure类，更加方便设定参数。
 
 ## 如何使用
 
