@@ -66,9 +66,9 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 /*!
  @method
  @brief 工厂方法
- @param verBaseMargin --- imageView与scrollView的水平间距
- @param horBaseMargin --- imageView与scrollView的垂直间距
- @param contentInsets --- scrollView和frameView与父视图的内边距，目前初始化后不可再更改
+ @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
+ @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
+ @param contentInsets --- 裁剪区域与主视图的内边距，目前初始化后不可再更改
  @param imageresizerIsCanRecovery --- 是否可以重置的回调
  @discussion 自行配置参数
  */
@@ -102,9 +102,9 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 @property (nonatomic) CGFloat maskAlpha;
 /** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
 @property (nonatomic) CGFloat resizeWHScale;
-/** 裁剪图片的垂直边距 */
+/** 裁剪图片与裁剪区域的垂直边距 */
 @property (nonatomic, assign) CGFloat verBaseMargin;
-/** 裁剪图片的水平边距 */
+/** 裁剪图片与裁剪区域的水平边距 */
 @property (nonatomic, assign) CGFloat horBaseMargin;
 /** 是否顺时针旋转（默认逆时针） */
 @property (nonatomic, assign) BOOL isClockwiseRotation;

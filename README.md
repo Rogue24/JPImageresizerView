@@ -10,10 +10,11 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
-## 0.2.2 更新内容
+## 0.2.3 更新内容
 
     1.修复相册图片方向错乱的bug；
     2.修复水平方向边框点和线有所缩小的问题。
+    3.更正属性的注释
 
 ## 0.2.0 更新内容
 

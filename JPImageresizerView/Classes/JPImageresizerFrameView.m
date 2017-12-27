@@ -1125,7 +1125,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 
 - (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
     _verBaseMargin = verBaseMargin;
-    _horSizeScale = horBaseMargin;
+    _horBaseMargin = horBaseMargin;
     self.layer.transform = CATransform3DIdentity;
     [self updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection];
 }
