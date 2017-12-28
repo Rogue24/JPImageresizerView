@@ -441,7 +441,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
         
-        _defaultDuration = 0.28;
+        _defaultDuration = 0.22;
         _dotWH = 10.0;
         _arrLineW = 2.5;
         _arrLength = 20.0;
@@ -1035,8 +1035,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     void (^zoomBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        sSelf.scrollView.contentInset = contentInset;
-        sSelf.scrollView.contentOffset = contentOffset;
+        [sSelf.scrollView setContentInset:contentInset];
+        [sSelf.scrollView setContentOffset:contentOffset animated:NO];
         [sSelf.scrollView zoomToRect:zoomFrame animated:NO];
     };
     
@@ -1631,24 +1631,21 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         }
             
     }
-    
     self.imageresizerFrame = CGRectMake(x, y, width, height);
     
     CGRect zoomFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
-    CGFloat diffOffsetX = 0;
-    CGFloat diffOffsetY = 0;
+    CGPoint contentOffset = self.scrollView.contentOffset;
     if (zoomFrame.origin.x < 0) {
-        diffOffsetX = zoomFrame.origin.x;
-    } else if (CGRectGetMaxX(zoomFrame) > self.imageView.bounds.size.width) {
-        diffOffsetX = CGRectGetMaxX(zoomFrame) - self.imageView.bounds.size.width;
+        contentOffset.x -= zoomFrame.origin.x;
+    } else if (CGRectGetMaxX(zoomFrame) > _baseImageW) {
+        contentOffset.x -= CGRectGetMaxX(zoomFrame) - _baseImageW;
     }
     if (zoomFrame.origin.y < 0) {
-        diffOffsetY = zoomFrame.origin.y;
-    } else if (CGRectGetMaxY(zoomFrame) > self.imageView.bounds.size.height) {
-        diffOffsetY = CGRectGetMaxY(zoomFrame) - self.imageView.bounds.size.height;
+        contentOffset.y -= zoomFrame.origin.y;
+    } else if (CGRectGetMaxY(zoomFrame) > _baseImageH) {
+        contentOffset.y -= CGRectGetMaxY(zoomFrame) - _baseImageH;
     }
-    self.scrollView.contentOffset = CGPointMake(self.scrollView.contentOffset.x - diffOffsetX,
-                                                self.scrollView.contentOffset.y - diffOffsetY);
+    [self.scrollView setContentOffset:contentOffset animated:NO];
     
     CGFloat wZoomScale = 0;
     CGFloat hZoomScale = 0;
@@ -1660,7 +1657,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     }
     CGFloat zoomScale = MAX(wZoomScale, hZoomScale);
     if (zoomScale > self.scrollView.zoomScale) {
-        self.scrollView.zoomScale = zoomScale;
+        [self.scrollView setZoomScale:zoomScale animated:NO];
     }
 }
 
