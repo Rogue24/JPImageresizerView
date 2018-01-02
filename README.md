@@ -12,6 +12,12 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
+## 0.3.0 更新内容
+
+    1.修正旋转水平方向时自动整体自适应缩小的问题，现在为图片宽度比图片高度小时才自适应，也可以手动设定
+    2.新增锁定功能，裁剪区域可锁定，无法继续拖动；
+    3.新增镜像功能，可进行垂直方向和水平方向镜像操作；
+
 ## 0.2.3 更新内容
 
     1.修复相册照片方向错乱的bug；
@@ -32,22 +38,22 @@
 // 方式一：使用工厂方法配置参数（裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调）
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                                    initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                                    frame:frame
-                                    maskType:JPConciseFrameType
-                                    frameType:JPConciseFrameType
-                                    animationCurve:JPAnimationCurveLinear
-                                    strokeColor:[UIColor whiteColor]
-                                    bgColor:[UIColor blackColor]
-                                    maskAlpha:0.75
-                                    verBaseMargin:10
-                                    horBaseMargin:10
-                                    resizeWHScale:0
-                                    contentInsets:UIEdgeInsetsZero
-                                    imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-                                        // 可在这里监听到是否可以重置
-                                        // 注意循环引用
-                                    }];
+                                        initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                                        frame:frame
+                                        maskType:JPConciseFrameType
+                                        frameType:JPConciseFrameType
+                                        animationCurve:JPAnimationCurveLinear
+                                        strokeColor:[UIColor whiteColor]
+                                        bgColor:[UIColor blackColor]
+                                        maskAlpha:0.75
+                                        verBaseMargin:10
+                                        horBaseMargin:10
+                                        resizeWHScale:0
+                                        contentInsets:UIEdgeInsetsZero
+                                        imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+                                            // 可在这里监听到是否可以重置
+                                            // 注意循环引用
+                                        }];
 
 // 方式二：使用JPImageresizerConfigure配置好参数再创建
 
@@ -79,11 +85,26 @@ self.imageresizerView.resizeWHScale = 16.0 / 9.0;
 #### 更改边框样式
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
+
 ```ruby
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
 self.imageresizerView.frameType = JPClassicFrameType;
 ```
+
+#### 镜像翻转
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
+
+```ruby
+// 垂直镜像，YES->沿着Y轴旋转180°，NO->还原
+BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
+[self.imageresizerView setVerticalityMirror:isVerticalityMirror animated:YES];
+
+// 水平镜像，YES->沿着X轴旋转180°，NO->还原
+BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
+[self.imageresizerView setHorizontalMirror:isHorizontalMirror animated:YES];
+```
+
 
 #### 旋转
 ```ruby
@@ -110,6 +131,16 @@ self.imageresizerView.isClockwiseRotation = YES;
 }];
 ```
 
+#### 其他
+```ruby
+// 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
+self.imageresizerView.isLockResizeFrame = YES;
+
+// 旋转至水平方向时是否自适应裁剪区域大小
+// 当图片宽度比图片高度小时，该属性默认YES，可手动设为NO
+self.imageresizerView.isAutoScale = NO;
+```
+
 ## 安装
 
 JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添加下面一行到你的podfile：
@@ -120,8 +151,8 @@ pod 'JPImageresizerView'
 
 ## 反馈地址
 
-邮箱：zhoujianping24@hotmail.com
-博客：https://www.jianshu.com/u/2edfbadd451c
+    邮箱：zhoujianping24@hotmail.com
+    博客：https://www.jianshu.com/u/2edfbadd451c
 
 ## License
 

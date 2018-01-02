@@ -16,7 +16,6 @@
 
 @property (nonatomic, strong) NSMutableArray *allDirections;
 @property (nonatomic, assign) NSInteger directionIndex;
-
 @end
 
 @implementation JPImageresizerView
@@ -24,6 +23,7 @@
     CGFloat _verticalInset;
     CGFloat _horizontalInset;
     UIEdgeInsets _contentInsets;
+    CGSize _contentSize;
     UIViewAnimationOptions _animationOption;
 }
 
@@ -96,6 +96,23 @@
     }
 }
 
+- (void)setIsLockResizeFrame:(BOOL)isLockResizeFrame {
+    self.frameView.panGR.enabled = !isLockResizeFrame;
+}
+
+- (void)setIsAutoScale:(BOOL)isAutoScale {
+    _isAutoScale = isAutoScale;
+    self.frameView.isAutoScale = isAutoScale;
+}
+
+- (void)setVerticalityMirror:(BOOL)verticalityMirror {
+    [self setVerticalityMirror:verticalityMirror animated:NO];
+}
+
+- (void)setHorizontalMirror:(BOOL)horizontalMirror {
+    [self setHorizontalMirror:horizontalMirror animated:NO];
+}
+
 #pragma mark - getter
 
 - (JPImageresizerMaskType)maskType {
@@ -124,6 +141,10 @@
 
 - (CGFloat)maskAlpha {
     return _frameView.maskAlpha;
+}
+
+- (BOOL)isLockResizeFrame {
+    return !self.frameView.panGR.enabled;
 }
 
 #pragma mark - init
@@ -162,6 +183,9 @@
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
         _contentInsets = contentInsets;
+        CGFloat width = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
+        CGFloat height = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
+        _contentSize = CGSizeMake(width, height);
         if (maskType == JPLightBlurMaskType) {
             self.bgColor = [UIColor whiteColor];
         } else if (maskType == JPDarkBlurMaskType) {
@@ -192,12 +216,12 @@
                             @(JPImageresizerHorizontalRightDirection)] mutableCopy];
 }
 
+#pragma mark - setupSubviews
+
 - (void)setupScorllView {
-    CGFloat width = (self.frame.size.width - _contentInsets.left - _contentInsets.right);
-    CGFloat height = (self.frame.size.height - _contentInsets.top - _contentInsets.bottom);
-    CGFloat h = height;
-    CGFloat w = h * h / width;
-    CGFloat x = _contentInsets.left + (self.frame.size.width - w) * 0.5;
+    CGFloat h = _contentSize.height;
+    CGFloat w = h * h / _contentSize.width;
+    CGFloat x = _contentInsets.left + (self.bounds.size.width - w) * 0.5;
     CGFloat y = _contentInsets.top;
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     scrollView.frame = CGRectMake(x, y, w, h);
@@ -233,6 +257,8 @@
     [self.scrollView addSubview:imageView];
     self.imageView = imageView;
     
+    self.isAutoScale = h > w;
+    
     _verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
     _horizontalInset = (self.scrollView.bounds.size.width - self.frame.size.width) * 0.5 + self.horBaseMargin + (maxW - w) * 0.5;
     self.scrollView.contentSize = imageView.bounds.size;
@@ -246,8 +272,10 @@
                             maskAlpha:(CGFloat)maskAlpha
                         resizeWHScale:(CGFloat)resizeWHScale
                    isCanRecoveryBlock:(JPImageresizerIsCanRecoveryBlock)isCanRecoveryBlock {
+    
     JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+                                           contentSize:_contentSize 
                                               maskType:maskType
                                              frameType:frameType
                                            strokeColor:strokeColor
@@ -259,6 +287,23 @@
                                             scrollView:self.scrollView
                                              imageView:self.imageView
                              imageresizerIsCanRecovery:isCanRecoveryBlock];
+    
+    frameView.isAutoScale = self.isAutoScale;
+    
+    __weak typeof(self) wSelf = self;
+    
+    frameView.isVerticalityMirror = ^BOOL{
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return NO;
+        return sSelf.verticalityMirror;
+    };
+    
+    frameView.isHorizontalMirror = ^BOOL{
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return NO;
+        return sSelf.horizontalMirror;
+    };
+    
     [self addSubview:frameView];
     self.frameView = frameView;
 }
@@ -295,6 +340,64 @@
 
 #pragma mark - puild method
 
+- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {
+    if (_verticalityMirror == verticalityMirror) return;
+    _verticalityMirror = verticalityMirror;
+    [self setMirror:NO animated:isAnimated];
+}
+
+- (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated {
+    if (_horizontalMirror == horizontalMirror) return;
+    _horizontalMirror = horizontalMirror;
+    [self setMirror:YES animated:isAnimated];
+}
+
+- (void)setMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
+    CATransform3D transform = self.layer.transform;
+    BOOL mirror;
+    if (isHorizontalMirror) {
+        transform = CATransform3DRotate(transform, M_PI, 1, 0, 0);
+        mirror = _horizontalMirror;
+    } else {
+        transform = CATransform3DRotate(transform, M_PI, 0, 1, 0);
+        mirror = _verticalityMirror;
+    }
+    
+    [self.frameView willMirror:isAnimated];
+    
+    void (^animateBlock)(CATransform3D aTransform) = ^(CATransform3D aTransform){
+        self.layer.transform = aTransform;
+        if (isHorizontalMirror) {
+            [self.frameView horizontalMirrorWithDiffY:(mirror ? _contentInsets.bottom : _contentInsets.top)];
+        } else {
+            [self.frameView verticalityMirrorWithDiffX:(mirror ? _contentInsets.right : _contentInsets.left)];
+        }
+    };
+    
+    if (isAnimated) {
+        self.layer.zPosition = -400;
+        transform.m34 = 1.0 / 1500.0;
+        if (isHorizontalMirror) {
+            transform.m34 *= -1.0;
+        }
+        if (mirror) {
+            transform.m34 *= -1.0;
+        }
+        [UIView animateWithDuration:0.45 delay:0 options:_animationOption animations:^{
+            animateBlock(transform);
+        } completion:^(BOOL finished) {
+            [self.frameView mirrorDone];
+            self.layer.zPosition = 0;
+        }];
+    } else {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        animateBlock(transform);
+        [CATransaction commit];
+        [self.frameView mirrorDone];
+    }
+}
+
 - (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
     self.imageView.image = resizeImage;
     _verBaseMargin = verBaseMargin;
@@ -309,15 +412,22 @@
     
     JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
-    CGFloat scale;
-    if (direction == JPImageresizerHorizontalLeftDirection ||
-        direction == JPImageresizerHorizontalRightDirection) {
-        scale = self.frame.size.width / self.scrollView.bounds.size.height;
-    } else {
-        scale = self.scrollView.bounds.size.height / self.frame.size.width;
+    CGFloat scale = 1;
+    if (self.isAutoScale) {
+        if (direction == JPImageresizerHorizontalLeftDirection ||
+            direction == JPImageresizerHorizontalRightDirection) {
+            scale = self.frame.size.width / self.scrollView.bounds.size.height;
+        } else {
+            scale = self.scrollView.bounds.size.height / self.frame.size.width;
+        }
     }
     
     CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * M_PI * 0.5;
+    
+//    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
+//    if (!isNormal) {
+//        angle *= -1.0;
+//    }
     
     CATransform3D svTransform = self.scrollView.layer.transform;
     svTransform = CATransform3DScale(svTransform, scale, scale, 1);
@@ -327,7 +437,7 @@
     fvTransform = CATransform3DScale(fvTransform, scale, scale, 1);
     fvTransform = CATransform3DRotate(fvTransform, angle, 0, 0, 1);
     
-    NSTimeInterval duration = 0.17;
+    NSTimeInterval duration = 0.2;
     [self.frameView rotationWithDirection:direction rotationDuration:duration];
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
@@ -343,12 +453,29 @@
     self.scrollView.minimumZoomScale = 1;
     self.directionIndex = 0;
     
-    [UIView animateWithDuration:0.35 animations:^{
+    _horizontalMirror = NO;
+    _verticalityMirror = NO;
+    
+    CGFloat x = (_contentSize.width - self.scrollView.bounds.size.width) * 0.5 + _contentInsets.left;
+    CGFloat y = (_contentSize.height - self.scrollView.bounds.size.height) * 0.5 + _contentInsets.top;
+    CGRect frame = self.scrollView.bounds;
+    frame.origin.x = x;
+    frame.origin.y = y;
+    
+    [UIView animateWithDuration:0.45 animations:^{
+        
+        self.layer.transform = CATransform3DIdentity;
+        self.scrollView.layer.transform = CATransform3DIdentity;
+        self.frameView.layer.transform = CATransform3DIdentity;
+        
+        self.scrollView.frame = frame;
+        self.frameView.frame = frame;
+        
         self.scrollView.contentInset = UIEdgeInsetsMake(_verticalInset, _horizontalInset, _verticalInset, _horizontalInset);
         self.scrollView.zoomScale = 1;
-        self.scrollView.layer.transform = CATransform3DIdentity;
+        
         self.frameView.layer.opacity = 0;
-        self.frameView.layer.transform = CATransform3DIdentity;
+        
     } completion:^(BOOL finished) {
         [self.frameView recovery];
     }];
@@ -394,7 +521,7 @@
     configure.viewFrame = [UIScreen mainScreen].bounds;
     configure.maskAlpha = JPNormalMaskType;
     configure.frameType = JPConciseFrameType;
-    configure.animationCurve = JPAnimationCurveLinear;
+    configure.animationCurve = JPAnimationCurveEaseInOut;
     configure.strokeColor = [UIColor whiteColor];
     configure.bgColor = [UIColor blackColor];
     configure.maskAlpha = 0.75;
@@ -413,6 +540,25 @@
     }];
     !make ? : make(configure);
     return configure;
+}
+
+- (void)setMaskType:(JPImageresizerMaskType)maskType {
+    _maskType = maskType;
+    if (maskType == JPLightBlurMaskType) {
+        self.bgColor = [UIColor whiteColor];
+    } else if (maskType == JPDarkBlurMaskType) {
+        self.bgColor = [UIColor blackColor];
+    }
+}
+
+- (void)setBgColor:(UIColor *)bgColor {
+    if (self.maskType == JPLightBlurMaskType) {
+        _bgColor = [UIColor whiteColor];
+    } else if (self.maskType == JPDarkBlurMaskType) {
+        _bgColor = [UIColor blackColor];
+    } else {
+        _bgColor = bgColor;
+    }
 }
 
 - (JPImageresizerConfigure *(^)(UIImage *resizeImage))jp_resizeImage {

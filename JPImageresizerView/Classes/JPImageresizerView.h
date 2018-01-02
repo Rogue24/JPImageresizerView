@@ -35,10 +35,10 @@ typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
  * 动画曲线
  */
 typedef NS_ENUM(NSUInteger, JPAnimationCurve) {
-    JPAnimationCurveLinear, // default
-    JPAnimationCurveEaseInOut,
+    JPAnimationCurveEaseInOut, // default
     JPAnimationCurveEaseIn,
-    JPAnimationCurveEaseOut
+    JPAnimationCurveEaseOut,
+    JPAnimationCurveLinear
 };
 
 typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
@@ -108,6 +108,19 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 @property (nonatomic, assign) CGFloat horBaseMargin;
 /** 是否顺时针旋转（默认逆时针） */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
+/** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
+@property (nonatomic) BOOL isLockResizeFrame;
+/** 旋转后，是否自动缩放至合适尺寸（默认当图片的宽度比高度小时为YES） */
+@property (nonatomic, assign) BOOL isAutoScale;
+
+/**
+ * verticalityMirror：垂直镜像，沿着Y轴旋转180°
+ * horizontalMirror：水平镜像，沿着X轴旋转180°
+ */
+@property (nonatomic, assign) BOOL verticalityMirror;
+@property (nonatomic, assign) BOOL horizontalMirror;
+- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
+- (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 
 /*!
  @method

@@ -7,6 +7,7 @@
 //
 
 #import "JPViewController.h"
+#import "JPImageViewController.h"
 
 @interface JPViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
@@ -23,6 +24,8 @@
 {
     [super viewDidLoad];
     
+    self.view.backgroundColor = self.configure.bgColor;
+    
     self.recoveryBtn.enabled = NO;
     
     __weak typeof(self) weakSelf = self;
@@ -31,9 +34,10 @@
         if (!strongSelf) return;
         strongSelf.recoveryBtn.enabled = isCanRecovery;
     }];
-    [self.view insertSubview:imageresizerView aboveSubview:self.imageView];
+    [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
     self.configure = nil;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -96,14 +100,20 @@
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         
-        for (UIButton *btn in strongSelf.processBtns) {
-            btn.hidden = YES;
-        }
-        strongSelf.imageresizerView.hidden = YES;
+//        for (UIButton *btn in strongSelf.processBtns) {
+//            btn.hidden = YES;
+//        }
+//        strongSelf.imageresizerView.hidden = YES;
+//
+//        strongSelf.imageView.image = resizeImage;
+//        strongSelf.imageView.hidden = NO;
+//        strongSelf.goBackBtn.hidden = NO;
         
-        strongSelf.imageView.image = resizeImage;
-        strongSelf.imageView.hidden = NO;
-        strongSelf.goBackBtn.hidden = NO;
+        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        vc.image = resizeImage;
+        [strongSelf.navigationController pushViewController:vc animated:YES];
+        
+        strongSelf.recoveryBtn.enabled = YES;
     }];
 }
 
@@ -123,6 +133,19 @@
 
 - (IBAction)pop:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)lockFrame:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    self.imageresizerView.isLockResizeFrame = sender.selected;
+}
+
+- (IBAction)verMirror:(id)sender {
+    [self.imageresizerView setVerticalityMirror:!self.imageresizerView.verticalityMirror animated:YES];
+}
+
+- (IBAction)horMirror:(id)sender {
+    [self.imageresizerView setHorizontalMirror:!self.imageresizerView.horizontalMirror animated:YES];
 }
 
 @end

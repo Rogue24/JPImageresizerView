@@ -19,6 +19,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
+                  contentSize:(CGSize)contentSize
                      maskType:(JPImageresizerMaskType)maskType
                     frameType:(JPImageresizerFrameType)frameType 
                   strokeColor:(UIColor *)strokeColor
@@ -35,6 +36,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
 
+@property (nonatomic, weak, readonly) UIPanGestureRecognizer *panGR;
+
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
 @property (nonatomic, strong) UIColor *strokeColor;
@@ -49,7 +52,16 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
+@property (nonatomic, readonly) BOOL isHorizontalDirection;
+
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
+
+@property (nonatomic, assign, readonly) CGFloat sizeScale;
+
+@property (nonatomic, assign) BOOL isAutoScale;
+
+@property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
+@property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
 
 - (void)updateFrameType:(JPImageresizerFrameType)frameType;
 
@@ -62,6 +74,11 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 - (void)willRecovery;
 - (void)recovery;
+
+- (void)willMirror:(BOOL)animated;
+- (void)verticalityMirrorWithDiffX:(CGFloat)diffX;
+- (void)horizontalMirrorWithDiffY:(CGFloat)diffY;
+- (void)mirrorDone;
 
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
 
