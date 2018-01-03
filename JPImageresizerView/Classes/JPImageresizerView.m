@@ -375,6 +375,7 @@
     };
     
     if (isAnimated) {
+        // 做3d旋转时会遮盖住上层的控件，设置为-400即可
         self.layer.zPosition = -400;
         transform.m34 = 1.0 / 1500.0;
         if (isHorizontalMirror) {
@@ -386,8 +387,8 @@
         [UIView animateWithDuration:0.45 delay:0 options:_animationOption animations:^{
             animateBlock(transform);
         } completion:^(BOOL finished) {
-            [self.frameView mirrorDone];
             self.layer.zPosition = 0;
+            [self.frameView mirrorDone];
         }];
     } else {
         [CATransaction begin];
@@ -462,6 +463,8 @@
     frame.origin.x = x;
     frame.origin.y = y;
     
+    // 做3d旋转时会遮盖住上层的控件，设置为-400即可
+    self.layer.zPosition = -400;
     [UIView animateWithDuration:0.45 animations:^{
         
         self.layer.transform = CATransform3DIdentity;
@@ -477,6 +480,7 @@
         self.frameView.layer.opacity = 0;
         
     } completion:^(BOOL finished) {
+        self.layer.zPosition = 0;
         [self.frameView recovery];
     }];
 }
