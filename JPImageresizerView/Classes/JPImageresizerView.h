@@ -41,7 +41,21 @@ typedef NS_ENUM(NSUInteger, JPAnimationCurve) {
     JPAnimationCurveLinear
 };
 
+/**
+ * 是否可以重置的回调
+ * 当裁剪区域缩放至适应范围后就会触发该回调
+    - YES：可重置
+    - NO：不需要重置，裁剪区域跟图片区域一致，并且没有旋转、镜像过
+ */
 typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
+
+/**
+ * 是否预备缩放裁剪区域至适应范围
+ * 当裁剪区域发生变化的开始和结束就会触发该回调
+    - YES：预备缩放，此时裁剪、旋转、镜像功能不可用
+    - NO：没有预备缩放
+ */
+typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 @interface JPImageresizerView : UIView
 
@@ -61,7 +75,8 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
  @discussion 使用JPImageresizerConfigure配置好参数
  */
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure*)configure
-                    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery;
+                    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+                 imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
 /*!
  @method
@@ -69,7 +84,8 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
  @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
  @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
  @param contentInsets --- 裁剪区域与主视图的内边距，目前初始化后不可再更改
- @param imageresizerIsCanRecovery --- 是否可以重置的回调
+ @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
+ @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
  */
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage
@@ -84,7 +100,8 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
-          imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery;
+          imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+       imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
 /** 遮罩样式，目前初始化后不可再更改 */
 @property (nonatomic, readonly) JPImageresizerMaskType maskType;
@@ -111,7 +128,7 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 /** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
 @property (nonatomic) BOOL isLockResizeFrame;
 /** 旋转后，是否自动缩放至合适尺寸（默认当图片的宽度比高度小时为YES） */
-@property (nonatomic, assign) BOOL isAutoScale;
+@property (nonatomic, assign) BOOL isRotatedAutoScale;
 
 /**
  * verticalityMirror：垂直镜像，沿着Y轴旋转180°

@@ -30,7 +30,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
-    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery;
+    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
 @property (nonatomic, assign, readonly) JPImageresizerMaskType maskType;
 
@@ -48,17 +49,19 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
+@property (nonatomic, assign, readonly) BOOL isCanRecovery;
 @property (nonatomic, copy) JPImageresizerIsCanRecoveryBlock imageresizerIsCanRecovery;
+
+@property (nonatomic, assign, readonly) BOOL isPrepareToScale;
+@property (nonatomic, copy) JPImageresizerIsPrepareToScaleBlock imageresizerIsPrepareToScale;
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
 @property (nonatomic, readonly) BOOL isHorizontalDirection;
 
-@property (nonatomic, assign, readonly) BOOL isCanRecovery;
-
 @property (nonatomic, assign, readonly) CGFloat sizeScale;
 
-@property (nonatomic, assign) BOOL isAutoScale;
+@property (nonatomic, assign) BOOL isRotatedAutoScale;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);

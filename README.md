@@ -16,7 +16,7 @@
         4.支持上左下右的旋转；
         5.水平和垂直的镜像翻转；
         6.两种边框样式；
-        7.自定义遮罩颜色，或两种高斯模糊的遮罩
+        7.自定义遮罩颜色，或两种高斯模糊的遮罩。
 
     注意：
         1.由于自动布局不利于手势控制，所以目前使用的是frame布局，暂不支持自动布局；
@@ -27,9 +27,14 @@
         2.适配横竖屏切换；
         3.更多新的边框和遮罩样式；
         4.更多的参数设定；
-        5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果
+        5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
+
+## 0.3.2 更新内容
+
+    1.新增【裁剪区域预备缩放至适应范围的回调】，当预备缩放时裁剪、旋转、镜像功能不可用，可在这回调中作相应处理；
+    2.修改【旋转后是否自动缩放】的属性名 isAutoScale -> isRotatedAutoScale
 
 ## 0.3.0 更新内容
 
@@ -54,25 +59,34 @@
 
 #### 初始化
 ```ruby
-// 方式一：使用工厂方法配置参数（裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调）
+// 方式一：使用工厂方法配置参数
+// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                                        initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                                        frame:frame
-                                        maskType:JPConciseFrameType
-                                        frameType:JPConciseFrameType
-                                        animationCurve:JPAnimationCurveLinear
-                                        strokeColor:[UIColor whiteColor]
-                                        bgColor:[UIColor blackColor]
-                                        maskAlpha:0.75
-                                        verBaseMargin:10
-                                        horBaseMargin:10
-                                        resizeWHScale:0
-                                        contentInsets:UIEdgeInsetsZero
-                                        imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-                                            // 可在这里监听到是否可以重置
-                                            // 注意循环引用
-                                        }];
+                        initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                        frame:frame
+                        maskType:JPConciseFrameType
+                        frameType:JPConciseFrameType
+                        animationCurve:JPAnimationCurveLinear
+                        strokeColor:[UIColor whiteColor]
+                        bgColor:[UIColor blackColor]
+                        maskAlpha:0.75
+                        verBaseMargin:10
+                        horBaseMargin:10
+                        resizeWHScale:0
+                        contentInsets:UIEdgeInsetsZero
+                        imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+                            // 可在这里监听到是否可以重置
+                            // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
+                            // 具体操作可参照Demo
+                            // 注意循环引用
+                        }
+                        imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+                            // 可在这里监听到裁剪区域是否预备缩放至适合范围
+                            // 如果预备缩放（isPrepareToScale为YES），此时裁剪、旋转、镜像功能不可用，可在这里做相应处理，例如将对应按钮设置为不可点或隐藏
+                            // 具体操作可参照Demo
+                            // 注意循环引用
+                        }];
 
 // 方式二：使用JPImageresizerConfigure配置好参数再创建
 
@@ -90,6 +104,13 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
+    // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
+    // 具体操作可参照Demo
+    // 注意循环引用
+} imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+    // 可在这里监听到裁剪区域是否预备缩放至适合范围
+    // 如果预备缩放（isPrepareToScale为YES），此时裁剪、旋转、镜像功能不可用，可在这里做相应处理，例如将对应按钮设置为不可点或隐藏
+    // 具体操作可参照Demo
     // 注意循环引用
 }];
 

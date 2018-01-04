@@ -15,6 +15,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
 @property (weak, nonatomic) IBOutlet UIButton *goBackBtn;
 @property (weak, nonatomic) IBOutlet UIButton *resizeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *horMirrorBtn;
+@property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
+@property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
 @property (nonatomic, weak) JPImageresizerView *imageresizerView;
 @end
 
@@ -28,15 +31,27 @@
     
     self.recoveryBtn.enabled = NO;
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) wSelf = self;
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) return;
-        strongSelf.recoveryBtn.enabled = isCanRecovery;
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        // 当不需要重置设置按钮不可点
+        sSelf.recoveryBtn.enabled = isCanRecovery;
+    } imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        // 当预备缩放设置按钮不可点，结束后可点击
+        BOOL enabled = !isPrepareToScale;
+        sSelf.rotateBtn.enabled = enabled;
+        sSelf.resizeBtn.enabled = enabled;
+        sSelf.horMirrorBtn.enabled = enabled;
+        sSelf.verMirrorBtn.enabled = enabled;
     }];
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
     self.configure = nil;
+    
+    
     
 }
 

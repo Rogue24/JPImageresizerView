@@ -9,6 +9,12 @@
 #import "JPImageresizerView.h"
 #import "JPImageresizerFrameView.h"
 
+#ifdef DEBUG
+#define JPLog(...) printf("%s %s 第%d行: %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String]);
+#else
+#define JPLog(...)
+#endif
+
 @interface JPImageresizerView () <UIScrollViewDelegate>
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIImageView *imageView;
@@ -100,9 +106,9 @@
     self.frameView.panGR.enabled = !isLockResizeFrame;
 }
 
-- (void)setIsAutoScale:(BOOL)isAutoScale {
-    _isAutoScale = isAutoScale;
-    self.frameView.isAutoScale = isAutoScale;
+- (void)setIsRotatedAutoScale:(BOOL)isRotatedAutoScale {
+    _isRotatedAutoScale = isRotatedAutoScale;
+    self.frameView.isRotatedAutoScale = isRotatedAutoScale;
 }
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror {
@@ -150,7 +156,8 @@
 #pragma mark - init
 
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
-                    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
+                    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+                 imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     return [[self alloc] initWithResizeImage:configure.resizeImage
                                        frame:configure.viewFrame
                                     maskType:configure.maskType
@@ -163,7 +170,8 @@
                                horBaseMargin:configure.horBaseMargin
                                resizeWHScale:configure.resizeWHScale
                                contentInsets:configure.contentInsets
-                   imageresizerIsCanRecovery:imageresizerIsCanRecovery];
+                   imageresizerIsCanRecovery:imageresizerIsCanRecovery
+                imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
 }
 
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage
@@ -178,7 +186,9 @@
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
-          imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
+          imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+       imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
+    
     if (self = [super initWithFrame:frame]) {
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
@@ -201,7 +211,8 @@
                               strokeColor:strokeColor
                                 maskAlpha:maskAlpha
                             resizeWHScale:resizeWHScale
-                       isCanRecoveryBlock:imageresizerIsCanRecovery];
+                       isCanRecoveryBlock:imageresizerIsCanRecovery
+                   isPrepareToScaleBlock:imageresizerIsPrepareToScale];
         self.animationCurve = animationCurve;
     }
     return self;
@@ -257,7 +268,7 @@
     [self.scrollView addSubview:imageView];
     self.imageView = imageView;
     
-    self.isAutoScale = h > w;
+    self.isRotatedAutoScale = h > w;
     
     _verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
     _horizontalInset = (self.scrollView.bounds.size.width - self.frame.size.width) * 0.5 + self.horBaseMargin + (maxW - w) * 0.5;
@@ -268,10 +279,11 @@
 
 - (void)setupFrameViewWithMaskType:(JPImageresizerMaskType)maskType
                          frameType:(JPImageresizerFrameType)frameType
-                        strokeColor:(UIColor *)strokeColor
-                            maskAlpha:(CGFloat)maskAlpha
-                        resizeWHScale:(CGFloat)resizeWHScale
-                   isCanRecoveryBlock:(JPImageresizerIsCanRecoveryBlock)isCanRecoveryBlock {
+                       strokeColor:(UIColor *)strokeColor
+                         maskAlpha:(CGFloat)maskAlpha
+                     resizeWHScale:(CGFloat)resizeWHScale
+                isCanRecoveryBlock:(JPImageresizerIsCanRecoveryBlock)isCanRecoveryBlock
+             isPrepareToScaleBlock:(JPImageresizerIsPrepareToScaleBlock)isPrepareToScaleBlock {
     
     JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
@@ -286,9 +298,10 @@
                                          resizeWHScale:resizeWHScale
                                             scrollView:self.scrollView
                                              imageView:self.imageView
-                             imageresizerIsCanRecovery:isCanRecoveryBlock];
+                             imageresizerIsCanRecovery:isCanRecoveryBlock
+                          imageresizerIsPrepareToScale:isPrepareToScaleBlock];
     
-    frameView.isAutoScale = self.isAutoScale;
+    frameView.isRotatedAutoScale = self.isRotatedAutoScale;
     
     __weak typeof(self) wSelf = self;
     
@@ -341,12 +354,20 @@
 #pragma mark - puild method
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
+        return;
+    }
     if (_verticalityMirror == verticalityMirror) return;
     _verticalityMirror = verticalityMirror;
     [self setMirror:NO animated:isAnimated];
 }
 
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
+        return;
+    }
     if (_horizontalMirror == horizontalMirror) return;
     _horizontalMirror = horizontalMirror;
     [self setMirror:YES animated:isAnimated];
@@ -407,6 +428,10 @@
 }
 
 - (void)rotation {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
+        return;
+    }
     
     self.directionIndex += 1;
     if (self.directionIndex > self.allDirections.count - 1) self.directionIndex = 0;
@@ -414,7 +439,7 @@
     JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
     CGFloat scale = 1;
-    if (self.isAutoScale) {
+    if (self.isRotatedAutoScale) {
         if (direction == JPImageresizerHorizontalLeftDirection ||
             direction == JPImageresizerHorizontalRightDirection) {
             scale = self.frame.size.width / self.scrollView.bounds.size.height;
@@ -447,7 +472,10 @@
 }
 
 - (void)recovery {
-    if (!self.frameView.isCanRecovery) return;
+    if (!self.frameView.isCanRecovery) {
+        JPLog(@"已经是初始状态，不需要重置");
+        return;
+    }
     
     [self.frameView willRecovery];
     
@@ -486,6 +514,10 @@
 }
 
 - (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
+        return;
+    }
     [self.frameView imageresizerWithComplete:complete];
 }
 

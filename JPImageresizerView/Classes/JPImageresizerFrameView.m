@@ -312,10 +312,20 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     }
 }
 
-- (void)setIsAutoScale:(BOOL)isAutoScale {
-    if (_isAutoScale == isAutoScale) return;
-    _isAutoScale = isAutoScale;
+- (void)setIsRotatedAutoScale:(BOOL)isRotatedAutoScale {
+    if (_isRotatedAutoScale == isRotatedAutoScale) return;
+    _isRotatedAutoScale = isRotatedAutoScale;
     if (self.superview) [self updateMaxResizeFrame];
+}
+
+- (void)setIsCanRecovery:(BOOL)isCanRecovery {
+    _isCanRecovery = isCanRecovery;
+    !self.imageresizerIsCanRecovery ? : self.imageresizerIsCanRecovery(isCanRecovery);
+}
+
+- (void)setIsPrepareToScale:(BOOL)isPrepareToScale {
+    _isPrepareToScale = isPrepareToScale;
+    !self.imageresizerIsPrepareToScale ? : self.imageresizerIsPrepareToScale(isPrepareToScale);
 }
 
 #pragma mark - getter
@@ -448,7 +458,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
-    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery {
+    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
@@ -467,6 +478,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         _horBaseMargin = horBaseMargin;
         _verBaseMargin = verBaseMargin;
         _imageresizerIsCanRecovery = [imageresizerIsCanRecovery copy];
+        _imageresizerIsPrepareToScale = [imageresizerIsPrepareToScale copy];
         
         _diffRotLength = 1000;
         _bgFrame = CGRectMake(self.bounds.origin.x - _diffRotLength,
@@ -536,17 +548,20 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 
 #pragma mark - timer
 
-- (void)addTimer {
-    [self removeTimer];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.65 target:self selector:@selector(timerHandle) userInfo:nil repeats:NO];
+- (BOOL)addTimer {
+    BOOL isHasTimer = [self removeTimer];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.65 target:self selector:@selector(timerHandle) userInfo:nil repeats:NO]; // default 0.65
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+    return isHasTimer;
 }
 
-- (void)removeTimer {
+- (BOOL)removeTimer {
     if (self.timer) {
         [self.timer invalidate];
         self.timer = nil;
+        return YES;
     }
+    return NO;
 }
 
 - (void)timerHandle {
@@ -934,7 +949,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         w = self.bounds.size.width - 2 * x;
         h = self.bounds.size.height - 2 * y;
     } else {
-        if (self.isAutoScale) {
+        if (self.isRotatedAutoScale) {
             _sizeScale = _horSizeScale;
             x = _verBaseMargin / _sizeScale;
             y = _horBaseMargin / _sizeScale;
@@ -1087,6 +1102,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         sSelf.scrollView.minimumZoomScale = minZoomScale;
         
         [sSelf checkIsCanRecovery];
+        
+        sSelf.isPrepareToScale = NO;
     };
     
     self.window.userInteractionEnabled = NO;
@@ -1106,11 +1123,10 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)checkIsCanRecovery {
-    BOOL isVerticalityMirror = self.isVerticalityMirror();
-    BOOL isHorizontalMirror = self.isHorizontalMirror();
+    BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
+    BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     if (isVerticalityMirror || isHorizontalMirror) {
-        self->_isCanRecovery = YES;
-        !self.imageresizerIsCanRecovery ? : self.imageresizerIsCanRecovery(YES);
+        self.isCanRecovery = YES;
         return;
     }
     
@@ -1121,8 +1137,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     BOOL isOriginFrame = (self.rotationDirection == JPImageresizerVerticalUpDirection &&
                           [self imageresizerFrameIsEqualImageViewFrame] &&
                           self.scrollView.zoomScale == 1);
-    self->_isCanRecovery = !isOriginFrame || !isSameCenter;
-    !self.imageresizerIsCanRecovery ? : self.imageresizerIsCanRecovery(self->_isCanRecovery);
+    self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
 - (UIImage *)getTargetDirectionImage:(UIImage *)image verticalityMirror:(BOOL)verticalityMirror horizontalMirror:(BOOL)horizontalMirror {
@@ -1171,6 +1186,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)startImageresizer {
+    self.isPrepareToScale = YES;
     [self removeTimer];
     [self hideOrShowBlurEffect:YES animateDuration:0.2];
     [self hideOrShowFrameLine:YES animateDuration:0.2];
@@ -1266,8 +1282,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     UIImage *image = self.imageView.image;
     
-    BOOL isVerticalityMirror = self.isVerticalityMirror();
-    BOOL isHorizontalMirror = self.isHorizontalMirror();
+    BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
+    BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     BOOL isHorizontalDirection = self.isHorizontalDirection;
     if (isHorizontalDirection) {
         BOOL temp = isVerticalityMirror;
