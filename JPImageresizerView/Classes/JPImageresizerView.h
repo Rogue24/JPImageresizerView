@@ -124,8 +124,11 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic) CGFloat maskAlpha;
 
-/** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
+/** 裁剪宽高比
+ * 0为任意比例，可拖动8个方向，大于0为固定比例，可拖动4个方向
+ */
 @property (nonatomic) CGFloat resizeWHScale;
+/** 是否通过动画形式修改宽高比 */
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
 /** 裁剪图片与裁剪区域的垂直边距 */
@@ -148,8 +151,9 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
  * horizontalMirror：水平镜像，沿着X轴旋转180°
  */
 @property (nonatomic, assign) BOOL verticalityMirror;
-- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
 @property (nonatomic, assign) BOOL horizontalMirror;
+/** 是否通过动画形式进行镜像翻转 */
+- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 
 /*!
