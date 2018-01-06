@@ -33,8 +33,10 @@
 
 ## 0.3.3 更新内容
 
-    1.新增resizeWHScale的动画设置接口（-setResizeWHScale:animated:(BOOL)isAnimated）
-    说明：例如裁剪头像区域，一般都是使用1:1的比例，如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给用户一种图片尺寸改变了的错觉，所以个人建议可进去页面后再使用这个接口调整宽高比（请看gif图），这样让用户体验好点。
+    1.新增resizeWHScale的动画形式的设置接口（-setResizeWHScale:animated:）。
+    
+    说明：平时裁剪头像区域一般都是使用1:1的比例，但如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给人一种图片尺寸改变了的错觉，
+    所以个人建议进去页面后（例如控制器的viewDidApper时）再调用改方法重新调整宽高比（请看gif图效果），这样让用户体验好点。
     
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 
