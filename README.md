@@ -31,10 +31,16 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
+## 0.3.3 更新内容
+
+    1.新增resizeWHScale的动画设置接口（-setResizeWHScale:animated:(BOOL)isAnimated）
+    说明：例如裁剪头像区域，一般都是使用1:1的比例，如果一开始即使该比例，一进去页面可能用户无法得知全图信息，个人建议可进去页面后再调整宽高比（请看gif图），所以新增这个接口让用户体验好点。
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/ivpFV94K5W.gif)
+
 ## 0.3.2 更新内容
 
     1.新增【裁剪区域预备缩放至适应范围的回调】，当预备缩放时裁剪、旋转、镜像功能不可用，可在这回调中作相应处理；
-    2.修改【旋转后是否自动缩放】的属性名 isAutoScale -> isRotatedAutoScale
+    2.修改【旋转后是否自动缩放】的属性名 isAutoScale -> isRotatedAutoScale。
 
 ## 0.3.0 更新内容
 

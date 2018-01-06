@@ -21,7 +21,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 - (instancetype)initWithFrame:(CGRect)frame
                   contentSize:(CGSize)contentSize
                      maskType:(JPImageresizerMaskType)maskType
-                    frameType:(JPImageresizerFrameType)frameType 
+                    frameType:(JPImageresizerFrameType)frameType
+               animationCurve:(JPAnimationCurve)animationCurve
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
                     maskAlpha:(CGFloat)maskAlpha
@@ -48,6 +49,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 @property (nonatomic, assign) CGFloat maskAlpha;
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
+- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 @property (nonatomic, copy) JPImageresizerIsCanRecoveryBlock imageresizerIsCanRecovery;

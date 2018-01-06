@@ -69,7 +69,11 @@
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
-    self.frameView.resizeWHScale = resizeWHScale;
+    [self.frameView setResizeWHScale:resizeWHScale animated:NO];
+}
+
+- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
+    [self.frameView setResizeWHScale:resizeWHScale animated:isAnimated];
 }
 
 - (void)setIsClockwiseRotation:(BOOL)isClockwiseRotation {
@@ -85,7 +89,7 @@
 
 - (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
     _animationCurve = animationCurve;
-    self.frameView.animationCurve = animationCurve;
+    _frameView.animationCurve = animationCurve;
     switch (animationCurve) {
         case JPAnimationCurveEaseInOut:
             _animationOption = UIViewAnimationOptionCurveEaseInOut;
@@ -203,17 +207,19 @@
         } else {
             self.bgColor = bgColor;
         }
+        self.animationCurve = animationCurve;
         [self setupBase];
         [self setupScorllView];
         [self setupImageViewWithImage:resizeImage];
         [self setupFrameViewWithMaskType:maskType
                                frameType:frameType
-                              strokeColor:strokeColor
-                                maskAlpha:maskAlpha
-                            resizeWHScale:resizeWHScale
-                       isCanRecoveryBlock:imageresizerIsCanRecovery
+                          animationCurve:animationCurve
+                             strokeColor:strokeColor
+                               maskAlpha:maskAlpha
+                           resizeWHScale:resizeWHScale
+                      isCanRecoveryBlock:imageresizerIsCanRecovery
                    isPrepareToScaleBlock:imageresizerIsPrepareToScale];
-        self.animationCurve = animationCurve;
+        
     }
     return self;
 }
@@ -279,6 +285,7 @@
 
 - (void)setupFrameViewWithMaskType:(JPImageresizerMaskType)maskType
                          frameType:(JPImageresizerFrameType)frameType
+                    animationCurve:(JPAnimationCurve)animationCurve
                        strokeColor:(UIColor *)strokeColor
                          maskAlpha:(CGFloat)maskAlpha
                      resizeWHScale:(CGFloat)resizeWHScale
@@ -290,6 +297,7 @@
                                            contentSize:_contentSize 
                                               maskType:maskType
                                              frameType:frameType
+                                        animationCurve:animationCurve
                                            strokeColor:strokeColor
                                              fillColor:self.bgColor
                                              maskAlpha:maskAlpha

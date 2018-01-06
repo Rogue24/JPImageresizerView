@@ -105,28 +105,41 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 /** 遮罩样式，目前初始化后不可再更改 */
 @property (nonatomic, readonly) JPImageresizerMaskType maskType;
+
 /** 边框样式 */
 @property (nonatomic) JPImageresizerFrameType frameType;
+
 /** 动画曲线（默认是线性Linear） */
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
+
 /** 裁剪的图片 */
 @property (nonatomic) UIImage *resizeImage;
+
 /** 裁剪线颜色 */
 @property (nonatomic) UIColor *strokeColor;
+
 /** 背景颜色 */
 @property (nonatomic) UIColor *bgColor;
+
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic) CGFloat maskAlpha;
+
 /** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
 @property (nonatomic) CGFloat resizeWHScale;
+- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
+
 /** 裁剪图片与裁剪区域的垂直边距 */
 @property (nonatomic, assign) CGFloat verBaseMargin;
+
 /** 裁剪图片与裁剪区域的水平边距 */
 @property (nonatomic, assign) CGFloat horBaseMargin;
+
 /** 是否顺时针旋转（默认逆时针） */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
+
 /** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
 @property (nonatomic) BOOL isLockResizeFrame;
+
 /** 旋转后，是否自动缩放至合适尺寸（默认当图片的宽度比高度小时为YES） */
 @property (nonatomic, assign) BOOL isRotatedAutoScale;
 
@@ -135,8 +148,8 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
  * horizontalMirror：水平镜像，沿着X轴旋转180°
  */
 @property (nonatomic, assign) BOOL verticalityMirror;
-@property (nonatomic, assign) BOOL horizontalMirror;
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
+@property (nonatomic, assign) BOOL horizontalMirror;
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 
 /*!

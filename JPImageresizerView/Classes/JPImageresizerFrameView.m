@@ -94,6 +94,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 @implementation JPImageresizerFrameView
 {
     NSTimeInterval _defaultDuration;
+    NSTimeInterval _updateDuration;
     NSString *_kCAMediaTimingFunction;
     UIViewAnimationOptions _animationOption;
     
@@ -238,6 +239,10 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
+    [self setResizeWHScale:resizeWHScale animated:NO];
+}
+
+- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
     if (resizeWHScale > 0) {
         if (self.isHorizontalDirection) {
             resizeWHScale = 1.0 / resizeWHScale;
@@ -245,6 +250,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     }
     if (_resizeWHScale == resizeWHScale) return;
     _resizeWHScale = resizeWHScale;
+    
+    _updateDuration = isAnimated ? _defaultDuration : -1.0;
     
     _isArbitrarily = resizeWHScale <= 0;
     
@@ -450,6 +457,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
                   contentSize:(CGSize)contentSize
                      maskType:(JPImageresizerMaskType)maskType
                     frameType:(JPImageresizerFrameType)frameType
+               animationCurve:(JPAnimationCurve)animationCurve
                   strokeColor:(UIColor *)strokeColor
                     fillColor:(UIColor *)fillColor
                     maskAlpha:(CGFloat)maskAlpha
@@ -465,6 +473,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         self.clipsToBounds = NO;
         
         _defaultDuration = 0.27;
+        _updateDuration = -1.0;
         _dotWH = 10.0;
         _arrLineW = 2.5;
         _arrLength = 20.0;
@@ -517,7 +526,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         self.frameLayer = frameLayer;
         
         self.frameType = frameType;
-        
+        self.animationCurve = animationCurve;
         self.scrollView = scrollView;
         self.imageView = imageView;
         
@@ -912,7 +921,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     [self resetImageresizerFrame];
-    [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];
+    [self updateImageresizerFrameWithAnimateDuration:_updateDuration isAdjustResize:YES];
+    _updateDuration = -1.0;
 }
 
 - (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {

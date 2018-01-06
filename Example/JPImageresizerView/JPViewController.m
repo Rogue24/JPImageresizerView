@@ -50,14 +50,16 @@
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
     self.configure = nil;
-    
-    
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+//    [self.imageresizerView setResizeWHScale:1 animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
