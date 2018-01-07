@@ -765,9 +765,9 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     [CATransaction commit];
 }
 
-- (void)resetImageresizerFrame {
+- (CGRect)baseImageresizerFrame {
     if (_isArbitrarily) {
-        self.imageresizerFrame = self.originImageFrame;
+        return self.originImageFrame;
     } else {
         CGFloat w = 0;
         CGFloat h = 0;
@@ -788,7 +788,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         }
         CGFloat x = self.maxResizeX + (self.maxResizeW - w) * 0.5;
         CGFloat y = self.maxResizeY + (self.maxResizeH - h) * 0.5;
-        self.imageresizerFrame = CGRectMake(x, y, w, h);
+        return CGRectMake(x, y, w, h);
     }
 }
 
@@ -920,7 +920,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
-    [self resetImageresizerFrame];
+    [self updateImageresizerFrame:[self baseImageresizerFrame] animateDuration:_updateDuration];
     [self updateImageresizerFrameWithAnimateDuration:_updateDuration isAdjustResize:YES];
     _updateDuration = -1.0;
 }
@@ -1007,54 +1007,15 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         }
     }
     
-    CGFloat adjustResizeW = 0;
-    CGFloat adjustResizeH = 0;
-    CGFloat adjustResizeX = 0;
-    CGFloat adjustResizeY = 0;
+    CGRect adjustResizeFrame;
     if (adjustResize) {
-        CGFloat resizerWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
-        adjustResizeW = 0;
-        adjustResizeH = 0;
-        if (resizerWHScale >= 1) {
-            adjustResizeW = self.maxResizeW;
-            adjustResizeH = adjustResizeW / resizerWHScale;
-            if (adjustResizeH > self.maxResizeH) {
-                adjustResizeH = self.maxResizeH;
-                adjustResizeW = self.maxResizeH * resizerWHScale;
-            }
-        } else {
-            adjustResizeH = self.maxResizeH;
-            adjustResizeW = adjustResizeH * resizerWHScale;
-            if (adjustResizeW > self.maxResizeW) {
-                adjustResizeW = self.maxResizeW;
-                adjustResizeH = adjustResizeW / resizerWHScale;
-            }
-        }
-        adjustResizeX = self.maxResizeX + (self.maxResizeW - adjustResizeW) * 0.5;
-        adjustResizeY = self.maxResizeY + (self.maxResizeH - adjustResizeH) * 0.5;
+        adjustResizeFrame = [self adjustResizeFrame];
     } else {
-        adjustResizeW = self.imageresizerFrame.size.width;
-        adjustResizeH = self.imageresizerFrame.size.height;
-        adjustResizeX = self.imageresizerFrame.origin.x;
-        adjustResizeY = self.imageresizerFrame.origin.y;
+        adjustResizeFrame = self.imageresizerFrame;
     }
-    CGRect adjustResizeFrame = CGRectMake(adjustResizeX, adjustResizeY, adjustResizeW, adjustResizeH);
-    
-    CGFloat selfWidth = self.bounds.size.width;
-    CGFloat selfHeight = self.bounds.size.height;
     
     // contentInset
-    CGFloat top = 0;
-    CGFloat left = 0;
-    CGFloat bottom = 0;
-    CGFloat right = 0;
-    CGFloat hoSpace = (self.scrollView.bounds.size.width - selfWidth) * 0.5;
-    // scrollView高度跟self.height一样，上下不需要额外添加veSpace
-    top = adjustResizeY; // + veSpace?
-    bottom = selfHeight - CGRectGetMaxY(adjustResizeFrame); // + veSpace?
-    left = adjustResizeX + hoSpace;
-    right = selfWidth - CGRectGetMaxX(adjustResizeFrame) + hoSpace;
-    UIEdgeInsets contentInset = UIEdgeInsetsMake(top, left, bottom, right);
+    UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
     
     // contentOffset
     CGPoint contentOffset = CGPointZero;
@@ -1067,9 +1028,9 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     // zoomFrame
     // 根据裁剪的区域，因为需要有间距，所以拼接成self的尺寸获取缩放的区域zoomFrame
     // 宽高比不变，所以宽度高度的比例是一样，这里就用宽度比例吧
-    CGFloat convertScale = self.imageresizeW / adjustResizeW;
-    CGFloat diffXSpace = adjustResizeX * convertScale;
-    CGFloat diffYSpace = adjustResizeY * convertScale;
+    CGFloat convertScale = self.imageresizeW / adjustResizeFrame.size.width;
+    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale;
+    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale;
     CGFloat convertW = self.imageresizeW + 2 * diffXSpace;
     CGFloat convertH = self.imageresizeH + 2 * diffYSpace;
     CGFloat convertX = self.imageresizeX - diffXSpace;
@@ -1093,23 +1054,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         
         sSelf.window.userInteractionEnabled = YES;
         
-        CGFloat minZoomScale = 1;
-        if (adjustResizeW >= adjustResizeH) {
-            minZoomScale = adjustResizeW / sSelf->_baseImageW;
-            CGFloat imageH = sSelf->_baseImageH * minZoomScale;
-            CGFloat trueImageH = adjustResizeH;
-            if (imageH < trueImageH) {
-                minZoomScale *= (trueImageH / imageH);
-            }
-        } else {
-            minZoomScale = adjustResizeH / sSelf->_baseImageH;
-            CGFloat imageW = sSelf->_baseImageW * minZoomScale;
-            CGFloat trueImageW = adjustResizeW;
-            if (imageW < trueImageW) {
-                minZoomScale *= (trueImageW / imageW);
-            }
-        }
-        sSelf.scrollView.minimumZoomScale = minZoomScale;
+        sSelf.scrollView.minimumZoomScale = [sSelf scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
         
         [sSelf checkIsCanRecovery];
         
@@ -1132,6 +1077,61 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     }
 }
 
+- (CGRect)adjustResizeFrame {
+    CGFloat resizerWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
+    CGFloat adjustResizeW = 0;
+    CGFloat adjustResizeH = 0;
+    if (resizerWHScale >= 1) {
+        adjustResizeW = self.maxResizeW;
+        adjustResizeH = adjustResizeW / resizerWHScale;
+        if (adjustResizeH > self.maxResizeH) {
+            adjustResizeH = self.maxResizeH;
+            adjustResizeW = self.maxResizeH * resizerWHScale;
+        }
+    } else {
+        adjustResizeH = self.maxResizeH;
+        adjustResizeW = adjustResizeH * resizerWHScale;
+        if (adjustResizeW > self.maxResizeW) {
+            adjustResizeW = self.maxResizeW;
+            adjustResizeH = adjustResizeW / resizerWHScale;
+        }
+    }
+    CGFloat adjustResizeX = self.maxResizeX + (self.maxResizeW - adjustResizeW) * 0.5;
+    CGFloat adjustResizeY = self.maxResizeY + (self.maxResizeH - adjustResizeH) * 0.5;
+    return CGRectMake(adjustResizeX, adjustResizeY, adjustResizeW, adjustResizeH);
+}
+
+- (UIEdgeInsets)scrollViewContentInsetWithAdjustResizeFrame:(CGRect)adjustResizeFrame {
+    // scrollView宽高跟self一样，上下左右不需要额外添加Space
+    CGFloat top = adjustResizeFrame.origin.y; // + veSpace?
+    CGFloat bottom = self.bounds.size.height - CGRectGetMaxY(adjustResizeFrame); // + veSpace?
+    CGFloat left = adjustResizeFrame.origin.x; // + hoSpace?
+    CGFloat right = self.bounds.size.width - CGRectGetMaxX(adjustResizeFrame); // + hoSpace?
+    return UIEdgeInsetsMake(top, left, bottom, right);
+}
+
+- (CGFloat)scrollViewMinZoomScaleWithResizeSize:(CGSize)size {
+    CGFloat minZoomScale = 1;
+    CGFloat w = size.width;
+    CGFloat h = size.height;
+    if (w >= h) {
+        minZoomScale = w / self->_baseImageW;
+        CGFloat imageH = self->_baseImageH * minZoomScale;
+        CGFloat trueImageH = h;
+        if (imageH < trueImageH) {
+            minZoomScale *= (trueImageH / imageH);
+        }
+    } else {
+        minZoomScale = h / self->_baseImageH;
+        CGFloat imageW = self->_baseImageW * minZoomScale;
+        CGFloat trueImageW = w;
+        if (imageW < trueImageW) {
+            minZoomScale *= (trueImageW / imageW);
+        }
+    }
+    return minZoomScale;
+}
+
 - (void)checkIsCanRecovery {
     BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
@@ -1145,8 +1145,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     BOOL isSameCenter = (labs((NSInteger)convertCenter.x - (NSInteger)imageViewCenter.x) <= 1 &&
                          labs((NSInteger)convertCenter.y - (NSInteger)imageViewCenter.y) <= 1);
     BOOL isOriginFrame = (self.rotationDirection == JPImageresizerVerticalUpDirection &&
-                          [self imageresizerFrameIsEqualImageViewFrame] &&
-                          self.scrollView.zoomScale == 1);
+                          [self imageresizerFrameIsEqualImageViewFrame]);
     self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
@@ -1253,8 +1252,35 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)recovery {
+    self.layer.opacity = 0;
+    
     [self updateRotationDirection:JPImageresizerVerticalUpDirection];
-    [self resetImageresizerFrame];
+    
+    if (_isArbitrarily) {
+        CGFloat verticalInset = (self.scrollView.bounds.size.height - self.imageView.bounds.size.height) * 0.5;
+        CGFloat horizontalInset = (self.scrollView.bounds.size.width - self.imageView.bounds.size.width) * 0.5;
+        self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
+        self.scrollView.zoomScale = 1;
+        return;
+    }
+    
+    CGRect adjustResizeFrame = [self adjustResizeFrame];
+    
+    UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
+    
+    CGFloat minZoomScale = [self scrollViewMinZoomScaleWithResizeSize:CGSizeMake(adjustResizeFrame.size.width, adjustResizeFrame.size.height)];
+    
+    CGFloat contentOffsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
+    CGFloat contentOffsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
+    
+    self.imageresizerFrame = adjustResizeFrame;
+    self.scrollView.zoomScale = minZoomScale;
+    self.scrollView.contentInset = contentInset;
+    self.scrollView.contentOffset = CGPointMake(contentOffsetX, contentOffsetY);
+}
+
+- (void)recoveryDone {
+    if (_isArbitrarily) self.imageresizerFrame = [self baseImageresizerFrame];
     [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];
     [UIView animateWithDuration:0.2 animations:^{
         self.layer.opacity = 1;

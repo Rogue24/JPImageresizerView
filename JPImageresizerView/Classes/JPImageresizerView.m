@@ -26,8 +26,6 @@
 
 @implementation JPImageresizerView
 {
-    CGFloat _verticalInset;
-    CGFloat _horizontalInset;
     UIEdgeInsets _contentInsets;
     CGSize _contentSize;
     UIViewAnimationOptions _animationOption;
@@ -276,11 +274,11 @@
     
     self.isRotatedAutoScale = h > w;
     
-    _verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
-    _horizontalInset = (self.scrollView.bounds.size.width - self.frame.size.width) * 0.5 + self.horBaseMargin + (maxW - w) * 0.5;
+    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
+    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
     self.scrollView.contentSize = imageView.bounds.size;
-    self.scrollView.contentInset = UIEdgeInsetsMake(_verticalInset, _horizontalInset, _verticalInset, _horizontalInset);
-    self.scrollView.contentOffset = CGPointMake(-_horizontalInset, -_verticalInset);
+    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
+    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
 }
 
 - (void)setupFrameViewWithMaskType:(JPImageresizerMaskType)maskType
@@ -349,12 +347,12 @@
     }
     self.imageView.frame = CGRectMake(0, 0, w, h);
     
-    _verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
-    _horizontalInset = (self.scrollView.bounds.size.width - self.frame.size.width) * 0.5 + self.horBaseMargin + (maxW - w) * 0.5;
+    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
+    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
     
     self.scrollView.contentSize = self.imageView.bounds.size;
-    self.scrollView.contentInset = UIEdgeInsetsMake(_verticalInset, _horizontalInset, _verticalInset, _horizontalInset);
-    self.scrollView.contentOffset = CGPointMake(-_horizontalInset, -_verticalInset);
+    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
+    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
     
     [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin];
 }
@@ -486,8 +484,7 @@
     }
     
     [self.frameView willRecovery];
-    
-    self.scrollView.minimumZoomScale = 1;
+
     self.directionIndex = 0;
     
     _horizontalMirror = NO;
@@ -510,14 +507,11 @@
         self.scrollView.frame = frame;
         self.frameView.frame = frame;
         
-        self.scrollView.contentInset = UIEdgeInsetsMake(_verticalInset, _horizontalInset, _verticalInset, _horizontalInset);
-        self.scrollView.zoomScale = 1;
-        
-        self.frameView.layer.opacity = 0;
+        [self.frameView recovery];
         
     } completion:^(BOOL finished) {
         self.layer.zPosition = 0;
-        [self.frameView recovery];
+        [self.frameView recoveryDone];
     }];
 }
 

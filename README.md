@@ -31,7 +31,10 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
-## 0.3.3 更新内容
+### 0.3.4 更新内容
+    修复了指定裁剪宽高比（resizeWHScale大于0）的情况下，重置动画的错乱（recovery方法）
+
+### 0.3.3 更新内容
 
     1.新增resizeWHScale的动画形式的设置接口（-setResizeWHScale:animated:）。
     
@@ -40,24 +43,24 @@
     
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 
-## 0.3.2 更新内容
+### 0.3.2 更新内容
 
     1.新增【裁剪区域预备缩放至适应范围的回调】，当预备缩放时裁剪、旋转、镜像功能不可用，可在这回调中作相应处理；
     2.修改【旋转后是否自动缩放】的属性名 isAutoScale -> isRotatedAutoScale。
 
-## 0.3.0 更新内容
+### 0.3.0 更新内容
 
     1.修正旋转水平方向时自动整体自适应缩小的问题，现在为图片宽度比图片高度小时才自适应，也可以手动设定；
     2.新增锁定功能，裁剪区域可锁定，无法继续拖动；
     3.新增镜像功能，可进行垂直方向和水平方向镜像操作。
 
-## 0.2.3 更新内容
+### 0.2.3 更新内容
 
     1.修复相册照片方向错乱的bug；
     2.修复水平方向边框点和线有所缩小的问题；
     3.更正属性的注释。
 
-## 0.2.0 更新内容
+### 0.2.0 更新内容
 
     1.新增高斯模糊的遮罩样式；
     2.可设置动画曲线；

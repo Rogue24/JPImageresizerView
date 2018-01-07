@@ -63,6 +63,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign, readonly) CGFloat sizeScale;
 
+@property (nonatomic, assign, readonly) CGFloat scrollViewMinZoomScale;
+
 @property (nonatomic, assign) BOOL isRotatedAutoScale;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
@@ -79,6 +81,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 - (void)willRecovery;
 - (void)recovery;
+- (void)recoveryDone;
 
 - (void)willMirror:(BOOL)animated;
 - (void)verticalityMirrorWithDiffX:(CGFloat)diffX;
