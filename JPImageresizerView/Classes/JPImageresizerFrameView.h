@@ -48,6 +48,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 @property (nonatomic, assign) CGFloat maskAlpha;
 
+@property (nonatomic, assign, readonly) CGRect imageresizerFrame;
+
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 

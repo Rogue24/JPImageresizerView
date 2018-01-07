@@ -470,10 +470,11 @@
     fvTransform = CATransform3DRotate(fvTransform, angle, 0, 0, 1);
     
     NSTimeInterval duration = 0.2;
-    [self.frameView rotationWithDirection:direction rotationDuration:duration];
+    
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
         self.frameView.layer.transform = fvTransform;
+        [self.frameView rotationWithDirection:direction rotationDuration:duration];
     } completion:nil];
 }
 
@@ -510,8 +511,8 @@
         [self.frameView recovery];
         
     } completion:^(BOOL finished) {
-        self.layer.zPosition = 0;
         [self.frameView recoveryDone];
+        self.layer.zPosition = 0;
     }];
 }
 

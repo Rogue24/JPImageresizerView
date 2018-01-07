@@ -28,6 +28,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
     JPConciseFrameType, // default
+    JPConciseWithoutOtherDotFrameType,
     JPClassicFrameType
 };
 
@@ -230,5 +231,4 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 @property (nonatomic, assign) CGFloat horBaseMargin;
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 @property (nonatomic, assign) BOOL isClockwiseRotation;
-
 @end

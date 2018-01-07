@@ -76,7 +76,6 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 - (CGFloat)maxResizeW;
 - (CGFloat)maxResizeH;
 
-@property (nonatomic, assign) CGRect imageresizerFrame;
 @property (nonatomic) CGFloat imageresizeX;
 @property (nonatomic) CGFloat imageresizeY;
 @property (nonatomic) CGFloat imageresizeW;
@@ -184,7 +183,9 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     _frameLayer.strokeColor = strokeCGColor;
-    if (_frameType == JPConciseFrameType) {
+    if (_frameType == JPConciseFrameType ||
+        _frameType == JPConciseWithoutOtherDotFrameType) {
+        
         _leftTopDot.fillColor = strokeCGColor;
         _leftBottomDot.fillColor = strokeCGColor;
         _rightTopDot.fillColor = strokeCGColor;
@@ -199,6 +200,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         _rightMidDot.fillColor = strokeCGColor;
         _topMidDot.fillColor = strokeCGColor;
         _bottomMidDot.fillColor = strokeCGColor;
+        
     } else {
         _leftTopDot.strokeColor = strokeCGColor;
         _leftBottomDot.strokeColor = strokeCGColor;
@@ -270,11 +272,19 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 - (void)setFrameType:(JPImageresizerFrameType)frameType {
     _frameType = frameType;
     CGFloat lineW = 0;
-    if (frameType == JPConciseFrameType) {
-        [self leftMidDot];
-        [self rightMidDot];
-        [self topMidDot];
-        [self bottomMidDot];
+    if (frameType == JPConciseFrameType ||
+        frameType == JPConciseWithoutOtherDotFrameType) {
+        if (frameType == JPConciseFrameType) {
+            [self leftMidDot];
+            [self rightMidDot];
+            [self topMidDot];
+            [self bottomMidDot];
+        } else {
+            [_leftMidDot removeFromSuperlayer];
+            [_rightMidDot removeFromSuperlayer];
+            [_topMidDot removeFromSuperlayer];
+            [_bottomMidDot removeFromSuperlayer];
+        }
         [_horTopLine removeFromSuperlayer];
         [_horBottomLine removeFromSuperlayer];
         [_verLeftLine removeFromSuperlayer];
@@ -322,7 +332,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 - (void)setIsRotatedAutoScale:(BOOL)isRotatedAutoScale {
     if (_isRotatedAutoScale == isRotatedAutoScale) return;
     _isRotatedAutoScale = isRotatedAutoScale;
-    if (self.superview) [self updateMaxResizeFrame];
+    if (self.superview) [self updateMaxResizeFrameWithDirection:_rotationDirection];
 }
 
 - (void)setIsCanRecovery:(BOOL)isCanRecovery {
@@ -817,16 +827,19 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     UIBezierPath *verLeftLinePath;
     UIBezierPath *verRightLinePath;
     
-    if (_frameType == JPConciseFrameType) {
+    if (_frameType == JPConciseFrameType || _frameType == JPConciseWithoutOtherDotFrameType) {
         leftTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerY)];
         leftBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY)];
         rightTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY)];
         rightBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY)];
         
-        leftMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY)];
-        rightMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY)];
-        topMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY)];
-        bottomMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY)];
+        if (_frameType == JPConciseFrameType) {
+            leftMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY)];
+            rightMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY)];
+            topMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY)];
+            bottomMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY)];
+        }
+        
     } else {
         leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:LeftTop];
         leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:LeftBottom];
@@ -877,7 +890,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             layerPathAnimate(_rightMidDot, rightMidDotPath);
             layerPathAnimate(_topMidDot, topMidDotPath);
             layerPathAnimate(_bottomMidDot, bottomMidDotPath);
-        } else {
+        } else if (_frameType == JPClassicFrameType) {
             layerPathAnimate(_horTopLine, horTopLinePath);
             layerPathAnimate(_horBottomLine, horBottomLinePath);
             layerPathAnimate(_verLeftLine, verLeftLinePath);
@@ -898,7 +911,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         _rightMidDot.path = rightMidDotPath.CGPath;
         _topMidDot.path = topMidDotPath.CGPath;
         _bottomMidDot.path = bottomMidDotPath.CGPath;
-    } else {
+    } else if (_frameType == JPClassicFrameType) {
         _horTopLine.path = horTopLinePath.CGPath;
         _horBottomLine.path = horBottomLinePath.CGPath;
         _verLeftLine.path = verLeftLinePath.CGPath;
@@ -925,7 +938,12 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     _updateDuration = -1.0;
 }
 
-- (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
+- (BOOL)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
+    
+    [self updateMaxResizeFrameWithDirection:rotationDirection];
+    
+    BOOL isAdjustResize = NO;
+    
     BOOL isVer2Hor = ((_rotationDirection == JPImageresizerVerticalUpDirection ||
                       _rotationDirection == JPImageresizerVerticalDownDirection) &&
                       (rotationDirection == JPImageresizerHorizontalLeftDirection ||
@@ -934,25 +952,58 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
                        _rotationDirection == JPImageresizerHorizontalRightDirection) &&
                       (rotationDirection == JPImageresizerVerticalUpDirection ||
                        rotationDirection == JPImageresizerVerticalDownDirection));
-    if (!_isArbitrarily && (isVer2Hor || isHor2Ver)) {
-        _resizeWHScale = 1.0 / _resizeWHScale;
-        CGFloat w = self.imageresizeH;
-        CGFloat h = self.imageresizeW;
-        CGFloat x = (self.bounds.size.width - w) * 0.5;
-        CGFloat y = (self.bounds.size.height - h) * 0.5;
+    
+    _rotationDirection = rotationDirection;
+    
+    if (!_isArbitrarily) {
+        if (isVer2Hor || isHor2Ver) {
+            _resizeWHScale = 1.0 / _resizeWHScale;
+        }
+        
+        CGRect adjustResizeFrame = [self adjustResizeFrame];
+        CGFloat w = adjustResizeFrame.size.width;
+        CGFloat h = adjustResizeFrame.size.height;
+        
+        if (w - self.imageView.frame.size.width > 1) {
+            w = self.imageView.frame.size.width;
+            h = w / _resizeWHScale;
+            isAdjustResize = YES;
+        }
+        
+        if (h - self.imageView.frame.size.height > 1) {
+            h = self.imageView.frame.size.height;
+            w = h * _resizeWHScale;
+            isAdjustResize = YES;
+        }
+        
+        if (w > self.maxResizeW) {
+            w = self.maxResizeW;
+            h = w / _resizeWHScale;
+        }
+        if (h > self.maxResizeH) {
+            h = self.maxResizeH;
+            w = h * _resizeWHScale;
+        }
+        
+        CGFloat x = self.maxResizeX + (self.maxResizeW - w) * 0.5;
+        CGFloat y = self.maxResizeY + (self.maxResizeH - h) * 0.5;
+        
+        if (x < self.maxResizeX) x = self.maxResizeX;
+        if (y < self.maxResizeY) y = self.maxResizeY;
+        
         _imageresizerFrame = CGRectMake(x, y, w, h);
     }
-    _rotationDirection = rotationDirection;
-    [self updateMaxResizeFrame];
+    
+    return isAdjustResize;
 }
 
-- (void)updateMaxResizeFrame {
+- (void)updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
     CGFloat x = 0;
     CGFloat y = 0;
     CGFloat w = 0;
     CGFloat h = 0;
-    if (_rotationDirection == JPImageresizerVerticalUpDirection ||
-        _rotationDirection == JPImageresizerVerticalDownDirection) {
+    if (direction == JPImageresizerVerticalUpDirection ||
+        direction == JPImageresizerVerticalDownDirection) {
         _sizeScale = _verSizeScale;
         x = _diffHalfW + _horBaseMargin;
         y = _verBaseMargin;
@@ -1207,8 +1258,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
     [self removeTimer];
-    [self updateRotationDirection:direction];
-    [self updateImageresizerFrameWithAnimateDuration:rotationDuration isAdjustResize:NO];
+    BOOL isAdjustResize = [self updateRotationDirection:direction];
+    [self updateImageresizerFrameWithAnimateDuration:rotationDuration isAdjustResize:isAdjustResize];
 }
 
 - (void)willMirror:(BOOL)animated {
@@ -1256,31 +1307,23 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     [self updateRotationDirection:JPImageresizerVerticalUpDirection];
     
-    if (_isArbitrarily) {
-        CGFloat verticalInset = (self.scrollView.bounds.size.height - self.imageView.bounds.size.height) * 0.5;
-        CGFloat horizontalInset = (self.scrollView.bounds.size.width - self.imageView.bounds.size.width) * 0.5;
-        self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
-        self.scrollView.zoomScale = 1;
-        return;
-    }
-    
-    CGRect adjustResizeFrame = [self adjustResizeFrame];
+    CGRect adjustResizeFrame = _isArbitrarily ? [self baseImageresizerFrame] : [self adjustResizeFrame];
     
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
     
-    CGFloat minZoomScale = [self scrollViewMinZoomScaleWithResizeSize:CGSizeMake(adjustResizeFrame.size.width, adjustResizeFrame.size.height)];
+    CGFloat minZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
     
     CGFloat contentOffsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
     CGFloat contentOffsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
     
-    self.imageresizerFrame = adjustResizeFrame;
+    _imageresizerFrame = adjustResizeFrame;
+    self.scrollView.minimumZoomScale = minZoomScale;
     self.scrollView.zoomScale = minZoomScale;
     self.scrollView.contentInset = contentInset;
     self.scrollView.contentOffset = CGPointMake(contentOffsetX, contentOffsetY);
 }
 
 - (void)recoveryDone {
-    if (_isArbitrarily) self.imageresizerFrame = [self baseImageresizerFrame];
     [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];
     [UIView animateWithDuration:0.2 animations:^{
         self.layer.opacity = 1;
