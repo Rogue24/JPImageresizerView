@@ -519,6 +519,7 @@
 - (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
+        !complete ? : complete(nil);
         return;
     }
     [self.frameView imageresizerWithComplete:complete];

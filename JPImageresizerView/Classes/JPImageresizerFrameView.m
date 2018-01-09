@@ -1201,6 +1201,10 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (UIImage *)getTargetDirectionImage:(UIImage *)image verticalityMirror:(BOOL)verticalityMirror horizontalMirror:(BOOL)horizontalMirror {
+    
+    
+    
+    
 //    BOOL isNormal = (verticalityMirror && horizontalMirror) || (!verticalityMirror && !horizontalMirror);
     UIImageOrientation orientation;
     switch (self.rotationDirection) {
@@ -1226,7 +1230,57 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             orientation = UIImageOrientationUp;
             break;
     }
-    return [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:orientation];
+//    return [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:orientation];
+    
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch (orientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+            
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+            
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        default:
+            break;
+    }
+    
+    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
+                                             CGImageGetBitsPerComponent(image.CGImage), 0,
+                                             CGImageGetColorSpace(image.CGImage),
+                                             CGImageGetBitmapInfo(image.CGImage));
+    CGContextConcatCTM(ctx, transform);
+    switch (image.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
+            break;
+            
+        default:
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
+            break;
+    }
+    
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
 }
 
 #pragma mark - puild method
@@ -1359,8 +1413,6 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
     }
     
-    UIImage *image = self.imageView.image;
-    
     BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     BOOL isHorizontalDirection = self.isHorizontalDirection;
@@ -1370,26 +1422,59 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         isHorizontalMirror = temp;
     }
     
-    CGRect cropFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
-    CGFloat deviceScale = [UIScreen mainScreen].scale;
+    __block UIImage *image = self.imageView.image;
     
-    // 宽高比不变，所以宽度高度的比例是一样
     CGFloat scale = image.size.width / self.imageView.bounds.size.width;
-    CGFloat orgX = cropFrame.origin.x * scale;
-    CGFloat orgY = cropFrame.origin.y * scale;
-    CGFloat width = cropFrame.size.width * scale;
-    CGFloat height = cropFrame.size.height * scale;
     
-    CGRect cropRect = CGRectMake(orgX, orgY, width, height);
+    CGRect cropFrame = self.isCanRecovery ? [self convertRect:self.imageresizerFrame toView:self.imageView] : self.imageView.bounds;
+    
+    CGFloat deviceScale = [UIScreen mainScreen].scale;
     
     __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         
-        UIImage *fixedImage = [image jp_fixOrientation];
+        image = [image jp_fixOrientation];
+        if (isVerticalityMirror) image = [image jp_verticalityMirror];
+        if (isHorizontalMirror) image = [image jp_horizontalMirror];
         
-        CGImageRef imgRef = CGImageCreateWithImageInRect(fixedImage.CGImage, cropRect);
+        // 宽高比不变，所以宽度高度的比例是一样
+        CGFloat orgX = cropFrame.origin.x * scale;
+        CGFloat orgY = cropFrame.origin.y * scale;
+        CGFloat width = cropFrame.size.width * scale;
+        CGFloat height = cropFrame.size.height * scale;
+        CGRect cropRect = CGRectMake(orgX, orgY, width, height);
+        
+        if (orgX < 0) {
+            cropRect.origin.x = 0;
+            cropRect.size.width += -orgX;
+        }
+        
+        if (orgY < 0) {
+            cropRect.origin.y = 0;
+            cropRect.size.height += -orgY;
+        }
+        
+        CGFloat cropMaxX = CGRectGetMaxX(cropRect);
+        if (cropMaxX > image.size.width) {
+            CGFloat diffW = cropMaxX - image.size.width;
+            cropRect.size.width -= diffW;
+        }
+        
+        CGFloat cropMaxY = CGRectGetMaxY(cropRect);
+        if (cropMaxY > image.size.height) {
+            CGFloat diffH = cropMaxY - image.size.height;
+            cropRect.size.height -= diffH;
+        }
+        
+        if (isVerticalityMirror) cropRect.origin.x = image.size.width - CGRectGetMaxX(cropRect);
+        if (isHorizontalMirror) cropRect.origin.y = image.size.height - CGRectGetMaxY(cropRect);
+        
+        CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
+        
+        // 有小数的情况下，边界会多出白线，需要把小数点去掉
+        CGSize cropSize = CGSizeMake(floor(cropFrame.size.width), floor(cropFrame.size.height));
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm
@@ -1398,24 +1483,16 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             - 2.CGContextScaleCTM(context, 1, -1);
          */
         
-        
-        UIGraphicsBeginImageContextWithOptions(cropFrame.size, 0, deviceScale);
+        UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
         CGContextRef context = UIGraphicsGetCurrentContext();
         
-        if (isVerticalityMirror) {
-            CGContextTranslateCTM(context, cropFrame.size.width, 0);
-            CGContextScaleCTM(context, -1, 1);
-        }
+        CGContextTranslateCTM(context, 0, cropSize.height);
+        CGContextScaleCTM(context, 1, -1);
         
-        if (!isHorizontalMirror) {
-            CGContextTranslateCTM(context, 0, cropFrame.size.height);
-            CGContextScaleCTM(context, 1, -1);
-        }
-        
-        CGContextDrawImage(context, CGRectMake(0, 0, cropFrame.size.width, cropFrame.size.height), imgRef);
+        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), imgRef);
         
         UIImage *newImg = UIGraphicsGetImageFromCurrentImageContext();
-        newImg = [sSelf getTargetDirectionImage:newImg verticalityMirror:isVerticalityMirror horizontalMirror:isHorizontalMirror];
+        newImg = [newImg jp_rotate:orientation];
         
         CGImageRelease(imgRef);
         UIGraphicsEndImageContext();

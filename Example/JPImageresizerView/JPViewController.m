@@ -117,14 +117,10 @@
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         
-//        for (UIButton *btn in strongSelf.processBtns) {
-//            btn.hidden = YES;
-//        }
-//        strongSelf.imageresizerView.hidden = YES;
-//
-//        strongSelf.imageView.image = resizeImage;
-//        strongSelf.imageView.hidden = NO;
-//        strongSelf.goBackBtn.hidden = NO;
+        if (!resizeImage) {
+            NSLog(@"没有裁剪图片");
+            return;
+        }
         
         JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.image = resizeImage;

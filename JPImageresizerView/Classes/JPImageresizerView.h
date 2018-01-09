@@ -24,6 +24,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
 /**
  * 边框样式
  * JPConciseFrameType：简洁样式，可拖拽8个方向（固定比例则4个方向）
+ * JPConciseWithoutOtherDotFrameType：简洁样式，可拖拽4个方向（4角）
  * JPClassicFrameType：经典样式，类似微信的裁剪边框样式，可拖拽4个方向
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
