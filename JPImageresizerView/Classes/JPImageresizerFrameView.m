@@ -944,18 +944,17 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     BOOL isAdjustResize = NO;
     
-    BOOL isVer2Hor = ((_rotationDirection == JPImageresizerVerticalUpDirection ||
-                      _rotationDirection == JPImageresizerVerticalDownDirection) &&
-                      (rotationDirection == JPImageresizerHorizontalLeftDirection ||
-                       rotationDirection == JPImageresizerHorizontalRightDirection));
-    BOOL isHor2Ver = ((_rotationDirection == JPImageresizerHorizontalLeftDirection ||
-                       _rotationDirection == JPImageresizerHorizontalRightDirection) &&
-                      (rotationDirection == JPImageresizerVerticalUpDirection ||
-                       rotationDirection == JPImageresizerVerticalDownDirection));
-    
-    _rotationDirection = rotationDirection;
-    
     if (!_isArbitrarily) {
+        
+        BOOL isVer2Hor = ((_rotationDirection == JPImageresizerVerticalUpDirection ||
+                           _rotationDirection == JPImageresizerVerticalDownDirection) &&
+                          (rotationDirection == JPImageresizerHorizontalLeftDirection ||
+                           rotationDirection == JPImageresizerHorizontalRightDirection));
+        BOOL isHor2Ver = ((_rotationDirection == JPImageresizerHorizontalLeftDirection ||
+                           _rotationDirection == JPImageresizerHorizontalRightDirection) &&
+                          (rotationDirection == JPImageresizerVerticalUpDirection ||
+                           rotationDirection == JPImageresizerVerticalDownDirection));
+        
         if (isVer2Hor || isHor2Ver) {
             _resizeWHScale = 1.0 / _resizeWHScale;
         }
@@ -993,6 +992,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         
         _imageresizerFrame = CGRectMake(x, y, w, h);
     }
+    
+    _rotationDirection = rotationDirection;
     
     return isAdjustResize;
 }

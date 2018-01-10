@@ -32,8 +32,8 @@
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
 ### 0.3.6 更新内容
-    修复了图片旋转和镜像后裁剪位置错乱的问题；
-    新增边框样式：只有4角拖拽方向的简洁样式（JPConciseWithoutOtherDotFrameType）
+    1.修复了图片旋转和镜像后裁剪位置错乱的问题；
+    2.新增边框样式：只有4角拖拽方向的简洁样式（JPConciseWithoutOtherDotFrameType）
 
 ### 0.3.4 更新内容
     修复了指定裁剪宽高比（resizeWHScale大于0）的情况下，重置动画的错乱（recovery方法）
@@ -180,7 +180,7 @@ self.imageresizerView.isClockwiseRotation = YES;
 #### 裁剪
 ```ruby
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
-// 调用可添加提示...
+// 如果是高清图片，调用前可添加HUD提示...
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
     // 裁剪完成，resizeImage为裁剪后的图片
     // 注意循环引用
