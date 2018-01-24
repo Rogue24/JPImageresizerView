@@ -1427,7 +1427,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     CGFloat scale = image.size.width / self.imageView.bounds.size.width;
     
-    CGRect cropFrame = self.isCanRecovery ? [self convertRect:self.imageresizerFrame toView:self.imageView] : self.imageView.bounds;
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : self.imageView.bounds;
     
     CGFloat deviceScale = [UIScreen mainScreen].scale;
     
