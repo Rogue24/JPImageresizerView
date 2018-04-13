@@ -35,7 +35,7 @@
     
     NSString *title3 = @"浅色毛玻璃遮罩";
     JPImageresizerConfigure *configure3 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:image isLight:YES make:^(JPImageresizerConfigure *configure) {
-        configure.jp_contentInsets(contentInsets).jp_strokeColor([UIColor blueColor]);
+        configure.jp_contentInsets(contentInsets).jp_strokeColor([UIColor blueColor]).jp_resizeImage([UIImage imageNamed:@"Lotus.jpg"]);
     }];
     
     NSString *title4 = @"其他样式";

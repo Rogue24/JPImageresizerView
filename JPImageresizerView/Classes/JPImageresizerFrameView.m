@@ -130,6 +130,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
     
     CGSize _contentSize;
+    
+    BOOL _isRotation;
 }
 
 #pragma mark - setter
@@ -969,26 +971,25 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             isAdjustResize = YES;
         }
         
-        if (h - self.imageView.frame.size.height > 1) {
-            h = self.imageView.frame.size.height;
-            w = h * _resizeWHScale;
-            isAdjustResize = YES;
-        }
+        CGFloat maxResizeX = self.maxResizeX;
+        CGFloat maxResizeY = self.maxResizeY;
+        CGFloat maxResizeW = self.maxResizeW;
+        CGFloat maxResizeH = self.maxResizeH;
         
-        if (w > self.maxResizeW) {
-            w = self.maxResizeW;
+        if (w > maxResizeW) {
+            w = maxResizeW;
             h = w / _resizeWHScale;
         }
-        if (h > self.maxResizeH) {
-            h = self.maxResizeH;
+        if (h > maxResizeH) {
+            h = maxResizeH;
             w = h * _resizeWHScale;
         }
         
-        CGFloat x = self.maxResizeX + (self.maxResizeW - w) * 0.5;
-        CGFloat y = self.maxResizeY + (self.maxResizeH - h) * 0.5;
+        CGFloat x = maxResizeX + (maxResizeW - w) * 0.5;
+        CGFloat y = maxResizeY + (maxResizeH - h) * 0.5;
         
-        if (x < self.maxResizeX) x = self.maxResizeX;
-        if (y < self.maxResizeY) y = self.maxResizeY;
+        if (x < maxResizeX) x = maxResizeX;
+        if (y < maxResizeY) y = maxResizeY;
         
         _imageresizerFrame = CGRectMake(x, y, w, h);
     }
@@ -1077,18 +1078,27 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     contentOffset.x = -contentInset.left + convertPoint.x * self.scrollView.zoomScale;
     contentOffset.y = -contentInset.top + convertPoint.y * self.scrollView.zoomScale;
     
+    // minimumZoomScale
+    CGFloat currMinZoomScale = self.scrollView.minimumZoomScale;
+    self.scrollView.minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
+    CGFloat diffMinZoomScale = 1;
+    if (_isRotation &&
+        (self.scrollView.zoomScale == currMinZoomScale) &&
+        (self.scrollView.minimumZoomScale != currMinZoomScale)) {
+        diffMinZoomScale = fabs(self.scrollView.minimumZoomScale - currMinZoomScale);
+    }
+    
     // zoomFrame
     // 根据裁剪的区域，因为需要有间距，所以拼接成self的尺寸获取缩放的区域zoomFrame
     // 宽高比不变，所以宽度高度的比例是一样，这里就用宽度比例吧
     CGFloat convertScale = self.imageresizeW / adjustResizeFrame.size.width;
-    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale;
-    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale;
+    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale / diffMinZoomScale;
+    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale / diffMinZoomScale;
     CGFloat convertW = self.imageresizeW + 2 * diffXSpace;
     CGFloat convertH = self.imageresizeH + 2 * diffYSpace;
     CGFloat convertX = self.imageresizeX - diffXSpace;
     CGFloat convertY = self.imageresizeY - diffYSpace;
-    CGRect zoomFrame = CGRectMake(convertX, convertY, convertW, convertH);
-    zoomFrame = [self convertRect:zoomFrame toView:self.imageView];
+    CGRect zoomFrame = [self convertRect:CGRectMake(convertX, convertY, convertW, convertH) toView:self.imageView];
     
     __weak typeof(self) wSelf = self;
     
@@ -1103,14 +1113,10 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     void (^completeBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        
         sSelf.window.userInteractionEnabled = YES;
-        
-        sSelf.scrollView.minimumZoomScale = [sSelf scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
-        
         [sSelf checkIsCanRecovery];
-        
         sSelf.isPrepareToScale = NO;
+        sSelf->_isRotation = NO;
     };
     
     self.window.userInteractionEnabled = NO;
@@ -1201,89 +1207,6 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
-- (UIImage *)getTargetDirectionImage:(UIImage *)image verticalityMirror:(BOOL)verticalityMirror horizontalMirror:(BOOL)horizontalMirror {
-    
-    
-    
-    
-//    BOOL isNormal = (verticalityMirror && horizontalMirror) || (!verticalityMirror && !horizontalMirror);
-    UIImageOrientation orientation;
-    switch (self.rotationDirection) {
-        case JPImageresizerHorizontalLeftDirection:
-            orientation = UIImageOrientationLeft;
-//            if (!isNormal) {
-//                orientation = UIImageOrientationRight;
-//            }
-            break;
-            
-        case JPImageresizerVerticalDownDirection:
-            orientation = UIImageOrientationDown;
-            break;
-            
-        case JPImageresizerHorizontalRightDirection:
-            orientation = UIImageOrientationRight;
-//            if (!isNormal) {
-//                orientation = UIImageOrientationLeft;
-//            }
-            break;
-            
-        default:
-            orientation = UIImageOrientationUp;
-            break;
-    }
-//    return [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:orientation];
-    
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    
-    switch (orientation) {
-        case UIImageOrientationDown:
-        case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
-            transform = CGAffineTransformRotate(transform, M_PI);
-            break;
-            
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
-            transform = CGAffineTransformRotate(transform, M_PI_2);
-            break;
-            
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
-            transform = CGAffineTransformRotate(transform, -M_PI_2);
-            break;
-        default:
-            break;
-    }
-    
-    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
-                                             CGImageGetBitsPerComponent(image.CGImage), 0,
-                                             CGImageGetColorSpace(image.CGImage),
-                                             CGImageGetBitmapInfo(image.CGImage));
-    CGContextConcatCTM(ctx, transform);
-    switch (image.imageOrientation) {
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            // Grr...
-            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
-            break;
-            
-        default:
-            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
-            break;
-    }
-    
-    // And now we just create a new UIImage from the drawing context
-    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
-    UIImage *img = [UIImage imageWithCGImage:cgimg];
-    CGContextRelease(ctx);
-    CGImageRelease(cgimg);
-    return img;
-}
-
 #pragma mark - puild method
 
 - (void)updateFrameType:(JPImageresizerFrameType)frameType {
@@ -1312,6 +1235,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 }
 
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
+    _isRotation = YES;
     [self removeTimer];
     BOOL isAdjustResize = [self updateRotationDirection:direction];
     [self updateImageresizerFrameWithAnimateDuration:rotationDuration isAdjustResize:isAdjustResize];
@@ -1480,8 +1404,8 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         /**
          * 参考：http://www.jb51.net/article/81318.htm
          * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
-            - 1.CGContextTranslateCTM(context, 0, cropFrame.size.height);
-            - 2.CGContextScaleCTM(context, 1, -1);
+         - 1.CGContextTranslateCTM(context, 0, cropFrame.size.height);
+         - 2.CGContextScaleCTM(context, 1, -1);
          */
         
         UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);

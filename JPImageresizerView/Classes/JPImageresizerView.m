@@ -67,7 +67,7 @@
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
-    [self.frameView setResizeWHScale:resizeWHScale animated:NO];
+    [self.frameView setResizeWHScale:resizeWHScale animated:YES];
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
