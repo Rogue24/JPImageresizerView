@@ -1,5 +1,5 @@
 PODS:
-  - JPImageresizerView (0.1.0)
+  - JPImageresizerView (0.3.8)
 
 DEPENDENCIES:
   - JPImageresizerView (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  JPImageresizerView: 02d0942457ec939da44e8c3491862ffc6a8f17b6
+  JPImageresizerView: 988958cfaa5964ed52fbb10289fd433f699c41ee
 
 PODFILE CHECKSUM: d4592ca9b8332f2381dee8f989ad49cde9853087
 

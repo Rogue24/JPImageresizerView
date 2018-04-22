@@ -7,14 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JPImageresizerView.h"
-
-typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
-    JPImageresizerVerticalUpDirection = 0,
-    JPImageresizerHorizontalLeftDirection,
-    JPImageresizerVerticalDownDirection,
-    JPImageresizerHorizontalRightDirection
-};
+#import "JPImageresizerTypedef.h"
 
 @interface JPImageresizerFrameView : UIView
 

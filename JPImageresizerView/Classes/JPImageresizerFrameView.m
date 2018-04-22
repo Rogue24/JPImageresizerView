@@ -7,7 +7,6 @@
 //
 
 #import "JPImageresizerFrameView.h"
-#import "JPImageresizerView.h"
 #import "UIImage+JPExtension.h"
 
 /** keypath */
@@ -20,25 +19,25 @@ struct JPRGBAColor {
     CGFloat jp_a;
 };
 
-typedef NS_ENUM(NSUInteger, RectHorn) {
-    Center,
-    LeftTop,
-    LeftMid,
-    LeftBottom,
+typedef NS_ENUM(NSUInteger, JPRectHorn) {
+    JPCenter,
+    JPLeftTop,
+    JPLeftMid,
+    JPLeftBottom,
     
-    RightTop,
-    RightMid,
-    RightBottom,
+    JPRightTop,
+    JPRightMid,
+    JPRightBottom,
     
-    TopMid,
-    BottomMid
+    JPTopMid,
+    JPBottomMid
 };
 
-typedef NS_ENUM(NSUInteger, LinePosition) {
-    HorizontalTop,
-    HorizontalBottom,
-    VerticalLeft,
-    VerticalRight
+typedef NS_ENUM(NSUInteger, JPLinePosition) {
+    JPHorizontalTop,
+    JPHorizontalBottom,
+    JPVerticalLeft,
+    JPVerticalRight
 };
 
 @interface JPImageresizerFrameView ()
@@ -65,7 +64,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
 @property (nonatomic, weak) CAShapeLayer *verLeftLine;
 @property (nonatomic, weak) CAShapeLayer *verRightLine;
 
-@property (nonatomic, assign) RectHorn currHorn;
+@property (nonatomic, assign) JPRectHorn currHorn;
 @property (nonatomic, assign) CGPoint diagonal;
 
 @property (nonatomic, assign) CGRect originImageFrame;
@@ -615,7 +614,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     return dotPath;
 }
 
-- (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(RectHorn)horn {
+- (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(JPRectHorn)horn {
     CGFloat arrLineW = _arrLineW / _sizeScale;
     CGFloat arrLength = _arrLength / _sizeScale;;
     UIBezierPath *path = [UIBezierPath bezierPath];
@@ -624,7 +623,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGPoint secondPoint = CGPointZero;
     CGPoint thirdPoint = CGPointZero;
     switch (horn) {
-        case LeftTop:
+        case JPLeftTop:
         {
             position.x -= halfArrLineW;
             position.y -= halfArrLineW;
@@ -633,7 +632,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case LeftBottom:
+        case JPLeftBottom:
         {
             position.x -= halfArrLineW;
             position.y += halfArrLineW;
@@ -642,7 +641,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case RightTop:
+        case JPRightTop:
         {
             position.x += halfArrLineW;
             position.y -= halfArrLineW;
@@ -651,7 +650,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case RightBottom:
+        case JPRightBottom:
         {
             position.x += halfArrLineW;
             position.y += halfArrLineW;
@@ -674,18 +673,18 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     return path;
 }
 
-- (UIBezierPath *)linePathWithLinePosition:(LinePosition)linePosition location:(CGPoint)location length:(CGFloat)length {
+- (UIBezierPath *)linePathWithLinePosition:(JPLinePosition)linePosition location:(CGPoint)location length:(CGFloat)length {
     UIBezierPath *path = [UIBezierPath bezierPath];
     CGPoint point = CGPointZero;
     switch (linePosition) {
-        case HorizontalTop:
-        case HorizontalBottom:
+        case JPHorizontalTop:
+        case JPHorizontalBottom:
         {
             point = CGPointMake(location.x + length, location.y);
             break;
         }
-        case VerticalLeft:
-        case VerticalRight:
+        case JPVerticalLeft:
+        case JPVerticalRight:
         {
             point = CGPointMake(location.x, location.y + length);
             break;
@@ -843,20 +842,20 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
         }
         
     } else {
-        leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:LeftTop];
-        leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:LeftBottom];
-        rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) rectHorn:RightTop];
-        rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) rectHorn:RightBottom];
+        leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:JPLeftTop];
+        leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:JPLeftBottom];
+        rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) rectHorn:JPRightTop];
+        rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) rectHorn:JPRightBottom];
         
         CGFloat imageresizerW = imageresizerFrame.size.width;
         CGFloat imageresizerH = imageresizerFrame.size.height;
         CGFloat oneThirdW = imageresizerW / 3.0;
         CGFloat oneThirdH = imageresizerH / 3.0;
         
-        horTopLinePath = [self linePathWithLinePosition:HorizontalTop location:CGPointMake(imageresizerX, imageresizerY + oneThirdH) length:imageresizerW];
-        horBottomLinePath = [self linePathWithLinePosition:HorizontalBottom location:CGPointMake(imageresizerX, imageresizerY + oneThirdH * 2) length:imageresizerW];
-        verLeftLinePath = [self linePathWithLinePosition:VerticalLeft location:CGPointMake(imageresizerX + oneThirdW, imageresizerY) length:imageresizerH];
-        verRightLinePath = [self linePathWithLinePosition:VerticalRight location:CGPointMake(imageresizerX + oneThirdW * 2, imageresizerY) length:imageresizerH];
+        horTopLinePath = [self linePathWithLinePosition:JPHorizontalTop location:CGPointMake(imageresizerX, imageresizerY + oneThirdH) length:imageresizerW];
+        horBottomLinePath = [self linePathWithLinePosition:JPHorizontalBottom location:CGPointMake(imageresizerX, imageresizerY + oneThirdH * 2) length:imageresizerW];
+        verLeftLinePath = [self linePathWithLinePosition:JPVerticalLeft location:CGPointMake(imageresizerX + oneThirdW, imageresizerY) length:imageresizerH];
+        verRightLinePath = [self linePathWithLinePosition:JPVerticalRight location:CGPointMake(imageresizerX + oneThirdW * 2, imageresizerY) length:imageresizerH];
     }
     
     UIBezierPath *bgPath;
@@ -1471,31 +1470,31 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     CGRect botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     
     if (CGRectContainsPoint(leftTopRect, location)) {
-        self.currHorn = LeftTop;
+        self.currHorn = JPLeftTop;
         self.diagonal = CGPointMake(x + width, y + height);
     } else if (CGRectContainsPoint(leftBotRect, location)) {
-        self.currHorn = LeftBottom;
+        self.currHorn = JPLeftBottom;
         self.diagonal = CGPointMake(x + width, y);
     } else if (CGRectContainsPoint(rightTopRect, location)) {
-        self.currHorn = RightTop;
+        self.currHorn = JPRightTop;
         self.diagonal = CGPointMake(x, y + height);
     } else if (CGRectContainsPoint(rightBotRect, location)) {
-        self.currHorn = RightBottom;
+        self.currHorn = JPRightBottom;
         self.diagonal = CGPointMake(x, y);
     } else if (self.isShowMidDot && CGRectContainsPoint(leftMidRect, location)) {
-        self.currHorn = LeftMid;
+        self.currHorn = JPLeftMid;
         self.diagonal = CGPointMake(maxX, midY);
     } else if (self.isShowMidDot && CGRectContainsPoint(rightMidRect, location)) {
-        self.currHorn = RightMid;
+        self.currHorn = JPRightMid;
         self.diagonal = CGPointMake(x, midY);
     } else if (self.isShowMidDot && CGRectContainsPoint(topMidRect, location)) {
-        self.currHorn = TopMid;
+        self.currHorn = JPTopMid;
         self.diagonal = CGPointMake(midX, maxY);
     } else if (self.isShowMidDot && CGRectContainsPoint(botMidRect, location)) {
-        self.currHorn = BottomMid;
+        self.currHorn = JPBottomMid;
         self.diagonal = CGPointMake(midX, y);
     } else {
-        self.currHorn = Center;
+        self.currHorn = JPCenter;
     }
     
     _startResizeW = width;
@@ -1511,7 +1510,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
     
     switch (self.currHorn) {
             
-        case LeftTop: {
+        case JPLeftTop: {
             if (_isArbitrarily) {
                 x += translation.x;
                 y += translation.y;
@@ -1576,7 +1575,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case LeftBottom: {
+        case JPLeftBottom: {
             if (_isArbitrarily) {
                 x += translation.x;
                 height = height + translation.y;
@@ -1637,7 +1636,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case RightTop: {
+        case JPRightTop: {
             if (_isArbitrarily) {
                 y += translation.y;
                 width = width + translation.x;
@@ -1699,7 +1698,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case RightBottom: {
+        case JPRightBottom: {
             if (_isArbitrarily) {
                 width = width + translation.x;
                 height = height + translation.y;
@@ -1756,7 +1755,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case LeftMid: {
+        case JPLeftMid: {
             x += translation.x;
             
             if (x < self.maxResizeX) {
@@ -1772,7 +1771,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case RightMid: {
+        case JPRightMid: {
             width = width + translation.x;
             
             CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
@@ -1786,7 +1785,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case TopMid: {
+        case JPTopMid: {
             y += translation.y;
             
             if (y < self.maxResizeY) {
@@ -1802,7 +1801,7 @@ typedef NS_ENUM(NSUInteger, LinePosition) {
             break;
         }
             
-        case BottomMid: {
+        case JPBottomMid: {
             height = height + translation.y;
             
             CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);

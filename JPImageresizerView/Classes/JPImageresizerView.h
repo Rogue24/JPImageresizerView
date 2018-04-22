@@ -7,57 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class JPImageresizerConfigure;
-
-/**
- * 遮罩样式
- * JPNormalMaskType：    通常类型，bgColor能任意设置
- * JPLightBlurMaskType： 明亮高斯模糊，bgColor强制为白色，maskAlpha可自行修改，建议为0.3
- * JPDarkBlurMaskType：  暗黑高斯模糊，bgColor强制为黑色，maskAlpha可自行修改，建议为0.3
- */
-typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
-    JPNormalMaskType, // default
-    JPLightBlurMaskType,
-    JPDarkBlurMaskType
-};
-
-/**
- * 边框样式
- * JPConciseFrameType：简洁样式，可拖拽8个方向（固定比例则4个方向）
- * JPConciseWithoutOtherDotFrameType：简洁样式，可拖拽4个方向（4角）
- * JPClassicFrameType：经典样式，类似微信的裁剪边框样式，可拖拽4个方向
- */
-typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
-    JPConciseFrameType, // default
-    JPConciseWithoutOtherDotFrameType,
-    JPClassicFrameType
-};
-
-/**
- * 动画曲线
- */
-typedef NS_ENUM(NSUInteger, JPAnimationCurve) {
-    JPAnimationCurveEaseInOut, // default
-    JPAnimationCurveEaseIn,
-    JPAnimationCurveEaseOut,
-    JPAnimationCurveLinear
-};
-
-/**
- * 是否可以重置的回调
- * 当裁剪区域缩放至适应范围后就会触发该回调
-    - YES：可重置
-    - NO：不需要重置，裁剪区域跟图片区域一致，并且没有旋转、镜像过
- */
-typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
-
-/**
- * 是否预备缩放裁剪区域至适应范围
- * 当裁剪区域发生变化的开始和结束就会触发该回调
-    - YES：预备缩放，此时裁剪、旋转、镜像功能不可用
-    - NO：没有预备缩放
- */
-typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
+#import "JPImageresizerConfigure.h"
 
 @interface JPImageresizerView : UIView
 
@@ -72,11 +22,11 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 /*!
  @method
- @brief 类方法
+ @brief 类方法（推荐）
  @param configure --- 包含了所有初始化参数
  @discussion 使用JPImageresizerConfigure配置好参数
  */
-+ (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure*)configure
++ (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -182,54 +132,4 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
  */
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
 
-@end
-
-
-@interface JPImageresizerConfigure : NSObject
-
-/**
- * 默认参数值：
- viewFrame = [UIScreen mainScreen].bounds;
- maskAlpha = JPNormalMaskType;
- frameType = JPConciseFrameType;
- animationCurve = JPAnimationCurveLinear;
- strokeColor = [UIColor whiteColor];
- bgColor = [UIColor blackColor];
- maskAlpha = 0.75;
- verBaseMargin = 10.0;
- horBaseMargin = 10.0;
- resizeWHScale = 0.0;
- contentInsets = UIEdgeInsetsZero;
- */
-+ (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
-
-+ (instancetype)blurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage isLight:(BOOL)isLight make:(void (^)(JPImageresizerConfigure *configure))make;
-
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_maskType)(JPImageresizerMaskType maskType);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_verBaseMargin)(CGFloat verBaseMargin);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
-
-@property (nonatomic, strong) UIImage *resizeImage;
-@property (nonatomic, assign) CGRect viewFrame;
-@property (nonatomic, assign) JPImageresizerMaskType maskType;
-@property (nonatomic, assign) JPImageresizerFrameType frameType;
-@property (nonatomic, assign) JPAnimationCurve animationCurve;
-@property (nonatomic, strong) UIColor *strokeColor;
-@property (nonatomic, strong) UIColor *bgColor;
-@property (nonatomic, assign) CGFloat maskAlpha;
-@property (nonatomic, assign) CGFloat resizeWHScale;
-@property (nonatomic, assign) CGFloat verBaseMargin;
-@property (nonatomic, assign) CGFloat horBaseMargin;
-@property (nonatomic, assign) UIEdgeInsets contentInsets;
-@property (nonatomic, assign) BOOL isClockwiseRotation;
 @end

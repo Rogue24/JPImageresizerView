@@ -10,8 +10,11 @@
 #endif
 #endif
 
+#import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
+#import "JPImageresizerTypedef.h"
 #import "JPImageresizerView.h"
+#import "UIImage+JPExtension.h"
 
 FOUNDATION_EXPORT double JPImageresizerViewVersionNumber;
 FOUNDATION_EXPORT const unsigned char JPImageresizerViewVersionString[];

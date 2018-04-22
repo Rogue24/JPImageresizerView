@@ -31,6 +31,10 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
+### 0.3.8~0.3.9 更新内容
+    1.修复1:1比例情况下旋转导致错位的问题；
+    2.优化代码结构，更好的注释
+
 ### 0.3.6 更新内容
     1.修复了图片旋转和镜像后裁剪位置错乱的问题；
     2.新增边框样式：只有4角拖拽方向的简洁样式（JPConciseWithoutOtherDotFrameType）
