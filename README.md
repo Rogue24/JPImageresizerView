@@ -31,26 +31,6 @@
 
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
 
-### 0.3.8~0.3.9 更新内容
-    1.修复1:1比例情况下旋转导致错位的问题；
-    2.优化代码结构，更好的注释
-
-### 0.3.6 更新内容
-    1.修复了图片旋转和镜像后裁剪位置错乱的问题；
-    2.新增边框样式：只有4角拖拽方向的简洁样式（JPConciseWithoutOtherDotFrameType）
-
-### 0.3.4 更新内容
-    修复了指定裁剪宽高比（resizeWHScale大于0）的情况下，重置动画的错乱（recovery方法）
-
-### 0.3.3 更新内容
-
-    1.新增resizeWHScale的动画形式的设置接口（-setResizeWHScale:animated:）。
-    
-    说明：平时裁剪头像区域一般都是使用1:1的比例，但如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给人一种图片尺寸改变了的错觉，
-    所以个人建议进去页面后（例如控制器的viewDidApper时）再调用改方法重新调整宽高比（请看gif图效果），这样用户体验会好点。
-    
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
-
 ## 如何使用
 
 #### 初始化
@@ -176,6 +156,26 @@ self.imageresizerView.isLockResizeFrame = YES;
 // 当图片宽度比图片高度小时，该属性默认YES，可手动设为NO
 self.imageresizerView.isAutoScale = NO;
 ```
+
+### 0.3.8~0.3.9 更新内容
+1.修复1:1比例情况下旋转导致错位的问题；
+2.优化代码结构，更好的注释
+
+### 0.3.6 更新内容
+1.修复了图片旋转和镜像后裁剪位置错乱的问题；
+2.新增边框样式：只有4角拖拽方向的简洁样式（JPConciseWithoutOtherDotFrameType）
+
+### 0.3.4 更新内容
+修复了指定裁剪宽高比（resizeWHScale大于0）的情况下，重置动画的错乱（recovery方法）
+
+### 0.3.3 更新内容
+
+1.新增resizeWHScale的动画形式的设置接口（-setResizeWHScale:animated:）。
+
+说明：平时裁剪头像区域一般都是使用1:1的比例，但如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给人一种图片尺寸改变了的错觉，
+所以个人建议进去页面后（例如控制器的viewDidApper时）再调用改方法重新调整宽高比（请看gif图效果），这样用户体验会好点。
+
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 
 ### 0.3.2 更新内容
 
