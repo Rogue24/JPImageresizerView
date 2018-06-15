@@ -469,8 +469,7 @@
     fvTransform = CATransform3DScale(fvTransform, scale, scale, 1);
     fvTransform = CATransform3DRotate(fvTransform, angle, 0, 0, 1);
     
-    NSTimeInterval duration = 0.2;
-    
+    NSTimeInterval duration = 0.23;
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
         self.frameView.layer.transform = fvTransform;
@@ -499,7 +498,8 @@
     
     // 做3d旋转时会遮盖住上层的控件，设置为-400即可
     self.layer.zPosition = -400;
-    [UIView animateWithDuration:0.45 animations:^{
+    NSTimeInterval duration = 0.45;
+    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         
         self.layer.transform = CATransform3DIdentity;
         self.scrollView.layer.transform = CATransform3DIdentity;
@@ -508,7 +508,7 @@
         self.scrollView.frame = frame;
         self.frameView.frame = frame;
         
-        [self.frameView recovery];
+        [self.frameView recoveryWithDuration:duration];
         
     } completion:^(BOOL finished) {
         [self.frameView recoveryDone];

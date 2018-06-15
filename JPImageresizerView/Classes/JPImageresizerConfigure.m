@@ -15,7 +15,7 @@
     configure.viewFrame = [UIScreen mainScreen].bounds;
     configure.maskAlpha = JPNormalMaskType;
     configure.frameType = JPConciseFrameType;
-    configure.animationCurve = JPAnimationCurveEaseInOut;
+    configure.animationCurve = JPAnimationCurveEaseOut;
     configure.strokeColor = [UIColor whiteColor];
     configure.bgColor = [UIColor blackColor];
     configure.maskAlpha = 0.75;
@@ -25,6 +25,14 @@
     configure.contentInsets = UIEdgeInsetsZero;
     !make ? : make(configure);
     return configure;
+}
+
+- (void)setFrameType:(JPImageresizerFrameType)frameType {
+    _frameType = frameType;
+}
+
+- (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
+    _animationCurve = animationCurve;
 }
 
 + (instancetype)blurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage isLight:(BOOL)isLight make:(void (^)(JPImageresizerConfigure *))make {

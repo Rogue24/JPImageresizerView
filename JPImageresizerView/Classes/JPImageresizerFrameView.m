@@ -1280,11 +1280,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     [self removeTimer];
 }
 
-- (void)recovery {
-    self.layer.opacity = 0;
-    
-    [self updateRotationDirection:JPImageresizerVerticalUpDirection];
-    
+- (void)recoveryWithDuration:(NSTimeInterval)duration {
     CGRect adjustResizeFrame = _isArbitrarily ? [self baseImageresizerFrame] : [self adjustResizeFrame];
     
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
@@ -1294,7 +1290,10 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat contentOffsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
     CGFloat contentOffsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
     
-    _imageresizerFrame = adjustResizeFrame;
+    [self updateRotationDirection:JPImageresizerVerticalUpDirection];
+    
+    [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
+    
     self.scrollView.minimumZoomScale = minZoomScale;
     self.scrollView.zoomScale = minZoomScale;
     self.scrollView.contentInset = contentInset;
@@ -1303,11 +1302,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 - (void)recoveryDone {
     [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];
-    [UIView animateWithDuration:0.2 animations:^{
-        self.layer.opacity = 1;
-    } completion:^(BOOL finished) {
-        self.window.userInteractionEnabled = YES;
-    }];
+    self.window.userInteractionEnabled = YES;
 }
 
 - (void)imageresizerWithComplete:(void (^)(UIImage *))complete {

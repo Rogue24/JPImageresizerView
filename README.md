@@ -157,6 +157,9 @@ self.imageresizerView.isLockResizeFrame = YES;
 self.imageresizerView.isAutoScale = NO;
 ```
 
+### 0.4.0 更新内容
+1.优化了重置动画
+
 ### 0.3.8~0.3.9 更新内容
 1.修复1:1比例情况下旋转导致错位的问题；
 2.优化代码结构，更好的注释

@@ -75,7 +75,7 @@
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration;
 
 - (void)willRecovery;
-- (void)recovery;
+- (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone;
 
 - (void)willMirror:(BOOL)animated;
