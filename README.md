@@ -34,7 +34,7 @@
 ## 如何使用
 
 #### 初始化
-```ruby
+```obj
 // 方式一：使用工厂方法配置参数
 // 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调、是否预备缩放的回调
 
@@ -102,7 +102,7 @@ self.imageresizerView.resizeWHScale = 16.0 / 9.0;
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
 
-```ruby
+```obj
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
 self.imageresizerView.frameType = JPClassicFrameType;
@@ -111,7 +111,7 @@ self.imageresizerView.frameType = JPClassicFrameType;
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
 
-```ruby
+```obj
 // 垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
 [self.imageresizerView setVerticalityMirror:isVerticalityMirror animated:YES];
@@ -123,7 +123,7 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 
 
 #### 旋转
-```ruby
+```obj
 // 默认逆时针旋转，旋转角度为90°
 [self.imageresizerView rotation];
 
@@ -132,13 +132,13 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 #### 重置
-```ruby
+```obj
 // 重置为初始状态，方向垂直向上
 [self.imageresizerView recovery];
 ```
 
 #### 裁剪
-```ruby
+```obj
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
@@ -148,7 +148,7 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 #### 其他
-```ruby
+```obj
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
 self.imageresizerView.isLockResizeFrame = YES;
 
@@ -208,7 +208,7 @@ self.imageresizerView.isAutoScale = NO;
 
 JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添加下面一行到你的podfile：
 
-```ruby
+```obj
 pod 'JPImageresizerView'
 ```
 
