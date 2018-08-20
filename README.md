@@ -158,7 +158,7 @@ self.imageresizerView.isLockResizeFrame = YES;
 self.imageresizerView.isAutoScale = NO;
 ```
 
-## 历史主要更新
+## 各版本的主要更新
 
 #### 0.4.1 更新内容
     1.优化了重置动画；
