@@ -398,9 +398,9 @@
         if (!sSelf) return;
         sSelf.layer.transform = aTransform;
         if (isHorizontalMirror) {
-            [self.frameView horizontalMirrorWithDiffY:(mirror ? sSelf->_contentInsets.bottom : sSelf->_contentInsets.top)];
+            [sSelf.frameView horizontalMirrorWithDiffY:(mirror ? sSelf->_contentInsets.bottom : sSelf->_contentInsets.top)];
         } else {
-            [self.frameView verticalityMirrorWithDiffX:(mirror ? sSelf->_contentInsets.right : sSelf->_contentInsets.left)];
+            [sSelf.frameView verticalityMirrorWithDiffX:(mirror ? sSelf->_contentInsets.right : sSelf->_contentInsets.left)];
         }
     };
     
