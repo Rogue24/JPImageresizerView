@@ -392,12 +392,15 @@
     
     [self.frameView willMirror:isAnimated];
     
+    __weak typeof(self) wSelf = self;
     void (^animateBlock)(CATransform3D aTransform) = ^(CATransform3D aTransform){
-        self.layer.transform = aTransform;
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        sSelf.layer.transform = aTransform;
         if (isHorizontalMirror) {
-            [self.frameView horizontalMirrorWithDiffY:(mirror ? _contentInsets.bottom : _contentInsets.top)];
+            [self.frameView horizontalMirrorWithDiffY:(mirror ? sSelf->_contentInsets.bottom : sSelf->_contentInsets.top)];
         } else {
-            [self.frameView verticalityMirrorWithDiffX:(mirror ? _contentInsets.right : _contentInsets.left)];
+            [self.frameView verticalityMirrorWithDiffX:(mirror ? sSelf->_contentInsets.right : sSelf->_contentInsets.left)];
         }
     };
     

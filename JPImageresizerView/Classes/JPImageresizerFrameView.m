@@ -872,13 +872,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     
     if (duration > 0) {
+        __weak typeof(self) wSelf = self;
         void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf) return;
             CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:aKeyPath(layer, path)];
             anim.fillMode = kCAFillModeBackwards;
             anim.fromValue = [UIBezierPath bezierPathWithCGPath:layer.path];
             anim.toValue = path;
             anim.duration = duration;
-            anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:sSelf->_kCAMediaTimingFunction];
             [layer addAnimation:anim forKey:@"path"];
         };
         

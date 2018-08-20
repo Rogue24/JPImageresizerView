@@ -23,8 +23,7 @@
 
 @implementation JPViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     
     self.view.backgroundColor = self.configure.bgColor;
@@ -65,6 +64,10 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (void)dealloc {
+    NSLog(@"viewController is dead");
 }
 
 - (IBAction)changeFrameType:(UIButton *)sender {
