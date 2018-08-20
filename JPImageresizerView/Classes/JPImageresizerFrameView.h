@@ -83,6 +83,6 @@
 - (void)horizontalMirrorWithDiffY:(CGFloat)diffY;
 - (void)mirrorDone;
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete isOriginImageSize:(BOOL)isOriginImageSize;
 
 @end

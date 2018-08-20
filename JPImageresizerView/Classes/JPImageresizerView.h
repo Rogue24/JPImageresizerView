@@ -128,6 +128,16 @@
 /*!
  @method
  @brief 裁剪
+ @param complete --- 裁剪完成的回调
+ @param isOriginImageSize --- 裁剪的图片尺寸是否为原图尺寸
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete isOriginImageSize:(BOOL)isOriginImageSize;
+
+/*!
+ @method
+ @brief 裁剪（该方法的isOriginImageSize为NO，即裁剪的图片尺寸按屏幕尺寸）
+ @param complete --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;

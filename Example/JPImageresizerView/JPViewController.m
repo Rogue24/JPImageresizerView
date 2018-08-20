@@ -127,7 +127,8 @@
         [strongSelf.navigationController pushViewController:vc animated:YES];
         
         strongSelf.recoveryBtn.enabled = YES;
-    }];
+        
+    } isOriginImageSize:YES];
 }
 
 - (IBAction)goBack:(id)sender {

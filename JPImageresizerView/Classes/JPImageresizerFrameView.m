@@ -1305,7 +1305,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.window.userInteractionEnabled = YES;
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize {
     /**
      * UIImageOrientationUp,            // default orientation
      * UIImageOrientationDown,          // 180 deg rotation
@@ -1392,14 +1392,23 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         
         CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
         
+        if (isOriginImageSize) {
+            UIImage *resizeImg = [UIImage imageWithCGImage:imgRef];
+            resizeImg = [resizeImg jp_rotate:orientation];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                complete(resizeImg);
+            });
+            return;
+        }
+        
         // 有小数的情况下，边界会多出白线，需要把小数点去掉
         CGSize cropSize = CGSizeMake(floor(cropFrame.size.width), floor(cropFrame.size.height));
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm
          * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
-         - 1.CGContextTranslateCTM(context, 0, cropFrame.size.height);
-         - 2.CGContextScaleCTM(context, 1, -1);
+            - 1.CGContextTranslateCTM(context, 0, cropFrame.size.height);
+            - 2.CGContextScaleCTM(context, 1, -1);
          */
         
         UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
@@ -1410,14 +1419,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         
         CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), imgRef);
         
-        UIImage *newImg = UIGraphicsGetImageFromCurrentImageContext();
-        newImg = [newImg jp_rotate:orientation];
+        UIImage *resizeImg = UIGraphicsGetImageFromCurrentImageContext();
+        resizeImg = [resizeImg jp_rotate:orientation];
         
         CGImageRelease(imgRef);
         UIGraphicsEndImageContext();
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            complete(newImg);
+            complete(resizeImg);
         });
     });
 }

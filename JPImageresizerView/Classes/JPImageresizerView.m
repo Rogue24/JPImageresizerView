@@ -291,21 +291,21 @@
              isPrepareToScaleBlock:(JPImageresizerIsPrepareToScaleBlock)isPrepareToScaleBlock {
     
     JPImageresizerFrameView *frameView =
-        [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
-                                           contentSize:_contentSize 
-                                              maskType:maskType
-                                             frameType:frameType
-                                        animationCurve:animationCurve
-                                           strokeColor:strokeColor
-                                             fillColor:self.bgColor
-                                             maskAlpha:maskAlpha
-                                         verBaseMargin:_verBaseMargin
-                                         horBaseMargin:_horBaseMargin
-                                         resizeWHScale:resizeWHScale
-                                            scrollView:self.scrollView
-                                             imageView:self.imageView
-                             imageresizerIsCanRecovery:isCanRecoveryBlock
-                          imageresizerIsPrepareToScale:isPrepareToScaleBlock];
+    [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+                                       contentSize:_contentSize
+                                          maskType:maskType
+                                         frameType:frameType
+                                    animationCurve:animationCurve
+                                       strokeColor:strokeColor
+                                         fillColor:self.bgColor
+                                         maskAlpha:maskAlpha
+                                     verBaseMargin:_verBaseMargin
+                                     horBaseMargin:_horBaseMargin
+                                     resizeWHScale:resizeWHScale
+                                        scrollView:self.scrollView
+                                         imageView:self.imageView
+                         imageresizerIsCanRecovery:isCanRecoveryBlock
+                      imageresizerIsPrepareToScale:isPrepareToScaleBlock];
     
     frameView.isRotatedAutoScale = self.isRotatedAutoScale;
     
@@ -456,10 +456,10 @@
     
     CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * M_PI * 0.5;
     
-//    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
-//    if (!isNormal) {
-//        angle *= -1.0;
-//    }
+    //    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
+    //    if (!isNormal) {
+    //        angle *= -1.0;
+    //    }
     
     CATransform3D svTransform = self.scrollView.layer.transform;
     svTransform = CATransform3DScale(svTransform, scale, scale, 1);
@@ -484,7 +484,7 @@
     }
     
     [self.frameView willRecovery];
-
+    
     self.directionIndex = 0;
     
     _horizontalMirror = NO;
@@ -516,13 +516,17 @@
     }];
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !complete ? : complete(nil);
         return;
     }
-    [self.frameView imageresizerWithComplete:complete];
+    [self.frameView imageresizerWithComplete:complete isOriginImageSize:isOriginImageSize];
+}
+
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
+    [self imageresizerWithComplete:complete isOriginImageSize:NO];
 }
 
 #pragma mark - <UIScrollViewDelegate>

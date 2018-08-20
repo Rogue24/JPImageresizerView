@@ -141,10 +141,11 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```obj
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
+// isOriginImageSize：裁剪的图片尺寸是否按照原图尺寸，NO则为屏幕尺寸
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
     // 裁剪完成，resizeImage为裁剪后的图片
     // 注意循环引用
-}];
+} isOriginImageSize:YES];
 ```
 
 #### 其他
@@ -157,8 +158,9 @@ self.imageresizerView.isLockResizeFrame = YES;
 self.imageresizerView.isAutoScale = NO;
 ```
 
-### 0.4.0 更新内容
+### 0.4.1 更新内容
 1.优化了重置动画
+2.裁剪方法（imageresizerWithComplete:isOriginImageSize:）新增isOriginImageSize参数，YES为裁剪的图片尺寸按原图尺寸裁剪，NO则为屏幕尺寸
 
 ### 0.3.8~0.3.9 更新内容
 1.修复1:1比例情况下旋转导致错位的问题；
