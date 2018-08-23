@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
+# 代码正在重构当中
+
 ## 简介
 
 仿微信裁剪图片的一个裁剪小工具。
