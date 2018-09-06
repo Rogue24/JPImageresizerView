@@ -1309,6 +1309,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize {
+    if (!complete) return;
+    
     /**
      * UIImageOrientationUp,            // default orientation
      * UIImageOrientationDown,          // 180 deg rotation
@@ -1395,9 +1397,10 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         
         CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
         
+        UIImage *resizeImg = [UIImage imageWithCGImage:imgRef];
+        resizeImg = [resizeImg jp_rotate:orientation];
+        
         if (isOriginImageSize) {
-            UIImage *resizeImg = [UIImage imageWithCGImage:imgRef];
-            resizeImg = [resizeImg jp_rotate:orientation];
             dispatch_async(dispatch_get_main_queue(), ^{
                 complete(resizeImg);
             });
@@ -1405,13 +1408,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
         
         // 有小数的情况下，边界会多出白线，需要把小数点去掉
-        CGSize cropSize = CGSizeMake(floor(cropFrame.size.width), floor(cropFrame.size.height));
+        CGSize cropSize = CGSizeMake(floor(resizeImg.size.width / scale), floor(resizeImg.size.height / scale));
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm
          * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
-            - 1.CGContextTranslateCTM(context, 0, cropFrame.size.height);
-            - 2.CGContextScaleCTM(context, 1, -1);
+         - 1.CGContextTranslateCTM(context, 0, cropSize.height);
+         - 2.CGContextScaleCTM(context, 1, -1);
          */
         
         UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
@@ -1420,16 +1423,15 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         CGContextTranslateCTM(context, 0, cropSize.height);
         CGContextScaleCTM(context, 1, -1);
         
-        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), imgRef);
+        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), resizeImg.CGImage);
         
-        UIImage *resizeImg = UIGraphicsGetImageFromCurrentImageContext();
-        resizeImg = [resizeImg jp_rotate:orientation];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
         
         CGImageRelease(imgRef);
         UIGraphicsEndImageContext();
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            complete(resizeImg);
+            complete(newImage);
         });
     });
 }
