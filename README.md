@@ -162,6 +162,11 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
+#### 0.4.3 更新内容
+    1.修复了image的scle不为1的情况下裁剪错误问题；
+    2.移除裁剪方法（imageresizerWithComplete:isOriginImageSize:），新增（originImageresizerWithComplete:）来代替原图尺寸裁剪；
+    3.新增两个压缩尺寸裁剪方法（imageresizerWithComplete:referenceWidth:）和（imageresizerWithComplete:），其中referenceWidth为裁剪的图片的参照宽度，例如设置为375，如果裁剪区域为图片宽度的一半，则裁剪的图片宽度为187.5，而高度则根据宽高比得出，最大和最小不超过原图和imageView两者的宽度。
+
 #### 0.4.1 更新内容
     1.优化了重置动画；
     2.裁剪方法（imageresizerWithComplete:isOriginImageSize:）新增 isOriginImageSize 参数，YES 为裁剪的图片尺寸按原图尺寸裁剪，NO 则为屏幕尺寸。

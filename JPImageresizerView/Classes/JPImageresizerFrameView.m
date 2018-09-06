@@ -1308,7 +1308,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.window.userInteractionEnabled = YES;
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize {
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize referenceWidth:(CGFloat)referenceWidth {
     if (!complete) return;
     
     /**
@@ -1348,11 +1348,24 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     __block UIImage *image = self.imageView.image;
     
-    CGFloat scale = image.size.width / self.imageView.bounds.size.width;
+    CGFloat imageScale = image.scale;
+    CGFloat imageWidth = image.size.width * imageScale;
+    CGFloat imageHeight = image.size.height * imageScale;
+    
+    CGFloat scale = imageWidth / self.imageView.bounds.size.width;
     
     CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : self.imageView.bounds;
     
     CGFloat deviceScale = [UIScreen mainScreen].scale;
+    
+    if (referenceWidth > 0) {
+        CGFloat maxWidth = MAX(imageWidth, self.imageView.bounds.size.width);
+        CGFloat minWidth = MIN(imageWidth, self.imageView.bounds.size.width);
+        if (referenceWidth > maxWidth) referenceWidth = maxWidth;
+        if (referenceWidth < minWidth) referenceWidth = minWidth;
+    } else {
+        referenceWidth = self.imageView.bounds.size.width;
+    }
     
     __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -1381,19 +1394,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
         
         CGFloat cropMaxX = CGRectGetMaxX(cropRect);
-        if (cropMaxX > image.size.width) {
-            CGFloat diffW = cropMaxX - image.size.width;
+        if (cropMaxX > imageWidth) {
+            CGFloat diffW = cropMaxX - imageWidth;
             cropRect.size.width -= diffW;
         }
         
         CGFloat cropMaxY = CGRectGetMaxY(cropRect);
-        if (cropMaxY > image.size.height) {
-            CGFloat diffH = cropMaxY - image.size.height;
+        if (cropMaxY > imageHeight) {
+            CGFloat diffH = cropMaxY - imageHeight;
             cropRect.size.height -= diffH;
         }
         
-        if (isVerticalityMirror) cropRect.origin.x = image.size.width - CGRectGetMaxX(cropRect);
-        if (isHorizontalMirror) cropRect.origin.y = image.size.height - CGRectGetMaxY(cropRect);
+        if (isVerticalityMirror) cropRect.origin.x = imageWidth - CGRectGetMaxX(cropRect);
+        if (isHorizontalMirror) cropRect.origin.y = imageHeight - CGRectGetMaxY(cropRect);
         
         CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
         
@@ -1408,7 +1421,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
         
         // 有小数的情况下，边界会多出白线，需要把小数点去掉
-        CGSize cropSize = CGSizeMake(floor(resizeImg.size.width / scale), floor(resizeImg.size.height / scale));
+        CGFloat cropScale = imageWidth / referenceWidth;
+        CGSize cropSize = CGSizeMake(floor(resizeImg.size.width / cropScale), floor(resizeImg.size.height / cropScale));
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm

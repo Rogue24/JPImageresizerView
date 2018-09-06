@@ -131,7 +131,7 @@
         
         strongSelf.recoveryBtn.enabled = YES;
         
-    } isOriginImageSize:YES];
+    }];
 }
 
 - (IBAction)goBack:(id)sender {
