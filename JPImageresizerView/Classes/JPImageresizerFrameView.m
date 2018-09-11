@@ -1350,6 +1350,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         resizeImg = [resizeImg jp_rotate:orientation];
         
         if (isOriginImageSize) {
+            CGImageRelease(imgRef);
             dispatch_async(dispatch_get_main_queue(), ^{
                 complete(resizeImg);
             });
