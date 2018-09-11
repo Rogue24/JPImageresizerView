@@ -586,7 +586,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 - (void)timerHandle {
     [self removeTimer];
-    [self updateImageresizerFrameWithAnimateDuration:_defaultDuration isAdjustResize:YES];
+    [self updateImageresizerFrameWithAnimateDuration:_defaultDuration];
 }
 
 #pragma mark - assist method
@@ -938,18 +938,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     [self updateImageresizerFrame:[self baseImageresizerFrame] animateDuration:_updateDuration];
-    [self updateImageresizerFrameWithAnimateDuration:_updateDuration isAdjustResize:YES];
+    [self updateImageresizerFrameWithAnimateDuration:_updateDuration];
     _updateDuration = -1.0;
 }
 
-- (BOOL)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
-    
+- (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
     [self updateMaxResizeFrameWithDirection:rotationDirection];
-    
-    BOOL isAdjustResize = NO;
-    
     if (!_isArbitrarily) {
-        
         BOOL isVer2Hor = ((_rotationDirection == JPImageresizerVerticalUpDirection ||
                            _rotationDirection == JPImageresizerVerticalDownDirection) &&
                           (rotationDirection == JPImageresizerHorizontalLeftDirection ||
@@ -958,47 +953,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                            _rotationDirection == JPImageresizerHorizontalRightDirection) &&
                           (rotationDirection == JPImageresizerVerticalUpDirection ||
                            rotationDirection == JPImageresizerVerticalDownDirection));
-        
-        if (isVer2Hor || isHor2Ver) {
-            _resizeWHScale = 1.0 / _resizeWHScale;
-        }
-        
-        CGRect adjustResizeFrame = [self adjustResizeFrame];
-        CGFloat w = adjustResizeFrame.size.width;
-        CGFloat h = adjustResizeFrame.size.height;
-        
-        if (w - self.imageView.frame.size.width > 1) {
-            w = self.imageView.frame.size.width;
-            h = w / _resizeWHScale;
-            isAdjustResize = YES;
-        }
-        
-        CGFloat maxResizeX = self.maxResizeX;
-        CGFloat maxResizeY = self.maxResizeY;
-        CGFloat maxResizeW = self.maxResizeW;
-        CGFloat maxResizeH = self.maxResizeH;
-        
-        if (w > maxResizeW) {
-            w = maxResizeW;
-            h = w / _resizeWHScale;
-        }
-        if (h > maxResizeH) {
-            h = maxResizeH;
-            w = h * _resizeWHScale;
-        }
-        
-        CGFloat x = maxResizeX + (maxResizeW - w) * 0.5;
-        CGFloat y = maxResizeY + (maxResizeH - h) * 0.5;
-        
-        if (x < maxResizeX) x = maxResizeX;
-        if (y < maxResizeY) y = maxResizeY;
-        
-        _imageresizerFrame = CGRectMake(x, y, w, h);
+        if (isVer2Hor || isHor2Ver) _resizeWHScale = 1.0 / _resizeWHScale;
     }
-    
     _rotationDirection = rotationDirection;
-    
-    return isAdjustResize;
 }
 
 - (void)updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
@@ -1045,33 +1002,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _verRightLine.lineWidth = lineW;
 }
 
-- (void)updateImageresizerFrameWithAnimateDuration:(NSTimeInterval)duration isAdjustResize:(BOOL)adjustResize {
-    if (self.imageresizeX < self.maxResizeX) self.imageresizeX = self.maxResizeX;
-    if (self.imageresizeY < self.maxResizeY) self.imageresizeY = self.maxResizeY;
-    if (_isArbitrarily) {
-        if (self.imageresizeW > self.maxResizeW) self.imageresizeW = self.maxResizeW;
-        if (self.imageresizeH > self.maxResizeH) self.imageresizeH = self.maxResizeH;
-    } else {
-        if (self.imageresizeW > self.maxResizeW) {
-            self.imageresizeW = self.maxResizeW;
-            self.imageresizeH = self.imageresizeW / _resizeWHScale;
-        }
-        if (self.imageresizeH > self.maxResizeH) {
-            self.imageresizeH = self.maxResizeH;
-            self.imageresizeW = self.imageresizeH * _resizeWHScale;
-        }
-    }
-    
-    CGRect adjustResizeFrame;
-    if (adjustResize) {
-        adjustResizeFrame = [self adjustResizeFrame];
-    } else {
-        adjustResizeFrame = self.imageresizerFrame;
-    }
+- (void)updateImageresizerFrameWithAnimateDuration:(NSTimeInterval)duration {
+    CGRect adjustResizeFrame = [self adjustResizeFrame];
     
     // contentInset
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
-    
+
     // contentOffset
     CGPoint contentOffset = CGPointZero;
     CGPoint origin = self.imageresizerFrame.origin;
@@ -1138,22 +1074,22 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (CGRect)adjustResizeFrame {
-    CGFloat resizerWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
+    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
     CGFloat adjustResizeW = 0;
     CGFloat adjustResizeH = 0;
-    if (resizerWHScale >= 1) {
+    if (resizeWHScale >= 1) {
         adjustResizeW = self.maxResizeW;
-        adjustResizeH = adjustResizeW / resizerWHScale;
+        adjustResizeH = adjustResizeW / resizeWHScale;
         if (adjustResizeH > self.maxResizeH) {
             adjustResizeH = self.maxResizeH;
-            adjustResizeW = self.maxResizeH * resizerWHScale;
+            adjustResizeW = self.maxResizeH * resizeWHScale;
         }
     } else {
         adjustResizeH = self.maxResizeH;
-        adjustResizeW = adjustResizeH * resizerWHScale;
+        adjustResizeW = adjustResizeH * resizeWHScale;
         if (adjustResizeW > self.maxResizeW) {
             adjustResizeW = self.maxResizeW;
-            adjustResizeH = adjustResizeW / resizerWHScale;
+            adjustResizeH = adjustResizeW / resizeWHScale;
         }
     }
     CGFloat adjustResizeX = self.maxResizeX + (self.maxResizeW - adjustResizeW) * 0.5;
@@ -1239,8 +1175,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
     _isRotation = YES;
     [self removeTimer];
-    BOOL isAdjustResize = [self updateRotationDirection:direction];
-    [self updateImageresizerFrameWithAnimateDuration:rotationDuration isAdjustResize:isAdjustResize];
+    [self updateRotationDirection:direction];
+    [self updateImageresizerFrameWithAnimateDuration:rotationDuration];
 }
 
 - (void)willMirror:(BOOL)animated {
@@ -1284,6 +1220,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)recoveryWithDuration:(NSTimeInterval)duration {
+    [self updateRotationDirection:JPImageresizerVerticalUpDirection];
+    
     CGRect adjustResizeFrame = _isArbitrarily ? [self baseImageresizerFrame] : [self adjustResizeFrame];
     
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
@@ -1292,8 +1230,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     CGFloat contentOffsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
     CGFloat contentOffsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
-    
-    [self updateRotationDirection:JPImageresizerVerticalUpDirection];
     
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
     
@@ -1304,7 +1240,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)recoveryDone {
-    [self updateImageresizerFrameWithAnimateDuration:-1.0 isAdjustResize:YES];
+    [self updateImageresizerFrameWithAnimateDuration:-1.0];
     self.window.userInteractionEnabled = YES;
 }
 
