@@ -116,6 +116,8 @@
     self.recoveryBtn.enabled = NO;
     
     __weak typeof(self) weakSelf = self;
+    
+    // 1.默认以imageView的宽度为参照宽度进行裁剪
     [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
@@ -132,6 +134,18 @@
         strongSelf.recoveryBtn.enabled = YES;
         
     }];
+    
+    // 2.自定义参照宽度进行裁剪（例如按屏幕宽度）
+//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
+//        // 裁剪完成，resizeImage为裁剪后的图片
+//        // 注意循环引用
+//    } referenceWidth:[UIScreen mainScreen].bounds.size.width];
+
+    // 3.以原图尺寸进行裁剪
+//    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+//        // 裁剪完成，resizeImage为裁剪后的图片
+//        // 注意循环引用
+//    }];
 }
 
 - (IBAction)goBack:(id)sender {
