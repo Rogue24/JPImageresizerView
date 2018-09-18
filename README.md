@@ -233,7 +233,7 @@ pod 'JPImageresizerView'
 
 ## 反馈地址
 
-    邮箱：zhoujianping24@hotmail.com
+    扣扣：184669029
     博客：https://www.jianshu.com/u/2edfbadd451c
 
 ## License
