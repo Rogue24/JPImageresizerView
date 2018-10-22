@@ -1051,13 +1051,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     void (^completeBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        sSelf.window.userInteractionEnabled = YES;
+        sSelf.superview.userInteractionEnabled = YES;
         [sSelf checkIsCanRecovery];
         sSelf.isPrepareToScale = NO;
         sSelf->_isRotation = NO;
     };
     
-    self.window.userInteractionEnabled = NO;
+    self.superview.userInteractionEnabled = NO;
     [self hideOrShowBlurEffect:NO animateDuration:duration];
     [self hideOrShowFrameLine:NO animateDuration:duration];
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
@@ -1169,6 +1169,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)endedImageresizer {
+    UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:self.imageresizerFrame];
+    self.scrollView.contentInset = contentInset;
     [self addTimer];
 }
 
