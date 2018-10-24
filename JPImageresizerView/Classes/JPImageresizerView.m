@@ -242,7 +242,7 @@
     scrollView.frame = CGRectMake(x, y, w, h);
     scrollView.delegate = self;
     scrollView.minimumZoomScale = 1.0;
-    scrollView.maximumZoomScale = 10.0;
+    scrollView.maximumZoomScale = MAXFLOAT;
     scrollView.alwaysBounceVertical = YES;
     scrollView.alwaysBounceHorizontal = YES;
     scrollView.showsVerticalScrollIndicator = NO;
