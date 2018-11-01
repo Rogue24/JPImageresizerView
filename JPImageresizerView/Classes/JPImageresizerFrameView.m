@@ -1351,8 +1351,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         UIImage *resizeImg = [UIImage imageWithCGImage:imgRef];
         resizeImg = [resizeImg jp_rotate:orientation];
         
+        CGImageRelease(imgRef);
+        
         if (isOriginImageSize) {
-            CGImageRelease(imgRef);
             dispatch_async(dispatch_get_main_queue(), ^{
                 complete(resizeImg);
             });
@@ -1366,21 +1367,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         /**
          * 参考：http://www.jb51.net/article/81318.htm
          * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
-         - 1.CGContextTranslateCTM(context, 0, cropSize.height);
-         - 2.CGContextScaleCTM(context, 1, -1);
+            - 1.CGContextTranslateCTM(context, 0, cropSize.height);
+            - 2.CGContextScaleCTM(context, 1, -1);
          */
         
         UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
         CGContextRef context = UIGraphicsGetCurrentContext();
-        
         CGContextTranslateCTM(context, 0, cropSize.height);
         CGContextScaleCTM(context, 1, -1);
-        
         CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), resizeImg.CGImage);
-        
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-        
-        CGImageRelease(imgRef);
         UIGraphicsEndImageContext();
         
         dispatch_async(dispatch_get_main_queue(), ^{
