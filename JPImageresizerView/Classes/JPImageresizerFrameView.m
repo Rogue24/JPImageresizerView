@@ -1363,6 +1363,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         // 有小数的情况下，边界会多出白线，需要把小数点去掉
         CGFloat cropScale = imageWidth / referenceWidth;
         CGSize cropSize = CGSizeMake(floor(resizeImg.size.width / cropScale), floor(resizeImg.size.height / cropScale));
+        if (cropSize.width < 1) cropSize.width = 1;
+        if (cropSize.height < 1) cropSize.height = 1;
         
         /**
          * 参考：http://www.jb51.net/article/81318.htm
@@ -1379,6 +1381,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
+        resizeImg = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             complete(newImage);
         });
