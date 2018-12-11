@@ -49,6 +49,13 @@
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
     self.configure = nil;
+    
+    // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
+    if (@available(iOS 11.0, *)) {
+        
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
