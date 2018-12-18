@@ -22,6 +22,7 @@
     configure.verBaseMargin = 10.0;
     configure.horBaseMargin = 10.0;
     configure.resizeWHScale = 0.0;
+    configure.edgeLineIsEnabled = YES;
     configure.contentInsets = UIEdgeInsetsZero;
     !make ? : make(configure);
     return configure;
@@ -122,6 +123,13 @@
 - (JPImageresizerConfigure *(^)(CGFloat resizeWHScale))jp_resizeWHScale {
     return ^(CGFloat resizeWHScale) {
         self.resizeWHScale = resizeWHScale;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL edgeLineIsEnabled))jp_edgeLineIsEnabled {
+    return ^(BOOL edgeLineIsEnabled) {
+        self.edgeLineIsEnabled = edgeLineIsEnabled;
         return self;
     };
 }

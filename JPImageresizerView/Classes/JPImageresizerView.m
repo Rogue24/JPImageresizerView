@@ -70,6 +70,11 @@
     [self.frameView setResizeWHScale:resizeWHScale animated:YES];
 }
 
+- (void)setEdgeLineIsEnabled:(BOOL)edgeLineIsEnabled {
+    _edgeLineIsEnabled = edgeLineIsEnabled;
+    self.frameView.edgeLineIsEnabled = edgeLineIsEnabled;
+}
+
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
     [self.frameView setResizeWHScale:resizeWHScale animated:isAnimated];
 }
@@ -160,7 +165,7 @@
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
-    return [[self alloc] initWithResizeImage:configure.resizeImage
+    JPImageresizerView *imageresizerView =  [[self alloc] initWithResizeImage:configure.resizeImage
                                        frame:configure.viewFrame
                                     maskType:configure.maskType
                                    frameType:configure.frameType
@@ -174,6 +179,8 @@
                                contentInsets:configure.contentInsets
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
+    imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
+    return imageresizerView;
 }
 
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage

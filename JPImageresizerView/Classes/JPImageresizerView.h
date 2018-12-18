@@ -80,6 +80,9 @@
 @property (nonatomic) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
+/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
+@property (nonatomic, assign) BOOL edgeLineIsEnabled;
+
 /** 裁剪图片与裁剪区域的垂直边距 */
 @property (nonatomic, assign) CGFloat verBaseMargin;
 

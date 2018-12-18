@@ -55,6 +55,9 @@
 /** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
+/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
+@property (nonatomic, assign) BOOL edgeLineIsEnabled;
+
 /** 裁剪图片与裁剪区域的垂直边距 */
 @property (nonatomic, assign) CGFloat verBaseMargin;
 
@@ -77,6 +80,7 @@
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
+@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_verBaseMargin)(CGFloat verBaseMargin);
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
 @property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);

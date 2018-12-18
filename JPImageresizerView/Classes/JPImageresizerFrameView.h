@@ -46,6 +46,8 @@
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
+@property (nonatomic, assign) BOOL edgeLineIsEnabled;
+
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 @property (nonatomic, copy) JPImageresizerIsCanRecoveryBlock imageresizerIsCanRecovery;
 

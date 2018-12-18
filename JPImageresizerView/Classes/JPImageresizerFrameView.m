@@ -462,6 +462,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             self.rotationDirection == JPImageresizerHorizontalRightDirection);
 }
 
+- (BOOL)edgeLineIsEnabled {
+    if (_isArbitrarily) {
+        return _edgeLineIsEnabled;
+    } else {
+        return NO;
+    }
+}
+
 #pragma mark - init
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -482,6 +490,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
+        
+        _edgeLineIsEnabled = YES;
         
         _defaultDuration = 0.27;
         _updateDuration = -1.0;
@@ -605,7 +615,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (BOOL)isShowMidDot {
-    return  _isArbitrarily && _frameType == JPConciseFrameType;
+    return _isArbitrarily && _frameType == JPConciseFrameType;
 }
 
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
@@ -1425,10 +1435,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGRect leftBotRect = CGRectMake(x - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     CGRect rightTopRect = CGRectMake(maxX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
     CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
-    CGRect leftMidRect = CGRectMake(x - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
-    CGRect rightMidRect = CGRectMake(maxX - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
-    CGRect topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
-    CGRect botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     
     if (CGRectContainsPoint(leftTopRect, location)) {
         self.currHorn = JPLeftTop;
@@ -1442,18 +1448,37 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     } else if (CGRectContainsPoint(rightBotRect, location)) {
         self.currHorn = JPRightBottom;
         self.diagonal = CGPointMake(x, y);
-    } else if (self.isShowMidDot && CGRectContainsPoint(leftMidRect, location)) {
-        self.currHorn = JPLeftMid;
-        self.diagonal = CGPointMake(maxX, midY);
-    } else if (self.isShowMidDot && CGRectContainsPoint(rightMidRect, location)) {
-        self.currHorn = JPRightMid;
-        self.diagonal = CGPointMake(x, midY);
-    } else if (self.isShowMidDot && CGRectContainsPoint(topMidRect, location)) {
-        self.currHorn = JPTopMid;
-        self.diagonal = CGPointMake(midX, maxY);
-    } else if (self.isShowMidDot && CGRectContainsPoint(botMidRect, location)) {
-        self.currHorn = JPBottomMid;
-        self.diagonal = CGPointMake(midX, y);
+    } else if (_isArbitrarily) {
+        CGRect leftMidRect = CGRectNull;
+        CGRect rightMidRect = CGRectNull;
+        CGRect topMidRect = CGRectNull;
+        CGRect botMidRect = CGRectNull;
+        if (_edgeLineIsEnabled) {
+            leftMidRect = CGRectMake(x - halfScopeWH, y + halfScopeWH, scopeWH, height - scopeWH);
+            rightMidRect = CGRectMake(maxX - halfScopeWH, y + halfScopeWH, scopeWH, height - scopeWH);
+            topMidRect = CGRectMake(x + halfScopeWH, y - halfScopeWH, width - scopeWH, scopeWH);
+            botMidRect = CGRectMake(x + halfScopeWH, maxY - halfScopeWH, width - scopeWH, scopeWH);
+        } else if (self.isShowMidDot) {
+            leftMidRect = CGRectMake(x - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
+            rightMidRect = CGRectMake(maxX - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
+            topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
+            botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
+        }
+        if (CGRectContainsPoint(leftMidRect, location)) {
+            self.currHorn = JPLeftMid;
+            self.diagonal = CGPointMake(maxX, midY);
+        } else if (CGRectContainsPoint(rightMidRect, location)) {
+            self.currHorn = JPRightMid;
+            self.diagonal = CGPointMake(x, midY);
+        } else if (CGRectContainsPoint(topMidRect, location)) {
+            self.currHorn = JPTopMid;
+            self.diagonal = CGPointMake(midX, maxY);
+        } else if (CGRectContainsPoint(botMidRect, location)) {
+            self.currHorn = JPBottomMid;
+            self.diagonal = CGPointMake(midX, y);
+        } else {
+            self.currHorn = JPCenter;
+        }
     } else {
         self.currHorn = JPCenter;
     }
@@ -1817,34 +1842,45 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     if (!self.panGR.enabled) return NO;
     
-    CGFloat x = self.imageresizeX;
-    CGFloat y = self.imageresizeY;
-    CGFloat midX = CGRectGetMidX(self.imageresizerFrame);
-    CGFloat midY = CGRectGetMidY(self.imageresizerFrame);
-    CGFloat maxX = CGRectGetMaxX(self.imageresizerFrame);
-    CGFloat maxY = CGRectGetMaxY(self.imageresizerFrame);
-    
     CGFloat scopeWH = _scopeWH;
     CGFloat halfScopeWH = scopeWH * 0.5;
     
-    CGRect leftTopRect = CGRectMake(x - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
-    CGRect leftBotRect = CGRectMake(x - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
-    CGRect rightTopRect = CGRectMake(maxX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
-    CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
-    CGRect leftMidRect = CGRectMake(x - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
-    CGRect rightMidRect = CGRectMake(maxX - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
-    CGRect topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
-    CGRect botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
-    
-    if (CGRectContainsPoint(leftTopRect, point) ||
-        CGRectContainsPoint(leftBotRect, point) ||
-        CGRectContainsPoint(rightTopRect, point) ||
-        CGRectContainsPoint(rightBotRect, point) ||
-        (self.isShowMidDot && CGRectContainsPoint(leftMidRect, point)) ||
-        (self.isShowMidDot && CGRectContainsPoint(rightMidRect, point)) ||
-        (self.isShowMidDot && CGRectContainsPoint(topMidRect, point)) ||
-        (self.isShowMidDot && CGRectContainsPoint(botMidRect, point))) {
-        return YES;
+    if (self.edgeLineIsEnabled) {
+        CGRect maxFrame = CGRectInset(self.imageresizerFrame, -halfScopeWH, -halfScopeWH);
+        CGRect minFrame = CGRectInset(self.imageresizerFrame, halfScopeWH, halfScopeWH);
+        if (CGRectContainsPoint(maxFrame, point) && !CGRectContainsPoint(minFrame, point)) {
+            return YES;
+        }
+    } else {
+        CGFloat x = self.imageresizeX;
+        CGFloat y = self.imageresizeY;
+        CGFloat midX = CGRectGetMidX(self.imageresizerFrame);
+        CGFloat midY = CGRectGetMidY(self.imageresizerFrame);
+        CGFloat maxX = CGRectGetMaxX(self.imageresizerFrame);
+        CGFloat maxY = CGRectGetMaxY(self.imageresizerFrame);
+        
+        CGRect leftTopRect = CGRectMake(x - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
+        CGRect leftBotRect = CGRectMake(x - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
+        CGRect rightTopRect = CGRectMake(maxX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
+        CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
+        
+        if (CGRectContainsPoint(leftTopRect, point) ||
+            CGRectContainsPoint(leftBotRect, point) ||
+            CGRectContainsPoint(rightTopRect, point) ||
+            CGRectContainsPoint(rightBotRect, point)) {
+            return YES;
+        } else if (self.isShowMidDot) {
+            CGRect leftMidRect = CGRectMake(x - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
+            CGRect rightMidRect = CGRectMake(maxX - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
+            CGRect topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
+            CGRect botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
+            if (CGRectContainsPoint(leftMidRect, point) ||
+                CGRectContainsPoint(rightMidRect, point) ||
+                CGRectContainsPoint(topMidRect, point) ||
+                CGRectContainsPoint(botMidRect, point)) {
+                return YES;
+            }
+        }
     }
     return NO;
 }

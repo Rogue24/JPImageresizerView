@@ -36,7 +36,7 @@
 #### 初始化
 ```obj
 // 方式一：使用工厂方法配置参数
-// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、可否重置的回调、是否预备缩放的回调
+// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪框边线能否进行对边拖拽、裁剪区域的内边距、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                         initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
@@ -180,6 +180,9 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 0.4.9 更新内容
+    新增edgeLineIsEnabled属性：用于设置裁剪框边线能否进行对边拖拽，只有当裁剪宽高比(resizeWHScale)为0，即任意比例时才有效，适用于所有边框样式，默认为yes。（之前是只有触碰上下左右的中点才可以进行对边拖拽，现在是整条边线的作用范围）
 
 #### 0.4.3~0.4.6 更新内容
     1.修复了image的scale不为1的情况下裁剪错误问题；
