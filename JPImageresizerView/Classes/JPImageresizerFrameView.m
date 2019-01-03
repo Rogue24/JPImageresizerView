@@ -1545,7 +1545,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                     x = self.diagonal.x - width;
                 }
                 
-                if (width < _minImageWH || height < _minImageWH) {
+                if (width < _minImageWH && height < _minImageWH) {
                     if (_resizeWHScale >= 1) {
                         width = _minImageWH;
                         height = width / _resizeWHScale;
@@ -1606,7 +1606,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                     x = self.diagonal.x - width;
                 }
                 
-                if (width < _minImageWH || height < _minImageWH) {
+                if (width < _minImageWH && height < _minImageWH) {
                     if (_resizeWHScale >= 1) {
                         width = _minImageWH;
                         height = width / _resizeWHScale;
@@ -1668,7 +1668,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                     y = self.diagonal.y - height;
                 }
                 
-                if (width < _minImageWH || height < _minImageWH) {
+                if (width < _minImageWH && height < _minImageWH) {
                     if (_resizeWHScale >= 1) {
                         width = _minImageWH;
                         height = width / _resizeWHScale;
@@ -1725,7 +1725,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                     width = height * _resizeWHScale;
                 }
                 
-                if (width < _minImageWH || height < _minImageWH) {
+                if (width < _minImageWH && height < _minImageWH) {
                     if (_resizeWHScale >= 1) {
                         width = _minImageWH;
                         height = width / _resizeWHScale;
