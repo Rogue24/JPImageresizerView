@@ -214,7 +214,7 @@
         }
         self.animationCurve = animationCurve;
         [self setupBase];
-        [self setupScorllView];
+        [self setupScrollView];
         [self setupImageViewWithImage:resizeImage];
         [self setupFrameViewWithMaskType:maskType
                                frameType:frameType
@@ -240,11 +240,11 @@
 
 #pragma mark - setupSubviews
 
-- (void)setupScorllView {
+- (void)setupScrollView {
     CGFloat h = _contentSize.height;
     CGFloat w = h * h / _contentSize.width;
-    CGFloat x = _contentInsets.left + (self.bounds.size.width - w) * 0.5;
-    CGFloat y = _contentInsets.top;
+    CGFloat x = (_contentSize.width - w) * 0.5 + _contentInsets.left;
+    CGFloat y = (_contentSize.height - h) * 0.5 + _contentInsets.top;
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     scrollView.frame = CGRectMake(x, y, w, h);
     scrollView.delegate = self;
