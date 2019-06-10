@@ -1261,21 +1261,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
      * UIImageOrientationLeft,          // 90 deg CCW
      * UIImageOrientationRight,         // 90 deg CW
      */
-    
     UIImageOrientation orientation;
     switch (self.rotationDirection) {
         case JPImageresizerHorizontalLeftDirection:
             orientation = UIImageOrientationLeft;
             break;
-            
         case JPImageresizerVerticalDownDirection:
             orientation = UIImageOrientationDown;
             break;
-            
         case JPImageresizerHorizontalRightDirection:
             orientation = UIImageOrientationRight;
             break;
-            
         default:
             orientation = UIImageOrientationUp;
             break;

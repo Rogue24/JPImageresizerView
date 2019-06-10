@@ -56,17 +56,17 @@
         .jp_animationCurve(JPAnimationCurveEaseOut);
     }];
     
-    self.configures = @[@{@"title": title1, @"configure": configure1},
-                        @{@"title": title2, @"configure": configure2},
-                        @{@"title": title3, @"configure": configure3},
-                        @{@"title": title4, @"configure": configure4}];
+    self.configures = @[@{@"title": title1, @"configure": configure1, @"statusBarStyle": @(UIStatusBarStyleLightContent)},
+                        @{@"title": title2, @"configure": configure2, @"statusBarStyle": @(UIStatusBarStyleLightContent)},
+                        @{@"title": title3, @"configure": configure3, @"statusBarStyle": @(UIStatusBarStyleDefault)},
+                        @{@"title": title4, @"configure": configure4, @"statusBarStyle": @(UIStatusBarStyleDefault)}];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
 }
 
 #pragma mark - Table view data source
@@ -87,6 +87,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
     NSDictionary *dic = self.configures[indexPath.row];
+    vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
     vc.configure = dic[@"configure"];
     [self.navigationController pushViewController:vc animated:YES];
 }

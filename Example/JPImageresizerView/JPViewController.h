@@ -10,5 +10,6 @@
 #import "JPImageresizerView.h"
 
 @interface JPViewController : UIViewController
+@property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, strong) JPImageresizerConfigure *configure;
 @end

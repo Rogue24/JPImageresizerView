@@ -449,8 +449,14 @@
         return;
     }
     
-    self.directionIndex += 1;
-    if (self.directionIndex > self.allDirections.count - 1) self.directionIndex = 0;
+    BOOL isNormal = _verticalityMirror == _horizontalMirror;
+    if (isNormal) {
+        self.directionIndex += 1;
+        if (self.directionIndex > (self.allDirections.count - 1)) self.directionIndex = 0;
+    } else {
+        self.directionIndex -= 1;
+        if (self.directionIndex < 0) self.directionIndex = (self.allDirections.count - 1);
+    }
     
     JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
@@ -468,10 +474,7 @@
         }
     }
     
-    CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * M_PI * 0.5;
-    
-    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
-    if (!isNormal) angle *= -1.0;
+    CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * (isNormal ? 1.0 : -1.0) * M_PI_2;
     
     CATransform3D svTransform = self.scrollView.layer.transform;
     svTransform = CATransform3DScale(svTransform, scale, scale, 1);
