@@ -30,24 +30,30 @@
     
     NSString *title2 = @"深色毛玻璃遮罩";
     JPImageresizerConfigure *configure2 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:image isLight:NO make:^(JPImageresizerConfigure *configure) {
-        configure.jp_contentInsets(contentInsets).jp_strokeColor([UIColor redColor]);
+        configure
+        .jp_contentInsets(contentInsets)
+        .jp_strokeColor([UIColor redColor]);
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
     JPImageresizerConfigure *configure3 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:image isLight:YES make:^(JPImageresizerConfigure *configure) {
-        configure.jp_contentInsets(contentInsets).jp_strokeColor([UIColor blueColor]).jp_resizeImage([UIImage imageNamed:@"Lotus.jpg"]);
+        configure
+        .jp_contentInsets(contentInsets)
+        .jp_strokeColor([UIColor blueColor])
+        .jp_resizeImage([UIImage imageNamed:@"Lotus.jpg"]);
     }];
     
     NSString *title4 = @"其他样式";
     JPImageresizerConfigure *configure4 = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
-        configure.jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"]).
-        jp_maskAlpha(0.5).
-        jp_strokeColor([UIColor yellowColor]).
-        jp_frameType(JPClassicFrameType).
-        jp_contentInsets(contentInsets).
-        jp_bgColor([UIColor orangeColor]).
-        jp_isClockwiseRotation(YES).
-        jp_animationCurve(JPAnimationCurveEaseOut);
+        configure
+        .jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"])
+        .jp_maskAlpha(0.5)
+        .jp_strokeColor([UIColor yellowColor])
+        .jp_frameType(JPClassicFrameType)
+        .jp_contentInsets(contentInsets)
+        .jp_bgColor([UIColor orangeColor])
+        .jp_isClockwiseRotation(YES)
+        .jp_animationCurve(JPAnimationCurveEaseOut);
     }];
     
     self.configures = @[@{@"title": title1, @"configure": configure1},
@@ -71,11 +77,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    
     NSDictionary *dic = self.configures[indexPath.row];
-    
     cell.textLabel.text = dic[@"title"];
-    
     return cell;
 }
 
@@ -87,49 +90,5 @@
     vc.configure = dic[@"configure"];
     [self.navigationController pushViewController:vc animated:YES];
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

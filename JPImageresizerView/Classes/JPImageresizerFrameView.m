@@ -971,30 +971,26 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
     CGFloat x = 0;
     CGFloat y = 0;
-    CGFloat w = 0;
-    CGFloat h = 0;
+    CGFloat w = self.bounds.size.width;
+    CGFloat h = self.bounds.size.height;
     if (direction == JPImageresizerVerticalUpDirection ||
         direction == JPImageresizerVerticalDownDirection) {
         _sizeScale = _verSizeScale;
         x = _diffHalfW + _horBaseMargin;
         y = _verBaseMargin;
-        w = self.bounds.size.width - 2 * x;
-        h = self.bounds.size.height - 2 * y;
     } else {
         if (self.isRotatedAutoScale) {
             _sizeScale = _horSizeScale;
             x = _verBaseMargin / _sizeScale;
             y = _horBaseMargin / _sizeScale;
-            w = self.bounds.size.width - 2 * x;
-            h = self.bounds.size.height - 2 * y;
         } else {
             _sizeScale = _verSizeScale;
-            x = (self.bounds.size.width - _contentSize.height) * 0.5 +  _verBaseMargin / _sizeScale;
-            y = (self.bounds.size.height - _contentSize.width) * 0.5 + _horBaseMargin / _sizeScale;
-            w = self.bounds.size.width - 2 * x;
-            h = self.bounds.size.height - 2 * y;
+            x = (w - _contentSize.height) * 0.5 +  _verBaseMargin / _sizeScale;
+            y = (h - _contentSize.width) * 0.5 + _horBaseMargin / _sizeScale;
         }
     }
+    w -= 2 * x;
+    h -= 2 * y;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
     _frameLayer.lineWidth = 1.0 / _sizeScale;

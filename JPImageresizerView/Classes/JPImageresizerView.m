@@ -202,9 +202,9 @@
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
         _contentInsets = contentInsets;
-        CGFloat width = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
-        CGFloat height = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
-        _contentSize = CGSizeMake(width, height);
+        CGFloat contentWidth = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
+        CGFloat contentHeight = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
+        _contentSize = CGSizeMake(contentWidth, contentHeight);
         if (maskType == JPLightBlurMaskType) {
             self.bgColor = [UIColor whiteColor];
         } else if (maskType == JPDarkBlurMaskType) {
@@ -264,8 +264,8 @@
 - (void)setupImageViewWithImage:(UIImage *)image {
     CGFloat width = (self.frame.size.width - _contentInsets.left - _contentInsets.right);
     CGFloat height = (self.frame.size.height - _contentInsets.top - _contentInsets.bottom);
-    CGFloat maxW = width - 2 * self.horBaseMargin;
-    CGFloat maxH = height - 2 * self.verBaseMargin;
+    CGFloat maxW = width - 2 * _horBaseMargin;
+    CGFloat maxH = height - 2 * _verBaseMargin;
     CGFloat whScale = image.size.width / image.size.height;
     CGFloat w = maxW;
     CGFloat h = w / whScale;
@@ -343,8 +343,8 @@
     self.scrollView.minimumZoomScale = 1.0;
     self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
     
-    CGFloat maxW = self.frame.size.width - 2 * self.horBaseMargin;
-    CGFloat maxH = self.frame.size.height - 2 * self.verBaseMargin;
+    CGFloat maxW = self.frame.size.width - 2 * _horBaseMargin;
+    CGFloat maxH = self.frame.size.height - 2 * _verBaseMargin;
     CGFloat whScale = self.imageView.image.size.width / self.imageView.image.size.height;
     CGFloat w = maxW;
     CGFloat h = w / whScale;
@@ -456,20 +456,22 @@
     
     CGFloat scale = 1;
     if (self.isRotatedAutoScale) {
+        // 水平时的实际宽度为 scrollView的实际高度 + 实际（经横竖比例缩放后）的裁剪区域与主视图的水平内边距
+        CGFloat realScrollViewH = self.scrollView.bounds.size.height;
+        CGFloat realHorInset = (_contentInsets.left + _contentInsets.right) * (realScrollViewH / _contentSize.width);
+        CGFloat realHorWidth = realScrollViewH + realHorInset;
         if (direction == JPImageresizerHorizontalLeftDirection ||
             direction == JPImageresizerHorizontalRightDirection) {
-            scale = self.frame.size.width / self.scrollView.bounds.size.height;
+            scale = self.frame.size.width / realHorWidth;
         } else {
-            scale = self.scrollView.bounds.size.height / self.frame.size.width;
+            scale = realHorWidth / self.frame.size.width;
         }
     }
     
     CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * M_PI * 0.5;
     
-    //    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
-    //    if (!isNormal) {
-    //        angle *= -1.0;
-    //    }
+    BOOL isNormal = (_verticalityMirror && _horizontalMirror) || (!_verticalityMirror && !_horizontalMirror);
+    if (!isNormal) angle *= -1.0;
     
     CATransform3D svTransform = self.scrollView.layer.transform;
     svTransform = CATransform3DScale(svTransform, scale, scale, 1);
