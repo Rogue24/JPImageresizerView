@@ -95,15 +95,11 @@
 /** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
 @property (nonatomic) BOOL isLockResizeFrame;
 
-/** 旋转后，是否自动缩放至合适尺寸（默认当图片的宽度比高度小时为YES） */
-@property (nonatomic, assign) BOOL isRotatedAutoScale;
-
-/**
- * verticalityMirror：垂直镜像，沿着Y轴旋转180°
- * horizontalMirror：水平镜像，沿着X轴旋转180°
- */
+/** verticalityMirror：垂直镜像，沿着Y轴旋转180° */
 @property (nonatomic, assign) BOOL verticalityMirror;
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
+
+/** horizontalMirror：水平镜像，沿着X轴旋转180° */
 @property (nonatomic, assign) BOOL horizontalMirror;
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 

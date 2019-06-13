@@ -113,17 +113,23 @@
     self.frameView.panGR.enabled = !isLockResizeFrame;
 }
 
-- (void)setIsRotatedAutoScale:(BOOL)isRotatedAutoScale {
-    _isRotatedAutoScale = isRotatedAutoScale;
-    self.frameView.isRotatedAutoScale = isRotatedAutoScale;
-}
-
 - (void)setVerticalityMirror:(BOOL)verticalityMirror {
     [self setVerticalityMirror:verticalityMirror animated:NO];
 }
 
 - (void)setHorizontalMirror:(BOOL)horizontalMirror {
     [self setHorizontalMirror:horizontalMirror animated:NO];
+}
+
+- (void)setDirectionIndex:(NSInteger)directionIndex {
+    NSInteger maxIndex = self.allDirections.count - 1;
+    NSInteger minIndex = 0;
+    if (directionIndex < minIndex) {
+        directionIndex = maxIndex;
+    } else if (directionIndex > maxIndex) {
+        directionIndex = minIndex;
+    }
+    _directionIndex = directionIndex;
 }
 
 #pragma mark - getter
@@ -279,8 +285,6 @@
     [self.scrollView addSubview:imageView];
     self.imageView = imageView;
     
-    self.isRotatedAutoScale = h > w;
-    
     CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
     CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
     self.scrollView.contentSize = imageView.bounds.size;
@@ -313,8 +317,6 @@
                                          imageView:self.imageView
                          imageresizerIsCanRecovery:isCanRecoveryBlock
                       imageresizerIsPrepareToScale:isPrepareToScaleBlock];
-    
-    frameView.isRotatedAutoScale = self.isRotatedAutoScale;
     
     __weak typeof(self) wSelf = self;
     
@@ -450,41 +452,15 @@
     }
     
     BOOL isNormal = _verticalityMirror == _horizontalMirror;
-    if (isNormal) {
-        self.directionIndex += 1;
-        if (self.directionIndex > (self.allDirections.count - 1)) self.directionIndex = 0;
-    } else {
-        self.directionIndex -= 1;
-        if (self.directionIndex < 0) self.directionIndex = (self.allDirections.count - 1);
-    }
-    
-    JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
-    
-    CGFloat scale = 1;
-    if (self.isRotatedAutoScale) {
-        // 水平时的实际宽度为 scrollView的实际高度 + 实际（经横竖比例缩放后）的裁剪区域与主视图的水平内边距
-        CGFloat realScrollViewH = self.scrollView.bounds.size.height;
-        CGFloat realHorInset = (_contentInsets.left + _contentInsets.right) * (realScrollViewH / _contentSize.width);
-        CGFloat realHorWidth = realScrollViewH + realHorInset;
-        if (direction == JPImageresizerHorizontalLeftDirection ||
-            direction == JPImageresizerHorizontalRightDirection) {
-            scale = self.frame.size.width / realHorWidth;
-        } else {
-            scale = realHorWidth / self.frame.size.width;
-        }
-    }
     
     CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * (isNormal ? 1.0 : -1.0) * M_PI_2;
+    CATransform3D svTransform = CATransform3DRotate(self.scrollView.layer.transform, angle, 0, 0, 1);
+    CATransform3D fvTransform = CATransform3DRotate(self.frameView.layer.transform, angle, 0, 0, 1);
     
-    CATransform3D svTransform = self.scrollView.layer.transform;
-    svTransform = CATransform3DScale(svTransform, scale, scale, 1);
-    svTransform = CATransform3DRotate(svTransform, angle, 0, 0, 1);
+    self.directionIndex += (isNormal ? 1 : -1);
+    JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
-    CATransform3D fvTransform = self.frameView.layer.transform;
-    fvTransform = CATransform3DScale(fvTransform, scale, scale, 1);
-    fvTransform = CATransform3DRotate(fvTransform, angle, 0, 0, 1);
-    
-    NSTimeInterval duration = 0.23;
+    NSTimeInterval duration = 0.22;
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
         self.frameView.layer.transform = fvTransform;

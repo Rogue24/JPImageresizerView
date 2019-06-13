@@ -113,8 +113,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat _verBaseMargin;
     CGFloat _horBaseMargin;
     
-    CGFloat _verSizeScale;
-    CGFloat _horSizeScale;
     CGFloat _diffHalfW;
     
     BOOL _isArbitrarily;
@@ -129,8 +127,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
     
     CGSize _contentSize;
-    
-    BOOL _isRotation;
 }
 
 #pragma mark - setter
@@ -246,11 +242,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
-    if (resizeWHScale > 0) {
-        if (self.isHorizontalDirection) {
-            resizeWHScale = 1.0 / resizeWHScale;
-        }
-    }
+    if (resizeWHScale > 0 && [self isHorizontalDirection:_rotationDirection]) resizeWHScale = 1.0 / resizeWHScale;
     if (_resizeWHScale == resizeWHScale) return;
     _resizeWHScale = resizeWHScale;
     
@@ -300,7 +292,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         [_rightMidDot removeFromSuperlayer];
         [_topMidDot removeFromSuperlayer];
         [_bottomMidDot removeFromSuperlayer];
-        lineW = _arrLineW / _sizeScale;
+        lineW = _arrLineW;
     }
     self.leftTopDot.lineWidth = lineW;
     self.leftBottomDot.lineWidth = lineW;
@@ -328,12 +320,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             _animationOption = UIViewAnimationOptionCurveLinear;
             break;
     }
-}
-
-- (void)setIsRotatedAutoScale:(BOOL)isRotatedAutoScale {
-    if (_isRotatedAutoScale == isRotatedAutoScale) return;
-    _isRotatedAutoScale = isRotatedAutoScale;
-    if (self.superview) [self updateMaxResizeFrameWithDirection:_rotationDirection];
 }
 
 - (void)setIsCanRecovery:(BOOL)isCanRecovery {
@@ -389,12 +375,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (CGSize)imageViewSzie {
     CGFloat w = ((NSInteger)(self.imageView.frame.size.width)) * 1.0;
     CGFloat h = ((NSInteger)(self.imageView.frame.size.height)) * 1.0;
-    if (self.rotationDirection == JPImageresizerVerticalUpDirection ||
-        self.rotationDirection == JPImageresizerVerticalDownDirection) {
-        return CGSizeMake(w, h);
-    } else {
-        return CGSizeMake(h, w);
-    }
+    return [self isHorizontalDirection:_rotationDirection] ? CGSizeMake(h, w) : CGSizeMake(w, h);
 }
 
 - (CAShapeLayer *)leftTopDot {
@@ -457,11 +438,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     return _verRightLine;
 }
 
-- (BOOL)isHorizontalDirection {
-    return (self.rotationDirection == JPImageresizerHorizontalLeftDirection ||
-            self.rotationDirection == JPImageresizerHorizontalRightDirection);
-}
-
 - (BOOL)edgeLineIsEnabled {
     if (_isArbitrarily) {
         return _edgeLineIsEnabled;
@@ -500,7 +476,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         _arrLength = 20.0;
         _scopeWH = 50.0;
         _minImageWH = 70.0;
-        _sizeScale = 1.0;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         
         _contentSize = contentSize;
@@ -618,15 +593,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     return _isArbitrarily && _frameType == JPConciseFrameType;
 }
 
+- (BOOL)isHorizontalDirection:(JPImageresizerRotationDirection)direction {
+    return (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection);
+}
+
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
-    CGFloat dotWH = _dotWH / _sizeScale;
+    CGFloat dotWH = _dotWH;
     UIBezierPath *dotPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - dotWH * 0.5, position.y - dotWH * 0.5, dotWH, dotWH)];
     return dotPath;
 }
 
 - (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(JPRectHorn)horn {
-    CGFloat arrLineW = _arrLineW / _sizeScale;
-    CGFloat arrLength = _arrLength / _sizeScale;;
+    CGFloat arrLineW = _arrLineW;
+    CGFloat arrLength = _arrLength;
     UIBezierPath *path = [UIBezierPath bezierPath];
     CGFloat halfArrLineW = arrLineW * 0.5;
     CGPoint firstPoint = CGPointZero;
@@ -715,7 +694,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (BOOL)imageresizerFrameIsEqualImageViewFrame {
     CGSize imageresizerSize = self.imageresizerSize;
     CGSize imageViewSzie = self.imageViewSzie;
-    CGFloat resizeWHScale = (self.rotationDirection == JPImageresizerVerticalUpDirection || self.rotationDirection == JPImageresizerVerticalDownDirection) ? _resizeWHScale : (1.0 / _resizeWHScale);
+    CGFloat resizeWHScale = [self isHorizontalDirection:_rotationDirection] ? (1.0 / _resizeWHScale) : _resizeWHScale;
     if (_isArbitrarily || (resizeWHScale == _originWHScale)) {
         return (fabs(imageresizerSize.width - imageViewSzie.width) <= 1 &&
                 fabs(imageresizerSize.height - imageViewSzie.height) <= 1);
@@ -792,8 +771,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     } else {
         CGFloat w = 0;
         CGFloat h = 0;
-        if (_baseImageW >= _baseImageH) {
-            h = _baseImageH;
+        if ([self isHorizontalDirection:_rotationDirection]) {
+            h = _baseImageW;
             w = h * _resizeWHScale;
             if (w > self.maxResizeW) {
                 w = self.maxResizeW;
@@ -940,8 +919,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     [self removeTimer];
     _baseImageW = self.imageView.bounds.size.width;
     _baseImageH = self.imageView.bounds.size.height;
-    _verSizeScale = 1.0;
-    _horSizeScale = _contentSize.width / self.scrollView.bounds.size.height;
     _diffHalfW = (self.bounds.size.width - _contentSize.width) * 0.5;
     CGFloat x = (self.bounds.size.width - _baseImageW) * 0.5;
     CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
@@ -955,15 +932,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
     [self updateMaxResizeFrameWithDirection:rotationDirection];
     if (!_isArbitrarily) {
-        BOOL isVer2Hor = ((_rotationDirection == JPImageresizerVerticalUpDirection ||
-                           _rotationDirection == JPImageresizerVerticalDownDirection) &&
-                          (rotationDirection == JPImageresizerHorizontalLeftDirection ||
-                           rotationDirection == JPImageresizerHorizontalRightDirection));
-        BOOL isHor2Ver = ((_rotationDirection == JPImageresizerHorizontalLeftDirection ||
-                           _rotationDirection == JPImageresizerHorizontalRightDirection) &&
-                          (rotationDirection == JPImageresizerVerticalUpDirection ||
-                           rotationDirection == JPImageresizerVerticalDownDirection));
-        if (isVer2Hor || isHor2Ver) _resizeWHScale = 1.0 / _resizeWHScale;
+        BOOL isSwitchVerHor = [self isHorizontalDirection:_rotationDirection] != [self isHorizontalDirection:rotationDirection];
+        if (isSwitchVerHor) _resizeWHScale = 1.0 / _resizeWHScale;
     }
     _rotationDirection = rotationDirection;
 }
@@ -973,35 +943,26 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat y = 0;
     CGFloat w = self.bounds.size.width;
     CGFloat h = self.bounds.size.height;
-    if (direction == JPImageresizerVerticalUpDirection ||
-        direction == JPImageresizerVerticalDownDirection) {
-        _sizeScale = _verSizeScale;
+    if ([self isHorizontalDirection:direction]) {
+        x = (w - _contentSize.height) * 0.5 +  _verBaseMargin;
+        y = (h - _contentSize.width) * 0.5 + _horBaseMargin;
+    } else {
         x = _diffHalfW + _horBaseMargin;
         y = _verBaseMargin;
-    } else {
-        if (self.isRotatedAutoScale) {
-            _sizeScale = _horSizeScale;
-            x = _verBaseMargin / _sizeScale;
-            y = _horBaseMargin / _sizeScale;
-        } else {
-            _sizeScale = _verSizeScale;
-            x = (w - _contentSize.height) * 0.5 +  _verBaseMargin / _sizeScale;
-            y = (h - _contentSize.width) * 0.5 + _horBaseMargin / _sizeScale;
-        }
     }
     w -= 2 * x;
     h -= 2 * y;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
-    _frameLayer.lineWidth = 1.0 / _sizeScale;
+    _frameLayer.lineWidth = 1.0;
     CGFloat lineW = 0;
-    if (_frameType == JPClassicFrameType) lineW = _arrLineW / _sizeScale;
+    if (_frameType == JPClassicFrameType) lineW = _arrLineW;
     _leftTopDot.lineWidth = lineW;
     _leftBottomDot.lineWidth = lineW;
     _rightTopDot.lineWidth = lineW;
     _rightBottomDot.lineWidth = lineW;
     
-    lineW = 0.5 / _sizeScale;
+    lineW = 0.5;
     _horTopLine.lineWidth = lineW;
     _horBottomLine.lineWidth = lineW;
     _verLeftLine.lineWidth = lineW;
@@ -1023,25 +984,28 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     contentOffset.y = -contentInset.top + convertPoint.y * self.scrollView.zoomScale;
     
     // minimumZoomScale
-    CGFloat currMinZoomScale = self.scrollView.minimumZoomScale;
     self.scrollView.minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
-    CGFloat diffMinZoomScale = 1;
-    if (_isRotation &&
-        (self.scrollView.zoomScale == currMinZoomScale) &&
-        (self.scrollView.minimumZoomScale != currMinZoomScale)) {
-        diffMinZoomScale = fabs(self.scrollView.minimumZoomScale - currMinZoomScale);
-    }
     
     // zoomFrame
     // 根据裁剪的区域，因为需要有间距，所以拼接成self的尺寸获取缩放的区域zoomFrame
     // 宽高比不变，所以宽度高度的比例是一样，这里就用宽度比例吧
     CGFloat convertScale = self.imageresizeW / adjustResizeFrame.size.width;
-    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale / diffMinZoomScale;
-    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale / diffMinZoomScale;
+    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale;
+    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale;
     CGFloat convertW = self.imageresizeW + 2 * diffXSpace;
     CGFloat convertH = self.imageresizeH + 2 * diffYSpace;
     CGFloat convertX = self.imageresizeX - diffXSpace;
     CGFloat convertY = self.imageresizeY - diffYSpace;
+    // 边沿检测，到顶就往外取值，防止有空隙
+    CGRect convertImageresizerFrame = [self convertRect:self.imageresizerFrame toView:self.scrollView];
+    BOOL isTheTop = fabs(convertImageresizerFrame.origin.y - self.imageView.frame.origin.y) < 1.0;
+    BOOL isTheLead = fabs(convertImageresizerFrame.origin.x - self.imageView.frame.origin.x) < 1.0;
+    BOOL isTheBottom = fabs(CGRectGetMaxY(convertImageresizerFrame) - CGRectGetMaxY(self.imageView.frame)) < 1.0;
+    BOOL isTheTrail = fabs(CGRectGetMaxX(convertImageresizerFrame) - CGRectGetMaxX(self.imageView.frame)) < 1.0;
+    if (isTheTop) convertY -= 1.0;
+    if (isTheLead) convertX -= 1.0;
+    if (isTheBottom) convertH += 1.0;
+    if (isTheTrail) convertW += 1.0;
     CGRect zoomFrame = [self convertRect:CGRectMake(convertX, convertY, convertW, convertH) toView:self.imageView];
     
     __weak typeof(self) wSelf = self;
@@ -1060,7 +1024,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         sSelf.superview.userInteractionEnabled = YES;
         [sSelf checkIsCanRecovery];
         sSelf.isPrepareToScale = NO;
-        sSelf->_isRotation = NO;
     };
     
     self.superview.userInteractionEnabled = NO;
@@ -1113,23 +1076,25 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (CGFloat)scrollViewMinZoomScaleWithResizeSize:(CGSize)size {
-    CGFloat minZoomScale = 1;
-    CGFloat w = size.width;
-    CGFloat h = size.height;
-    if (w >= h) {
-        minZoomScale = w / self->_baseImageW;
-        CGFloat imageH = self->_baseImageH * minZoomScale;
-        CGFloat trueImageH = h;
-        if (imageH < trueImageH) {
-            minZoomScale *= (trueImageH / imageH);
-        }
+    CGFloat length;
+    CGFloat baseLength;
+    CGFloat width;
+    CGFloat baseWidth;
+    if (size.width >= size.height) {
+        length = size.width;
+        baseLength = _baseImageW;
+        width = size.height;
+        baseWidth = _baseImageH;
     } else {
-        minZoomScale = h / self->_baseImageH;
-        CGFloat imageW = self->_baseImageW * minZoomScale;
-        CGFloat trueImageW = w;
-        if (imageW < trueImageW) {
-            minZoomScale *= (trueImageW / imageW);
-        }
+        length = size.height;
+        baseLength = _baseImageH;
+        width = size.width;
+        baseWidth = _baseImageW;
+    }
+    CGFloat minZoomScale = length / baseLength;
+    CGFloat scaleWidth = baseWidth * minZoomScale;
+    if (scaleWidth < width) {
+        minZoomScale *= (width / scaleWidth);
     }
     return minZoomScale;
 }
@@ -1144,10 +1109,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     CGPoint convertCenter = [self convertPoint:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds)) toView:self.imageView];
     CGPoint imageViewCenter = CGPointMake(CGRectGetMidX(self.imageView.bounds), CGRectGetMidY(self.imageView.bounds));
-    BOOL isSameCenter = (labs((NSInteger)convertCenter.x - (NSInteger)imageViewCenter.x) <= 1 &&
-                         labs((NSInteger)convertCenter.y - (NSInteger)imageViewCenter.y) <= 1);
-    BOOL isOriginFrame = (self.rotationDirection == JPImageresizerVerticalUpDirection &&
-                          [self imageresizerFrameIsEqualImageViewFrame]);
+    BOOL isSameCenter = labs((NSInteger)convertCenter.x - (NSInteger)imageViewCenter.x) <= 1 && labs((NSInteger)convertCenter.y - (NSInteger)imageViewCenter.y) <= 1;
+    BOOL isOriginFrame = self.rotationDirection == JPImageresizerVerticalUpDirection && [self imageresizerFrameIsEqualImageViewFrame];
     self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
@@ -1181,7 +1144,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
-    _isRotation = YES;
     [self removeTimer];
     [self updateRotationDirection:direction];
     [self updateImageresizerFrameWithAnimateDuration:rotationDuration];
@@ -1193,25 +1155,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)verticalityMirrorWithDiffX:(CGFloat)diffX {
-    CGFloat w = !self.isHorizontalDirection ? self.bounds.size.width : self.bounds.size.height;
-    w *= self.sizeScale;
-    
+    CGFloat w = [self isHorizontalDirection:_rotationDirection] ? self.bounds.size.height : self.bounds.size.width;
     CGFloat x = (_contentSize.width - w) * 0.5 + diffX;
     CGRect frame = self.frame;
     frame.origin.x = x;
-    
     self.scrollView.frame = frame;
     self.frame = frame;
 }
 
 - (void)horizontalMirrorWithDiffY:(CGFloat)diffY {
-    CGFloat h = !self.isHorizontalDirection ? self.bounds.size.height : self.bounds.size.width;
-    h *= self.sizeScale;
-    
+    CGFloat h = [self isHorizontalDirection:_rotationDirection] ? self.bounds.size.width : self.bounds.size.height;
     CGFloat y = (_contentSize.height - h) * 0.5 + diffY;
     CGRect frame = self.frame;
     frame.origin.y = y;
-    
     self.scrollView.frame = frame;
     self.frame = frame;
 }
@@ -1279,8 +1235,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
-    BOOL isHorizontalDirection = self.isHorizontalDirection;
-    if (isHorizontalDirection) {
+    if ([self isHorizontalDirection:_rotationDirection]) {
         BOOL temp = isVerticalityMirror;
         isVerticalityMirror = isHorizontalMirror;
         isHorizontalMirror = temp;

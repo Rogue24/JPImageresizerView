@@ -102,7 +102,7 @@
 }
 
 - (IBAction)one2one:(id)sender {
-    self.imageresizerView.resizeWHScale = 1;
+    self.imageresizerView.resizeWHScale = 1.0;
 }
 
 - (IBAction)sixteen2nine:(id)sender {

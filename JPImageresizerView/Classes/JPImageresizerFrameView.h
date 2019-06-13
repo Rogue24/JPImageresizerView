@@ -56,13 +56,7 @@
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
-@property (nonatomic, readonly) BOOL isHorizontalDirection;
-
-@property (nonatomic, assign, readonly) CGFloat sizeScale;
-
 @property (nonatomic, assign, readonly) CGFloat scrollViewMinZoomScale;
-
-@property (nonatomic, assign) BOOL isRotatedAutoScale;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);

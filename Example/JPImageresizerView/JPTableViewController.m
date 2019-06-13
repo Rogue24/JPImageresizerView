@@ -21,7 +21,13 @@
     self.title = @"Example";
     
     UIImage *image = [UIImage imageNamed:@"Girl.jpg"];
+    
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 0, (40 + 30 + 30 + 10), 0);
+    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
+    if (isX) {
+        contentInsets.top += 24;
+        contentInsets.bottom += 34;
+    }
     
     NSString *title1 = @"默认样式";
     JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
