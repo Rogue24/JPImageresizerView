@@ -123,24 +123,23 @@
 - (IBAction)resize:(id)sender {
     self.recoveryBtn.enabled = NO;
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) wSelf = self;
     
     // 1.默认以imageView的宽度为参照宽度进行裁剪
     [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) return;
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
         
         if (!resizeImage) {
             NSLog(@"没有裁剪图片");
             return;
         }
         
-        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.image = resizeImage;
-        [strongSelf.navigationController pushViewController:vc animated:YES];
+        [sSelf.navigationController pushViewController:vc animated:YES];
         
-        strongSelf.recoveryBtn.enabled = YES;
-        
+        sSelf.recoveryBtn.enabled = YES;
     }];
     
     // 2.自定义参照宽度进行裁剪（例如按屏幕宽度）

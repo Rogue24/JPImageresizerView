@@ -1,0 +1,6 @@
+framework module JPLiquidLayout {
+  umbrella header "JPLiquidLayout-umbrella.h"
+
+  export *
+  module * { export * }
+}

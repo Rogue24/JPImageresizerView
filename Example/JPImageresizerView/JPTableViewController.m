@@ -8,6 +8,7 @@
 
 #import "JPTableViewController.h"
 #import "JPViewController.h"
+#import "JPPhotoViewController.h"
 
 @interface JPTableViewController ()
 @property (nonatomic, copy) NSArray *configures;
@@ -78,24 +79,33 @@
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.configures.count;
+    return self.configures.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    NSDictionary *dic = self.configures[indexPath.row];
-    cell.textLabel.text = dic[@"title"];
+    if (indexPath.row >= self.configures.count) {
+        cell.textLabel.text = @"用户相册";
+    } else {
+        NSDictionary *dic = self.configures[indexPath.row];
+        cell.textLabel.text = dic[@"title"];
+    }
     return cell;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
-    NSDictionary *dic = self.configures[indexPath.row];
-    vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
-    vc.configure = dic[@"configure"];
-    [self.navigationController pushViewController:vc animated:YES];
+    if (indexPath.row >= self.configures.count) {
+        JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    } else {
+        JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
+        NSDictionary *dic = self.configures[indexPath.row];
+        vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
+        vc.configure = dic[@"configure"];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 @end
