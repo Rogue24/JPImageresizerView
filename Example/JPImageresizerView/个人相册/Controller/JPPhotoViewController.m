@@ -310,7 +310,7 @@
             [SVProgressHUD dismiss];
             [sSelf imageresizerWithImage:result];
         } else {
-            [SVProgressHUD showErrorWithStatus:@"照片无法获取"];
+            [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
         }
     }];
     return NO;
