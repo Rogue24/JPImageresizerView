@@ -304,10 +304,14 @@
     [SVProgressHUD show];
     __weak typeof(self) wSelf = self;
     [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:PHImageManagerMaximumSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
-        [SVProgressHUD dismiss];
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        [sSelf imageresizerWithImage:result];
+        if (result) {
+            [SVProgressHUD dismiss];
+            [sSelf imageresizerWithImage:result];
+        } else {
+            [SVProgressHUD showErrorWithStatus:@"照片无法获取"];
+        }
     }];
     return NO;
 }

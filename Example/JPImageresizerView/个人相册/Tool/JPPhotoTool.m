@@ -523,11 +523,13 @@ static JPPhotoTool *_sharedInstance;
                                         ![info[PHImageResultIsDegradedKey] boolValue]);
                 if (downloadFinined) {
                     UIImage *resultImage = [UIImage imageWithData:imageData scale:0.1];
-                    resultImage = [self resizeImage:resultImage size:targetSize];
                     if (resultImage) {
+                        resultImage = [self resizeImage:resultImage size:targetSize];
                         if (isFixOrientation) resultImage = [self imageFixOrientation:resultImage];
-                        resultHandler(asset, resultImage, info);
                     }
+                    resultHandler(asset, resultImage, info);
+                } else {
+                    resultHandler(asset, nil, info);
                 }
             }];
             return;
@@ -537,10 +539,9 @@ static JPPhotoTool *_sharedInstance;
                                 ![info[PHImageCancelledKey] boolValue] &&
                                 ![info[PHImageResultIsDegradedKey] boolValue]);
         
-        if (downloadFinined && image) {
-            if (isFixOrientation) image = [self imageFixOrientation:image];
-            resultHandler(asset, image, info);
-        }
+        if (downloadFinined && image && isFixOrientation) image = [self imageFixOrientation:image];
+        
+        resultHandler(asset, image, info);
     }];
     
 }
@@ -554,14 +555,14 @@ static JPPhotoTool *_sharedInstance;
     PHImageRequestOptions *options = isFastMode ? self.fastOptions : self.highQualityOptions;
     [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:options resultHandler:^(UIImage * _Nullable image, NSDictionary * _Nullable info) {
         if (resultHandler) {
-            if (isJustGetFinalPhoto) {
-                BOOL downloadFinined = (!info[PHImageErrorKey] &&
-                                        ![info[PHImageCancelledKey] boolValue] &&
-                                        ![info[PHImageResultIsDegradedKey] boolValue]);
-                if (downloadFinined) resultHandler(asset, image, info);
-            } else {
+//            if (isJustGetFinalPhoto) {
+//                BOOL downloadFinined = (!info[PHImageErrorKey] &&
+//                                        ![info[PHImageCancelledKey] boolValue] &&
+//                                        ![info[PHImageResultIsDegradedKey] boolValue]);
+//                if (downloadFinined) resultHandler(asset, image, info);
+//            } else {
                 resultHandler(asset, image, info);
-            }
+//            }
         }
     }];
 }
