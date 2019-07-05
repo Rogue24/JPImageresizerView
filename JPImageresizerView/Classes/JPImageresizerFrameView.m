@@ -1243,104 +1243,104 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     __block UIImage *image = self.imageView.image;
     
-    CGFloat imageScale = image.scale;
-    CGFloat imageWidth = image.size.width * imageScale;
-    CGFloat imageHeight = image.size.height * imageScale;
-    
-    CGFloat scale = imageWidth / self.imageView.bounds.size.width;
-    
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : self.imageView.bounds;
-    
     CGFloat deviceScale = [UIScreen mainScreen].scale;
     
-    if (referenceWidth > 0) {
-        CGFloat maxWidth = MAX(imageWidth, self.imageView.bounds.size.width);
-        CGFloat minWidth = MIN(imageWidth, self.imageView.bounds.size.width);
-        if (referenceWidth > maxWidth) referenceWidth = maxWidth;
-        if (referenceWidth < minWidth) referenceWidth = minWidth;
-    } else {
-        referenceWidth = self.imageView.bounds.size.width;
-    }
+    CGRect imageViewBounds = self.imageView.bounds;
+    CGFloat imageViewWidth = imageViewBounds.size.width;
+    
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     
     __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         
+        // 修正图片方向
         image = [image jp_fixOrientation];
+        
+        // 镜像处理
         if (isVerticalityMirror) image = [image jp_verticalityMirror];
         if (isHorizontalMirror) image = [image jp_horizontalMirror];
         
+        // 获取裁剪区域
+        CGFloat imageScale = image.scale;
+        CGFloat imageWidth = image.size.width * imageScale;
+        CGFloat imageHeight = image.size.height * imageScale;
         // 宽高比不变，所以宽度高度的比例是一样
-        CGFloat orgX = cropFrame.origin.x * scale;
-        CGFloat orgY = cropFrame.origin.y * scale;
-        CGFloat width = cropFrame.size.width * scale;
-        CGFloat height = cropFrame.size.height * scale;
-        CGRect cropRect = CGRectMake(orgX, orgY, width, height);
-        
-        if (orgX < 0) {
-            cropRect.origin.x = 0;
-            cropRect.size.width += -orgX;
+        CGFloat scale = imageWidth / imageViewWidth;
+        CGFloat cropX = cropFrame.origin.x * scale;
+        CGFloat cropY = cropFrame.origin.y * scale;
+        CGFloat cropW = cropFrame.size.width * scale;
+        CGFloat cropH = cropFrame.size.height * scale;
+        if (cropX < 0) {
+            cropW += -cropX;
+            cropX = 0;
         }
-        
-        if (orgY < 0) {
-            cropRect.origin.y = 0;
-            cropRect.size.height += -orgY;
+        if (cropY < 0) {
+            cropH += -cropY;
+            cropY = 0;
         }
-        
-        CGFloat cropMaxX = CGRectGetMaxX(cropRect);
+        CGFloat cropMaxX = cropX + cropW;
         if (cropMaxX > imageWidth) {
-            CGFloat diffW = cropMaxX - imageWidth;
-            cropRect.size.width -= diffW;
+            cropW -= (cropMaxX - imageWidth);
+            cropMaxX = cropX + cropW;
         }
-        
-        CGFloat cropMaxY = CGRectGetMaxY(cropRect);
+        CGFloat cropMaxY = cropY + cropH;
         if (cropMaxY > imageHeight) {
-            CGFloat diffH = cropMaxY - imageHeight;
-            cropRect.size.height -= diffH;
+            cropH -= (cropMaxY - imageHeight);
+            cropMaxY = cropY + cropH;
         }
+        if (isVerticalityMirror) cropX = imageWidth - cropMaxX;
+        if (isHorizontalMirror) cropY = imageHeight - cropMaxY;
+        CGRect cropRect = CGRectMake(cropX, cropY, cropW, cropH);
         
-        if (isVerticalityMirror) cropRect.origin.x = imageWidth - CGRectGetMaxX(cropRect);
-        if (isHorizontalMirror) cropRect.origin.y = imageHeight - CGRectGetMaxY(cropRect);
-        
+        // 裁剪并旋转图片
         CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
-        
-        UIImage *resizeImg = [UIImage imageWithCGImage:imgRef];
-        resizeImg = [resizeImg jp_rotate:orientation];
-        
+        image = [[UIImage imageWithCGImage:imgRef] jp_rotate:orientation];
         CGImageRelease(imgRef);
         
+        // 若原图尺寸，则原图输出
         if (isOriginImageSize) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                complete(resizeImg);
+                complete(image);
             });
             return;
         }
         
+        // 按照参照宽度获取压缩尺寸
+        CGFloat referenceW = referenceWidth;
+        if (referenceW > 0) {
+            CGFloat maxWidth = MAX(imageWidth, imageViewWidth);
+            CGFloat minWidth = MIN(imageWidth, imageViewWidth);
+            if (referenceW > maxWidth) referenceW = maxWidth;
+            if (referenceW < minWidth) referenceW = minWidth;
+        } else {
+            referenceW = imageViewWidth;
+        }
+        CGFloat cropScale = imageWidth / referenceW;
         // 有小数的情况下，边界会多出白线，需要把小数点去掉
-        CGFloat cropScale = imageWidth / referenceWidth;
-        CGSize cropSize = CGSizeMake(floor(resizeImg.size.width / cropScale), floor(resizeImg.size.height / cropScale));
+        CGSize cropSize = CGSizeMake(floor(image.size.width / cropScale), floor(image.size.height / cropScale));
         if (cropSize.width < 1) cropSize.width = 1;
         if (cropSize.height < 1) cropSize.height = 1;
         
+        // 压缩图片
         /**
          * 参考：http://www.jb51.net/article/81318.htm
          * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
             - 1.CGContextTranslateCTM(context, 0, cropSize.height);
             - 2.CGContextScaleCTM(context, 1, -1);
          */
-        
         UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextTranslateCTM(context, 0, cropSize.height);
         CGContextScaleCTM(context, 1, -1);
-        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), resizeImg.CGImage);
-        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), image.CGImage);
+        image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
-        resizeImg = nil;
+        // 输出压缩图片
         dispatch_async(dispatch_get_main_queue(), ^{
-            complete(newImage);
+            complete(image);
         });
     });
 }
