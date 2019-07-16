@@ -1775,20 +1775,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     self.imageresizerFrame = CGRectMake(x, y, width, height);
     
-    CGRect zoomFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
-    CGPoint contentOffset = self.scrollView.contentOffset;
-    if (zoomFrame.origin.x < 0) {
-        contentOffset.x -= zoomFrame.origin.x;
-    } else if (CGRectGetMaxX(zoomFrame) > _baseImageW) {
-        contentOffset.x -= CGRectGetMaxX(zoomFrame) - _baseImageW;
-    }
-    if (zoomFrame.origin.y < 0) {
-        contentOffset.y -= zoomFrame.origin.y;
-    } else if (CGRectGetMaxY(zoomFrame) > _baseImageH) {
-        contentOffset.y -= CGRectGetMaxY(zoomFrame) - _baseImageH;
-    }
-    [self.scrollView setContentOffset:contentOffset animated:NO];
-    
+    CGFloat zoomScale = self.scrollView.zoomScale;
     CGFloat wZoomScale = 0;
     CGFloat hZoomScale = 0;
     if (width > _startResizeW) {
@@ -1797,10 +1784,27 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     if (height > _startResizeH) {
         hZoomScale = height / _baseImageH;
     }
-    CGFloat zoomScale = MAX(wZoomScale, hZoomScale);
-    if (zoomScale > self.scrollView.zoomScale) {
-        [self.scrollView setZoomScale:zoomScale animated:NO];
+    CGFloat maxZoomScale = MAX(wZoomScale, hZoomScale);
+    if (maxZoomScale > zoomScale) {
+        zoomScale = maxZoomScale;
     }
+    [self.scrollView setZoomScale:zoomScale animated:NO];
+    
+    CGPoint contentOffset = self.scrollView.contentOffset;
+    CGSize contentSize = self.scrollView.contentSize;
+    CGRect convertFrame = [self convertRect:self.imageresizerFrame toView:self.scrollView];
+    if (convertFrame.origin.x < 0) {
+        contentOffset.x -= convertFrame.origin.x;
+    } else if (CGRectGetMaxX(convertFrame) > contentSize.width) {
+        contentOffset.x -= CGRectGetMaxX(convertFrame) - contentSize.width;
+    }
+    if (convertFrame.origin.y < 0) {
+        contentOffset.y -= convertFrame.origin.y;
+    } else if (CGRectGetMaxY(convertFrame) > contentSize.height) {
+        contentOffset.y -= CGRectGetMaxY(convertFrame) - contentSize.height;
+    }
+    [self.scrollView setContentOffset:contentOffset animated:NO];
+    
 }
 
 #pragma mark - super method
