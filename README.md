@@ -191,7 +191,7 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 0.5.4~0.5.5 更新内容
+#### 0.5.4~0.5.6 更新内容
     1.新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；
     2.新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；
     3.新增recoveryByResizeWHScale:方法，重置时可修改成任意resizeWHScale；
