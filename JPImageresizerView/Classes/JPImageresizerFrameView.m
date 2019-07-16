@@ -41,7 +41,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 };
 
 @interface JPImageresizerFrameView ()
-
 @property (nonatomic, strong) NSTimer *timer;
 
 @property (nonatomic, weak) UIScrollView *scrollView;
@@ -63,6 +62,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 @property (nonatomic, weak) CAShapeLayer *horBottomLine;
 @property (nonatomic, weak) CAShapeLayer *verLeftLine;
 @property (nonatomic, weak) CAShapeLayer *verRightLine;
+
+@property (nonatomic, assign) BOOL isArbitrarily;
 
 @property (nonatomic, assign) JPRectHorn currHorn;
 @property (nonatomic, assign) CGPoint diagonal;
@@ -91,42 +92,35 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 @implementation JPImageresizerFrameView
 {
-    NSTimeInterval _defaultDuration;
-    NSTimeInterval _updateDuration;
-    NSString *_kCAMediaTimingFunction;
-    UIViewAnimationOptions _animationOption;
-    
     CGFloat _dotWH;
     CGFloat _arrLineW;
     CGFloat _arrLength;
     CGFloat _scopeWH;
     CGFloat _minImageWH;
-    
     CGFloat _baseImageW;
     CGFloat _baseImageH;
-    
     CGFloat _startResizeW;
     CGFloat _startResizeH;
-    
     CGFloat _originWHScale;
-    
     CGFloat _verBaseMargin;
     CGFloat _horBaseMargin;
-    
     CGFloat _diffHalfW;
-    
-    BOOL _isArbitrarily;
-    
-    struct JPRGBAColor _fillRgba;
-    UIColor *_clearColor;
+    CGFloat _diffRotLength;
+    CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
+    CGSize _contentSize;
     
     BOOL _isHideBlurEffect;
     BOOL _isHideFrameLine;
+    BOOL _isSetResizeWHScale;
     
-    CGFloat _diffRotLength;
-    CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
+    NSTimeInterval _defaultDuration;
+    NSTimeInterval _updateDuration;
     
-    CGSize _contentSize;
+    NSString *_kCAMediaTimingFunction;
+    UIViewAnimationOptions _animationOption;
+    
+    struct JPRGBAColor _fillRgba;
+    UIColor *_clearColor;
 }
 
 #pragma mark - setter
@@ -246,18 +240,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     if (_resizeWHScale == resizeWHScale) return;
     _resizeWHScale = resizeWHScale;
     
+    _isSetResizeWHScale = YES;
+    
     _updateDuration = isAnimated ? _defaultDuration : -1.0;
     
-    _isArbitrarily = resizeWHScale <= 0;
-    
-    if (_frameType == JPConciseFrameType) {
-        CGFloat midDotOpacity = 1;
-        if (!_isArbitrarily) midDotOpacity = 0;
-        _leftMidDot.opacity = midDotOpacity;
-        _rightMidDot.opacity = midDotOpacity;
-        _topMidDot.opacity = midDotOpacity;
-        _bottomMidDot.opacity = midDotOpacity;
-    }
+    self.isArbitrarily = resizeWHScale <= 0;
     
     if (self.superview) [self updateImageOriginFrameWithDirection:_rotationDirection];
 }
@@ -330,6 +317,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setIsPrepareToScale:(BOOL)isPrepareToScale {
     _isPrepareToScale = isPrepareToScale;
     !self.imageresizerIsPrepareToScale ? : self.imageresizerIsPrepareToScale(isPrepareToScale);
+}
+
+- (void)setIsArbitrarily:(BOOL)isArbitrarily {
+    _isArbitrarily = isArbitrarily;
+    if (_frameType == JPConciseFrameType) {
+        CGFloat midDotOpacity = isArbitrarily ? 1.0 : 0.0;
+        _leftMidDot.opacity = midDotOpacity;
+        _rightMidDot.opacity = midDotOpacity;
+        _topMidDot.opacity = midDotOpacity;
+        _bottomMidDot.opacity = midDotOpacity;
+    }
 }
 
 #pragma mark - getter
@@ -532,6 +530,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         
         if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale - 1.0;
         self.resizeWHScale = resizeWHScale;
+        self.initialResizeWHScale = resizeWHScale;
         
         UIPanGestureRecognizer *panGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
         [self addGestureRecognizer:panGR];
@@ -571,7 +570,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 - (void)timerHandle {
     [self removeTimer];
-    [self updateImageresizerFrameWithAnimateDuration:_defaultDuration];
+    [self adjustImageresizerFrameWithAnimateDuration:_defaultDuration];
 }
 
 #pragma mark - assist method
@@ -925,7 +924,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     [self updateImageresizerFrame:[self baseImageresizerFrame] animateDuration:_updateDuration];
-    [self updateImageresizerFrameWithAnimateDuration:_updateDuration];
+    [self adjustImageresizerFrameWithAnimateDuration:_updateDuration];
     _updateDuration = -1.0;
 }
 
@@ -969,53 +968,62 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _verRightLine.lineWidth = lineW;
 }
 
-- (void)updateImageresizerFrameWithAnimateDuration:(NSTimeInterval)duration {
+- (void)adjustImageresizerFrameWithAnimateDuration:(NSTimeInterval)duration {
     CGRect adjustResizeFrame = [self adjustResizeFrame];
-    
-    // contentInset
-    UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
-
-    // contentOffset
-    CGPoint contentOffset = CGPointZero;
-    CGPoint origin = self.imageresizerFrame.origin;
-    CGPoint convertPoint = [self convertPoint:origin toView:self.imageView];
-    // 这个convertPoint是相对self.imageView.bounds上的点，所以要✖️zoomScale拿到相对frame实际显示的大小
-    contentOffset.x = -contentInset.left + convertPoint.x * self.scrollView.zoomScale;
-    contentOffset.y = -contentInset.top + convertPoint.y * self.scrollView.zoomScale;
-    
-    // minimumZoomScale
-    self.scrollView.minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
+    CGRect imageresizerFrame = self.imageresizerFrame;
+    UIScrollView *scrollView = self.scrollView;
+    UIImageView *imageView = self.imageView;
     
     // zoomFrame
     // 根据裁剪的区域，因为需要有间距，所以拼接成self的尺寸获取缩放的区域zoomFrame
     // 宽高比不变，所以宽度高度的比例是一样，这里就用宽度比例吧
-    CGFloat convertScale = self.imageresizeW / adjustResizeFrame.size.width;
-    CGFloat diffXSpace = adjustResizeFrame.origin.x * convertScale;
-    CGFloat diffYSpace = adjustResizeFrame.origin.y * convertScale;
-    CGFloat convertW = self.imageresizeW + 2 * diffXSpace;
-    CGFloat convertH = self.imageresizeH + 2 * diffYSpace;
-    CGFloat convertX = self.imageresizeX - diffXSpace;
-    CGFloat convertY = self.imageresizeY - diffYSpace;
+    CGFloat convertScale = imageresizerFrame.size.width / adjustResizeFrame.size.width;
+    CGFloat dx = -adjustResizeFrame.origin.x * convertScale;
+    CGFloat dy = -adjustResizeFrame.origin.y * convertScale;
+    CGRect convertZoomFrame = CGRectInset(imageresizerFrame, dx, dy);
+    if (_isSetResizeWHScale) {
+        dx = -(convertZoomFrame.size.width / convertScale - convertZoomFrame.size.width) * 0.5;
+        dy = -(convertZoomFrame.size.height / convertScale - convertZoomFrame.size.height) * 0.5;
+        convertZoomFrame = CGRectInset(convertZoomFrame, dx, dy);
+    }
     // 边沿检测，到顶就往外取值，防止有空隙
-    CGRect convertImageresizerFrame = [self convertRect:self.imageresizerFrame toView:self.scrollView];
-    BOOL isTheTop = fabs(convertImageresizerFrame.origin.y - self.imageView.frame.origin.y) < 1.0;
-    BOOL isTheLead = fabs(convertImageresizerFrame.origin.x - self.imageView.frame.origin.x) < 1.0;
-    BOOL isTheBottom = fabs(CGRectGetMaxY(convertImageresizerFrame) - CGRectGetMaxY(self.imageView.frame)) < 1.0;
-    BOOL isTheTrail = fabs(CGRectGetMaxX(convertImageresizerFrame) - CGRectGetMaxX(self.imageView.frame)) < 1.0;
-    if (isTheTop) convertY -= 1.0;
-    if (isTheLead) convertX -= 1.0;
-    if (isTheBottom) convertH += 1.0;
-    if (isTheTrail) convertW += 1.0;
-    CGRect zoomFrame = [self convertRect:CGRectMake(convertX, convertY, convertW, convertH) toView:self.imageView];
+    CGRect convertImageresizerFrame = [self convertRect:imageresizerFrame toView:scrollView];
+    BOOL isTheTop = fabs(convertImageresizerFrame.origin.y - imageView.frame.origin.y) < 1.0;
+    BOOL isTheLead = fabs(convertImageresizerFrame.origin.x - imageView.frame.origin.x) < 1.0;
+    BOOL isTheBottom = fabs(CGRectGetMaxY(convertImageresizerFrame) - CGRectGetMaxY(imageView.frame)) < 1.0;
+    BOOL isTheTrail = fabs(CGRectGetMaxX(convertImageresizerFrame) - CGRectGetMaxX(imageView.frame)) < 1.0;
+    if (isTheTop) convertZoomFrame.origin.y -= 1.0;
+    if (isTheLead) convertZoomFrame.origin.x -= 1.0;
+    if (isTheBottom) convertZoomFrame.size.height += 1.0;
+    if (isTheTrail) convertZoomFrame.size.width += 1.0;
+    CGRect zoomFrame = [self convertRect:convertZoomFrame toView:imageView];
+    
+    // contentInset
+    UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
+    
+    // contentOffset
+    __block CGPoint contentOffset;
+    if (!_isSetResizeWHScale) {
+        contentOffset = [self convertPoint:imageresizerFrame.origin toView:imageView];
+    }
+    
+    // minimumZoomScale
+    scrollView.minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
     
     __weak typeof(self) wSelf = self;
     
     void (^zoomBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        [sSelf.scrollView setContentInset:contentInset];
-        [sSelf.scrollView setContentOffset:contentOffset animated:NO];
-        [sSelf.scrollView zoomToRect:zoomFrame animated:NO];
+        [scrollView setContentInset:contentInset];
+        [scrollView zoomToRect:zoomFrame animated:NO];
+        
+        if (sSelf->_isSetResizeWHScale) {
+            contentOffset = [sSelf convertPoint:sSelf.imageresizerFrame.origin toView:imageView];
+        }
+        contentOffset.x = -contentInset.left + contentOffset.x * scrollView.zoomScale;
+        contentOffset.y = -contentInset.top + contentOffset.y * scrollView.zoomScale;
+        [scrollView setContentOffset:contentOffset animated:NO];
     };
     
     void (^completeBlock)(void) = ^{
@@ -1024,6 +1032,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         sSelf.superview.userInteractionEnabled = YES;
         [sSelf checkIsCanRecovery];
         sSelf.isPrepareToScale = NO;
+        sSelf->_isSetResizeWHScale = NO;
     };
     
     self.superview.userInteractionEnabled = NO;
@@ -1100,6 +1109,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)checkIsCanRecovery {
+    if (self.resizeWHScale != self.initialResizeWHScale) {
+        self.isCanRecovery = YES;
+        return;
+    }
+    
     BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     if (isVerticalityMirror || isHorizontalMirror) {
@@ -1146,7 +1160,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
     [self removeTimer];
     [self updateRotationDirection:direction];
-    [self updateImageresizerFrameWithAnimateDuration:rotationDuration];
+    [self adjustImageresizerFrameWithAnimateDuration:rotationDuration];
 }
 
 - (void)willMirror:(BOOL)animated {
@@ -1183,7 +1197,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     [self removeTimer];
 }
 
-- (void)recoveryWithDuration:(NSTimeInterval)duration {
+- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale duration:(NSTimeInterval)duration {
+    if (_resizeWHScale != resizeWHScale) {
+        _resizeWHScale = resizeWHScale;
+        self.isArbitrarily = _resizeWHScale <= 0;
+    }
+    
     [self updateRotationDirection:JPImageresizerVerticalUpDirection];
     
     CGRect adjustResizeFrame = _isArbitrarily ? [self baseImageresizerFrame] : [self adjustResizeFrame];
@@ -1204,7 +1223,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)recoveryDone {
-    [self updateImageresizerFrameWithAnimateDuration:-1.0];
+    [self adjustImageresizerFrameWithAnimateDuration:-1.0];
     self.window.userInteractionEnabled = YES;
 }
 

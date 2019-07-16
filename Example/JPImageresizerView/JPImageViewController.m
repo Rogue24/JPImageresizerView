@@ -43,4 +43,8 @@
     [[JPPhotoTool sharedInstance] savePhotoToAppAlbumSuccessWithImage:self.image];
 }
 
+- (void)dealloc {
+    NSLog(@"imageViewController is dead");
+}
+
 @end

@@ -70,13 +70,17 @@
     [self.frameView setResizeWHScale:resizeWHScale animated:YES];
 }
 
+- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
+    [self.frameView setResizeWHScale:resizeWHScale animated:isAnimated];
+}
+
+- (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
+    self.frameView.initialResizeWHScale = initialResizeWHScale;
+}
+
 - (void)setEdgeLineIsEnabled:(BOOL)edgeLineIsEnabled {
     _edgeLineIsEnabled = edgeLineIsEnabled;
     self.frameView.edgeLineIsEnabled = edgeLineIsEnabled;
-}
-
-- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
-    [self.frameView setResizeWHScale:resizeWHScale animated:isAnimated];
 }
 
 - (void)setIsClockwiseRotation:(BOOL)isClockwiseRotation {
@@ -156,6 +160,10 @@
 
 - (CGFloat)resizeWHScale {
     return _frameView.resizeWHScale;
+}
+
+- (CGFloat)initialResizeWHScale {
+    return _frameView.initialResizeWHScale;
 }
 
 - (CGFloat)maskAlpha {
@@ -469,6 +477,14 @@
 }
 
 - (void)recovery {
+    [self recoveryByResizeWHScale:self.initialResizeWHScale];
+}
+
+- (void)recoveryByCurrentResizeWHScale {
+    [self recoveryByResizeWHScale:self.resizeWHScale];
+}
+
+- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale {
     if (!self.frameView.isCanRecovery) {
         JPLog(@"已经是初始状态，不需要重置");
         return;
@@ -499,7 +515,7 @@
         self.scrollView.frame = frame;
         self.frameView.frame = frame;
         
-        [self.frameView recoveryWithDuration:duration];
+        [self.frameView recoveryByResizeWHScale:resizeWHScale duration:duration];
         
     } completion:^(BOOL finished) {
         [self.frameView recoveryDone];

@@ -6,7 +6,7 @@
 //  Copyright (c) 2017 ZhouJianPing. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 #import "JPImageresizerView.h"
 
 @interface JPViewController : UIViewController

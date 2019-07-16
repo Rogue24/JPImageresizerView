@@ -46,6 +46,8 @@
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
+@property (nonatomic, assign) CGFloat initialResizeWHScale;
+
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
 
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
@@ -71,7 +73,7 @@
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration;
 
 - (void)willRecovery;
-- (void)recoveryWithDuration:(NSTimeInterval)duration;
+- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale duration:(NSTimeInterval)duration;
 - (void)recoveryDone;
 
 - (void)willMirror:(BOOL)animated;

@@ -142,8 +142,16 @@ self.imageresizerView.isClockwiseRotation = YES;
 
 #### 重置
 ```obj
-// 重置为初始状态，方向垂直向上
+// 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
+
+// 1.默认按initialResizeWHScale进行重置
 [self.imageresizerView recovery];
+
+// 2.按当前resizeWHScale进行重置
+[self.imageresizerView recoveryByCurrentResizeWHScale];
+
+// 3.按指定resizeWHScale进行重置
+[self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
 ```
 
 #### 裁剪
@@ -182,6 +190,12 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 0.5.4 更新内容
+    1.新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；
+    2.新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；
+    3.新增recoveryByResizeWHScale:方法，重置时可修改成任意resizeWHScale；
+    4.修复了不断切换resizeWHScale时不断缩放的问题。
 
 #### 0.5.1~0.5.3 更新内容
     1.修复了设置镜像后的旋转、裁剪错乱问题；

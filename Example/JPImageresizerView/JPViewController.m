@@ -25,9 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     self.view.backgroundColor = self.configure.bgColor;
-    
     self.recoveryBtn.enabled = NO;
     
     __weak typeof(self) wSelf = self;
@@ -49,6 +47,13 @@
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
     self.configure = nil;
+    
+    // initialResizeWHScale默认为初始化时的resizeWHScale
+    // 若之后修改了resizeWHScale的值，重置时（调用 recovery）resizeWHScale会重置为该属性的值
+    // self.imageresizerView.initialResizeWHScale = 16.0 / 9.0; // 可随意修改该参数
+    
+    // 若想重置为当前resizeWHScale，可使用recoveryByCurrentResizeWHScale方法
+    // 若想重置为任意resizeWHScale，可使用recoveryByResizeWHScale:方法
     
     // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
     if (@available(iOS 11.0, *)) {
@@ -94,7 +99,14 @@
 }
 
 - (IBAction)recovery:(id)sender {
+    // 1.默认按initialResizeWHScale进行重置
     [self.imageresizerView recovery];
+    
+    // 2.按当前resizeWHScale进行重置
+//    [self.imageresizerView recoveryByCurrentResizeWHScale];
+    
+    // 3.按指定resizeWHScale进行重置
+//    [self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
 }
 
 - (IBAction)anyScale:(id)sender {
