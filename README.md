@@ -145,12 +145,17 @@ self.imageresizerView.isClockwiseRotation = YES;
 // 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
 
 // 1.默认按initialResizeWHScale进行重置
+/**
+ * initialResizeWHScale默认为初始化时的resizeWHScale
+ * 初始化后可自行修改initialResizeWHScale的值
+ * 重置时（调用recovery）resizeWHScale会重置为initialResizeWHScale的值
+ */
 [self.imageresizerView recovery];
 
-// 2.按当前resizeWHScale进行重置
+// 2.按当前resizeWHScale进行重置（resizeWHScale不会重置为initialResizeWHScale的值）
 [self.imageresizerView recoveryByCurrentResizeWHScale];
 
-// 3.按指定resizeWHScale进行重置
+// 3.按指定resizeWHScale进行重置（自定义重置的resizeWHScale）
 [self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
 ```
 
