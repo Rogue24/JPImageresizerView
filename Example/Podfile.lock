@@ -1,5 +1,5 @@
 PODS:
-  - JPImageresizerView (0.5.3)
+  - JPImageresizerView (1.0.0)
   - JPLiquidLayout (0.1.1)
   - Masonry (1.1.0)
   - pop (1.0.12)
@@ -24,7 +24,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JPImageresizerView: eedd90ce2082fa10f104f4282e428cd1c3da86b9
+  JPImageresizerView: da50a142a8b594f46e22bc149836d1679a00dcb6
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a

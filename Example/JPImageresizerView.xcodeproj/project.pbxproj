@@ -27,22 +27,20 @@
 		1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36622B2854A00B6B6AB /* Kobe.jpg */; };
 		1A0AB36A22B2854A00B6B6AB /* Girl.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36722B2854A00B6B6AB /* Girl.jpg */; };
 		1A0AB36B22B2854A00B6B6AB /* Lotus.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36822B2854A00B6B6AB /* Lotus.jpg */; };
+		1A0AFEEE22E5F078002BECE9 /* JPImageresizerView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A0AFEE622E5F078002BECE9 /* JPImageresizerView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A0AFF0622E5F117002BECE9 /* JPImageresizerConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0AFEFD22E5F116002BECE9 /* JPImageresizerConfigure.h */; };
+		1A0AFF0722E5F117002BECE9 /* JPImageresizerTypedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0AFEFE22E5F116002BECE9 /* JPImageresizerTypedef.h */; };
+		1A0AFF0822E5F117002BECE9 /* JPImageresizerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0AFEFF22E5F117002BECE9 /* JPImageresizerView.h */; };
+		1A0AFF0922E5F117002BECE9 /* JPImageresizerFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AFF0022E5F117002BECE9 /* JPImageresizerFrameView.m */; };
+		1A0AFF0A22E5F117002BECE9 /* JPImageresizerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AFF0122E5F117002BECE9 /* JPImageresizerView.m */; };
+		1A0AFF0B22E5F117002BECE9 /* UIImage+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AFF0222E5F117002BECE9 /* UIImage+JPExtension.m */; };
+		1A0AFF0C22E5F117002BECE9 /* JPImageresizerFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0AFF0322E5F117002BECE9 /* JPImageresizerFrameView.h */; };
+		1A0AFF0D22E5F117002BECE9 /* UIImage+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0AFF0422E5F117002BECE9 /* UIImage+JPExtension.h */; };
+		1A0AFF0E22E5F117002BECE9 /* JPImageresizerConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AFF0522E5F117002BECE9 /* JPImageresizerConfigure.m */; };
 		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */; };
 		1A601A3A1FEBB523004B39A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README.md */; };
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
-		1A9ED47B22DDA22400159F91 /* JPImageresizerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9ED47422DDA22400159F91 /* JPImageresizerView.framework */; };
-		1A9ED47C22DDA22400159F91 /* JPImageresizerView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9ED47422DDA22400159F91 /* JPImageresizerView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1A9ED48922DDA24700159F91 /* JPImageresizerConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9ED48022DDA24700159F91 /* JPImageresizerConfigure.h */; };
-		1A9ED48A22DDA24700159F91 /* JPImageresizerTypedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9ED48122DDA24700159F91 /* JPImageresizerTypedef.h */; };
-		1A9ED48B22DDA24700159F91 /* UIImage+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9ED48222DDA24700159F91 /* UIImage+JPExtension.h */; };
-		1A9ED48C22DDA24700159F91 /* JPImageresizerFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9ED48322DDA24700159F91 /* JPImageresizerFrameView.h */; };
-		1A9ED48D22DDA24700159F91 /* JPImageresizerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9ED48422DDA24700159F91 /* JPImageresizerView.h */; };
-		1A9ED48E22DDA24700159F91 /* UIImage+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9ED48522DDA24700159F91 /* UIImage+JPExtension.m */; };
-		1A9ED48F22DDA24700159F91 /* JPImageresizerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9ED48622DDA24700159F91 /* JPImageresizerView.m */; };
-		1A9ED49022DDA24700159F91 /* JPImageresizerConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9ED48722DDA24700159F91 /* JPImageresizerConfigure.m */; };
-		1A9ED49122DDA24700159F91 /* JPImageresizerFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9ED48822DDA24700159F91 /* JPImageresizerFrameView.m */; };
-		1A9ED49322DDA33000159F91 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A9ED49222DDA33000159F91 /* Info.plist */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -56,17 +54,16 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		6E491940399175C9813B5529 /* Pods_JPImageresizerView_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FF4345995F06176F7CA1A6B /* Pods_JPImageresizerView_Example.framework */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1A9ED47922DDA22400159F91 /* PBXContainerItemProxy */ = {
+		1A0AFEEB22E5F078002BECE9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6003F582195388D10070C39A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1A9ED47322DDA22400159F91;
+			remoteGlobalIDString = 1A0AFEE522E5F078002BECE9;
 			remoteInfo = JPImageresizerView;
 		};
 		6003F5B3195388D20070C39A /* PBXContainerItemProxy */ = {
@@ -85,7 +82,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1A9ED47C22DDA22400159F91 /* JPImageresizerView.framework in Embed Frameworks */,
+				1A0AFEEE22E5F078002BECE9 /* JPImageresizerView.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,23 +128,23 @@
 		1A0AB36622B2854A00B6B6AB /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A0AB36722B2854A00B6B6AB /* Girl.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl.jpg; sourceTree = "<group>"; };
 		1A0AB36822B2854A00B6B6AB /* Lotus.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Lotus.jpg; sourceTree = "<group>"; };
+		1A0AFEE622E5F078002BECE9 /* JPImageresizerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JPImageresizerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A0AFEE922E5F078002BECE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A0AFEFD22E5F116002BECE9 /* JPImageresizerConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerConfigure.h; path = ../../JPImageresizerView/Classes/JPImageresizerConfigure.h; sourceTree = "<group>"; };
+		1A0AFEFE22E5F116002BECE9 /* JPImageresizerTypedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerTypedef.h; path = ../../JPImageresizerView/Classes/JPImageresizerTypedef.h; sourceTree = "<group>"; };
+		1A0AFEFF22E5F117002BECE9 /* JPImageresizerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerView.h; path = ../../JPImageresizerView/Classes/JPImageresizerView.h; sourceTree = "<group>"; };
+		1A0AFF0022E5F117002BECE9 /* JPImageresizerFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerFrameView.m; path = ../../JPImageresizerView/Classes/JPImageresizerFrameView.m; sourceTree = "<group>"; };
+		1A0AFF0122E5F117002BECE9 /* JPImageresizerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerView.m; path = ../../JPImageresizerView/Classes/JPImageresizerView.m; sourceTree = "<group>"; };
+		1A0AFF0222E5F117002BECE9 /* UIImage+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+JPExtension.m"; path = "../../JPImageresizerView/Classes/UIImage+JPExtension.m"; sourceTree = "<group>"; };
+		1A0AFF0322E5F117002BECE9 /* JPImageresizerFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerFrameView.h; path = ../../JPImageresizerView/Classes/JPImageresizerFrameView.h; sourceTree = "<group>"; };
+		1A0AFF0422E5F117002BECE9 /* UIImage+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+JPExtension.h"; path = "../../JPImageresizerView/Classes/UIImage+JPExtension.h"; sourceTree = "<group>"; };
+		1A0AFF0522E5F117002BECE9 /* JPImageresizerConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerConfigure.m; path = ../../JPImageresizerView/Classes/JPImageresizerConfigure.m; sourceTree = "<group>"; };
 		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
 		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPImageViewController.h; sourceTree = "<group>"; };
 		1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPImageViewController.m; sourceTree = "<group>"; };
 		1A601A381FEBB523004B39A1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1A601A391FEBB523004B39A1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		1A9ED47422DDA22400159F91 /* JPImageresizerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JPImageresizerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A9ED48022DDA24700159F91 /* JPImageresizerConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerConfigure.h; path = ../../JPImageresizerView/Classes/JPImageresizerConfigure.h; sourceTree = "<group>"; };
-		1A9ED48122DDA24700159F91 /* JPImageresizerTypedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerTypedef.h; path = ../../JPImageresizerView/Classes/JPImageresizerTypedef.h; sourceTree = "<group>"; };
-		1A9ED48222DDA24700159F91 /* UIImage+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+JPExtension.h"; path = "../../JPImageresizerView/Classes/UIImage+JPExtension.h"; sourceTree = "<group>"; };
-		1A9ED48322DDA24700159F91 /* JPImageresizerFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerFrameView.h; path = ../../JPImageresizerView/Classes/JPImageresizerFrameView.h; sourceTree = "<group>"; };
-		1A9ED48422DDA24700159F91 /* JPImageresizerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPImageresizerView.h; path = ../../JPImageresizerView/Classes/JPImageresizerView.h; sourceTree = "<group>"; };
-		1A9ED48522DDA24700159F91 /* UIImage+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+JPExtension.m"; path = "../../JPImageresizerView/Classes/UIImage+JPExtension.m"; sourceTree = "<group>"; };
-		1A9ED48622DDA24700159F91 /* JPImageresizerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerView.m; path = ../../JPImageresizerView/Classes/JPImageresizerView.m; sourceTree = "<group>"; };
-		1A9ED48722DDA24700159F91 /* JPImageresizerConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerConfigure.m; path = ../../JPImageresizerView/Classes/JPImageresizerConfigure.m; sourceTree = "<group>"; };
-		1A9ED48822DDA24700159F91 /* JPImageresizerFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerFrameView.m; path = ../../JPImageresizerView/Classes/JPImageresizerFrameView.m; sourceTree = "<group>"; };
-		1A9ED49222DDA33000159F91 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* JPImageresizerView_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JPImageresizerView_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -175,7 +172,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1A9ED47122DDA22400159F91 /* Frameworks */ = {
+		1A0AFEE322E5F078002BECE9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -186,11 +183,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9ED47B22DDA22400159F91 /* JPImageresizerView.framework in Frameworks */,
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				6E491940399175C9813B5529 /* Pods_JPImageresizerView_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,19 +318,19 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
-		1A9ED47522DDA22400159F91 /* JPImageresizerView */ = {
+		1A0AFEE722E5F078002BECE9 /* JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
-				1A9ED49222DDA33000159F91 /* Info.plist */,
-				1A9ED48122DDA24700159F91 /* JPImageresizerTypedef.h */,
-				1A9ED48022DDA24700159F91 /* JPImageresizerConfigure.h */,
-				1A9ED48722DDA24700159F91 /* JPImageresizerConfigure.m */,
-				1A9ED48422DDA24700159F91 /* JPImageresizerView.h */,
-				1A9ED48622DDA24700159F91 /* JPImageresizerView.m */,
-				1A9ED48322DDA24700159F91 /* JPImageresizerFrameView.h */,
-				1A9ED48822DDA24700159F91 /* JPImageresizerFrameView.m */,
-				1A9ED48222DDA24700159F91 /* UIImage+JPExtension.h */,
-				1A9ED48522DDA24700159F91 /* UIImage+JPExtension.m */,
+				1A0AFEFD22E5F116002BECE9 /* JPImageresizerConfigure.h */,
+				1A0AFF0522E5F117002BECE9 /* JPImageresizerConfigure.m */,
+				1A0AFF0322E5F117002BECE9 /* JPImageresizerFrameView.h */,
+				1A0AFF0022E5F117002BECE9 /* JPImageresizerFrameView.m */,
+				1A0AFEFE22E5F116002BECE9 /* JPImageresizerTypedef.h */,
+				1A0AFEFF22E5F117002BECE9 /* JPImageresizerView.h */,
+				1A0AFF0122E5F117002BECE9 /* JPImageresizerView.m */,
+				1A0AFF0422E5F117002BECE9 /* UIImage+JPExtension.h */,
+				1A0AFF0222E5F117002BECE9 /* UIImage+JPExtension.m */,
+				1A0AFEE922E5F078002BECE9 /* Info.plist */,
 			);
 			path = JPImageresizerView;
 			sourceTree = "<group>";
@@ -354,7 +349,7 @@
 			children = (
 				60FF7A9C1954A5C5007DD14C /* Podspec Metadata */,
 				6003F593195388D20070C39A /* Example for JPImageresizerView */,
-				1A9ED47522DDA22400159F91 /* JPImageresizerView */,
+				1A0AFEE722E5F078002BECE9 /* JPImageresizerView */,
 				6003F5B5195388D20070C39A /* Tests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
@@ -367,7 +362,7 @@
 			children = (
 				6003F58A195388D20070C39A /* JPImageresizerView_Example.app */,
 				6003F5AE195388D20070C39A /* JPImageresizerView_Tests.xctest */,
-				1A9ED47422DDA22400159F91 /* JPImageresizerView.framework */,
+				1A0AFEE622E5F078002BECE9 /* JPImageresizerView.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -448,29 +443,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		1A9ED46F22DDA22400159F91 /* Headers */ = {
+		1A0AFEE122E5F078002BECE9 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9ED48B22DDA24700159F91 /* UIImage+JPExtension.h in Headers */,
-				1A9ED48D22DDA24700159F91 /* JPImageresizerView.h in Headers */,
-				1A9ED48922DDA24700159F91 /* JPImageresizerConfigure.h in Headers */,
-				1A9ED48C22DDA24700159F91 /* JPImageresizerFrameView.h in Headers */,
-				1A9ED48A22DDA24700159F91 /* JPImageresizerTypedef.h in Headers */,
+				1A0AFF0622E5F117002BECE9 /* JPImageresizerConfigure.h in Headers */,
+				1A0AFF0822E5F117002BECE9 /* JPImageresizerView.h in Headers */,
+				1A0AFF0C22E5F117002BECE9 /* JPImageresizerFrameView.h in Headers */,
+				1A0AFF0722E5F117002BECE9 /* JPImageresizerTypedef.h in Headers */,
+				1A0AFF0D22E5F117002BECE9 /* UIImage+JPExtension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1A9ED47322DDA22400159F91 /* JPImageresizerView */ = {
+		1A0AFEE522E5F078002BECE9 /* JPImageresizerView */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1A9ED47D22DDA22400159F91 /* Build configuration list for PBXNativeTarget "JPImageresizerView" */;
+			buildConfigurationList = 1A0AFEEF22E5F078002BECE9 /* Build configuration list for PBXNativeTarget "JPImageresizerView" */;
 			buildPhases = (
-				1A9ED46F22DDA22400159F91 /* Headers */,
-				1A9ED47022DDA22400159F91 /* Sources */,
-				1A9ED47122DDA22400159F91 /* Frameworks */,
-				1A9ED47222DDA22400159F91 /* Resources */,
+				1A0AFEE122E5F078002BECE9 /* Headers */,
+				1A0AFEE222E5F078002BECE9 /* Sources */,
+				1A0AFEE322E5F078002BECE9 /* Frameworks */,
+				1A0AFEE422E5F078002BECE9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -478,7 +473,7 @@
 			);
 			name = JPImageresizerView;
 			productName = JPImageresizerView;
-			productReference = 1A9ED47422DDA22400159F91 /* JPImageresizerView.framework */;
+			productReference = 1A0AFEE622E5F078002BECE9 /* JPImageresizerView.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		6003F589195388D20070C39A /* JPImageresizerView_Example */ = {
@@ -495,7 +490,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				1A9ED47A22DDA22400159F91 /* PBXTargetDependency */,
+				1A0AFEEC22E5F078002BECE9 /* PBXTargetDependency */,
 			);
 			name = JPImageresizerView_Example;
 			productName = JPImageresizerView;
@@ -527,11 +522,12 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = JP;
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = ZhouJianPing;
 				TargetAttributes = {
-					1A9ED47322DDA22400159F91 = {
-						CreatedOnToolsVersion = 10.2.1;
+					1A0AFEE522E5F078002BECE9 = {
+						CreatedOnToolsVersion = 11.0;
 						DevelopmentTeam = AH737FZCJM;
 						ProvisioningStyle = Automatic;
 					};
@@ -558,17 +554,16 @@
 			targets = (
 				6003F589195388D20070C39A /* JPImageresizerView_Example */,
 				6003F5AD195388D20070C39A /* JPImageresizerView_Tests */,
-				1A9ED47322DDA22400159F91 /* JPImageresizerView */,
+				1A0AFEE522E5F078002BECE9 /* JPImageresizerView */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1A9ED47222DDA22400159F91 /* Resources */ = {
+		1A0AFEE422E5F078002BECE9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9ED49322DDA33000159F91 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,14 +641,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1A9ED47022DDA22400159F91 /* Sources */ = {
+		1A0AFEE222E5F078002BECE9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9ED48E22DDA24700159F91 /* UIImage+JPExtension.m in Sources */,
-				1A9ED49022DDA24700159F91 /* JPImageresizerConfigure.m in Sources */,
-				1A9ED48F22DDA24700159F91 /* JPImageresizerView.m in Sources */,
-				1A9ED49122DDA24700159F91 /* JPImageresizerFrameView.m in Sources */,
+				1A0AFF0B22E5F117002BECE9 /* UIImage+JPExtension.m in Sources */,
+				1A0AFF0922E5F117002BECE9 /* JPImageresizerFrameView.m in Sources */,
+				1A0AFF0A22E5F117002BECE9 /* JPImageresizerView.m in Sources */,
+				1A0AFF0E22E5F117002BECE9 /* JPImageresizerConfigure.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -697,10 +692,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1A9ED47A22DDA22400159F91 /* PBXTargetDependency */ = {
+		1A0AFEEC22E5F078002BECE9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1A9ED47322DDA22400159F91 /* JPImageresizerView */;
-			targetProxy = 1A9ED47922DDA22400159F91 /* PBXContainerItemProxy */;
+			target = 1A0AFEE522E5F078002BECE9 /* JPImageresizerView */;
+			targetProxy = 1A0AFEEB22E5F078002BECE9 /* PBXContainerItemProxy */;
 		};
 		6003F5B4195388D20070C39A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -737,7 +732,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1A9ED47E22DDA22400159F91 /* Debug */ = {
+		1A0AFEF022E5F078002BECE9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -758,7 +753,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = JPImageresizerView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -771,7 +766,7 @@
 			};
 			name = Debug;
 		};
-		1A9ED47F22DDA22400159F91 /* Release */ = {
+		1A0AFEF122E5F078002BECE9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -793,7 +788,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = JPImageresizerView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -992,11 +987,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A9ED47D22DDA22400159F91 /* Build configuration list for PBXNativeTarget "JPImageresizerView" */ = {
+		1A0AFEEF22E5F078002BECE9 /* Build configuration list for PBXNativeTarget "JPImageresizerView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1A9ED47E22DDA22400159F91 /* Debug */,
-				1A9ED47F22DDA22400159F91 /* Release */,
+				1A0AFEF022E5F078002BECE9 /* Debug */,
+				1A0AFEF122E5F078002BECE9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
