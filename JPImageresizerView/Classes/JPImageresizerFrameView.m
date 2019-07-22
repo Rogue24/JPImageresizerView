@@ -251,6 +251,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat lineWidth = isPreview ? 0.0 : 1.0;
     CGFloat smallLineWidth = isPreview ? 0.0 : 0.5;
     CGFloat dotOpacity = isPreview ? 0.0 : 1.0;
+    CGFloat midDotOpacity = isPreview ? 0.0 : (_isArbitrarily ? 1.0 : 0.0);
     _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (isPreview ? 1 : _maskAlpha)];
     
     if (isAnimated) {
@@ -266,6 +267,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             anim.timingFunction = [CAMediaTimingFunction functionWithName:sSelf->_kCAMediaTimingFunction];
             [layer addAnimation:anim forKey:keyPath];
         };
+        
         layerAnimate(self.frameLayer,
                      aKeyPath(self.frameLayer, lineWidth),
                      @(self.frameLayer.lineWidth),
@@ -292,10 +294,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                      aKeyPath(self.leftTopDot, opacity),
                      @(self.leftTopDot.opacity),
                      @(dotOpacity));
-        layerAnimate(self.leftMidDot,
-                     aKeyPath(self.leftMidDot, opacity),
-                     @(self.leftMidDot.opacity),
-                     @(dotOpacity));
         layerAnimate(self.leftBottomDot,
                      aKeyPath(self.leftBottomDot, opacity),
                      @(self.leftBottomDot.opacity),
@@ -304,22 +302,27 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                      aKeyPath(self.rightTopDot, opacity),
                      @(self.rightTopDot.opacity),
                      @(dotOpacity));
-        layerAnimate(self.rightMidDot,
-                     aKeyPath(self.rightMidDot, opacity),
-                     @(self.rightMidDot.opacity),
-                     @(dotOpacity));
         layerAnimate(self.rightBottomDot,
                      aKeyPath(self.rightBottomDot, opacity),
                      @(self.rightBottomDot.opacity),
                      @(dotOpacity));
+        
+        layerAnimate(self.leftMidDot,
+                     aKeyPath(self.leftMidDot, opacity),
+                     @(self.leftMidDot.opacity),
+                     @(midDotOpacity));
+        layerAnimate(self.rightMidDot,
+                     aKeyPath(self.rightMidDot, opacity),
+                     @(self.rightMidDot.opacity),
+                     @(midDotOpacity));
         layerAnimate(self.topMidDot,
                      aKeyPath(self.topMidDot, opacity),
                      @(self.topMidDot.opacity),
-                     @(dotOpacity));
+                     @(midDotOpacity));
         layerAnimate(self.bottomMidDot,
                      aKeyPath(self.bottomMidDot, opacity),
                      @(self.bottomMidDot.opacity),
-                     @(dotOpacity));
+                     @(midDotOpacity));
         
         if (self.blurContentView) {
             layerAnimate(self.blurContentView.layer,
@@ -344,13 +347,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.verRightLine.lineWidth = smallLineWidth;
     
     self.leftTopDot.opacity = dotOpacity;
-    self.leftMidDot.opacity = dotOpacity;
     self.leftBottomDot.opacity = dotOpacity;
     self.rightTopDot.opacity = dotOpacity;
-    self.rightMidDot.opacity = dotOpacity;
     self.rightBottomDot.opacity = dotOpacity;
-    self.topMidDot.opacity = dotOpacity;
-    self.bottomMidDot.opacity = dotOpacity;
+    
+    self.leftMidDot.opacity = midDotOpacity;
+    self.rightMidDot.opacity = midDotOpacity;
+    self.topMidDot.opacity = midDotOpacity;
+    self.bottomMidDot.opacity = midDotOpacity;
     
     if (self.blurContentView) {
         self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
@@ -433,7 +437,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setIsArbitrarily:(BOOL)isArbitrarily {
     _isArbitrarily = isArbitrarily;
     if (_frameType == JPConciseFrameType) {
-        CGFloat midDotOpacity = _isPreview ? 0 : (isArbitrarily ? 1.0 : 0.0);
+        CGFloat midDotOpacity = _isPreview ? 0.0 : (isArbitrarily ? 1.0 : 0.0);
         _leftMidDot.opacity = midDotOpacity;
         _rightMidDot.opacity = midDotOpacity;
         _topMidDot.opacity = midDotOpacity;

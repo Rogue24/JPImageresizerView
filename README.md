@@ -202,7 +202,7 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 0.5.4~0.5.7 更新内容
+#### 1.0.0 更新内容
     1.新增了isPreview属性，用于预览裁剪后的区域；
     2.新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；
     3.新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；
