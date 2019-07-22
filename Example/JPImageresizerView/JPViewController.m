@@ -198,4 +198,10 @@
     [self.imageresizerView setHorizontalMirror:!self.imageresizerView.horizontalMirror animated:YES];
 }
 
+- (IBAction)previewAction:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    self.imageresizerView.isPreview = sender.selected;
+//    [self.imageresizerView setIsPreview:sender.selected animated:NO];
+}
+
 @end

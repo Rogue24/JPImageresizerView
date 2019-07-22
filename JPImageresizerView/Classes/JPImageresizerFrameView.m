@@ -117,7 +117,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     NSTimeInterval _defaultDuration;
     
     struct JPRGBAColor _fillRgba;
-    UIColor *_clearColor;
 }
 
 #pragma mark - setter
@@ -134,34 +133,30 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         fillColor = [UIColor blackColor];
     }
     _fillRgba = [self createRgbaWithColor:fillColor];
-    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * _maskAlpha];
-    _clearColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:0];
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (_isPreview ? 1 : _maskAlpha)];
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     if (self.blurContentView) {
-        self.blurContentView.backgroundColor = _fillColor;
+        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
     } else {
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
         self.bgLayer.fillColor = _fillColor.CGColor;
-        [CATransaction commit];
     }
+    [CATransaction commit];
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
+    if (maskAlpha < 0) maskAlpha = 0;
+    if (maskAlpha > 1) maskAlpha = 1;
     _maskAlpha = maskAlpha;
-    if (maskAlpha == 0) {
-        _fillColor = _clearColor;
-    } else {
-        _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * _maskAlpha];
-    }
-    
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (_isPreview ? 1 : maskAlpha)];
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     if (self.blurContentView) {
-        self.blurContentView.backgroundColor = _fillColor;
+        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
     } else {
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
         self.bgLayer.fillColor = _fillColor.CGColor;
-        [CATransaction commit];
     }
+    [CATransaction commit];
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
@@ -241,8 +236,128 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         CGRect adjustResizeFrame = [self adjustResizeFrame];
         NSTimeInterval duration = isAnimated ? _defaultDuration : -1.0;
         [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
-        [self adjustImageresizerFrame:adjustResizeFrame isUpdateOffset:NO animateDuration:duration];
+        [self adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:duration];
     }
+}
+
+- (void)setIsPreview:(BOOL)isPreview {
+    [self setIsPreview:isPreview animated:NO];
+}
+
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated {
+    _isPreview = isPreview;
+    
+    self.userInteractionEnabled = !isPreview;
+    CGFloat lineWidth = isPreview ? 0.0 : 1.0;
+    CGFloat smallLineWidth = isPreview ? 0.0 : 0.5;
+    CGFloat dotOpacity = isPreview ? 0.0 : 1.0;
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (isPreview ? 1 : _maskAlpha)];
+    
+    if (isAnimated) {
+        __weak typeof(self) wSelf = self;
+        void (^layerAnimate)(CALayer *layer, NSString *keyPath, id fromValue, id toValue) = ^(CALayer *layer, NSString *keyPath, id fromValue, id toValue) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf || !layer) return;
+            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:keyPath];
+            anim.fillMode = kCAFillModeBackwards;
+            anim.fromValue = fromValue;
+            anim.toValue = toValue;
+            anim.duration = sSelf->_defaultDuration;
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:sSelf->_kCAMediaTimingFunction];
+            [layer addAnimation:anim forKey:keyPath];
+        };
+        layerAnimate(self.frameLayer,
+                     aKeyPath(self.frameLayer, lineWidth),
+                     @(self.frameLayer.lineWidth),
+                     @(lineWidth));
+        
+        layerAnimate(self.horTopLine,
+                     aKeyPath(self.horTopLine, lineWidth),
+                     @(self.horTopLine.lineWidth),
+                     @(smallLineWidth));
+        layerAnimate(self.horBottomLine,
+                     aKeyPath(self.horBottomLine, lineWidth),
+                     @(self.horBottomLine.lineWidth),
+                     @(smallLineWidth));
+        layerAnimate(self.verLeftLine,
+                     aKeyPath(self.verLeftLine, lineWidth),
+                     @(self.verLeftLine.lineWidth),
+                     @(smallLineWidth));
+        layerAnimate(self.verRightLine,
+                     aKeyPath(self.verRightLine, lineWidth),
+                     @(self.verRightLine.lineWidth),
+                     @(smallLineWidth));
+        
+        layerAnimate(self.leftTopDot,
+                     aKeyPath(self.leftTopDot, opacity),
+                     @(self.leftTopDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.leftMidDot,
+                     aKeyPath(self.leftMidDot, opacity),
+                     @(self.leftMidDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.leftBottomDot,
+                     aKeyPath(self.leftBottomDot, opacity),
+                     @(self.leftBottomDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.rightTopDot,
+                     aKeyPath(self.rightTopDot, opacity),
+                     @(self.rightTopDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.rightMidDot,
+                     aKeyPath(self.rightMidDot, opacity),
+                     @(self.rightMidDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.rightBottomDot,
+                     aKeyPath(self.rightBottomDot, opacity),
+                     @(self.rightBottomDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.topMidDot,
+                     aKeyPath(self.topMidDot, opacity),
+                     @(self.topMidDot.opacity),
+                     @(dotOpacity));
+        layerAnimate(self.bottomMidDot,
+                     aKeyPath(self.bottomMidDot, opacity),
+                     @(self.bottomMidDot.opacity),
+                     @(dotOpacity));
+        
+        if (self.blurContentView) {
+            layerAnimate(self.blurContentView.layer,
+                         aKeyPath(self.blurContentView.layer, backgroundColor),
+                         ((id)self.blurContentView.layer.backgroundColor),
+                         _fillColor);
+        } else {
+            layerAnimate(self.bgLayer,
+                         aKeyPath(self.bgLayer, fillColor),
+                         ((id)self.bgLayer.fillColor),
+                         _fillColor);
+        }
+    }
+    
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    self.frameLayer.lineWidth = lineWidth;
+    
+    self.horTopLine.lineWidth = smallLineWidth;
+    self.horBottomLine.lineWidth = smallLineWidth;
+    self.verLeftLine.lineWidth = smallLineWidth;
+    self.verRightLine.lineWidth = smallLineWidth;
+    
+    self.leftTopDot.opacity = dotOpacity;
+    self.leftMidDot.opacity = dotOpacity;
+    self.leftBottomDot.opacity = dotOpacity;
+    self.rightTopDot.opacity = dotOpacity;
+    self.rightMidDot.opacity = dotOpacity;
+    self.rightBottomDot.opacity = dotOpacity;
+    self.topMidDot.opacity = dotOpacity;
+    self.bottomMidDot.opacity = dotOpacity;
+    
+    if (self.blurContentView) {
+        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
+    } else {
+        self.bgLayer.fillColor = _fillColor.CGColor;
+    }
+    [CATransaction commit];
 }
 
 - (void)setFrameType:(JPImageresizerFrameType)frameType {
@@ -318,7 +433,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setIsArbitrarily:(BOOL)isArbitrarily {
     _isArbitrarily = isArbitrarily;
     if (_frameType == JPConciseFrameType) {
-        CGFloat midDotOpacity = isArbitrarily ? 1.0 : 0.0;
+        CGFloat midDotOpacity = _isPreview ? 0 : (isArbitrarily ? 1.0 : 0.0);
         _leftMidDot.opacity = midDotOpacity;
         _rightMidDot.opacity = midDotOpacity;
         _topMidDot.opacity = midDotOpacity;
@@ -565,7 +680,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 - (void)timerHandle {
     [self removeTimer];
-    [self adjustImageresizerFrame:[self adjustResizeFrame] isUpdateOffset:YES animateDuration:_defaultDuration];
+    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:_defaultDuration];
 }
 
 #pragma mark - assist method
@@ -718,13 +833,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0 && ((_blurContentView != nil) || (_blurContentView == nil && ![self imageresizerFrameIsFullImageViewFrame]))) {
         CGFloat fromOpacity = isHide ? 1 : 0;
-        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:aKeyPath(self.blurEffectView.layer, opacity)];
+        NSString *keyPath = aKeyPath(self.blurEffectView.layer, opacity);
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:keyPath];
         anim.fillMode = kCAFillModeBackwards;
         anim.fromValue = @(fromOpacity);
         anim.toValue = @(toOpacity);
         anim.duration = duration;
         anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
-        [self.blurEffectView.layer addAnimation:anim forKey:@"opacity"];
+        [self.blurEffectView.layer addAnimation:anim forKey:keyPath];
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -739,16 +855,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0) {
         CGFloat fromOpacity = isHide ? 1 : 0;
-        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        NSString *keyPath = aKeyPath(_horTopLine, opacity);
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:keyPath];
         anim.fillMode = kCAFillModeBackwards;
         anim.fromValue = @(fromOpacity);
         anim.toValue = @(toOpacity);
         anim.duration = duration;
         anim.timingFunction = [CAMediaTimingFunction functionWithName:_kCAMediaTimingFunction];
-        [_horTopLine addAnimation:anim forKey:@"opacity"];
-        [_horBottomLine addAnimation:anim forKey:@"opacity"];
-        [_verLeftLine addAnimation:anim forKey:@"opacity"];
-        [_verRightLine addAnimation:anim forKey:@"opacity"];
+        [_horTopLine addAnimation:anim forKey:keyPath];
+        [_horBottomLine addAnimation:anim forKey:keyPath];
+        [_verLeftLine addAnimation:anim forKey:keyPath];
+        [_verRightLine addAnimation:anim forKey:keyPath];
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -859,13 +976,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
             __strong typeof(wSelf) sSelf = wSelf;
             if (!sSelf) return;
-            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:aKeyPath(layer, path)];
+            NSString *keyPath = aKeyPath(layer, path);
+            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:keyPath];
             anim.fillMode = kCAFillModeBackwards;
             anim.fromValue = [UIBezierPath bezierPathWithCGPath:layer.path];
             anim.toValue = path;
             anim.duration = duration;
             anim.timingFunction = [CAMediaTimingFunction functionWithName:sSelf->_kCAMediaTimingFunction];
-            [layer addAnimation:anim forKey:@"path"];
+            [layer addAnimation:anim forKey:keyPath];
         };
         
         layerPathAnimate(_leftTopDot, leftTopDotPath);
@@ -919,7 +1037,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     [self updateImageresizerFrame:[self baseImageresizerFrame] animateDuration:-1.0];
-    [self adjustImageresizerFrame:[self adjustResizeFrame] isUpdateOffset:YES animateDuration:-1.0];
+    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
 }
 
 - (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
@@ -947,7 +1065,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     h -= 2 * y;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
-    _frameLayer.lineWidth = 1.0;
+    _frameLayer.lineWidth = _isPreview ? 0.0 : 1.0;
     CGFloat lineW = 0;
     if (_frameType == JPClassicFrameType) lineW = _arrLineW;
     _leftTopDot.lineWidth = lineW;
@@ -955,7 +1073,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _rightTopDot.lineWidth = lineW;
     _rightBottomDot.lineWidth = lineW;
     
-    lineW = 0.5;
+    lineW = _isPreview ? 0.0 : 0.5;
     _horTopLine.lineWidth = lineW;
     _horBottomLine.lineWidth = lineW;
     _verLeftLine.lineWidth = lineW;
@@ -963,7 +1081,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)adjustImageresizerFrame:(CGRect)adjustResizeFrame
-                 isUpdateOffset:(BOOL)isUpdateOffset
+          isAdvanceUpdateOffset:(BOOL)isAdvanceUpdateOffset
                 animateDuration:(NSTimeInterval)duration {
     CGRect imageresizerFrame = self.imageresizerFrame;
     UIScrollView *scrollView = self.scrollView;
@@ -992,13 +1110,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
     
     // contentOffset
-    CGPoint contentOffset;
-    if (isUpdateOffset) {
+    __block CGPoint contentOffset;
+    if (isAdvanceUpdateOffset) {
         contentOffset = [self convertPoint:imageresizerFrame.origin toView:imageView];
         contentOffset.x = -contentInset.left + contentOffset.x * scrollView.zoomScale;
         contentOffset.y = -contentInset.top + contentOffset.y * scrollView.zoomScale;
-    } else {
-        contentOffset = scrollView.contentOffset;
     }
     
     // minimumZoomScale
@@ -1009,8 +1125,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         [scrollView setContentInset:contentInset];
-        [scrollView setContentOffset:contentOffset animated:NO];
+        if (isAdvanceUpdateOffset) {
+            [scrollView setContentOffset:contentOffset animated:NO];
+        }
         [scrollView zoomToRect:zoomFrame animated:NO];
+        if (!isAdvanceUpdateOffset) {
+            contentOffset = [sSelf convertPoint:sSelf.imageresizerFrame.origin toView:imageView];
+            contentOffset.x = -contentInset.left + contentOffset.x * scrollView.zoomScale;
+            contentOffset.y = -contentInset.top + contentOffset.y * scrollView.zoomScale;
+            [scrollView setContentOffset:contentOffset animated:NO];
+        }
     };
     void (^completeBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
@@ -1145,7 +1269,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration {
     [self removeTimer];
     [self updateRotationDirection:direction];
-    [self adjustImageresizerFrame:[self adjustResizeFrame] isUpdateOffset:YES animateDuration:rotationDuration];
+    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:rotationDuration];
 }
 
 - (void)willMirror:(BOOL)animated {
@@ -1208,7 +1332,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)recoveryDone {
-    [self adjustImageresizerFrame:[self adjustResizeFrame] isUpdateOffset:YES animateDuration:-1.0];
+    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
     self.window.userInteractionEnabled = YES;
 }
 

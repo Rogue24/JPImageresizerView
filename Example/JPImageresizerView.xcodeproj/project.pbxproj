@@ -327,8 +327,8 @@
 			isa = PBXGroup;
 			children = (
 				1A9ED49222DDA33000159F91 /* Info.plist */,
-				1A9ED48022DDA24700159F91 /* JPImageresizerConfigure.h */,
 				1A9ED48122DDA24700159F91 /* JPImageresizerTypedef.h */,
+				1A9ED48022DDA24700159F91 /* JPImageresizerConfigure.h */,
 				1A9ED48722DDA24700159F91 /* JPImageresizerConfigure.m */,
 				1A9ED48422DDA24700159F91 /* JPImageresizerView.h */,
 				1A9ED48622DDA24700159F91 /* JPImageresizerView.m */,

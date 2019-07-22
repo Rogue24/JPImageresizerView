@@ -46,6 +46,9 @@
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
+@property (nonatomic, assign) BOOL isPreview;
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
+
 @property (nonatomic, assign) CGFloat initialResizeWHScale;
 
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;

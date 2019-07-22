@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JPImageresizerConfigure.h"
+#import "JPImageresizerFrameView.h"
 
 @interface JPImageresizerView : UIView
 
@@ -19,6 +20,9 @@
         - frameView（绘制裁剪边框的view）
  * scrollView与frameView的frame一致
  */
+@property (nonatomic, weak, readonly) UIScrollView *scrollView;
+@property (nonatomic, weak, readonly) UIImageView *imageView;
+@property (nonatomic, weak, readonly) JPImageresizerFrameView *frameView;
 
 /*!
  @method
@@ -105,6 +109,10 @@
 /** horizontalMirror：水平镜像，沿着X轴旋转180° */
 @property (nonatomic, assign) BOOL horizontalMirror;
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
+
+/** 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域） */
+@property (nonatomic, assign) BOOL isPreview;
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
 
 /*!
  @method

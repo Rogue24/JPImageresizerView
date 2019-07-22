@@ -7,7 +7,6 @@
 //
 
 #import "JPImageresizerView.h"
-#import "JPImageresizerFrameView.h"
 
 #ifdef DEBUG
 #define JPLog(...) printf("%s %s 第%d行: %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String]);
@@ -16,10 +15,6 @@
 #endif
 
 @interface JPImageresizerView () <UIScrollViewDelegate>
-@property (nonatomic, weak) UIScrollView *scrollView;
-@property (nonatomic, weak) UIImageView *imageView;
-@property (nonatomic, weak) JPImageresizerFrameView *frameView;
-
 @property (nonatomic, strong) NSMutableArray *allDirections;
 @property (nonatomic, assign) NSInteger directionIndex;
 @end
@@ -136,6 +131,15 @@
     _directionIndex = directionIndex;
 }
 
+- (void)setIsPreview:(BOOL)isPreview {
+    [self setIsPreview:isPreview animated:YES];
+}
+
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated {
+    [self.frameView setIsPreview:isPreview animated:isAnimated];
+    self.scrollView.userInteractionEnabled = !isPreview;
+}
+
 #pragma mark - getter
 
 - (JPImageresizerMaskType)maskType {
@@ -171,7 +175,11 @@
 }
 
 - (BOOL)isLockResizeFrame {
-    return !self.frameView.panGR.enabled;
+    return !_frameView.panGR.enabled;
+}
+
+- (BOOL)isPreview {
+    return _frameView.isPreview;
 }
 
 #pragma mark - init
@@ -270,9 +278,10 @@
     scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.autoresizingMask = UIViewAutoresizingNone;
     scrollView.clipsToBounds = NO;
+    scrollView.scrollsToTop = NO;
     if (@available(iOS 11.0, *)) scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self addSubview:scrollView];
-    self.scrollView = scrollView;
+    _scrollView = scrollView;
 }
 
 - (void)setupImageViewWithImage:(UIImage *)image {
@@ -291,7 +300,7 @@
     imageView.frame = CGRectMake(0, 0, w, h);
     imageView.userInteractionEnabled = YES;
     [self.scrollView addSubview:imageView];
-    self.imageView = imageView;
+    _imageView = imageView;
     
     CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
     CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
@@ -341,7 +350,7 @@
     };
     
     [self addSubview:frameView];
-    self.frameView = frameView;
+    _frameView = frameView;
 }
 
 #pragma mark - private method
@@ -522,7 +531,6 @@
         self.layer.zPosition = 0;
     }];
 }
-
 
 - (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
     [self imageresizerWithComplete:complete isOriginImageSize:YES referenceWidth:0];

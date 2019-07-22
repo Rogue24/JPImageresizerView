@@ -154,6 +154,17 @@ self.imageresizerView.isClockwiseRotation = YES;
 [self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
 ```
 
+#### 预览
+```obj
+// 预览模式：隐藏边框，停止拖拽操作，用于预览裁剪后的区域
+
+// 1.默认自带动画效果
+self.imageresizerView.isPreview = YES;
+
+// 2.自定义是否带动画效果
+[self.imageresizerView setIsPreview:YES animated:NO]
+```
+
 #### 裁剪
 ```obj
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
@@ -191,12 +202,13 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 0.5.4~0.5.6 更新内容
-    1.新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；
-    2.新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；
-    3.新增recoveryByResizeWHScale:方法，重置时可修改成任意resizeWHScale；
-    4.修复了不断切换resizeWHScale时不断缩放的问题；
-    5.优化了手指拖动的效果。
+#### 0.5.4~0.5.7 更新内容
+    1.新增了isPreview属性，用于预览裁剪后的区域；
+    2.新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；
+    3.新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；
+    4.新增recoveryByResizeWHScale:方法，重置时可修改成任意resizeWHScale；
+    5.修复了不断切换resizeWHScale时不断缩放的问题；
+    6.优化了切换resizeWHScale、手指拖动时的交互效果。
 
 #### 0.5.1~0.5.3 更新内容
     1.修复了设置镜像后的旋转、裁剪错乱问题；
