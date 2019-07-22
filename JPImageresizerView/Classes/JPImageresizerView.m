@@ -219,7 +219,6 @@
                       contentInsets:(UIEdgeInsets)contentInsets
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
-    
     if (self = [super initWithFrame:frame]) {
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
@@ -246,7 +245,6 @@
                            resizeWHScale:resizeWHScale
                       isCanRecoveryBlock:imageresizerIsCanRecovery
                    isPrepareToScaleBlock:imageresizerIsPrepareToScale];
-        
     }
     return self;
 }
