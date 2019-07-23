@@ -13,7 +13,7 @@
 /**
  * 默认参数值：
     - viewFrame = [UIScreen mainScreen].bounds;
-    - maskAlpha = JPNormalMaskType;
+    - maskType = JPNormalMaskType;
     - frameType = JPConciseFrameType;
     - animationCurve = JPAnimationCurveLinear;
     - strokeColor = [UIColor whiteColor];
@@ -70,20 +70,18 @@
 /** 是否顺时针旋转 */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
 
-
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_maskType)(JPImageresizerMaskType maskType);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_verBaseMargin)(CGFloat verBaseMargin);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
-@property (nonatomic, copy, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
-
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maskType)(JPImageresizerMaskType maskType);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_verBaseMargin)(CGFloat verBaseMargin);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
 @end

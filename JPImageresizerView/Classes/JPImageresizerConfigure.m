@@ -11,19 +11,20 @@
 
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [[self alloc] init];
-    configure.resizeImage = resizeImage;
-    configure.viewFrame = [UIScreen mainScreen].bounds;
-    configure.maskAlpha = JPNormalMaskType;
-    configure.frameType = JPConciseFrameType;
-    configure.animationCurve = JPAnimationCurveEaseOut;
-    configure.strokeColor = [UIColor whiteColor];
-    configure.bgColor = [UIColor blackColor];
-    configure.maskAlpha = 0.75;
-    configure.verBaseMargin = 10.0;
-    configure.horBaseMargin = 10.0;
-    configure.resizeWHScale = 0.0;
-    configure.edgeLineIsEnabled = YES;
-    configure.contentInsets = UIEdgeInsetsZero;
+    configure
+    .jp_resizeImage(resizeImage)
+    .jp_viewFrame([UIScreen mainScreen].bounds)
+    .jp_maskType(JPNormalMaskType)
+    .jp_frameType(JPConciseFrameType)
+    .jp_animationCurve(JPAnimationCurveEaseOut)
+    .jp_strokeColor(UIColor.whiteColor)
+    .jp_bgColor(UIColor.blackColor)
+    .jp_maskAlpha(0.75)
+    .jp_verBaseMargin(10.0)
+    .jp_horBaseMargin(10.0)
+    .jp_resizeWHScale(0.0)
+    .jp_edgeLineIsEnabled(YES)
+    .jp_contentInsets(UIEdgeInsetsZero);
     !make ? : make(configure);
     return configure;
 }
