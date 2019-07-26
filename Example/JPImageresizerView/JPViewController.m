@@ -10,10 +10,8 @@
 #import "JPImageViewController.h"
 
 @interface JPViewController ()
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
-@property (weak, nonatomic) IBOutlet UIButton *goBackBtn;
 @property (weak, nonatomic) IBOutlet UIButton *resizeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *horMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
@@ -99,8 +97,8 @@
 }
 
 - (IBAction)recovery:(id)sender {
-    // 1.默认按initialResizeWHScale进行重置
-    [self.imageresizerView recovery];
+    // 1.按initialResizeWHScale进行重置
+    [self.imageresizerView recoveryByInitialResizeWHScale];
     
     // 2.按当前resizeWHScale进行重置
 //    [self.imageresizerView recoveryByCurrentResizeWHScale];
@@ -159,20 +157,6 @@
 //        // 裁剪完成，resizeImage为裁剪后的图片
 //        // 注意循环引用
 //    }];
-}
-
-- (IBAction)goBack:(id)sender {
-    for (UIButton *btn in self.processBtns) {
-        btn.hidden = NO;
-    }
-    self.imageresizerView.hidden = NO;
-    
-    self.imageView.image = nil;
-    self.imageView.hidden = YES;
-    self.goBackBtn.hidden = YES;
-    
-    self.recoveryBtn.enabled = YES;
-    [self.imageresizerView recovery];
 }
 
 - (IBAction)pop:(id)sender {

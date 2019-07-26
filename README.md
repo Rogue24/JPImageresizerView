@@ -144,13 +144,12 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```obj
 // 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
 
-// 1.默认按initialResizeWHScale进行重置
+// 1.按initialResizeWHScale进行重置
 /**
- * initialResizeWHScale默认为初始化时的resizeWHScale
- * 初始化后可自行修改initialResizeWHScale的值
- * 重置时（调用recovery）resizeWHScale会重置为initialResizeWHScale的值
+ * initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
+ * 使用该方法进行重置resizeWHScale会重置为initialResizeWHScale的值
  */
-[self.imageresizerView recovery];
+[self.imageresizerView recoveryByInitialResizeWHScale];
 
 // 2.按当前resizeWHScale进行重置（resizeWHScale不会重置为initialResizeWHScale的值）
 [self.imageresizerView recoveryByCurrentResizeWHScale];
@@ -202,9 +201,10 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 1.0.2 更新内容
-    1.裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；
-    2.优化了裁剪逻辑。
+#### 1.0.1~1.0.3 更新内容
+    1.recovery方法更名为recoveryByInitialResizeWHScale，意思按initialResizeWHScale进行重置，避免误导。
+    2.裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；
+    3.优化了裁剪逻辑；
 
 #### 1.0.0 更新内容
     1.新增了isPreview属性，用于预览裁剪后的区域；

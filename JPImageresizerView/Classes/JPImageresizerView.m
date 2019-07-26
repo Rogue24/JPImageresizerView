@@ -483,7 +483,7 @@
     } completion:nil];
 }
 
-- (void)recovery {
+- (void)recoveryByInitialResizeWHScale {
     [self recoveryByResizeWHScale:self.initialResizeWHScale];
 }
 

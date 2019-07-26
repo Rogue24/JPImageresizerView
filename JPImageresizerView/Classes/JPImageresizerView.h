@@ -133,7 +133,7 @@
  @brief 按初始裁剪宽高比进行重置
  @discussion 回到最初状态
  */
-- (void)recovery;
+- (void)recoveryByInitialResizeWHScale;
 
 /*!
  @method
