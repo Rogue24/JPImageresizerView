@@ -162,17 +162,9 @@
  @method
  @brief 压缩尺寸裁剪
  @param complete --- 裁剪完成的回调
- @param referenceWidth --- 裁剪的图片的参照宽度，例如设置为375，如果裁剪区域为图片宽度的一半，则裁剪的图片宽度为187.5，而高度则根据宽高比得出，最大和最小不超过原图和imageView两者的宽度
+ @param scale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：scale = 0.5，1000 x 1000 --> 500 x 500）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete referenceWidth:(CGFloat)referenceWidth;
-
-/*!
- @method
- @brief 压缩尺寸裁剪（referenceWidth为0，为imageView的宽度）
- @param complete --- 裁剪完成的回调
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
- */
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete scale:(CGFloat)scale;
 
 @end

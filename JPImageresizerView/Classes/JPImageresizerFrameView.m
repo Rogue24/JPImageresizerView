@@ -1340,14 +1340,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.window.userInteractionEnabled = YES;
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize referenceWidth:(CGFloat)referenceWidth {
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete scale:(CGFloat)scale {
     if (!complete) return;
     
+    if (scale <= 0) {
+        complete(nil);
+        return;
+    }
+    
     /**
-     * UIImageOrientationUp,            // default orientation
-     * UIImageOrientationDown,          // 180 deg rotation
-     * UIImageOrientationLeft,          // 90 deg CCW
-     * UIImageOrientationRight,         // 90 deg CW
+     * UIImageOrientationUp --------- default orientation
+     * UIImageOrientationDown ----- 180 deg rotation
+     * UIImageOrientationLeft -------- 90 deg CCW
+     * UIImageOrientationRight ------ 90 deg CW
      */
     UIImageOrientation orientation;
     switch (self.rotationDirection) {
@@ -1375,8 +1380,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     __block UIImage *image = self.imageView.image;
     
-    CGFloat deviceScale = [UIScreen mainScreen].scale;
-    
     CGRect imageViewBounds = self.imageView.bounds;
     CGFloat imageViewWidth = imageViewBounds.size.width;
     
@@ -1399,11 +1402,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         CGFloat imageWidth = image.size.width * imageScale;
         CGFloat imageHeight = image.size.height * imageScale;
         // 宽高比不变，所以宽度高度的比例是一样
-        CGFloat scale = imageWidth / imageViewWidth;
-        CGFloat cropX = cropFrame.origin.x * scale;
-        CGFloat cropY = cropFrame.origin.y * scale;
-        CGFloat cropW = cropFrame.size.width * scale;
-        CGFloat cropH = cropFrame.size.height * scale;
+        CGFloat cropScale = imageWidth / imageViewWidth;
+        CGFloat cropX = cropFrame.origin.x * cropScale;
+        CGFloat cropY = cropFrame.origin.y * cropScale;
+        CGFloat cropW = cropFrame.size.width * cropScale;
+        CGFloat cropH = cropFrame.size.height * cropScale;
         if (cropX < 0) {
             cropW += -cropX;
             cropX = 0;
@@ -1431,44 +1434,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         image = [[UIImage imageWithCGImage:imgRef] jp_rotate:orientation];
         CGImageRelease(imgRef);
         
-        // 若原图尺寸，则原图输出
-        if (isOriginImageSize) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                complete(image);
-            });
-            return;
-        }
-        
-        // 按照参照宽度获取压缩尺寸
-        CGFloat referenceW = referenceWidth;
-        if (referenceW > 0) {
-            CGFloat maxWidth = MAX(imageWidth, imageViewWidth);
-            CGFloat minWidth = MIN(imageWidth, imageViewWidth);
-            if (referenceW > maxWidth) referenceW = maxWidth;
-            if (referenceW < minWidth) referenceW = minWidth;
-        } else {
-            referenceW = imageViewWidth;
-        }
-        CGFloat cropScale = imageWidth / referenceW;
-        // 有小数的情况下，边界会多出白线，需要把小数点去掉
-        CGSize cropSize = CGSizeMake(floor(image.size.width / cropScale), floor(image.size.height / cropScale));
-        if (cropSize.width < 1) cropSize.width = 1;
-        if (cropSize.height < 1) cropSize.height = 1;
-        
         // 压缩图片
-        /**
-         * 参考：http://www.jb51.net/article/81318.htm
-         * 这里要注意一点CGContextDrawImage这个函数的坐标系和UIKIt的坐标系上下颠倒，需对坐标系处理如下：
-            - 1.CGContextTranslateCTM(context, 0, cropSize.height);
-            - 2.CGContextScaleCTM(context, 1, -1);
-         */
-        UIGraphicsBeginImageContextWithOptions(cropSize, 0, deviceScale);
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextTranslateCTM(context, 0, cropSize.height);
-        CGContextScaleCTM(context, 1, -1);
-        CGContextDrawImage(context, CGRectMake(0, 0, cropSize.width, cropSize.height), image.CGImage);
-        image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
+        if (scale < 1.0) image = [image jp_cgResizeImageWithScale:scale];
         
         // 输出压缩图片
         dispatch_async(dispatch_get_main_queue(), ^{

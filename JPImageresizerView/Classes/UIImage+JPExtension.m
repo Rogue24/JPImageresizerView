@@ -10,14 +10,19 @@
 
 @implementation UIImage (JPExtension)
 
+#pragma mark - 修改方向
+
+/** 修正图片的方向 */
 - (UIImage *)jp_fixOrientation {
-    if (self.imageOrientation == UIImageOrientationUp) return self;
+    
+    UIImageOrientation orientation = self.imageOrientation;
+    if (orientation == UIImageOrientationUp) return self;
     
     // We need to calculate the proper transformation to make the image upright.
     // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
     CGAffineTransform transform = CGAffineTransformIdentity;
     
-    switch (self.imageOrientation)
+    switch (orientation)
     {
         case UIImageOrientationDown:
         case UIImageOrientationDownMirrored:
@@ -41,7 +46,7 @@
             break;
     }
     
-    switch (self.imageOrientation)
+    switch (orientation)
     {
         case UIImageOrientationUpMirrored:
         case UIImageOrientationDownMirrored:
@@ -69,7 +74,7 @@
                                              CGImageGetBitmapInfo(self.CGImage));
     CGContextConcatCTM(ctx, transform);
     
-    switch (self.imageOrientation)
+    switch (orientation)
     {
         case UIImageOrientationLeft:
         case UIImageOrientationLeftMirrored:
@@ -91,10 +96,10 @@
     return img;
 }
 
+/** 按指定方向旋转图片 */
 - (UIImage*)jp_rotate:(UIImageOrientation)orientation {
     
     CGImageRef imageRef = self.CGImage;
-
     CGRect bounds = CGRectMake(0, 0, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
     CGRect rect = bounds;
     CGAffineTransform transform = CGAffineTransformIdentity;
@@ -179,20 +184,67 @@
     return newImage;
 }
 
+#pragma mark - 镜像翻转
+
+/** 沿Y轴翻转 */
 - (UIImage *)jp_verticalityMirror {
     return [self jp_rotate:UIImageOrientationUpMirrored];
 }
 
+/** 沿X轴翻转 */
 - (UIImage *)jp_horizontalMirror {
     return [self jp_rotate:UIImageOrientationDownMirrored];
 }
 
-// 交换宽高
+#pragma makr - CG缩略
+
+/** CG缩略（按比例缩略） */
+- (UIImage *)jp_cgResizeImageWithScale:(CGFloat)scale {
+    return [self jp_cgResizeImageWithLogicWidth:(self.size.width * scale)];
+}
+
+/** CG缩略（按逻辑宽度缩略） */
+- (UIImage *)jp_cgResizeImageWithLogicWidth:(CGFloat)logicWidth {
+    return [self jp_cgResizeImageWithPixelWidth:(logicWidth * self.scale)];
+}
+
+/** CG缩略（按像素宽度缩略） */
+- (UIImage *)jp_cgResizeImageWithPixelWidth:(CGFloat)pixelWidth {
+    if (pixelWidth >= (self.size.width * self.scale)) return self;
+    CGFloat pixelHeight = pixelWidth * self.jp_hwRatio;
+    
+    CGImageRef cgImage = self.CGImage;
+    if (!cgImage) return nil;
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(cgImage);
+    size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(cgImage);
+    
+    CGContextRef context = CGBitmapContextCreate(nil, (size_t)pixelWidth, (size_t)pixelHeight, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo);
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    CGContextDrawImage(context, CGRectMake(0, 0, pixelWidth, pixelHeight), cgImage);
+    CGImageRef resizedCGImage = CGBitmapContextCreateImage(context);
+    UIImage *resizedImage = [UIImage imageWithCGImage:resizedCGImage scale:self.scale orientation:self.imageOrientation];
+    
+    CGContextRelease(context);
+    CGImageRelease(resizedCGImage);
+    
+    return resizedImage;
+}
+
+#pragma makr - other
+
+/** 交换宽高 */
 - (CGRect)swapRectWH:(CGRect)rect {
     CGFloat width = rect.size.width;
     rect.size.width = rect.size.height;
     rect.size.height = width;
     return rect;
+}
+
+/** 图片高宽比 */
+- (CGFloat)jp_hwRatio {
+    return (self.size.height / self.size.width);
 }
 
 @end

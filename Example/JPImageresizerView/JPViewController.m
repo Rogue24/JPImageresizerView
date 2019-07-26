@@ -137,7 +137,7 @@
     
     __weak typeof(self) wSelf = self;
     
-    // 1.默认以imageView的宽度为参照宽度进行裁剪
+    // 1.自定义压缩比例进行裁剪
     [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
@@ -152,15 +152,9 @@
         [sSelf.navigationController pushViewController:vc animated:YES];
         
         sSelf.recoveryBtn.enabled = YES;
-    }];
+    } scale:0.7]; // 这里压缩为原图尺寸的70%
     
-    // 2.自定义参照宽度进行裁剪（例如按屏幕宽度）
-//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-//        // 裁剪完成，resizeImage为裁剪后的图片
-//        // 注意循环引用
-//    } referenceWidth:[UIScreen mainScreen].bounds.size.width];
-
-    // 3.以原图尺寸进行裁剪
+    // 2.以原图尺寸进行裁剪
 //    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
 //        // 裁剪完成，resizeImage为裁剪后的图片
 //        // 注意循环引用

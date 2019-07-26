@@ -531,24 +531,21 @@
 }
 
 - (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
-    [self imageresizerWithComplete:complete isOriginImageSize:YES referenceWidth:0];
+    [self imageresizerWithComplete:complete scale:1.0];
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete referenceWidth:(CGFloat)referenceWidth {
-    [self imageresizerWithComplete:complete isOriginImageSize:NO referenceWidth:referenceWidth];
-}
-
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete {
-    [self imageresizerWithComplete:complete isOriginImageSize:NO referenceWidth:0];
-}
-
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete isOriginImageSize:(BOOL)isOriginImageSize referenceWidth:(CGFloat)referenceWidth {
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete scale:(CGFloat)scale {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !complete ? : complete(nil);
         return;
     }
-    [self.frameView imageresizerWithComplete:complete isOriginImageSize:isOriginImageSize referenceWidth:referenceWidth];
+    if (scale <= 0) {
+        JPLog(@"压缩比例不能小于或等于0");
+        !complete ? : complete(nil);
+        return;
+    }
+    [self.frameView imageresizerWithComplete:complete scale:scale];
 }
 
 #pragma mark - <UIScrollViewDelegate>

@@ -174,21 +174,16 @@ self.imageresizerView.isPreview = YES;
 ```obj
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
-// referenceWidth：裁剪的图片的参照宽度，例如设置为375，如果裁剪区域为图片宽度的一半，则裁剪的图片宽度为187.5，而高度则根据宽高比得出，最大和最小不超过原图和imageView两者的宽度
+// scale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
+// 例：scale = 0.5，1000 x 1000 --> 500 x 500
 
-// 1.默认以imageView的宽度为参照宽度进行裁剪
+// 1.自定义压缩比例进行裁剪
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
     // 裁剪完成，resizeImage为裁剪后的图片
     // 注意循环引用
-}];
+} scale:0.7]; // 例：压缩为原图尺寸的70%
 
-// 2.自定义参照宽度进行裁剪（例如按屏幕宽度）
-[self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-    // 裁剪完成，resizeImage为裁剪后的图片
-    // 注意循环引用
-} referenceWidth:[UIScreen mainScreen].bounds.size.width];
-
-// 3.以原图尺寸进行裁剪
+// 2.以原图尺寸进行裁剪
 [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
     // 裁剪完成，resizeImage为裁剪后的图片
     // 注意循环引用
@@ -206,6 +201,10 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 1.0.2 更新内容
+    1.裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；
+    2.优化了裁剪逻辑。
 
 #### 1.0.0 更新内容
     1.新增了isPreview属性，用于预览裁剪后的区域；
