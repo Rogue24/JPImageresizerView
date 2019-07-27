@@ -201,10 +201,10 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 1.0.1~1.0.3 更新内容
+#### 1.0.1~1.0.4 更新内容
     1.recovery方法更名为recoveryByInitialResizeWHScale，意思按initialResizeWHScale进行重置，避免误导。
     2.裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；
-    3.优化了裁剪逻辑；
+    3.优化了裁剪和压缩逻辑；
 
 #### 1.0.0 更新内容
     1.新增了isPreview属性，用于预览裁剪后的区域；

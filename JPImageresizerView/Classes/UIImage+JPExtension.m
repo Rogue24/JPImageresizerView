@@ -196,40 +196,30 @@
     return [self jp_rotate:UIImageOrientationDownMirrored];
 }
 
-#pragma makr - CG缩略
+#pragma makr - 压缩
 
-/** CG缩略（按比例缩略） */
-- (UIImage *)jp_cgResizeImageWithScale:(CGFloat)scale {
-    return [self jp_cgResizeImageWithLogicWidth:(self.size.width * scale)];
+/** 按比例压缩 */
+- (UIImage *)jp_resizeImageWithScale:(CGFloat)scale {
+    return [self jp_resizeImageWithLogicWidth:(self.size.width * scale)];
 }
 
-/** CG缩略（按逻辑宽度缩略） */
-- (UIImage *)jp_cgResizeImageWithLogicWidth:(CGFloat)logicWidth {
-    return [self jp_cgResizeImageWithPixelWidth:(logicWidth * self.scale)];
+/** 按逻辑宽度压缩 */
+- (UIImage *)jp_resizeImageWithLogicWidth:(CGFloat)logicWidth {
+    if (logicWidth >= self.size.width) return self;
+    CGFloat w = logicWidth;
+    CGFloat h = w * self.jp_hwRatio;
+    @autoreleasepool {
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, self.scale);
+        [self drawInRect:CGRectMake(0, 0, w, h)];
+        UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return resizedImage;
+    }
 }
 
-/** CG缩略（按像素宽度缩略） */
-- (UIImage *)jp_cgResizeImageWithPixelWidth:(CGFloat)pixelWidth {
-    if (pixelWidth >= (self.size.width * self.scale)) return self;
-    CGFloat pixelHeight = pixelWidth * self.jp_hwRatio;
-    
-    CGImageRef cgImage = self.CGImage;
-    if (!cgImage) return nil;
-    size_t bitsPerComponent = CGImageGetBitsPerComponent(cgImage);
-    size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
-    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(cgImage);
-    
-    CGContextRef context = CGBitmapContextCreate(nil, (size_t)pixelWidth, (size_t)pixelHeight, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo);
-    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    CGContextDrawImage(context, CGRectMake(0, 0, pixelWidth, pixelHeight), cgImage);
-    CGImageRef resizedCGImage = CGBitmapContextCreateImage(context);
-    UIImage *resizedImage = [UIImage imageWithCGImage:resizedCGImage scale:self.scale orientation:self.imageOrientation];
-    
-    CGContextRelease(context);
-    CGImageRelease(resizedCGImage);
-    
-    return resizedImage;
+/** 按像素宽度压缩  */
+- (UIImage *)jp_resizeImageWithPixelWidth:(CGFloat)pixelWidth {
+    return [self jp_resizeImageWithLogicWidth:(pixelWidth / self.scale)];
 }
 
 #pragma makr - other

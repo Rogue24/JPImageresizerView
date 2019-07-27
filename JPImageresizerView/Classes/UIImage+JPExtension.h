@@ -20,12 +20,12 @@
 /** 沿X轴翻转 */
 - (UIImage *)jp_horizontalMirror;
 
-// https://github.com/Rogue24/JPImageResizing
-/** CG缩略（按比例缩略） */
-- (UIImage *)jp_cgResizeImageWithScale:(CGFloat)scale;
-/** CG缩略（按逻辑宽度缩略） */
-- (UIImage *)jp_cgResizeImageWithLogicWidth:(CGFloat)logicWidth;
-/** CG缩略（按像素宽度缩略） */
-- (UIImage *)jp_cgResizeImageWithPixelWidth:(CGFloat)pixelWidth;
+// 压缩图片：https://www.jianshu.com/p/c8e94ab5b50e
+/** 按比例压缩 */
+- (UIImage *)jp_resizeImageWithScale:(CGFloat)scale;
+/** 按逻辑宽度压缩 */
+- (UIImage *)jp_resizeImageWithLogicWidth:(CGFloat)logicWidth;
+/** 按像素宽度压缩 */
+- (UIImage *)jp_resizeImageWithPixelWidth:(CGFloat)pixelWidth;
 
 @end

@@ -1435,7 +1435,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         CGImageRelease(imgRef);
         
         // 压缩图片
-        if (scale < 1.0) image = [image jp_cgResizeImageWithScale:scale];
+        if (scale < 1.0) image = [image jp_resizeImageWithScale:scale];
         
         // 输出压缩图片
         dispatch_async(dispatch_get_main_queue(), ^{
