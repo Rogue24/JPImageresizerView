@@ -46,12 +46,12 @@
     self.imageresizerView = imageresizerView;
     self.configure = nil;
     
-    // initialResizeWHScale默认为初始化时的resizeWHScale
-    // 若之后修改了resizeWHScale的值，重置时（调用 recovery）resizeWHScale会重置为该属性的值
+    // initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
     // self.imageresizerView.initialResizeWHScale = 16.0 / 9.0; // 可随意修改该参数
     
-    // 若想重置为当前resizeWHScale，可使用recoveryByCurrentResizeWHScale方法
-    // 若想重置为任意resizeWHScale，可使用recoveryByResizeWHScale:方法
+    // 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
+    // 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
+    // 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
     
     // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
     if (@available(iOS 11.0, *)) {

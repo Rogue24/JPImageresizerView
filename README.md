@@ -106,6 +106,13 @@ if (@available(iOS 11.0, *)) {
 // 创建后也可以修改以上部分参数（除了maskType和contentInsets）
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
 self.imageresizerView.resizeWHScale = 16.0 / 9.0;
+
+// initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
+self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
+
+// 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
+// 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
+// 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
 ```
 #### 更改边框样式
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)

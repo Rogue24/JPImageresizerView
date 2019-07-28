@@ -84,7 +84,7 @@
 @property (nonatomic) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
-/** 初始裁剪宽高比，重置时（调用 recovery）resizeWHScale会重置为该属性的值 */
+/** 初始裁剪宽高比（默认为初始化时的resizeWHScalem，调用recoveryByInitialResizeWHScale方法进行重置则resizeWHScale会重置为该属性的值） */
 @property (nonatomic) CGFloat initialResizeWHScale;
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
@@ -131,14 +131,14 @@
 /*!
  @method
  @brief 按初始裁剪宽高比进行重置
- @discussion 回到最初状态
+ @discussion 回到最初状态，resizeWHScale会重置为initialResizeWHScale的值
  */
 - (void)recoveryByInitialResizeWHScale;
 
 /*!
  @method
  @brief 按当前裁剪宽高比进行重置
- @discussion 回到最初状态
+ @discussion 回到最初状态，resizeWHScale不会被重置
  */
 - (void)recoveryByCurrentResizeWHScale;
 
@@ -146,7 +146,7 @@
  @method
  @brief 按指定裁剪宽高比进行重置
  @param resizeWHScale --- 指定裁剪宽高比
- @discussion 回到最初状态
+ @discussion 回到最初状态，可重置为任意resizeWHScale
  */
 - (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale;
 
