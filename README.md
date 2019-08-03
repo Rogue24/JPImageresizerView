@@ -39,7 +39,7 @@
 #### 初始化
 ```obj
 // 方式一：使用工厂方法配置参数
-// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪框边线能否进行对边拖拽、裁剪区域的内边距、可否重置的回调、是否预备缩放的回调
+// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                         initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
