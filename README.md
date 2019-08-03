@@ -121,7 +121,6 @@ self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
 #### 更改边框样式
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
-
 ```objc
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
@@ -131,7 +130,6 @@ self.imageresizerView.frameType = JPClassicFrameType;
 #### 自定义边框图片
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
-
 ```objc
 // 使用自定义边框图片（例：平铺模式）
 UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -145,7 +143,6 @@ self.imageresizerView.borderImage = tileBorderImage;
 
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
-
 ```objc
 // 垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
