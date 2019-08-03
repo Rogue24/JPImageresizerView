@@ -18,7 +18,8 @@
         4.支持上左下右的旋转；
         5.水平和垂直的镜像翻转；
         6.两种边框样式；
-        7.自定义遮罩颜色，或两种高斯模糊的遮罩。
+        7.自定义遮罩颜色，或两种高斯模糊的遮罩；
+        8.自定义边框图片。
 
     注意：
         1.由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout；
@@ -53,6 +54,8 @@ JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                         horBaseMargin:10
                         resizeWHScale:0
                         contentInsets:UIEdgeInsetsZero
+                        borderImage:nil
+                        borderImageRectInset:CGPointZero
                         imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
                             // 可在这里监听到是否可以重置
                             // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
@@ -122,6 +125,19 @@ self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
 self.imageresizerView.frameType = JPClassicFrameType;
+```
+
+#### 自定义边框图片
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
+
+```obj
+// 使用自定义边框图片（例：平铺模式）
+UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
+// 设置边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
+self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
+// 设置边框图片（若为nil则使用frameType的边线）
+self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 #### 镜像翻转
@@ -208,6 +224,10 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
+#### 1.1.0 更新内容
+    1.现在可以自定义边框图片，新增borderImage（边框图片）和borderImageRectInset（边框图片与边线的偏移量）接口用于设置自定义边框图片；
+    2.优化计算逻辑。
+
 #### 1.0.1~1.0.4 更新内容
     1.recovery方法更名为recoveryByInitialResizeWHScale，意思按initialResizeWHScale进行重置，避免误导。
     2.裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；
@@ -225,7 +245,7 @@ self.imageresizerView.isAutoScale = NO;
     1.修复了设置镜像后的旋转、裁剪错乱问题；
     2.修复了切换裁剪比例时的缩放错误问题；
     3.移除isRotatedAutoScale属性（该属性会导致多处错误，且不利于优化，所以决定移除）；
-    4.优化计算。
+    4.优化计算逻辑。
 
 #### 0.4.9 更新内容
     新增edgeLineIsEnabled属性：用于设置裁剪框边线能否进行对边拖拽，只有当裁剪宽高比(resizeWHScale)为0，即任意比例时才有效，适用于所有边框样式，默认为yes。（之前是只有触碰上下左右的中点才可以进行对边拖拽，现在是整条边线的作用范围）

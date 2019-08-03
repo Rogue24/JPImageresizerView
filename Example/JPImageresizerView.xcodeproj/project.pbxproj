@@ -27,6 +27,8 @@
 		1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36622B2854A00B6B6AB /* Kobe.jpg */; };
 		1A0AB36A22B2854A00B6B6AB /* Girl.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36722B2854A00B6B6AB /* Girl.jpg */; };
 		1A0AB36B22B2854A00B6B6AB /* Lotus.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36822B2854A00B6B6AB /* Lotus.jpg */; };
+		1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A25802422F3E9BC00DB36B9 /* Woman.jpg */; };
+		1A25802722F4130D00DB36B9 /* Beauty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A25802622F4130D00DB36B9 /* Beauty.jpg */; };
 		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */; };
 		1A601A3A1FEBB523004B39A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README.md */; };
@@ -111,6 +113,8 @@
 		1A0AB36622B2854A00B6B6AB /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A0AB36722B2854A00B6B6AB /* Girl.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl.jpg; sourceTree = "<group>"; };
 		1A0AB36822B2854A00B6B6AB /* Lotus.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Lotus.jpg; sourceTree = "<group>"; };
+		1A25802422F3E9BC00DB36B9 /* Woman.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Woman.jpg; sourceTree = "<group>"; };
+		1A25802622F4130D00DB36B9 /* Beauty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Beauty.jpg; sourceTree = "<group>"; };
 		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
 		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPImageViewController.h; sourceTree = "<group>"; };
@@ -280,6 +284,8 @@
 				1A0AB36722B2854A00B6B6AB /* Girl.jpg */,
 				1A0AB36622B2854A00B6B6AB /* Kobe.jpg */,
 				1A0AB36822B2854A00B6B6AB /* Lotus.jpg */,
+				1A25802422F3E9BC00DB36B9 /* Woman.jpg */,
+				1A25802622F4130D00DB36B9 /* Beauty.jpg */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -472,6 +478,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				1A0AB36B22B2854A00B6B6AB /* Lotus.jpg in Resources */,
 				1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */,
@@ -480,6 +487,7 @@
 				1A0AB36A22B2854A00B6B6AB /* Girl.jpg in Resources */,
 				1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				1A25802722F4130D00DB36B9 /* Beauty.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

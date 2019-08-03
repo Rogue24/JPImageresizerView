@@ -40,6 +40,8 @@
  @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
  @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
  @param contentInsets --- 裁剪区域与主视图的内边距，目前初始化后不可再更改
+ @param borderImage --- 边框图片（nil则使用frameType的边线）
+ @param borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
@@ -56,6 +58,8 @@
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
+                        borderImage:(UIImage *)borderImage
+               borderImageRectInset:(CGPoint)borderImageRectInset
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -113,6 +117,12 @@
 /** 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域） */
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
+
+/** 边框图片（nil则使用frameType的边线） */
+@property (nonatomic) UIImage *borderImage;
+
+/** 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距） */
+@property (nonatomic) CGPoint borderImageRectInset;
 
 /*!
  @method

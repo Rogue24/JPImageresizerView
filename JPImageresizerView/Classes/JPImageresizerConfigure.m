@@ -24,17 +24,11 @@
     .jp_horBaseMargin(10.0)
     .jp_resizeWHScale(0.0)
     .jp_edgeLineIsEnabled(YES)
-    .jp_contentInsets(UIEdgeInsetsZero);
+    .jp_contentInsets(UIEdgeInsetsZero)
+    .jp_borderImage(nil)
+    .jp_borderImageRectInset(CGPointZero);
     !make ? : make(configure);
     return configure;
-}
-
-- (void)setFrameType:(JPImageresizerFrameType)frameType {
-    _frameType = frameType;
-}
-
-- (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
-    _animationCurve = animationCurve;
 }
 
 + (instancetype)blurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage isLight:(BOOL)isLight make:(void (^)(JPImageresizerConfigure *))make {
@@ -65,100 +59,114 @@
     }
 }
 
-- (JPImageresizerConfigure *(^)(UIImage *resizeImage))jp_resizeImage {
+- (JPImageresizerConfigure *(^)(UIImage *))jp_resizeImage {
     return ^(UIImage *resizeImage) {
         self.resizeImage = resizeImage;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(CGRect viewFrame))jp_viewFrame {
+- (JPImageresizerConfigure *(^)(CGRect))jp_viewFrame {
     return ^(CGRect viewFrame) {
         self.viewFrame = viewFrame;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(JPImageresizerMaskType maskType))jp_maskType {
+- (JPImageresizerConfigure *(^)(JPImageresizerMaskType))jp_maskType {
     return ^(JPImageresizerMaskType maskType) {
         self.maskType = maskType;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(JPImageresizerFrameType frameType))jp_frameType {
+- (JPImageresizerConfigure *(^)(JPImageresizerFrameType))jp_frameType {
     return ^(JPImageresizerFrameType frameType) {
         self.frameType = frameType;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(JPAnimationCurve animationCurve))jp_animationCurve {
+- (JPImageresizerConfigure *(^)(JPAnimationCurve))jp_animationCurve {
     return ^(JPAnimationCurve animationCurve) {
         self.animationCurve = animationCurve;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(UIColor *strokeColor))jp_strokeColor {
+- (JPImageresizerConfigure *(^)(UIColor *))jp_strokeColor {
     return ^(UIColor *strokeColor) {
         self.strokeColor = strokeColor;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(UIColor *bgColor))jp_bgColor {
+- (JPImageresizerConfigure *(^)(UIColor *))jp_bgColor {
     return ^(UIColor *bgColor) {
         self.bgColor = bgColor;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(CGFloat maskAlpha))jp_maskAlpha {
+- (JPImageresizerConfigure *(^)(CGFloat))jp_maskAlpha {
     return ^(CGFloat maskAlpha) {
         self.maskAlpha = maskAlpha;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(CGFloat resizeWHScale))jp_resizeWHScale {
+- (JPImageresizerConfigure *(^)(CGFloat))jp_resizeWHScale {
     return ^(CGFloat resizeWHScale) {
         self.resizeWHScale = resizeWHScale;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(BOOL edgeLineIsEnabled))jp_edgeLineIsEnabled {
+- (JPImageresizerConfigure *(^)(BOOL))jp_edgeLineIsEnabled {
     return ^(BOOL edgeLineIsEnabled) {
         self.edgeLineIsEnabled = edgeLineIsEnabled;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(CGFloat verBaseMargin))jp_verBaseMargin {
+- (JPImageresizerConfigure *(^)(CGFloat))jp_verBaseMargin {
     return ^(CGFloat verBaseMargin) {
         self.verBaseMargin = verBaseMargin;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(CGFloat horBaseMargin))jp_horBaseMargin {
+- (JPImageresizerConfigure *(^)(CGFloat))jp_horBaseMargin {
     return ^(CGFloat horBaseMargin) {
         self.horBaseMargin = horBaseMargin;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(UIEdgeInsets contentInsets))jp_contentInsets {
+- (JPImageresizerConfigure *(^)(UIEdgeInsets))jp_contentInsets {
     return ^(UIEdgeInsets contentInsets) {
         self.contentInsets = contentInsets;
         return self;
     };
 }
 
-- (JPImageresizerConfigure *(^)(BOOL isClockwiseRotation))jp_isClockwiseRotation {
+- (JPImageresizerConfigure *(^)(BOOL))jp_isClockwiseRotation {
     return ^(BOOL isClockwiseRotation) {
         self.isClockwiseRotation = isClockwiseRotation;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIImage *))jp_borderImage {
+    return ^(UIImage *borderImage) {
+        self.borderImage = borderImage;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGPoint))jp_borderImageRectInset {
+    return ^(CGPoint borderImageRectInset) {
+        self.borderImageRectInset = borderImageRectInset;
         return self;
     };
 }

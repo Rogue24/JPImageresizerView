@@ -10,6 +10,7 @@
 
 @interface NoDataView ()
 @property (nonatomic, assign) BOOL isWholeCenter;
+@property (nonatomic, weak) CALayer *iconShadow;
 @property (nonatomic, weak) UIImageView *iconView;
 @property (nonatomic, weak) UILabel *titleLabel;
 @end
@@ -35,12 +36,23 @@
     if (self = [super init]) {
         self.isWholeCenter = isWholeCenter;
         
+        CALayer *iconShadow = [CALayer layer];
+        iconShadow.frame = CGRectMake(0, 0, 60, 60);
+        iconShadow.backgroundColor = UIColor.whiteColor.CGColor;
+        iconShadow.cornerRadius = 30;
+        iconShadow.shadowColor = UIColor.blackColor.CGColor;
+        iconShadow.shadowOpacity = 0.15;
+        iconShadow.shadowRadius = 5.0;
+        iconShadow.shadowOffset = CGSizeZero;
+        iconShadow.shadowPath = [UIBezierPath bezierPathWithOvalInRect:iconShadow.bounds].CGPath;
+        [self.layer addSublayer:iconShadow];
+        self.iconShadow = iconShadow;
+        
         UIImageView *iconView = ({
-            UIImageView *aImgView = [[UIImageView alloc] init];
+            UIImageView *aImgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"jp_icon"]];
             aImgView.frame = CGRectMake(0, 0, 60, 60);
             aImgView.layer.cornerRadius = 30;
             aImgView.layer.masksToBounds = YES;
-            aImgView.image = [UIImage imageNamed:@"jpicon"];
             aImgView;
         });
         [self addSubview:iconView];
@@ -87,7 +99,6 @@
     }
 }
 
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self setupSubviewsLayout];
@@ -111,6 +122,7 @@
     titleLabelFrame.origin.x = (width - titleLabelFrame.size.width) * 0.5;
     titleLabelFrame.origin.y = iconViewFrame.size.height + 15;
     
+    self.iconShadow.frame = iconViewFrame;
     self.iconView.frame = iconViewFrame;
     self.titleLabel.frame = titleLabelFrame;
     self.frame = CGRectMake(0, 0, width, height);

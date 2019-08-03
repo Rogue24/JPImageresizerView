@@ -35,11 +35,11 @@
 - (void)setBgColor:(UIColor *)bgColor {
     if (bgColor == [UIColor clearColor]) bgColor = [UIColor blackColor];
     self.backgroundColor = bgColor;
-    if (_frameView) [_frameView setFillColor:bgColor];
+    [self.frameView setFillColor:bgColor];
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
-    if (_frameView) _frameView.maskAlpha = maskAlpha;
+    self.frameView.maskAlpha = maskAlpha;
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
@@ -143,11 +143,11 @@
 #pragma mark - getter
 
 - (JPImageresizerMaskType)maskType {
-    return self.frameView.maskType;
+    return _frameView.maskType;
 }
 
 - (JPImageresizerFrameType)frameType {
-    return self.frameView.frameType;
+    return _frameView.frameType;
 }
 
 - (UIColor *)bgColor {
@@ -187,7 +187,7 @@
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
-    JPImageresizerView *imageresizerView =  [[self alloc] initWithResizeImage:configure.resizeImage
+    JPImageresizerView *imageresizerView = [[self alloc] initWithResizeImage:configure.resizeImage
                                        frame:configure.viewFrame
                                     maskType:configure.maskType
                                    frameType:configure.frameType
@@ -199,6 +199,8 @@
                                horBaseMargin:configure.horBaseMargin
                                resizeWHScale:configure.resizeWHScale
                                contentInsets:configure.contentInsets
+                                 borderImage:configure.borderImage
+                        borderImageRectInset:configure.borderImageRectInset
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
     imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
@@ -217,6 +219,8 @@
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
+                        borderImage:(UIImage *)borderImage
+               borderImageRectInset:(CGPoint)borderImageRectInset
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     if (self = [super initWithFrame:frame]) {
@@ -237,14 +241,38 @@
         [self setupBase];
         [self setupScrollView];
         [self setupImageViewWithImage:resizeImage];
-        [self setupFrameViewWithMaskType:maskType
-                               frameType:frameType
-                          animationCurve:animationCurve
-                             strokeColor:strokeColor
-                               maskAlpha:maskAlpha
-                           resizeWHScale:resizeWHScale
-                      isCanRecoveryBlock:imageresizerIsCanRecovery
-                   isPrepareToScaleBlock:imageresizerIsPrepareToScale];
+        
+        JPImageresizerFrameView *frameView =
+        [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+                                           contentSize:_contentSize
+                                              maskType:maskType
+                                             frameType:frameType
+                                        animationCurve:animationCurve
+                                           strokeColor:strokeColor
+                                             fillColor:self.bgColor
+                                             maskAlpha:maskAlpha
+                                         verBaseMargin:_verBaseMargin
+                                         horBaseMargin:_horBaseMargin
+                                         resizeWHScale:resizeWHScale
+                                            scrollView:self.scrollView
+                                             imageView:self.imageView
+                                           borderImage:borderImage
+                                  borderImageRectInset:borderImageRectInset
+                             imageresizerIsCanRecovery:imageresizerIsCanRecovery
+                          imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
+        __weak typeof(self) wSelf = self;
+        frameView.isVerticalityMirror = ^BOOL{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf) return NO;
+            return sSelf.verticalityMirror;
+        };
+        frameView.isHorizontalMirror = ^BOOL{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf) return NO;
+            return sSelf.horizontalMirror;
+        };
+        [self addSubview:frameView];
+        _frameView = frameView;
     }
     return self;
 }
@@ -305,50 +333,6 @@
     self.scrollView.contentSize = imageView.bounds.size;
     self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
     self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
-}
-
-- (void)setupFrameViewWithMaskType:(JPImageresizerMaskType)maskType
-                         frameType:(JPImageresizerFrameType)frameType
-                    animationCurve:(JPAnimationCurve)animationCurve
-                       strokeColor:(UIColor *)strokeColor
-                         maskAlpha:(CGFloat)maskAlpha
-                     resizeWHScale:(CGFloat)resizeWHScale
-                isCanRecoveryBlock:(JPImageresizerIsCanRecoveryBlock)isCanRecoveryBlock
-             isPrepareToScaleBlock:(JPImageresizerIsPrepareToScaleBlock)isPrepareToScaleBlock {
-    
-    JPImageresizerFrameView *frameView =
-    [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
-                                       contentSize:_contentSize
-                                          maskType:maskType
-                                         frameType:frameType
-                                    animationCurve:animationCurve
-                                       strokeColor:strokeColor
-                                         fillColor:self.bgColor
-                                         maskAlpha:maskAlpha
-                                     verBaseMargin:_verBaseMargin
-                                     horBaseMargin:_horBaseMargin
-                                     resizeWHScale:resizeWHScale
-                                        scrollView:self.scrollView
-                                         imageView:self.imageView
-                         imageresizerIsCanRecovery:isCanRecoveryBlock
-                      imageresizerIsPrepareToScale:isPrepareToScaleBlock];
-    
-    __weak typeof(self) wSelf = self;
-    
-    frameView.isVerticalityMirror = ^BOOL{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return NO;
-        return sSelf.verticalityMirror;
-    };
-    
-    frameView.isHorizontalMirror = ^BOOL{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return NO;
-        return sSelf.horizontalMirror;
-    };
-    
-    [self addSubview:frameView];
-    _frameView = frameView;
 }
 
 #pragma mark - private method
@@ -572,6 +556,34 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
     [self.frameView endedImageresizer];
+}
+
+- (UIImage *)setupBorderImage:(UIImage *)borderImage
+         borderImageCapInsets:(UIEdgeInsets)borderImageCapInsets
+      borderImageResizingMode:(UIImageResizingMode)borderImageResizingMode {
+    if (UIEdgeInsetsEqualToEdgeInsets(borderImageCapInsets, UIEdgeInsetsZero)) {
+        self.frameView.borderImage = borderImage;
+        return borderImage;
+    }
+    borderImage = [borderImage resizableImageWithCapInsets:borderImageCapInsets resizingMode:borderImageResizingMode];
+    self.frameView.borderImage = borderImage;
+    return borderImage;
+}
+
+- (void)setBorderImage:(UIImage *)borderImage {
+    self.frameView.borderImage = borderImage;
+}
+
+- (UIImage *)borderImage {
+    return self.frameView.borderImage;
+}
+
+- (void)setBorderImageRectInset:(CGPoint)borderImageRectInset {
+    self.frameView.borderImageRectInset = borderImageRectInset;
+}
+
+- (CGPoint)borderImageRectInset {
+    return self.frameView.borderImageRectInset;
 }
 
 @end

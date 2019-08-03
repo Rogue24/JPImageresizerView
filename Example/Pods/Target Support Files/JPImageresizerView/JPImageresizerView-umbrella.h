@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "CALayer+JPExtension.h"
 #import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
 #import "JPImageresizerTypedef.h"

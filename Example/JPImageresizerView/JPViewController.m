@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
 @property (nonatomic, weak) JPImageresizerView *imageresizerView;
+@property (nonatomic, assign) JPImageresizerFrameType frameType;
+@property (nonatomic, strong) UIImage *borderImage;
 @end
 
 @implementation JPViewController
@@ -24,6 +26,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = self.configure.bgColor;
+    self.frameType = self.configure.frameType;
+    self.borderImage = self.configure.borderImage;
     self.recoveryBtn.enabled = NO;
     
     __weak typeof(self) wSelf = self;
@@ -83,13 +87,12 @@
 
 - (IBAction)changeFrameType:(UIButton *)sender {
     sender.selected = !sender.selected;
-    JPImageresizerFrameType frameType;
-    if (sender.selected) {
-        frameType = JPClassicFrameType;
+    if (self.borderImage) {
+        self.imageresizerView.borderImage = sender.selected ? nil : self.borderImage;
+        return;
     } else {
-        frameType = JPConciseFrameType;
+        self.imageresizerView.frameType = sender.selected ? (self.frameType == JPClassicFrameType ? JPConciseFrameType : JPClassicFrameType) : self.frameType;
     }
-    self.imageresizerView.frameType = frameType;
 }
 
 - (IBAction)rotate:(id)sender {

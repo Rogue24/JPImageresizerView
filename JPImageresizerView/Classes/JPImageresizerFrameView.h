@@ -24,6 +24,8 @@
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
+                  borderImage:(UIImage *)borderImage
+         borderImageRectInset:(CGPoint)borderImageRectInset
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -62,6 +64,9 @@
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
 @property (nonatomic, assign, readonly) CGFloat scrollViewMinZoomScale;
+
+@property (nonatomic, strong) UIImage *borderImage;
+@property (nonatomic, assign) CGPoint borderImageRectInset;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);

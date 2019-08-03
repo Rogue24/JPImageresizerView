@@ -23,6 +23,8 @@
     - horBaseMargin = 10.0;
     - resizeWHScale = 0.0;
     - contentInsets = UIEdgeInsetsZero;
+    - borderImage = nil;
+    - borderImageRectInset = CGPointZero;
  */
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
 
@@ -70,6 +72,12 @@
 /** 是否顺时针旋转 */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
 
+/** 边框图片 */
+@property (nonatomic, strong) UIImage *borderImage;
+
+/** 边框图片与边线的偏移量 */
+@property (nonatomic, assign) CGPoint borderImageRectInset;
+
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maskType)(JPImageresizerMaskType maskType);
@@ -84,4 +92,6 @@
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
 @end
