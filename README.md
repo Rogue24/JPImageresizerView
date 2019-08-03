@@ -117,6 +117,7 @@ self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
 // 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
 // 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
 ```
+
 #### 更改边框样式
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
@@ -131,11 +132,13 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
 
-```obj
+```objc
 // 使用自定义边框图片（例：平铺模式）
 UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
+
 // 设置边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
 self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
+
 // 设置边框图片（若为nil则使用frameType的边线）
 self.imageresizerView.borderImage = tileBorderImage;
 ```
@@ -152,7 +155,6 @@ BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
 BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 [self.imageresizerView setHorizontalMirror:isHorizontalMirror animated:YES];
 ```
-
 
 #### 旋转
 ```obj
