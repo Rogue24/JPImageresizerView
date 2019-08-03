@@ -139,7 +139,7 @@ UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImag
 // 设置边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
 self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
 
-// 设置边框图片（若为nil则使用frameType的边线）
+// 设置边框图片（若为nil则使用frameType的边框）
 self.imageresizerView.borderImage = tileBorderImage;
 ```
 
