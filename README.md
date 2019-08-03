@@ -37,37 +37,37 @@
 ## 如何使用
 
 #### 初始化
-```obj
+```objc
 // 方式一：使用工厂方法配置参数
 // 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                        initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                        frame:frame
-                        maskType:JPConciseFrameType
-                        frameType:JPConciseFrameType
-                        animationCurve:JPAnimationCurveLinear
-                        strokeColor:[UIColor whiteColor]
-                        bgColor:[UIColor blackColor]
-                        maskAlpha:0.75
-                        verBaseMargin:10
-                        horBaseMargin:10
-                        resizeWHScale:0
-                        contentInsets:UIEdgeInsetsZero
-                        borderImage:nil
-                        borderImageRectInset:CGPointZero
-                        imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-                            // 可在这里监听到是否可以重置
-                            // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
-                            // 具体操作可参照Demo
-                            // 注意循环引用
-                        }
-                        imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
-                            // 可在这里监听到裁剪区域是否预备缩放至适合范围
-                            // 如果预备缩放（isPrepareToScale为YES），此时裁剪、旋转、镜像功能不可用，可在这里做相应处理，例如将对应按钮设置为不可点或隐藏
-                            // 具体操作可参照Demo
-                            // 注意循环引用
-                        }];
+                    initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
+                    frame:frame
+                    maskType:JPConciseFrameType
+                    frameType:JPConciseFrameType
+                    animationCurve:JPAnimationCurveLinear
+                    strokeColor:[UIColor whiteColor]
+                    bgColor:[UIColor blackColor]
+                    maskAlpha:0.75
+                    verBaseMargin:10
+                    horBaseMargin:10
+                    resizeWHScale:0
+                    contentInsets:UIEdgeInsetsZero
+                    borderImage:nil
+                    borderImageRectInset:CGPointZero
+                    imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+                        // 可在这里监听到是否可以重置
+                        // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
+                        // 具体操作可参照Demo
+                        // 注意循环引用
+                    }
+                    imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+                        // 可在这里监听到裁剪区域是否预备缩放至适合范围
+                        // 如果预备缩放（isPrepareToScale为YES），此时裁剪、旋转、镜像功能不可用，可在这里做相应处理，例如将对应按钮设置为不可点或隐藏
+                        // 具体操作可参照Demo
+                        // 注意循环引用
+                    }];
 
 // 方式二：使用JPImageresizerConfigure配置好参数再创建
 
@@ -122,7 +122,7 @@ self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
 
-```obj
+```objc
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
 self.imageresizerView.frameType = JPClassicFrameType;
@@ -146,7 +146,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
 
-```obj
+```objc
 // 垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
 [self.imageresizerView setVerticalityMirror:isVerticalityMirror animated:YES];
@@ -157,7 +157,7 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 ```
 
 #### 旋转
-```obj
+```objc
 // 默认逆时针旋转，旋转角度为90°
 [self.imageresizerView rotation];
 
@@ -166,7 +166,7 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 #### 重置
-```obj
+```objc
 // 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
 
 // 1.按initialResizeWHScale进行重置
@@ -184,7 +184,7 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 #### 预览
-```obj
+```objc
 // 预览模式：隐藏边框，停止拖拽操作，用于预览裁剪后的区域
 
 // 1.默认自带动画效果
@@ -195,7 +195,7 @@ self.imageresizerView.isPreview = YES;
 ```
 
 #### 裁剪
-```obj
+```objc
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
 // scale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
@@ -215,7 +215,7 @@ self.imageresizerView.isPreview = YES;
 ```
 
 #### 其他
-```obj
+```objc
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
 self.imageresizerView.isLockResizeFrame = YES;
 
