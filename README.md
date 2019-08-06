@@ -145,7 +145,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```objc
 // 1.自定义参数切换
 /**
- * resizeWHScale：    目标裁剪宽高比
+ * resizeWHScale：    目标裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向）
  * isToBeArbitrarily：切换之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  * animated：         是否带动画效果
  */
@@ -255,8 +255,9 @@ self.imageresizerView.isAutoScale = NO;
 ## 各版本的主要更新
 
 #### 1.1.1 更新内容
-    1.新增 isToBeArbitrarily 关键字，用于设置裁剪宽高比、重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0），即可以继续任意拖拽裁剪框，对设置裁剪宽高比、重置等方法进行了修改，详情请查看Demo；
-    2.直接设置 resizeWHScale、verticalityMirror、horizontalMirror、isPreview 默认自带动画效果（isAnimated = YES，其中 resizeWHScale 的 isToBeArbitrarily = NO）。
+    1.新增 imageresizeWHScale 属性，获取当前裁剪框的宽高比；
+    2.新增 isToBeArbitrarily 关键字，用于设置裁剪宽高比、重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0），即可以继续任意拖拽裁剪框，对设置裁剪宽高比、重置等方法进行了修改，详情请查看Demo；
+    3.直接设置 resizeWHScale、verticalityMirror、horizontalMirror、isPreview 默认自带动画效果（isAnimated = YES，其中 resizeWHScale 的 isToBeArbitrarily = NO）。
 
 #### 1.1.0 更新内容
     1.现在可以自定义边框图片，新增borderImage（边框图片）和borderImageRectInset（边框图片与边线的偏移量）接口用于设置自定义边框图片；
