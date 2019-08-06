@@ -46,7 +46,7 @@
 @property (nonatomic, assign, readonly) CGRect imageresizerFrame;
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
-- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
+- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
@@ -80,8 +80,8 @@
 
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration;
 
-- (void)willRecovery;
-- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale duration:(NSTimeInterval)duration;
+- (void)willRecoveryByResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+- (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone;
 
 - (void)willMirror:(BOOL)animated;

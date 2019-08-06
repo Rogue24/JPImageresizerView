@@ -63,7 +63,7 @@
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
-/** 遮罩样式，目前初始化后不可再更改 */
+/** 遮罩样式（目前初始化后不可再更改） */
 @property (nonatomic, readonly) JPImageresizerMaskType maskType;
 
 /** 边框样式 */
@@ -84,12 +84,20 @@
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic) CGFloat maskAlpha;
 
-/** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
+/**
+ * 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向）
+ * 设置该值会调用 -setResizeWHScale: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = NO，isAnimated = YES）
+ */
 @property (nonatomic) CGFloat resizeWHScale;
-- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated;
 
-/** 初始裁剪宽高比（默认为初始化时的resizeWHScalem，调用recoveryByInitialResizeWHScale方法进行重置则resizeWHScale会重置为该属性的值） */
+/**
+ * 初始裁剪宽高比（默认为初始化时的resizeWHScalem）
+ * 调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
+ */
 @property (nonatomic) CGFloat initialResizeWHScale;
+
+/** 裁剪框当前的宽高比 */
+@property (readonly) CGFloat imageresizeWHScale;
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
@@ -106,23 +114,66 @@
 /** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
 @property (nonatomic) BOOL isLockResizeFrame;
 
-/** verticalityMirror：垂直镜像，沿着Y轴旋转180° */
+/**
+ * 垂直镜像（沿着Y轴旋转180）
+ * 设置该值会调用 -setVerticalityMirror: animated: 方法（isAnimated = YES）
+ */
 @property (nonatomic, assign) BOOL verticalityMirror;
-- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
 
-/** horizontalMirror：水平镜像，沿着X轴旋转180° */
+/**
+ * 水平镜像（沿着X轴旋转180）
+ * 设置该值会调用 -setHorizontalMirror: animated: 方法（isAnimated = YES）
+ */
 @property (nonatomic, assign) BOOL horizontalMirror;
-- (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 
-/** 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域） */
+/**
+ * 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域）
+ * 设置该值会调用 -setIsPreview: animated: 方法（isAnimated = YES）
+ */
 @property (nonatomic, assign) BOOL isPreview;
-- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
 
 /** 边框图片（若为nil则使用frameType的边框） */
 @property (nonatomic) UIImage *borderImage;
 
 /** 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距） */
 @property (nonatomic) CGPoint borderImageRectInset;
+
+/*!
+ @method
+ @brief 设置裁剪宽高比
+ @param resizeWHScale --- 目标裁剪宽高比
+ @param isToBeArbitrarily --- 设置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @param isAnimated --- 是否带动画效果
+ @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例，可控8个方向，固定比例为4个方向）
+ */
+- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+/*!
+ @method
+ @brief 设置是否垂直镜像
+ @param verticalityMirror --- 是否垂直镜像
+ @param isAnimated --- 是否带动画效果
+ @discussion 垂直镜像，沿着Y轴旋转180°
+ */
+- (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
+
+/*!
+ @method
+ @brief 设置是否水平镜像
+ @param horizontalMirror --- 是否水平镜像
+ @param isAnimated --- 是否带动画效果
+ @discussion 水平镜像，沿着X轴旋转180°
+ */
+- (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
+
+/*!
+ @method
+ @brief 设置是否预览
+ @param isPreview --- 是否预览
+ @param isAnimated --- 是否带动画效果
+ @discussion 隐藏边框，停止拖拽操作，用于预览裁剪后的区域
+ */
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
 
 /*!
  @method
@@ -140,25 +191,27 @@
 
 /*!
  @method
- @brief 按初始裁剪宽高比进行重置
- @discussion 回到最初状态，resizeWHScale会重置为initialResizeWHScale的值
- */
-- (void)recoveryByInitialResizeWHScale;
-
-/*!
- @method
- @brief 按当前裁剪宽高比进行重置
- @discussion 回到最初状态，resizeWHScale不会被重置
+ @brief 按当前裁剪宽高比（resizeWHScale）进行重置
+ @discussion 回到最初状态，resizeWHScale 不会被重置
  */
 - (void)recoveryByCurrentResizeWHScale;
 
 /*!
  @method
- @brief 按指定裁剪宽高比进行重置
- @param resizeWHScale --- 指定裁剪宽高比
- @discussion 回到最初状态，可重置为任意resizeWHScale
+ @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale =  initialResizeWHScale
  */
-- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale;
+- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
+
+/*!
+ @method
+ @brief 按目标裁剪宽高比进行重置
+ @param targetResizeWHScale --- 目标裁剪宽高比
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale
+ */
+- (void)recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 /*!
  @method

@@ -62,11 +62,7 @@
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
-    [self.frameView setResizeWHScale:resizeWHScale animated:YES];
-}
-
-- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
-    [self.frameView setResizeWHScale:resizeWHScale animated:isAnimated];
+    [self.frameView setResizeWHScale:resizeWHScale isToBeArbitrarily:NO animated:YES];
 }
 
 - (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
@@ -87,6 +83,17 @@
     } else if (self.directionIndex == 3) {
         self.directionIndex = 1;
     }
+}
+
+- (void)setDirectionIndex:(NSInteger)directionIndex {
+    NSInteger maxIndex = self.allDirections.count - 1;
+    NSInteger minIndex = 0;
+    if (directionIndex < minIndex) {
+        directionIndex = maxIndex;
+    } else if (directionIndex > maxIndex) {
+        directionIndex = minIndex;
+    }
+    _directionIndex = directionIndex;
 }
 
 - (void)setAnimationCurve:(JPAnimationCurve)animationCurve {
@@ -113,31 +120,15 @@
 }
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror {
-    [self setVerticalityMirror:verticalityMirror animated:NO];
+    [self setVerticalityMirror:verticalityMirror animated:YES];
 }
 
 - (void)setHorizontalMirror:(BOOL)horizontalMirror {
-    [self setHorizontalMirror:horizontalMirror animated:NO];
-}
-
-- (void)setDirectionIndex:(NSInteger)directionIndex {
-    NSInteger maxIndex = self.allDirections.count - 1;
-    NSInteger minIndex = 0;
-    if (directionIndex < minIndex) {
-        directionIndex = maxIndex;
-    } else if (directionIndex > maxIndex) {
-        directionIndex = minIndex;
-    }
-    _directionIndex = directionIndex;
+    [self setHorizontalMirror:horizontalMirror animated:YES];
 }
 
 - (void)setIsPreview:(BOOL)isPreview {
     [self setIsPreview:isPreview animated:YES];
-}
-
-- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated {
-    [self.frameView setIsPreview:isPreview animated:isAnimated];
-    self.scrollView.userInteractionEnabled = !isPreview;
 }
 
 #pragma mark - getter
@@ -168,6 +159,15 @@
 
 - (CGFloat)initialResizeWHScale {
     return _frameView.initialResizeWHScale;
+}
+
+- (CGFloat)imageresizeWHScale {
+    CGFloat w = _frameView.imageresizerFrame.size.width;
+    CGFloat h = _frameView.imageresizerFrame.size.height;
+    if (w > 0.0 && h > 0.0) {
+        return (w / h);
+    }
+    return 0.0;
 }
 
 - (CGFloat)maskAlpha {
@@ -335,37 +335,15 @@
     self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
 }
 
-#pragma mark - private method
-
-- (void)updateSubviewLayouts {
-    self.directionIndex = 0;
-    
-    self.scrollView.layer.transform = CATransform3DIdentity;
-    self.scrollView.minimumZoomScale = 1.0;
-    self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
-    
-    CGFloat maxW = self.frame.size.width - 2 * _horBaseMargin;
-    CGFloat maxH = self.frame.size.height - 2 * _verBaseMargin;
-    CGFloat whScale = self.imageView.image.size.width / self.imageView.image.size.height;
-    CGFloat w = maxW;
-    CGFloat h = w / whScale;
-    if (h > maxH) {
-        h = maxH;
-        w = h * whScale;
-    }
-    self.imageView.frame = CGRectMake(0, 0, w, h);
-    
-    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
-    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
-    
-    self.scrollView.contentSize = self.imageView.bounds.size;
-    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
-    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
-    
-    [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin];
-}
-
 #pragma mark - puild method
+
+- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        return;
+    }
+    [self.frameView setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+}
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
@@ -386,6 +364,108 @@
     _horizontalMirror = horizontalMirror;
     [self setMirror:YES animated:isAnimated];
 }
+
+- (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated {
+    [self.frameView setIsPreview:isPreview animated:isAnimated];
+    self.scrollView.userInteractionEnabled = !isPreview;
+}
+
+- (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
+    self.imageView.image = resizeImage;
+    _verBaseMargin = verBaseMargin;
+    _horBaseMargin = horBaseMargin;
+    [self updateSubviewLayouts];
+}
+
+- (void)rotation {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
+        return;
+    }
+    
+    BOOL isNormal = _verticalityMirror == _horizontalMirror;
+    
+    CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * (isNormal ? 1.0 : -1.0) * M_PI_2;
+    CATransform3D svTransform = CATransform3DRotate(self.scrollView.layer.transform, angle, 0, 0, 1);
+    CATransform3D fvTransform = CATransform3DRotate(self.frameView.layer.transform, angle, 0, 0, 1);
+    
+    self.directionIndex += (isNormal ? 1 : -1);
+    JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
+    
+    NSTimeInterval duration = 0.22;
+    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
+        self.scrollView.layer.transform = svTransform;
+        self.frameView.layer.transform = fvTransform;
+        [self.frameView rotationWithDirection:direction rotationDuration:duration];
+    } completion:nil];
+}
+
+- (void)recoveryByCurrentResizeWHScale {
+    [self recoveryByTargetResizeWHScale:self.resizeWHScale isToBeArbitrarily:NO];
+}
+
+- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily {
+    [self recoveryByTargetResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+}
+
+- (void)recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+    if (!self.frameView.isCanRecovery) {
+        JPLog(@"已经是初始状态，不需要重置");
+        return;
+    }
+    
+    [self.frameView willRecoveryByResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+    
+    self.directionIndex = 0;
+    
+    _horizontalMirror = NO;
+    _verticalityMirror = NO;
+    
+    CGFloat x = (_contentSize.width - self.scrollView.bounds.size.width) * 0.5 + _contentInsets.left;
+    CGFloat y = (_contentSize.height - self.scrollView.bounds.size.height) * 0.5 + _contentInsets.top;
+    CGRect frame = self.scrollView.bounds;
+    frame.origin.x = x;
+    frame.origin.y = y;
+    
+    // 做3d旋转时会遮盖住上层的控件，设置为-400即可
+    self.layer.zPosition = -400;
+    NSTimeInterval duration = 0.45;
+    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
+        
+        self.layer.transform = CATransform3DIdentity;
+        self.scrollView.layer.transform = CATransform3DIdentity;
+        self.frameView.layer.transform = CATransform3DIdentity;
+        
+        self.scrollView.frame = frame;
+        self.frameView.frame = frame;
+        
+        [self.frameView recoveryWithDuration:duration];
+        
+    } completion:^(BOOL finished) {
+        [self.frameView recoveryDone];
+        self.layer.zPosition = 0;
+    }];
+}
+
+- (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
+    [self imageresizerWithComplete:complete scale:1.0];
+}
+
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete scale:(CGFloat)scale {
+    if (self.frameView.isPrepareToScale) {
+        JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
+        !complete ? : complete(nil);
+        return;
+    }
+    if (scale <= 0) {
+        JPLog(@"压缩比例不能小于或等于0");
+        !complete ? : complete(nil);
+        return;
+    }
+    [self.frameView imageresizerWithComplete:complete scale:scale];
+}
+
+#pragma mark - private method
 
 - (void)setMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
     CATransform3D transform = self.layer.transform;
@@ -437,99 +517,32 @@
     }
 }
 
-- (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
-    self.imageView.image = resizeImage;
-    _verBaseMargin = verBaseMargin;
-    _horBaseMargin = horBaseMargin;
-    [self updateSubviewLayouts];
-}
-
-- (void)rotation {
-    if (self.frameView.isPrepareToScale) {
-        JPLog(@"裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
-        return;
-    }
-    
-    BOOL isNormal = _verticalityMirror == _horizontalMirror;
-    
-    CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * (isNormal ? 1.0 : -1.0) * M_PI_2;
-    CATransform3D svTransform = CATransform3DRotate(self.scrollView.layer.transform, angle, 0, 0, 1);
-    CATransform3D fvTransform = CATransform3DRotate(self.frameView.layer.transform, angle, 0, 0, 1);
-    
-    self.directionIndex += (isNormal ? 1 : -1);
-    JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
-    
-    NSTimeInterval duration = 0.22;
-    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-        self.scrollView.layer.transform = svTransform;
-        self.frameView.layer.transform = fvTransform;
-        [self.frameView rotationWithDirection:direction rotationDuration:duration];
-    } completion:nil];
-}
-
-- (void)recoveryByInitialResizeWHScale {
-    [self recoveryByResizeWHScale:self.initialResizeWHScale];
-}
-
-- (void)recoveryByCurrentResizeWHScale {
-    [self recoveryByResizeWHScale:self.resizeWHScale];
-}
-
-- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale {
-    if (!self.frameView.isCanRecovery) {
-        JPLog(@"已经是初始状态，不需要重置");
-        return;
-    }
-    
-    [self.frameView willRecovery];
-    
+- (void)updateSubviewLayouts {
     self.directionIndex = 0;
     
-    _horizontalMirror = NO;
-    _verticalityMirror = NO;
+    self.scrollView.layer.transform = CATransform3DIdentity;
+    self.scrollView.minimumZoomScale = 1.0;
+    self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
     
-    CGFloat x = (_contentSize.width - self.scrollView.bounds.size.width) * 0.5 + _contentInsets.left;
-    CGFloat y = (_contentSize.height - self.scrollView.bounds.size.height) * 0.5 + _contentInsets.top;
-    CGRect frame = self.scrollView.bounds;
-    frame.origin.x = x;
-    frame.origin.y = y;
+    CGFloat maxW = self.frame.size.width - 2 * _horBaseMargin;
+    CGFloat maxH = self.frame.size.height - 2 * _verBaseMargin;
+    CGFloat whScale = self.imageView.image.size.width / self.imageView.image.size.height;
+    CGFloat w = maxW;
+    CGFloat h = w / whScale;
+    if (h > maxH) {
+        h = maxH;
+        w = h * whScale;
+    }
+    self.imageView.frame = CGRectMake(0, 0, w, h);
     
-    // 做3d旋转时会遮盖住上层的控件，设置为-400即可
-    self.layer.zPosition = -400;
-    NSTimeInterval duration = 0.45;
-    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-        
-        self.layer.transform = CATransform3DIdentity;
-        self.scrollView.layer.transform = CATransform3DIdentity;
-        self.frameView.layer.transform = CATransform3DIdentity;
-        
-        self.scrollView.frame = frame;
-        self.frameView.frame = frame;
-        
-        [self.frameView recoveryByResizeWHScale:resizeWHScale duration:duration];
-        
-    } completion:^(BOOL finished) {
-        [self.frameView recoveryDone];
-        self.layer.zPosition = 0;
-    }];
-}
-
-- (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
-    [self imageresizerWithComplete:complete scale:1.0];
-}
-
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete scale:(CGFloat)scale {
-    if (self.frameView.isPrepareToScale) {
-        JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !complete ? : complete(nil);
-        return;
-    }
-    if (scale <= 0) {
-        JPLog(@"压缩比例不能小于或等于0");
-        !complete ? : complete(nil);
-        return;
-    }
-    [self.frameView imageresizerWithComplete:complete scale:scale];
+    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
+    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
+    
+    self.scrollView.contentSize = self.imageView.bounds.size;
+    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
+    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
+    
+    [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin];
 }
 
 #pragma mark - <UIScrollViewDelegate>

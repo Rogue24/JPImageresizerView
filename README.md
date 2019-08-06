@@ -141,15 +141,35 @@ self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
 self.imageresizerView.borderImage = tileBorderImage;
 ```
 
+#### 切换裁剪宽高比
+```objc
+// 1.自定义参数切换
+/**
+ * resizeWHScale：    目标裁剪宽高比
+ * isToBeArbitrarily：切换之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ * animated：         是否带动画效果
+ */
+[self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:YES animated:YES];
+
+// 2.直接切换
+self.imageresizerView.resizeWHScale = 1.0;
+// 默认切换之后保存最新的 resizeWHScale，且自带动画效果，相当于：
+[self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
+```
+
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
 ```objc
-// 垂直镜像，YES->沿着Y轴旋转180°，NO->还原
+// 1.垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
+self.imageresizerView.verticalityMirror = isVerticalityMirror;
+// 默认自带动画效果，相当于：
 [self.imageresizerView setVerticalityMirror:isVerticalityMirror animated:YES];
 
-// 水平镜像，YES->沿着X轴旋转180°，NO->还原
+// 2.水平镜像，YES->沿着X轴旋转180°，NO->还原
 BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
+self.imageresizerView.horizontalMirror = isHorizontalMirror;
+// 默认自带动画效果，相当于：
 [self.imageresizerView setHorizontalMirror:isHorizontalMirror animated:YES];
 ```
 
@@ -166,29 +186,40 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```objc
 // 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
 
-// 1.按initialResizeWHScale进行重置
+// 1.按当前 resizeWHScale 进行重置
 /**
- * initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
- * 使用该方法进行重置resizeWHScale会重置为initialResizeWHScale的值
+ * 使用该方法进行重置，裁剪框的宽高比会按照当前 resizeWHScale 的值进行重置
  */
-[self.imageresizerView recoveryByInitialResizeWHScale];
-
-// 2.按当前resizeWHScale进行重置（resizeWHScale不会重置为initialResizeWHScale的值）
 [self.imageresizerView recoveryByCurrentResizeWHScale];
 
-// 3.按指定resizeWHScale进行重置（自定义重置的resizeWHScale）
-[self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
+// isToBeArbitrarily：重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+BOOL isToBeArbitrarily = self.isToBeArbitrarily;   
+
+// 2.按 initialResizeWHScale 进行重置
+/**
+ * initialResizeWHScale 默认为初始化时的 resizeWHScale，此后可自行修改 initialResizeWHScale 的值
+ * 使用该方法进行重置，裁剪框的宽高比会按照 initialResizeWHScale 的值进行重置
+ * 若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = initialResizeWHScale
+ */
+[self.imageresizerView recoveryByInitialResizeWHScale:isToBeArbitrarily];
+    
+// 3.按 目标裁剪宽高比 进行重置
+/**
+ * 使用该方法进行重置，裁剪框的宽高比会按照 目标裁剪宽高比 进行重置
+ * 若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = targetResizeWHScale
+ */
+CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // 获取当前裁剪框的宽高比
+[self.imageresizerView recoveryByTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
 ```
 
 #### 预览
 ```objc
 // 预览模式：隐藏边框，停止拖拽操作，用于预览裁剪后的区域
 
-// 1.默认自带动画效果
 self.imageresizerView.isPreview = YES;
 
-// 2.自定义是否带动画效果
-[self.imageresizerView setIsPreview:YES animated:NO]
+// 默认自带动画效果，相当于：
+[self.imageresizerView setIsPreview:YES animated:YES];
 ```
 
 #### 裁剪
@@ -222,6 +253,10 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 1.1.1 更新内容
+    1.新增 isToBeArbitrarily 关键字，用于设置裁剪宽高比、重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0），即可以继续任意拖拽裁剪框，对设置裁剪宽高比、重置等方法进行了修改，详情请查看Demo；
+    2.直接设置 resizeWHScale、verticalityMirror、horizontalMirror、isPreview 默认自带动画效果（isAnimated = YES，其中 resizeWHScale 的 isToBeArbitrarily = NO）。
 
 #### 1.1.0 更新内容
     1.现在可以自定义边框图片，新增borderImage（边框图片）和borderImageRectInset（边框图片与边线的偏移量）接口用于设置自定义边框图片；

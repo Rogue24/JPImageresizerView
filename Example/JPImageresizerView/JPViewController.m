@@ -19,6 +19,7 @@
 @property (nonatomic, weak) JPImageresizerView *imageresizerView;
 @property (nonatomic, assign) JPImageresizerFrameType frameType;
 @property (nonatomic, strong) UIImage *borderImage;
+@property (nonatomic, assign) BOOL isToBeArbitrarily;
 @end
 
 @implementation JPViewController
@@ -100,14 +101,14 @@
 }
 
 - (IBAction)recovery:(id)sender {
-    // 1.按initialResizeWHScale进行重置
-    [self.imageresizerView recoveryByInitialResizeWHScale];
+    // 1.按当前 resizeWHScale 进行重置
+    [self.imageresizerView recoveryByCurrentResizeWHScale];
     
-    // 2.按当前resizeWHScale进行重置
-//    [self.imageresizerView recoveryByCurrentResizeWHScale];
+    // 2.按 initialResizeWHScale 进行重置
+//    [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
     
-    // 3.按指定resizeWHScale进行重置
-//    [self.imageresizerView recoveryByResizeWHScale:(3.0 / 4.0)];
+    // 3.按 目标裁剪宽高比 进行重置
+//    [self.imageresizerView recoveryByTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
 }
 
 - (IBAction)anyScale:(id)sender {
@@ -115,11 +116,13 @@
 }
 
 - (IBAction)one2one:(id)sender {
-    self.imageresizerView.resizeWHScale = 1.0;
+//    self.imageresizerView.resizeWHScale = 1.0;
+    [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 
 - (IBAction)sixteen2nine:(id)sender {
-    self.imageresizerView.resizeWHScale = 16.0 / 9.0;
+//    self.imageresizerView.resizeWHScale = 16.0 / 9.0;
+    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {
@@ -172,17 +175,22 @@
 }
 
 - (IBAction)verMirror:(id)sender {
-    [self.imageresizerView setVerticalityMirror:!self.imageresizerView.verticalityMirror animated:YES];
+    self.imageresizerView.verticalityMirror = !self.imageresizerView.verticalityMirror;
 }
 
 - (IBAction)horMirror:(id)sender {
-    [self.imageresizerView setHorizontalMirror:!self.imageresizerView.horizontalMirror animated:YES];
+    self.imageresizerView.horizontalMirror = !self.imageresizerView.horizontalMirror;
 }
 
 - (IBAction)previewAction:(UIButton *)sender {
     sender.selected = !sender.selected;
     self.imageresizerView.isPreview = sender.selected;
-//    [self.imageresizerView setIsPreview:sender.selected animated:NO];
+}
+
+- (IBAction)toBeArbitrarilyAction:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    self.isToBeArbitrarily = sender.selected;
+    [self.imageresizerView setResizeWHScale:self.imageresizerView.resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:NO];
 }
 
 @end

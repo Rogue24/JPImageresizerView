@@ -72,9 +72,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 @property (nonatomic, weak) CAShapeLayer *horBottomLine;
 @property (nonatomic, weak) CAShapeLayer *verLeftLine;
 @property (nonatomic, weak) CAShapeLayer *verRightLine;
-
-@property (nonatomic, assign) BOOL isArbitrarily;
-- (BOOL)isShowMidDot;
+// 是否显示边线的中点
+@property (nonatomic, assign) BOOL isShowMidDot;
 
 @property (nonatomic, assign) JPRectHorn currHorn;
 @property (nonatomic, assign) CGPoint diagonal;
@@ -115,6 +114,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     BOOL _isHideBlurEffect;
     BOOL _isHideFrameLine;
+    BOOL _isArbitrarily;
+    BOOL _isToBeArbitrarily;
     
     NSString *_kCAMediaTimingFunction;
     UIViewAnimationOptions _animationOption;
@@ -189,14 +190,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
-    [self setResizeWHScale:resizeWHScale animated:NO];
+    [self setResizeWHScale:resizeWHScale isToBeArbitrarily:NO animated:NO];
 }
 
-- (void)setResizeWHScale:(CGFloat)resizeWHScale animated:(BOOL)isAnimated {
+- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (resizeWHScale > 0 && [self isHorizontalDirection:_rotationDirection]) resizeWHScale = 1.0 / resizeWHScale;
-    if (_resizeWHScale == resizeWHScale) return;
+    if (_resizeWHScale == resizeWHScale && !isToBeArbitrarily) return;
     _resizeWHScale = resizeWHScale;
-    self.isArbitrarily = resizeWHScale <= 0;
+    _isArbitrarily = resizeWHScale <= 0;
+    _isToBeArbitrarily = isToBeArbitrarily;
+    self.isShowMidDot = isToBeArbitrarily ? YES : _isArbitrarily;
     if (self.superview) {
         CGRect adjustResizeFrame = [self adjustResizeFrame];
         NSTimeInterval duration = isAnimated ? _defaultDuration : -1.0;
@@ -377,15 +380,25 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     !self.imageresizerIsPrepareToScale ? : self.imageresizerIsPrepareToScale(isPrepareToScale);
 }
 
-- (void)setIsArbitrarily:(BOOL)isArbitrarily {
-    _isArbitrarily = isArbitrarily;
-    if (_frameType == JPConciseFrameType && !_borderImage) {
-        CGFloat midDotOpacity = _isPreview ? 0.0 : (isArbitrarily ? 1.0 : 0.0);
-        _leftMidDot.opacity = midDotOpacity;
-        _rightMidDot.opacity = midDotOpacity;
-        _topMidDot.opacity = midDotOpacity;
-        _bottomMidDot.opacity = midDotOpacity;
+- (void)setIsShowMidDot:(BOOL)isShowMidDot {
+    if (_frameType != JPConciseFrameType || _borderImage || _isPreview) {
+        isShowMidDot = NO;
     }
+    if (_isShowMidDot == isShowMidDot) {
+        return;
+    }
+    _isShowMidDot = isShowMidDot;
+    CGFloat midDotOpacity = isShowMidDot ? 1.0 : 0.0;
+    _leftMidDot.opacity = midDotOpacity;
+    _rightMidDot.opacity = midDotOpacity;
+    _topMidDot.opacity = midDotOpacity;
+    _bottomMidDot.opacity = midDotOpacity;
+}
+
+- (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
+    if (initialResizeWHScale < 0.0) initialResizeWHScale = 0.0;
+    _initialResizeWHScale = initialResizeWHScale;
+    [self checkIsCanRecovery];
 }
 
 #pragma mark - getter
@@ -682,12 +695,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     return shapeLayer;
 }
 
-- (BOOL)isShowMidDot {
-    return _isArbitrarily && _frameType == JPConciseFrameType;
-}
-
 - (BOOL)isHorizontalDirection:(JPImageresizerRotationDirection)direction {
-    return (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection);
+    return (direction == JPImageresizerHorizontalLeftDirection ||
+            direction == JPImageresizerHorizontalRightDirection);
 }
 
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
@@ -1192,6 +1202,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         sSelf.superview.userInteractionEnabled = YES;
+        if (sSelf->_isToBeArbitrarily) {
+            sSelf->_isToBeArbitrarily = NO;
+            sSelf->_resizeWHScale = 0;
+            sSelf->_isArbitrarily = YES;
+        }
         [sSelf checkIsCanRecovery];
         sSelf.isPrepareToScale = NO;
     };
@@ -1330,16 +1345,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.window.userInteractionEnabled = YES;
 }
 
-- (void)willRecovery {
+- (void)willRecoveryByResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily {
     self.window.userInteractionEnabled = NO;
     [self removeTimer];
+    _resizeWHScale = resizeWHScale;
+    _isArbitrarily = resizeWHScale <= 0;
+    _isToBeArbitrarily = isToBeArbitrarily;
 }
 
-- (void)recoveryByResizeWHScale:(CGFloat)resizeWHScale duration:(NSTimeInterval)duration {
-    if (_resizeWHScale != resizeWHScale) {
-        _resizeWHScale = resizeWHScale;
-        self.isArbitrarily = resizeWHScale <= 0;
-    }
+- (void)recoveryWithDuration:(NSTimeInterval)duration {
+    self.isShowMidDot = _isToBeArbitrarily ? YES : _isArbitrarily;
     
     [self updateRotationDirection:JPImageresizerVerticalUpDirection];
     
@@ -1349,15 +1364,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     CGFloat minZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
     
-    CGFloat contentOffsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
-    CGFloat contentOffsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
+    CGFloat offsetX = -contentInset.left + (_baseImageW * minZoomScale - adjustResizeFrame.size.width) * 0.5;
+    CGFloat offsetY = -contentInset.top + (_baseImageH * minZoomScale - adjustResizeFrame.size.height) * 0.5;
+    CGPoint contentOffset = CGPointMake(offsetX, offsetY);
     
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
     
     self.scrollView.minimumZoomScale = minZoomScale;
     self.scrollView.zoomScale = minZoomScale;
     self.scrollView.contentInset = contentInset;
-    self.scrollView.contentOffset = CGPointMake(contentOffsetX, contentOffsetY);
+    self.scrollView.contentOffset = contentOffset;
 }
 
 - (void)recoveryDone {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14835.7" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14790.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14806.4"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -86,7 +86,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="tOm-KP-cSJ"/>
                                 </constraints>
-                                <state key="normal" title="任意区域"/>
+                                <state key="normal" title="任意比例"/>
                                 <connections>
                                     <action selector="anyScale:" destination="whP-gf-Uak" eventType="touchUpInside" id="zqy-Wq-2Od"/>
                                 </connections>
@@ -139,15 +139,15 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT">
-                                <rect key="frame" x="20" y="0.0" width="60" height="30"/>
+                                <rect key="frame" x="16" y="0.0" width="39" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title=" ⬅️返回 "/>
+                                <state key="normal" title=" 返回 "/>
                                 <connections>
                                     <action selector="pop:" destination="whP-gf-Uak" eventType="touchUpInside" id="ZQs-Qd-Pnj"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7b-fV-KhW">
-                                <rect key="frame" x="324" y="0.0" width="31" height="30"/>
+                                <rect key="frame" x="328" y="0.0" width="31" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="锁定"/>
                                 <state key="selected" title="解锁"/>
@@ -156,7 +156,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oXP-jn-vnR">
-                                <rect key="frame" x="257" y="0.0" width="62" height="30"/>
+                                <rect key="frame" x="261" y="0.0" width="62" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="垂直镜像"/>
                                 <state key="disabled">
@@ -167,7 +167,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0oe-Do-HA2">
-                                <rect key="frame" x="190" y="0.0" width="62" height="30"/>
+                                <rect key="frame" x="194" y="0.0" width="62" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="水平镜像"/>
                                 <state key="disabled">
@@ -178,11 +178,20 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PPx-fE-9xq">
-                                <rect key="frame" x="154" y="0.0" width="31" height="30"/>
+                                <rect key="frame" x="158" y="0.0" width="31" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="预览"/>
                                 <connections>
                                     <action selector="previewAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="rTs-e6-sTe"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XaN-bE-0my">
+                                <rect key="frame" x="61" y="0.0" width="92" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="保持当前比例"/>
+                                <state key="selected" title="保持任意比例"/>
+                                <connections>
+                                    <action selector="toBeArbitrarilyAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="WDj-nd-bOt"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -191,13 +200,16 @@
                             <constraint firstItem="gfg-EW-TwQ" firstAttribute="width" secondItem="23z-V1-CXO" secondAttribute="width" id="0l5-aT-QjY"/>
                             <constraint firstItem="23z-V1-CXO" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" id="2n6-bl-LYj"/>
                             <constraint firstItem="gFY-kS-d4M" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="3gp-NH-Iaa"/>
+                            <constraint firstItem="XaN-bE-0my" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="5Qo-1I-aNg"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="7YP-11-YGd"/>
                             <constraint firstItem="0oe-Do-HA2" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="82e-EC-Uq1"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="leading" secondItem="LCH-xS-0qk" secondAttribute="trailing" constant="20" id="95S-0z-r6v"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nkI-gv-FqT" secondAttribute="trailingMargin" id="9Bj-dh-4HD"/>
                             <constraint firstItem="3Q2-Zj-NPf" firstAttribute="height" secondItem="23z-V1-CXO" secondAttribute="height" id="GCu-Q3-Jh3"/>
+                            <constraint firstItem="nkI-gv-FqT" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="16" id="LIw-oG-B2l"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="O05-ui-gVp"/>
                             <constraint firstItem="oXP-jn-vnR" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="OHq-Ho-Pjc"/>
+                            <constraint firstAttribute="trailing" secondItem="v7b-fV-KhW" secondAttribute="trailing" constant="16" id="PSt-ox-y6G"/>
                             <constraint firstItem="v7b-fV-KhW" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="QVu-I3-lRP"/>
                             <constraint firstItem="0oe-Do-HA2" firstAttribute="leading" secondItem="PPx-fE-9xq" secondAttribute="trailing" constant="5" id="Qgb-Ot-fpn"/>
                             <constraint firstItem="oXP-jn-vnR" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="QoJ-TU-gti"/>
@@ -216,15 +228,14 @@
                             <constraint firstItem="0oe-Do-HA2" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="eDL-8g-w7J"/>
                             <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerY" secondItem="23z-V1-CXO" secondAttribute="centerY" id="emC-nY-48s"/>
                             <constraint firstItem="gfg-EW-TwQ" firstAttribute="leading" secondItem="3Q2-Zj-NPf" secondAttribute="trailing" constant="20" id="hxK-Jh-kc1"/>
-                            <constraint firstItem="nkI-gv-FqT" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" constant="4" id="jhV-G4-2de"/>
                             <constraint firstItem="v7b-fV-KhW" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="k3h-DD-Q4R"/>
                             <constraint firstItem="Bmh-GN-dI9" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" id="lJj-JR-VTR"/>
                             <constraint firstItem="JTM-rw-zlm" firstAttribute="leading" secondItem="gFY-kS-d4M" secondAttribute="trailing" constant="20" id="mHZ-UZ-JrS"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="pyE-sd-tJK"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="v7b-fV-KhW" secondAttribute="trailing" constant="4" id="qs0-YT-urr"/>
                             <constraint firstItem="LCH-xS-0qk" firstAttribute="top" secondItem="23z-V1-CXO" secondAttribute="bottom" constant="20" id="qsa-mP-37m"/>
                             <constraint firstAttribute="trailing" secondItem="gfg-EW-TwQ" secondAttribute="trailing" constant="20" id="r6G-0Y-qT4"/>
                             <constraint firstItem="gFY-kS-d4M" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="rGV-v1-yy1"/>
+                            <constraint firstItem="PPx-fE-9xq" firstAttribute="leading" secondItem="XaN-bE-0my" secondAttribute="trailing" constant="5" id="rim-bV-9ex"/>
                             <constraint firstItem="23z-V1-CXO" firstAttribute="leading" secondItem="Bmh-GN-dI9" secondAttribute="trailing" constant="20" id="rx6-GP-MwR"/>
                             <constraint firstItem="tRo-kT-cgg" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="scE-Zp-5WH"/>
                             <constraint firstAttribute="trailing" secondItem="JTM-rw-zlm" secondAttribute="trailing" constant="20" id="tiY-6f-Wdm"/>
@@ -253,7 +264,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="652" y="412"/>
+            <point key="canvasLocation" x="652" y="411.544227886057"/>
         </scene>
         <!--Image View Controller-->
         <scene sceneID="EEc-hZ-lOE">
