@@ -56,6 +56,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 - (void)dealloc {
@@ -301,18 +302,18 @@
 #pragma mark - <JPPhotoCollectionViewDelegate>
 
 - (BOOL)pcVC:(JPPhotoCollectionViewController *)pcVC photoDidSelected:(JPPhotoViewModel *)photoVM {
-    [SVProgressHUD show];
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:PHImageManagerMaximumSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        if (result) {
-            [SVProgressHUD dismiss];
-            [sSelf imageresizerWithImage:result];
-        } else {
-            [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
-        }
-    }];
+//    [SVProgressHUD show];
+//    __weak typeof(self) wSelf = self;
+//    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:PHImageManagerMaximumSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        if (result) {
+//            [SVProgressHUD dismiss];
+//            [sSelf imageresizerWithImage:result];
+//        } else {
+//            [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
+//        }
+//    }];
     return NO;
 }
 

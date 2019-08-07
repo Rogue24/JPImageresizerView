@@ -11,6 +11,13 @@
 #import "JPPhotoCell.h"
 #import "NoDataView.h"
 #import "JPPhotoCollectionViewFlowLayout.h"
+#import "JPBrowseImagesViewController.h"
+#import <SVProgressHUD/SVProgressHUD.h>
+#import "JPViewController.h"
+
+@interface JPPhotoCollectionViewController () <JPBrowseImagesDelegate>
+
+@end
 
 @implementation JPPhotoCollectionViewController
 {
@@ -307,17 +314,19 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     cell.longPressBlock = ^(JPPhotoCell *pCell) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        [sSelf browsePhotoWithIndexPath:indexPath];
+//        [sSelf browsePhotoWithIndexPath:indexPath];
     };
     
     cell.tapBlock = ^(JPPhotoCell *pCell) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return NO;
-        if ([sSelf.pcVCDelegate respondsToSelector:@selector(pcVC:photoDidSelected:)]) {
-            return [sSelf.pcVCDelegate pcVC:sSelf photoDidSelected:pCell.photoVM];
-        } else {
-            return NO;
-        }
+        [sSelf browsePhotoWithIndexPath:indexPath];
+        return NO;
+//        if ([sSelf.pcVCDelegate respondsToSelector:@selector(pcVC:photoDidSelected:)]) {
+//            return [sSelf.pcVCDelegate pcVC:sSelf photoDidSelected:pCell.photoVM];
+//        } else {
+//            return NO;
+//        }
     };
     
     return cell;
@@ -364,7 +373,101 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 #pragma mark - JPPhotoCellDelegate（浏览大图）
 
 - (void)browsePhotoWithIndexPath:(NSIndexPath *)indexPath {
-    
+    JPBrowseImagesViewController *browseVC = [JPBrowseImagesViewController browseImagesViewControllerWithDelegate:self totalCount:self.photoVMs.count currIndex:indexPath.item isShowProgress:YES isShowNavigationBar:YES];
+    [self presentViewController:browseVC animated:YES completion:nil];
+}
+
+#pragma mark - <JPBrowseImagesDelegate>
+
+- (UIImageView *)getOriginImageView:(NSInteger)currIndex {
+    JPBrowseImageCell *cell = (JPBrowseImageCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
+    return cell.imageView;
+}
+
+- (CGFloat)getImageHWScale:(NSInteger)currIndex {
+    JPPhotoViewModel *photoVM = self.photoVMs[currIndex];
+    return photoVM.jp_whScale;
+}
+
+- (BOOL)isCornerRadiusTransition:(NSInteger)currIndex {
+    return NO;
+}
+
+- (BOOL)isAlphaTransition:(NSInteger)currIndex {
+    return NO;
+}
+
+- (void)flipImageViewWithLastIndex:(NSInteger)lastIndex currIndex:(NSInteger)currIndex {
+    UICollectionViewCell *lastCell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:lastIndex inSection:0]];
+    lastCell.hidden = NO;
+    UICollectionViewCell *currCell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
+    currCell.hidden = YES;
+}
+
+- (void)dismissComplete:(NSInteger)currIndex {
+    UICollectionViewCell *currCell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
+    currCell.hidden = NO;
+}
+
+- (void)cellRequestImage:(JPBrowseImageCell *)cell
+                   index:(NSInteger)index
+           progressBlock:(void (^)(NSInteger, JPBrowseImageModel *, float))progressBlock
+           completeBlock:(void (^)(NSInteger, JPBrowseImageModel *, UIImage *))completeBlock {
+    JPPhotoViewModel *photoVM = self.photoVMs[index];
+    __weak typeof(self) wSelf = self;
+    __weak JPBrowseImageModel *wModel = cell.model;
+    __weak typeof(photoVM) wPhotoVM = photoVM;
+    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:photoVM.originPhotoSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf || !wModel || !wPhotoVM) return;
+        !completeBlock ? : completeBlock(index, wModel, result);
+    }];
+}
+
+- (void)requestImageFailWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {
+    [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
+}
+
+- (NSString *)getNavigationDismissIcon {
+    return @"jp_back";
+}
+
+- (NSString *)getNavigationOtherIcon {
+    return @"jp_clipper";
+}
+
+- (void)browseImagesVC:(JPBrowseImagesViewController *)browseImagesVC navigationOtherHandleWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {
+    JPPhotoViewModel *photoVM = self.photoVMs[index];
+    [SVProgressHUD show];
+    __weak typeof(self) wSelf = self;
+    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:PHImageManagerMaximumSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        if (result) {
+            [SVProgressHUD dismiss];
+            [sSelf imageresizerWithImage:result fromVC:browseImagesVC];
+        } else {
+            [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
+        }
+    }];
+}
+
+#pragma mark - 裁剪照片
+
+- (void)imageresizerWithImage:(UIImage *)image fromVC:(UIViewController *)fromVC {
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 0, (40 + 30 + 30 + 10), 0);
+    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
+    if (isX) {
+        contentInsets.top += 24;
+        contentInsets.bottom += 34;
+    }
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *kConfigure) {
+        kConfigure.jp_contentInsets(contentInsets);
+    }];
+    JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
+    vc.statusBarStyle = UIStatusBarStyleLightContent;
+    vc.configure = configure;
+    [fromVC presentViewController:[[UINavigationController alloc] initWithRootViewController:vc] animated:YES completion:nil];
 }
 
 @end

@@ -138,10 +138,10 @@
                                     <action selector="rotate:" destination="whP-gf-Uak" eventType="touchUpInside" id="uaM-WC-hmI"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT">
-                                <rect key="frame" x="16" y="0.0" width="39" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title=" 返回 "/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT">
+                                <rect key="frame" x="16" y="0.0" width="22" height="30"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title=" " image="jp_back"/>
                                 <connections>
                                     <action selector="pop:" destination="whP-gf-Uak" eventType="touchUpInside" id="ZQs-Qd-Pnj"/>
                                 </connections>
@@ -317,4 +317,7 @@
             <point key="canvasLocation" x="-791" y="412"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="jp_back" width="17" height="17"/>
+    </resources>
 </document>

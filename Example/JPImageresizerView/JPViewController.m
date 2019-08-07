@@ -8,6 +8,7 @@
 
 #import "JPViewController.h"
 #import "JPImageViewController.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 
 @interface JPViewController ()
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
@@ -74,12 +75,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-//    [self.imageresizerView setResizeWHScale:1 animated:YES];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
+//    [self.imageresizerView setResizeWHScale:1 isToBeArbitrarily:NO animated:animated:YES];
 }
 
 - (void)dealloc {
@@ -139,34 +135,42 @@
 - (IBAction)resize:(id)sender {
     self.recoveryBtn.enabled = NO;
     
+    [SVProgressHUD show];
+    
     __weak typeof(self) wSelf = self;
     
     // 1.自定义压缩比例进行裁剪
-    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
+//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
+//        // 裁剪完成，resizeImage为裁剪后的图片
+//        // 注意循环引用
+//    } scale:0.7]; // 这里压缩为原图尺寸的70%
+    
+    // 2.以原图尺寸进行裁剪
+    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         
         if (!resizeImage) {
-            NSLog(@"没有裁剪图片");
+            [SVProgressHUD showErrorWithStatus:@"没有裁剪图片"];
             return;
         }
+        
+        [SVProgressHUD dismiss];
         
         JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.image = resizeImage;
         [sSelf.navigationController pushViewController:vc animated:YES];
         
         sSelf.recoveryBtn.enabled = YES;
-    } scale:0.7]; // 这里压缩为原图尺寸的70%
-    
-    // 2.以原图尺寸进行裁剪
-//    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
-//        // 裁剪完成，resizeImage为裁剪后的图片
-//        // 注意循环引用
-//    }];
+    }];
 }
 
 - (IBAction)pop:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.navigationController.viewControllers.count <= 1) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (IBAction)lockFrame:(UIButton *)sender {
