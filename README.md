@@ -73,14 +73,15 @@ JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
 
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
-    configure.jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"]).
-    jp_maskAlpha(0.5).
-    jp_strokeColor([UIColor yellowColor]).
-    jp_frameType(JPClassicFrameType).
-    jp_contentInsets(contentInsets).
-    jp_bgColor([UIColor orangeColor]).
-    jp_isClockwiseRotation(YES).
-    jp_animationCurve(JPAnimationCurveEaseOut);
+    configure
+    .jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"])
+    .jp_maskAlpha(0.5)
+    .jp_strokeColor([UIColor yellowColor])
+    .jp_frameType(JPClassicFrameType)
+    .jp_contentInsets(contentInsets)
+    .jp_bgColor([UIColor orangeColor])
+    .jp_isClockwiseRotation(YES)
+    .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
