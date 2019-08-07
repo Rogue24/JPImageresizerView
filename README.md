@@ -341,6 +341,7 @@ JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添�
 
 ```ruby
 pod 'JPImageresizerView'
+
 版本更新指令：pod update --no-repo-update
 ```
 
