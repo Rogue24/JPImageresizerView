@@ -311,11 +311,11 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     
     __weak typeof(self) wSelf = self;
     
-    cell.longPressBlock = ^(JPPhotoCell *pCell) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
+//    cell.longPressBlock = ^(JPPhotoCell *pCell) {
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
 //        [sSelf browsePhotoWithIndexPath:indexPath];
-    };
+//    };
     
     cell.tapBlock = ^(JPPhotoCell *pCell) {
         __strong typeof(wSelf) sSelf = wSelf;
