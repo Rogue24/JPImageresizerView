@@ -7,7 +7,7 @@
 
 英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
 
-## 简介
+## 简介（当前版本：1.1.1）
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -341,6 +341,7 @@ JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添�
 
 ```ruby
 pod 'JPImageresizerView'
+版本更新指令：pod update --no-repo-update
 ```
 
 ## 反馈地址
