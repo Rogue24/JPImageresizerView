@@ -67,8 +67,11 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
                                           maxWHSclae:(CGFloat)maxWHSclae
                                               maxCol:(NSInteger)maxCol
                                         pcVCDelegate:(id<JPPhotoCollectionViewControllerDelegate>)pcVCDelegate {
+    
+    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
+    
     JPPhotoCollectionViewFlowLayout *flowLayout = [[JPPhotoCollectionViewFlowLayout alloc] init];
-    flowLayout.sectionInset = UIEdgeInsetsMake(sideMargin, sideMargin, sideMargin, sideMargin);
+    flowLayout.sectionInset = UIEdgeInsetsMake(sideMargin, sideMargin, sideMargin + (isX ? 34 : 0), sideMargin);
     flowLayout.minimumLineSpacing = cellSpace;
     flowLayout.minimumInteritemSpacing = cellSpace;
     
