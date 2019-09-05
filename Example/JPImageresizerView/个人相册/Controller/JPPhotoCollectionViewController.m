@@ -443,7 +443,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     JPPhotoViewModel *photoVM = self.photoVMs[index];
     [SVProgressHUD show];
     __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:PHImageManagerMaximumSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
+    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:CGSizeMake(photoVM.asset.pixelWidth, photoVM.asset.pixelHeight) isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         if (result) {
@@ -470,7 +470,14 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
     vc.configure = configure;
-    [fromVC presentViewController:[[UINavigationController alloc] initWithRootViewController:vc] animated:YES completion:nil];
+    
+    UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:vc];
+    navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
+    
+    [UIView transitionWithView:fromVC.view.window duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        [fromVC presentViewController:navCtr animated:NO completion:nil];
+    } completion:nil];
+    
 }
 
 @end

@@ -70,7 +70,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
+    if (@available(iOS 13.0, *)) {
+        [[UIApplication sharedApplication] setStatusBarStyle:(self.statusBarStyle == UIStatusBarStyleDefault ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent) animated:YES];
+    } else {
+        [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -167,7 +171,9 @@
 
 - (IBAction)pop:(id)sender {
     if (self.navigationController.viewControllers.count <= 1) {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [UIView transitionWithView:self.view.window duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+            [self dismissViewControllerAnimated:NO completion:nil];
+        } completion:nil];
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
