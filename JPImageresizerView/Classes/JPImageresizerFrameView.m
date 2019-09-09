@@ -1827,11 +1827,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
             
         default:
-        {
             break;
-        }
-            
     }
+    
     CGRect imageresizerFrame = CGRectMake(x, y, w, h);
     
     CGFloat zoomScale = self.scrollView.zoomScale;
