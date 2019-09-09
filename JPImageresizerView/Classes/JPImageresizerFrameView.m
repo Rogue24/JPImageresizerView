@@ -75,9 +75,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 // 是否显示边线的中点
 @property (nonatomic, assign) BOOL isShowMidDot;
 
-@property (nonatomic, assign) JPRectHorn currHorn;
-@property (nonatomic, assign) CGPoint diagonal;
-
 @property (nonatomic, assign) CGRect originImageFrame;
 @property (nonatomic, assign) CGRect maxResizeFrame;
 - (CGFloat)maxResizeX;
@@ -122,6 +119,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     NSTimeInterval _defaultDuration;
     
     struct JPRGBAColor _fillRgba;
+    
+    JPRectHorn _currHorn;
+    CGPoint _diagonal;
 }
 
 #pragma mark - setter
@@ -953,9 +953,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
-    NSString *keyPath = aKeyPath(self.bgLayer, path);
-    CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
-    
     UIBezierPath *bgPath;
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRect:imageresizerFrame];
     if (self.blurContentView) {
@@ -975,7 +972,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
                 self.borderImageView.frame = borderImageViewFrame;
             } completion:nil];
-            [self.bgLayer jp_addBackwardsAnimationWithKeyPath:keyPath fromValue:[UIBezierPath bezierPathWithCGPath:self.bgLayer.path] toValue:bgPath timingFunctionName:timingFunctionName duration:duration];
+            [self.bgLayer jp_addBackwardsAnimationWithKeyPath:aKeyPath(self.bgLayer, path) fromValue:[UIBezierPath bezierPathWithCGPath:self.bgLayer.path] toValue:bgPath timingFunctionName:_kCAMediaTimingFunction duration:duration];
         } else {
             _borderImageView.frame = borderImageViewFrame;
         }
@@ -1038,6 +1035,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     
     if (duration > 0) {
+        NSString *keyPath = aKeyPath(self.bgLayer, path);
+        CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
+        
         __weak typeof(self) wSelf = self;
         void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
             __strong typeof(wSelf) sSelf = wSelf;
@@ -1488,23 +1488,32 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 #pragma mark - UIPanGestureRecognizer
 
 - (void)panHandle:(UIPanGestureRecognizer *)panGR {
-    
-    CGPoint translation = [panGR translationInView:self];
-    
+    switch (panGR.state) {
+        case UIGestureRecognizerStateBegan:
+        {
+            [self startImageresizer];
+            [self panBeganHandleWithLocation:[panGR locationInView:self]];
+            break;
+        }
+        case UIGestureRecognizerStateChanged:
+        {
+            [self panChangedHandleWithTranslation:[panGR translationInView:self]];
+            break;
+        }
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
+        {
+            [self endedImageresizer];
+            break;
+        }
+        default:
+            break;
+    }
     [panGR setTranslation:CGPointZero inView:self];
-    
-    if (panGR.state == UIGestureRecognizerStateBegan) [self panBeganHandleWithLocation:[panGR locationInView:self]];
-    
-    if (panGR.state == UIGestureRecognizerStateChanged) [self panChangedHandleWithTranslation:translation];
-    
-    if (panGR.state == UIGestureRecognizerStateEnded ||
-        panGR.state == UIGestureRecognizerStateCancelled ||
-        panGR.state == UIGestureRecognizerStateFailed) [self endedImageresizer];
 }
 
 - (void)panBeganHandleWithLocation:(CGPoint)location {
-    
-    [self startImageresizer];
     
     CGFloat x = self.imageresizeX;
     CGFloat y = self.imageresizeY;
@@ -1524,17 +1533,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     
     if (CGRectContainsPoint(leftTopRect, location)) {
-        self.currHorn = JPLeftTop;
-        self.diagonal = CGPointMake(x + width, y + height);
+        _currHorn = JPLeftTop;
+        _diagonal = CGPointMake(x + width, y + height);
     } else if (CGRectContainsPoint(leftBotRect, location)) {
-        self.currHorn = JPLeftBottom;
-        self.diagonal = CGPointMake(x + width, y);
+        _currHorn = JPLeftBottom;
+        _diagonal = CGPointMake(x + width, y);
     } else if (CGRectContainsPoint(rightTopRect, location)) {
-        self.currHorn = JPRightTop;
-        self.diagonal = CGPointMake(x, y + height);
+        _currHorn = JPRightTop;
+        _diagonal = CGPointMake(x, y + height);
     } else if (CGRectContainsPoint(rightBotRect, location)) {
-        self.currHorn = JPRightBottom;
-        self.diagonal = CGPointMake(x, y);
+        _currHorn = JPRightBottom;
+        _diagonal = CGPointMake(x, y);
     } else if (_isArbitrarily) {
         CGRect leftMidRect = CGRectNull;
         CGRect rightMidRect = CGRectNull;
@@ -1552,22 +1561,22 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
         }
         if (CGRectContainsPoint(leftMidRect, location)) {
-            self.currHorn = JPLeftMid;
-            self.diagonal = CGPointMake(maxX, midY);
+            _currHorn = JPLeftMid;
+            _diagonal = CGPointMake(maxX, midY);
         } else if (CGRectContainsPoint(rightMidRect, location)) {
-            self.currHorn = JPRightMid;
-            self.diagonal = CGPointMake(x, midY);
+            _currHorn = JPRightMid;
+            _diagonal = CGPointMake(x, midY);
         } else if (CGRectContainsPoint(topMidRect, location)) {
-            self.currHorn = JPTopMid;
-            self.diagonal = CGPointMake(midX, maxY);
+            _currHorn = JPTopMid;
+            _diagonal = CGPointMake(midX, maxY);
         } else if (CGRectContainsPoint(botMidRect, location)) {
-            self.currHorn = JPBottomMid;
-            self.diagonal = CGPointMake(midX, y);
+            _currHorn = JPBottomMid;
+            _diagonal = CGPointMake(midX, y);
         } else {
-            self.currHorn = JPCenter;
+            _currHorn = JPCenter;
         }
     } else {
-        self.currHorn = JPCenter;
+        _currHorn = JPCenter;
     }
     
     _startResizeW = width;
@@ -1581,7 +1590,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat width = self.imageresizeW;
     CGFloat height = self.imageresizeH;
     
-    switch (self.currHorn) {
+    switch (_currHorn) {
             
         case JPLeftTop: {
             if (_isArbitrarily) {
@@ -1596,40 +1605,40 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                     y = self.maxResizeY;
                 }
                 
-                width = self.diagonal.x - x;
-                height = self.diagonal.y - y;
+                width = _diagonal.x - x;
+                height = _diagonal.y - y;
                 
                 if (width < _minImageWH) {
                     width = _minImageWH;
-                    x = self.diagonal.x - width;
+                    x = _diagonal.x - width;
                 }
                 
                 if (height < _minImageWH) {
                     height = _minImageWH;
-                    y = self.diagonal.y - height;
+                    y = _diagonal.y - height;
                 }
             } else {
                 x += translation.x;
-                width = self.diagonal.x - x;
+                width = _diagonal.x - x;
                 
                 if (translation.x != 0) {
                     CGFloat diff = translation.x / _resizeWHScale;
                     y += diff;
-                    height = self.diagonal.y - y;
+                    height = _diagonal.y - y;
                 }
                 
                 if (x < self.maxResizeX) {
                     x = self.maxResizeX;
-                    width = self.diagonal.x - x;
+                    width = _diagonal.x - x;
                     height = width / _resizeWHScale;
-                    y = self.diagonal.y - height;
+                    y = _diagonal.y - height;
                 }
                 
                 if (y < self.maxResizeY) {
                     y = self.maxResizeY;
-                    height = self.diagonal.y - y;
+                    height = _diagonal.y - y;
                     width = height * _resizeWHScale;
-                    x = self.diagonal.x - width;
+                    x = _diagonal.x - width;
                 }
                 
                 if (width < _minImageWH && height < _minImageWH) {
@@ -1640,8 +1649,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                         height = _minImageWH;
                         width = height * _resizeWHScale;
                     }
-                    x = self.diagonal.x - width;
-                    y = self.diagonal.y - height;
+                    x = _diagonal.x - width;
+                    y = _diagonal.y - height;
                 }
             }
             
@@ -1659,14 +1668,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
                 if ((y + height) > maxResizeMaxY) {
-                    height = maxResizeMaxY - self.diagonal.y;
+                    height = maxResizeMaxY - _diagonal.y;
                 }
                 
-                width = self.diagonal.x - x;
+                width = _diagonal.x - x;
                 
                 if (width < _minImageWH) {
                     width = _minImageWH;
-                    x = self.diagonal.x - width;
+                    x = _diagonal.x - width;
                 }
                 
                 if (height < _minImageWH) {
@@ -1674,7 +1683,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 }
             } else {
                 x += translation.x;
-                width = self.diagonal.x - x;
+                width = _diagonal.x - x;
                 
                 if (translation.x != 0) {
                     height = width / _resizeWHScale;
@@ -1682,15 +1691,15 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 if (x < self.maxResizeX) {
                     x = self.maxResizeX;
-                    width = self.diagonal.x - x;
+                    width = _diagonal.x - x;
                     height = width / _resizeWHScale;
                 }
                 
                 CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
                 if ((y + height) > maxResizeMaxY) {
-                    height = maxResizeMaxY - self.diagonal.y;
+                    height = maxResizeMaxY - _diagonal.y;
                     width = height * _resizeWHScale;
-                    x = self.diagonal.x - width;
+                    x = _diagonal.x - width;
                 }
                 
                 if (width < _minImageWH && height < _minImageWH) {
@@ -1701,8 +1710,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                         height = _minImageWH;
                         width = height * _resizeWHScale;
                     }
-                    x = self.diagonal.x - width;
-                    y = self.diagonal.y;
+                    x = _diagonal.x - width;
+                    y = _diagonal.y;
                 }
             }
             
@@ -1720,10 +1729,10 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
                 if ((x + width) > maxResizeMaxX) {
-                    width = maxResizeMaxX - self.diagonal.x;
+                    width = maxResizeMaxX - _diagonal.x;
                 }
                 
-                height = self.diagonal.y - y;
+                height = _diagonal.y - y;
                 
                 if (width < _minImageWH) {
                     width = _minImageWH;
@@ -1731,7 +1740,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 if (height < _minImageWH) {
                     height = _minImageWH;
-                    y = self.diagonal.y - height;
+                    y = _diagonal.y - height;
                 }
             } else {
                 width = width + translation.x;
@@ -1739,20 +1748,20 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 if (translation.x != 0) {
                     CGFloat diff = translation.x / _resizeWHScale;
                     y -= diff;
-                    height = self.diagonal.y - y;
+                    height = _diagonal.y - y;
                 }
                 
                 if (y < self.maxResizeY) {
                     y = self.maxResizeY;
-                    height = self.diagonal.y - y;
+                    height = _diagonal.y - y;
                     width = height * _resizeWHScale;
                 }
                 
                 CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
                 if ((x + width) > maxResizeMaxX) {
-                    width = maxResizeMaxX - self.diagonal.x;
+                    width = maxResizeMaxX - _diagonal.x;
                     height = width / _resizeWHScale;
-                    y = self.diagonal.y - height;
+                    y = _diagonal.y - height;
                 }
                 
                 if (width < _minImageWH && height < _minImageWH) {
@@ -1763,8 +1772,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                         height = _minImageWH;
                         width = height * _resizeWHScale;
                     }
-                    x = self.diagonal.x;
-                    y = self.diagonal.y - height;
+                    x = _diagonal.x;
+                    y = _diagonal.y - height;
                 }
             }
             
@@ -1778,12 +1787,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
                 if ((x + width) > maxResizeMaxX) {
-                    width = maxResizeMaxX - self.diagonal.x;
+                    width = maxResizeMaxX - _diagonal.x;
                 }
                 
                 CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
                 if ((y + height) > maxResizeMaxY) {
-                    height = maxResizeMaxY - self.diagonal.y;
+                    height = maxResizeMaxY - _diagonal.y;
                 }
                 
                 if (width < _minImageWH) {
@@ -1802,13 +1811,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 
                 CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
                 if ((x + width) > maxResizeMaxX) {
-                    width = maxResizeMaxX - self.diagonal.x;
+                    width = maxResizeMaxX - _diagonal.x;
                     height = width / _resizeWHScale;
                 }
                 
                 CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
                 if ((y + height) > maxResizeMaxY) {
-                    height = maxResizeMaxY - self.diagonal.y;
+                    height = maxResizeMaxY - _diagonal.y;
                     width = height * _resizeWHScale;
                 }
                 
@@ -1820,8 +1829,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                         height = _minImageWH;
                         width = height * _resizeWHScale;
                     }
-                    x = self.diagonal.x;
-                    y = self.diagonal.y;
+                    x = _diagonal.x;
+                    y = _diagonal.y;
                 }
             }
             
@@ -1835,11 +1844,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 x = self.maxResizeX;
             }
             
-            width = self.diagonal.x - x;
+            width = _diagonal.x - x;
             
             if (width < _minImageWH) {
                 width = _minImageWH;
-                x = self.diagonal.x - width;
+                x = _diagonal.x - width;
             }
             break;
         }
@@ -1849,7 +1858,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             
             CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
             if ((x + width) > maxResizeMaxX) {
-                width = maxResizeMaxX - self.diagonal.x;
+                width = maxResizeMaxX - _diagonal.x;
             }
             
             if (width < _minImageWH) {
@@ -1865,11 +1874,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                 y = self.maxResizeY;
             }
             
-            height = self.diagonal.y - y;
+            height = _diagonal.y - y;
             
             if (height < _minImageWH) {
                 height = _minImageWH;
-                y = self.diagonal.y - height;
+                y = _diagonal.y - height;
             }
             break;
         }
@@ -1879,7 +1888,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             
             CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
             if ((y + height) > maxResizeMaxY) {
-                height = maxResizeMaxY - self.diagonal.y;
+                height = maxResizeMaxY - _diagonal.y;
             }
             
             if (height < _minImageWH) {
@@ -1909,7 +1918,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     if (maxZoomScale > zoomScale) {
         zoomScale = maxZoomScale;
     }
-    [self.scrollView setZoomScale:zoomScale animated:NO];
+    if (zoomScale != self.scrollView.zoomScale) {
+        [self.scrollView setZoomScale:zoomScale animated:NO];
+    }
     
     CGPoint contentOffset = self.scrollView.contentOffset;
     CGSize contentSize = self.scrollView.contentSize;
@@ -1924,7 +1935,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     } else if (CGRectGetMaxY(convertFrame) > contentSize.height) {
         contentOffset.y -= CGRectGetMaxY(convertFrame) - contentSize.height;
     }
-    [self.scrollView setContentOffset:contentOffset animated:NO];
+    if (!CGPointEqualToPoint(contentOffset, self.scrollView.contentOffset)) {
+        [self.scrollView setContentOffset:contentOffset animated:NO];
+    }
     
     self.imageresizerFrame = imageresizerFrame;
 }

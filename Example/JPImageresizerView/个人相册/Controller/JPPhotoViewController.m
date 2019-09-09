@@ -267,7 +267,7 @@
 #pragma mark - 裁剪图片
 
 - (void)imageresizerWithImage:(UIImage *)image {
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 0, (40 + 30 + 30 + 10), 0);
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 10, (40 + 30 + 30 + 10), 10);
     BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
     if (isX) {
         contentInsets.top += 24;

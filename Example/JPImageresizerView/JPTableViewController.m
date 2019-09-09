@@ -20,7 +20,7 @@
     [super viewDidLoad];
     self.title = @"Example";
     
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 0, (40 + 30 + 30 + 10), 0);
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 10, (40 + 30 + 30 + 10), 10);
     BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
     if (isX) {
         contentInsets.top += 24;
@@ -75,7 +75,8 @@
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage(stretchBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-2, -2));
+        .jp_borderImageRectInset(CGPointMake(-2, -2))
+        .jp_maskAlpha(0);
     }];
     
     NSString *title6 = @"自定义边框图片（平铺模式）";
@@ -89,7 +90,8 @@
         .jp_contentInsets(contentInsets)
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage(tileBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
+        .jp_borderImageRectInset(CGPointMake(-1.75, -1.75))
+        .jp_maskAlpha(0);
     }];
     
     self.configures = @[@{@"title": title1, @"configure": configure1, @"statusBarStyle": @(UIStatusBarStyleLightContent)},
