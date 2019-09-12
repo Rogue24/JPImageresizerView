@@ -7,7 +7,7 @@
 
 英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
 
-## 简介（当前版本：1.1.1）
+## 简介（当前版本：1.1.3）
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -254,6 +254,9 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 1.1.2~1.1.3 更新内容
+    优化计算流程。
 
 #### 1.1.1 更新内容
     1.新增 imageresizeWHScale 属性，获取当前裁剪框的宽高比；
