@@ -487,6 +487,7 @@ static JPPhotoTool *_sharedInstance;
     // [PHCachingImageManager defaultManager]
     
     // param：targetSize 即你想要的图片尺寸，若想要原尺寸则可输入PHImageManagerMaximumSize
+    // iOS13的PHImageManagerMaximumSize已经不适用，使用asset的像素获取原图尺寸
     
     PHImageRequestOptions *options = isFastMode ? self.fastOptions : self.highQualityOptions;
     

@@ -136,6 +136,7 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
         JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
         NSDictionary *dic = self.configures[indexPath.row];
@@ -143,8 +144,14 @@
         vc.configure = dic[@"configure"];
         [self.navigationController pushViewController:vc animated:YES];
     } else {
-        JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+        __weak typeof(self) wSelf = self;
+        [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf) return;
+            JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
+            [sSelf.navigationController pushViewController:vc animated:YES];
+        } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:YES];
+        
     }
 }
 

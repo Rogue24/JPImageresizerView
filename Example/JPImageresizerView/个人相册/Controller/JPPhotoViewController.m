@@ -50,7 +50,7 @@
     [self setupNavigationBar];
     [self setupCategoryTitleView];
     [self setupPageController];
-    [self setupAlbums];
+    [self setupDataSource];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -154,39 +154,7 @@
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         [sSelf photograph];
-    } refuseAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf photograph];
-    } alreadyRefuseAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf photograph];
-    } canNotAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf photograph];
-    }];
-}
-
-#pragma mark - 判断相册权限
-
-- (void)setupAlbums {
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [SVProgressHUD show];
-        [sSelf setupDataSource];
-    } refuseAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf setupDataSource];
-    } alreadyRefuseAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf setupDataSource];
-    } canNotAccessAuthorityHandler:nil isRegisterChange:YES];
+    } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil];
 }
 
 #pragma mark - 配置相册数据源
@@ -233,7 +201,16 @@
     
     // 获取选择的图片
     UIImage *image = info[UIImagePickerControllerOriginalImage];
-    if (!image) return;
+    if (!image) {
+        if (@available(iOS 13.0, *)) {
+            NSURL *url = info[UIImagePickerControllerImageURL];
+            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        }
+    }
+    if (!image) {
+        [SVProgressHUD showInfoWithStatus:@"无法获取"];
+        return;
+    }
     
     __weak typeof(self) wSelf = self;
     [JPPhotoToolSI savePhotoWithImage:image successHandle:^(NSString *assetID) {
