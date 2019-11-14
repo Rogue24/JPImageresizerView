@@ -25,6 +25,7 @@
     - contentInsets = UIEdgeInsetsZero;
     - borderImage = nil;
     - borderImageRectInset = CGPointZero;
+    - maximumZoomScale = 10.0;
  */
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
 
@@ -78,6 +79,9 @@
 /** 边框图片与边线的偏移量 */
 @property (nonatomic, assign) CGPoint borderImageRectInset;
 
+/** 最大缩放比例（默认为10.0，小于1.0则无效） */
+@property (nonatomic, assign) CGFloat maximumZoomScale;
+
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maskType)(JPImageresizerMaskType maskType);
@@ -94,4 +98,5 @@
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
+@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maximumZoomScale)(CGFloat maximumZoomScale);
 @end

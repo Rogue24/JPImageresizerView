@@ -137,8 +137,6 @@
 }
 
 - (IBAction)resize:(id)sender {
-    self.recoveryBtn.enabled = NO;
-    
     [SVProgressHUD show];
     
     __weak typeof(self) wSelf = self;
@@ -147,26 +145,32 @@
 //    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
 //        // 裁剪完成，resizeImage为裁剪后的图片
 //        // 注意循环引用
-//    } scale:0.7]; // 这里压缩为原图尺寸的70%
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        [sSelf imageresizerDone:resizeImage];
+//    } scale:0.5]; // 这里压缩为原图尺寸的50%
     
     // 2.以原图尺寸进行裁剪
     [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+        // 裁剪完成，resizeImage为裁剪后的图片
+        // 注意循环引用
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        
-        if (!resizeImage) {
-            [SVProgressHUD showErrorWithStatus:@"没有裁剪图片"];
-            return;
-        }
-        
-        [SVProgressHUD dismiss];
-        
-        JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
-        vc.image = resizeImage;
-        [sSelf.navigationController pushViewController:vc animated:YES];
-        
-        sSelf.recoveryBtn.enabled = YES;
+        [sSelf imageresizerDone:resizeImage];
     }];
+}
+
+- (void)imageresizerDone:(UIImage *)resizeImage {
+    if (!resizeImage) {
+        [SVProgressHUD showErrorWithStatus:@"没有裁剪图片"];
+        return;
+    }
+
+    [SVProgressHUD dismiss];
+
+    JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+    vc.image = resizeImage;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (IBAction)pop:(id)sender {

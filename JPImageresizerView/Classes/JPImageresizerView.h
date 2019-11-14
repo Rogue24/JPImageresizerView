@@ -37,11 +37,21 @@
 /*!
  @method
  @brief 工厂方法
+ @param resizeImage --- 裁剪图片
+ @param frame --- 相对父视图的区域
+ @param maskType --- 遮罩样式
+ @param frameType --- 边框样式
+ @param animationCurve --- 动画曲线
+ @param strokeColor ---裁剪线颜色
+ @param bgColor --- 背景颜色
+ @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
  @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
+ @param resizeWHScale --- 裁剪宽高比
  @param contentInsets --- 裁剪区域与主视图的内边距，目前初始化后不可再更改
  @param borderImage --- 边框图片（若为nil则使用frameType的边框）
  @param borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
+ @param maximumZoomScale --- 最大缩放比例
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
@@ -60,6 +70,7 @@
                       contentInsets:(UIEdgeInsets)contentInsets
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
+                   maximumZoomScale:(CGFloat)maximumZoomScale
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 

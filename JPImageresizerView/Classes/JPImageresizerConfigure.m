@@ -26,7 +26,8 @@
     .jp_edgeLineIsEnabled(YES)
     .jp_contentInsets(UIEdgeInsetsZero)
     .jp_borderImage(nil)
-    .jp_borderImageRectInset(CGPointZero);
+    .jp_borderImageRectInset(CGPointZero)
+    .jp_maximumZoomScale(10.0);
     !make ? : make(configure);
     return configure;
 }
@@ -167,6 +168,13 @@
 - (JPImageresizerConfigure *(^)(CGPoint))jp_borderImageRectInset {
     return ^(CGPoint borderImageRectInset) {
         self.borderImageRectInset = borderImageRectInset;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat))jp_maximumZoomScale {
+    return ^(CGFloat maximumZoomScale) {
+        self.maximumZoomScale = maximumZoomScale;
         return self;
     };
 }

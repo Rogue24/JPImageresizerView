@@ -201,6 +201,7 @@
                                contentInsets:configure.contentInsets
                                  borderImage:configure.borderImage
                         borderImageRectInset:configure.borderImageRectInset
+                            maximumZoomScale:configure.maximumZoomScale
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
     imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
@@ -221,25 +222,32 @@
                       contentInsets:(UIEdgeInsets)contentInsets
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
+                   maximumZoomScale:(CGFloat)maximumZoomScale
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     if (self = [super initWithFrame:frame]) {
+        self.clipsToBounds = YES;
+        self.autoresizingMask = UIViewAutoresizingNone;
+        
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
         _contentInsets = contentInsets;
+        
         CGFloat contentWidth = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
         CGFloat contentHeight = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
         _contentSize = CGSizeMake(contentWidth, contentHeight);
-        if (maskType == JPLightBlurMaskType) {
-            self.bgColor = [UIColor whiteColor];
-        } else if (maskType == JPDarkBlurMaskType) {
-            self.bgColor = [UIColor blackColor];
-        } else {
-            self.bgColor = bgColor;
-        }
+        
+        self.allDirections = [@[@(JPImageresizerVerticalUpDirection),
+                                @(JPImageresizerHorizontalLeftDirection),
+                                @(JPImageresizerVerticalDownDirection),
+                                @(JPImageresizerHorizontalRightDirection)] mutableCopy];
+        
         self.animationCurve = animationCurve;
-        [self setupBase];
-        [self setupScrollView];
+        
+        self.bgColor = maskType == JPLightBlurMaskType ? UIColor.whiteColor : (maskType == JPDarkBlurMaskType ? UIColor.blackColor : bgColor);
+        
+        [self setupScrollViewWithMaximumZoomScale:maximumZoomScale];
+        
         [self setupImageViewWithImage:resizeImage];
         
         JPImageresizerFrameView *frameView =
@@ -260,35 +268,30 @@
                                   borderImageRectInset:borderImageRectInset
                              imageresizerIsCanRecovery:imageresizerIsCanRecovery
                           imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
+        
         __weak typeof(self) wSelf = self;
+        
         frameView.isVerticalityMirror = ^BOOL{
             __strong typeof(wSelf) sSelf = wSelf;
             if (!sSelf) return NO;
             return sSelf.verticalityMirror;
         };
+        
         frameView.isHorizontalMirror = ^BOOL{
             __strong typeof(wSelf) sSelf = wSelf;
             if (!sSelf) return NO;
             return sSelf.horizontalMirror;
         };
+        
         [self addSubview:frameView];
         _frameView = frameView;
     }
     return self;
 }
 
-- (void)setupBase {
-    self.clipsToBounds = YES;
-    self.autoresizingMask = UIViewAutoresizingNone;
-    self.allDirections = [@[@(JPImageresizerVerticalUpDirection),
-                            @(JPImageresizerHorizontalLeftDirection),
-                            @(JPImageresizerVerticalDownDirection),
-                            @(JPImageresizerHorizontalRightDirection)] mutableCopy];
-}
-
 #pragma mark - setupSubviews
 
-- (void)setupScrollView {
+- (void)setupScrollViewWithMaximumZoomScale:(CGFloat)maximumZoomScale {
     CGFloat h = _contentSize.height;
     CGFloat w = h * h / _contentSize.width;
     CGFloat x = (_contentSize.width - w) * 0.5 + _contentInsets.left;
@@ -297,7 +300,7 @@
     scrollView.frame = CGRectMake(x, y, w, h);
     scrollView.delegate = self;
     scrollView.minimumZoomScale = 1.0;
-    scrollView.maximumZoomScale = MAXFLOAT;
+    scrollView.maximumZoomScale = maximumZoomScale > 1.0 ? maximumZoomScale : 1.0;
     scrollView.alwaysBounceVertical = YES;
     scrollView.alwaysBounceHorizontal = YES;
     scrollView.showsVerticalScrollIndicator = NO;

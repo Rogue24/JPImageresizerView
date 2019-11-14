@@ -54,59 +54,76 @@
  
  */
 
-@implementation JPPhotoTool
+/**
+ * 照片获取条件：
+ * PHImageRequestOptionsResizeModeNone,
+ * PHImageRequestOptionsResizeModeFast,     // 根据传入的size，迅速加载大小相匹配(略大于或略小于)的图像
+ * PHImageRequestOptionsResizeModeExact    // 精确的加载与传入size相匹配的图像
+ */
 
-static CGSize JPThumbnailPhotoSize;
+@implementation JPPhotoTool
 
 #pragma mark - singleton
 
-static JPPhotoTool *_sharedInstance;
-
-+ (instancetype)sharedInstance {
-    if(_sharedInstance == nil) {
-        _sharedInstance = [[JPPhotoTool alloc] init];
-    }
-    return _sharedInstance;
-}
+static JPPhotoTool *sharedInstance_;
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedInstance = [super allocWithZone:zone];
+        sharedInstance_ = [super allocWithZone:zone];
     });
-    return _sharedInstance;
+    return sharedInstance_;
 }
 
-- (id)init {
++ (instancetype)sharedInstance {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedInstance = [super init];
-        [_sharedInstance baseSetup];
+        sharedInstance_ = [[self alloc] init];
     });
-    return _sharedInstance;
+    return sharedInstance_;
 }
 
-- (void)baseSetup {
-    
-    self.imageManager = [[PHCachingImageManager alloc] init];
-    
-    // 照片获取条件
-    /**
-     * PHImageRequestOptionsResizeModeNone,
-     * PHImageRequestOptionsResizeModeFast, //根据传入的size，迅速加载大小相匹配(略大于或略小于)的图像
-     * PHImageRequestOptionsResizeModeExact //精确的加载与传入size相匹配的图像
-     */
-    
-    self.fastOptions = [[PHImageRequestOptions alloc] init];
-    self.fastOptions.resizeMode = PHImageRequestOptionsResizeModeFast;
-//    self.fastOptions.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
-    self.fastOptions.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
-    
-    self.highQualityOptions = [[PHImageRequestOptions alloc] init];
-    self.highQualityOptions.resizeMode = PHImageRequestOptionsResizeModeExact;
-    self.highQualityOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
-    
-    self.queue = [[NSOperationQueue alloc] init];
+- (id)copyWithZone:(NSZone *)zone {
+    return sharedInstance_; 
+}
+
+#pragma mark - const
+
+static CGSize JPThumbnailPhotoSize;
+
+#pragma mark - getter
+
+- (PHCachingImageManager *)imageManager {
+    if (!_imageManager) {
+        _imageManager = [[PHCachingImageManager alloc] init];
+    }
+    return _imageManager;
+}
+
+- (PHImageRequestOptions *)fastOptions {
+    if (!_fastOptions) {
+        _fastOptions = [[PHImageRequestOptions alloc] init];
+        _fastOptions.resizeMode = PHImageRequestOptionsResizeModeFast;
+//        _fastOptions.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
+        _fastOptions.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
+    }
+    return _fastOptions;
+}
+
+- (PHImageRequestOptions *)highQualityOptions {
+    if (!_highQualityOptions) {
+        _highQualityOptions = [[PHImageRequestOptions alloc] init];
+        _highQualityOptions.resizeMode = PHImageRequestOptionsResizeModeExact;
+        _highQualityOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    }
+    return _highQualityOptions;
+}
+
+- (NSOperationQueue *)queue {
+    if (!_queue) {
+        _queue = [[NSOperationQueue alloc] init];
+    }
+    return _queue;
 }
 
 #pragma mark - 配置collectionView
