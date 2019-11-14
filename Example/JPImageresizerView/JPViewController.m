@@ -77,11 +77,6 @@
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-//    [self.imageresizerView setResizeWHScale:1 isToBeArbitrarily:NO animated:animated:YES];
-}
-
 - (void)dealloc {
     NSLog(@"viewController is dead");
 }
@@ -101,13 +96,13 @@
 }
 
 - (IBAction)recovery:(id)sender {
-    // 1.按当前 resizeWHScale 进行重置
+    // 1.按当前【resizeWHScale】进行重置
     [self.imageresizerView recoveryByCurrentResizeWHScale];
     
-    // 2.按 initialResizeWHScale 进行重置
+    // 2.按【initialResizeWHScale】进行重置
 //    [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
     
-    // 3.按 目标裁剪宽高比 进行重置
+    // 3.按【目标裁剪宽高比】进行重置
 //    [self.imageresizerView recoveryByTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
 }
 
@@ -116,12 +111,10 @@
 }
 
 - (IBAction)one2one:(id)sender {
-//    self.imageresizerView.resizeWHScale = 1.0;
     [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 
 - (IBAction)sixteen2nine:(id)sender {
-//    self.imageresizerView.resizeWHScale = 16.0 / 9.0;
     [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 

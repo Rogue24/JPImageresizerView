@@ -7,7 +7,7 @@
 
 英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
 
-## 简介（当前版本：1.1.3）
+## 简介（当前版本：1.1.4）
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -25,7 +25,7 @@
         1.由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout；
         2.目前仅支持竖屏操作。
         
-    之后的更新内容：
+    努力着的更新内容：
         1.Swift版本；
         2.适配横竖屏切换；
         3.更多新的边框和遮罩样式；
@@ -39,7 +39,7 @@
 #### 初始化
 ```objc
 // 方式一：使用工厂方法配置参数
-// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、可否重置的回调、是否预备缩放的回调
+// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、最大缩放比例、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                     initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
@@ -50,12 +50,13 @@ JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                     strokeColor:[UIColor whiteColor]
                     bgColor:[UIColor blackColor]
                     maskAlpha:0.75
-                    verBaseMargin:10
-                    horBaseMargin:10
-                    resizeWHScale:0
+                    verBaseMargin:10.0
+                    horBaseMargin:10.0
+                    resizeWHScale:0.0
                     contentInsets:UIEdgeInsetsZero
                     borderImage:nil
-                    borderImageRectInset:CGPointZero
+                    borderImageRectInset:CGPointZero 
+                    maximumZoomScale:10.0
                     imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
                         // 可在这里监听到是否可以重置
                         // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
@@ -69,7 +70,7 @@ JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
                         // 注意循环引用
                     }];
 
-// 方式二：使用JPImageresizerConfigure配置好参数再创建
+// 方式二：使用JPImageresizerConfigure配置好参数再创建【推荐】
 
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
@@ -255,8 +256,9 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 1.1.2~1.1.3 更新内容
-    优化计算流程。
+#### 1.1.2~1.1.4 更新内容
+    1.优化计算逻辑，
+    2.初始化时可自定义最大缩放比例（maximumZoomScale）。
 
 #### 1.1.1 更新内容
     1.新增 imageresizeWHScale 属性，获取当前裁剪框的宽高比；
