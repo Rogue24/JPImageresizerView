@@ -7,7 +7,7 @@
 
 英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
 
-## 简介（当前版本：1.1.4）
+## 简介（当前版本：1.2.0）
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -147,7 +147,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```objc
 // 1.自定义参数切换
 /**
- * resizeWHScale：    目标裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向）
+ * resizeWHScale：    目标裁剪宽高比（0则为任意比例）
  * isToBeArbitrarily：切换之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  * animated：         是否带动画效果
  */
@@ -256,8 +256,12 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 各版本的主要更新
 
-#### 1.1.2~1.1.4 更新内容
-    1.优化计算逻辑，
+#### 1.2.0 更新内容
+    1.固定比例的裁剪宽高比，裁剪边框也均可拖拽8个方向；
+    2.优化了显示/隐藏毛玻璃效果。
+
+#### 1.1.2~1.1.5 更新内容
+    1.优化计算逻辑；
     2.初始化时可自定义最大缩放比例（maximumZoomScale）。
 
 #### 1.1.1 更新内容

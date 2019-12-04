@@ -7,11 +7,11 @@
 //
 
 #import "JPImageresizerFrameView.h"
-#import "UIImage+JPExtension.h"
-#import "CALayer+JPExtension.h"
+#import "UIImage+JPImageresizer.h"
+#import "CALayer+JPImageresizer.h"
 
 /** keypath */
-#define aKeyPath(objc, keyPath) @(((void)objc.keyPath, #keyPath))
+#define JP_KEYPATH(objc, keyPath) @(((void)objc.keyPath, #keyPath))
 
 struct JPRGBAColor {
     CGFloat jp_r;
@@ -47,6 +47,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) UIView *blurContentView;
+@property (nonatomic, strong) UIBlurEffect *blurEffect;
 @property (nonatomic, weak) UIVisualEffectView *blurEffectView;
 @property (nonatomic, weak) UIImageView *borderImageView;
 - (CGRect)borderImageViewFrame;
@@ -229,12 +230,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             } completion:nil];
         } else {
             id toMidDotOpacity = @(_isArbitrarily ? opacity : 0.0);
-            NSString *opacityKeyPath = aKeyPath(_frameLayer, opacity);
+            NSString *opacityKeyPath = JP_KEYPATH(_frameLayer, opacity);
             __weak typeof(self) wSelf = self;
             void (^layerOpacityAnimate)(CALayer *layer, id toValue) = ^(CALayer *layer, id toValue) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 if (!sSelf || !layer) return;
-                [layer jp_addBackwardsAnimationWithKeyPath:opacityKeyPath fromValue:@(layer.opacity) toValue:toValue timingFunctionName:timingFunctionName duration:duration];
+                [layer jpir_addBackwardsAnimationWithKeyPath:opacityKeyPath
+                                                   fromValue:@(layer.opacity)
+                                                     toValue:toValue
+                                          timingFunctionName:timingFunctionName
+                                                    duration:duration];
             };
             layerOpacityAnimate(_frameLayer, toOpacity);
             layerOpacityAnimate(_horTopLine, toOpacity);
@@ -251,9 +256,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             layerOpacityAnimate(_bottomMidDot, toMidDotOpacity);
         }
         if (self.blurContentView) {
-            [self.blurContentView.layer jp_addBackwardsAnimationWithKeyPath:aKeyPath(self.blurContentView.layer, backgroundColor) fromValue:((id)self.blurContentView.layer.backgroundColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
+            [self.blurContentView.layer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.blurContentView.layer, backgroundColor) fromValue:((id)self.blurContentView.layer.backgroundColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
         } else {
-            [self.bgLayer jp_addBackwardsAnimationWithKeyPath:aKeyPath(self.bgLayer, fillColor) fromValue:((id)self.bgLayer.fillColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
+            [self.bgLayer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.bgLayer, fillColor) fromValue:((id)self.bgLayer.fillColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
         }
     } else {
         _borderImageView.alpha = opacity;
@@ -586,13 +591,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             [self addSubview:blurContentView];
             self.blurContentView = blurContentView;
             
-            UIBlurEffect *blurEffect;
             if (maskType == JPLightBlurMaskType) {
-                blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+                self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
             } else {
-                blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+                self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
             }
-            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:self.blurEffect];
             blurEffectView.frame = blurContentView.bounds;
             [blurContentView addSubview:blurEffectView];
             self.blurEffectView = blurEffectView;
@@ -916,13 +920,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     if (self.maskType == JPNormalMaskType) return;
     if (_isHideBlurEffect == isHide) return;
     _isHideBlurEffect = isHide;
-    CGFloat toAlpha = isHide ? 0 : 1;
+    UIVisualEffect *effect = isHide ? nil : self.blurEffect;
     if (duration > 0) {
         [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-            self.blurEffectView.alpha = toAlpha;
+            self.blurEffectView.effect = effect;
         } completion:nil];
     } else {
-        self.blurEffectView.alpha = toAlpha;
+        self.blurEffectView.effect = effect;
     }
 }
 
@@ -934,8 +938,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0) {
         CGFloat fromOpacity = isHide ? 1 : 0;
-        NSString *keyPath = aKeyPath(_horTopLine, opacity);
-        CABasicAnimation *anim = [CABasicAnimation jp_backwardsAnimationWithKeyPath:keyPath fromValue:@(fromOpacity) toValue:@(toOpacity) timingFunctionName:_kCAMediaTimingFunction duration:duration];
+        NSString *keyPath = JP_KEYPATH(_horTopLine, opacity);
+        CABasicAnimation *anim = [CABasicAnimation jpir_backwardsAnimationWithKeyPath:keyPath fromValue:@(fromOpacity) toValue:@(toOpacity) timingFunctionName:_kCAMediaTimingFunction duration:duration];
         [_horTopLine addAnimation:anim forKey:keyPath];
         [_horBottomLine addAnimation:anim forKey:keyPath];
         [_verLeftLine addAnimation:anim forKey:keyPath];
@@ -972,7 +976,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
                 self.borderImageView.frame = borderImageViewFrame;
             } completion:nil];
-            [self.bgLayer jp_addBackwardsAnimationWithKeyPath:aKeyPath(self.bgLayer, path) fromValue:[UIBezierPath bezierPathWithCGPath:self.bgLayer.path] toValue:bgPath timingFunctionName:_kCAMediaTimingFunction duration:duration];
+            [self.bgLayer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.bgLayer, path)
+                                                      fromValue:[UIBezierPath bezierPathWithCGPath:self.bgLayer.path]
+                                                        toValue:bgPath
+                                             timingFunctionName:_kCAMediaTimingFunction
+                                                       duration:duration];
         } else {
             _borderImageView.frame = borderImageViewFrame;
         }
@@ -1035,18 +1043,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     
     if (duration > 0) {
-        NSString *keyPath = aKeyPath(self.bgLayer, path);
+        NSString *keyPath = JP_KEYPATH(self.bgLayer, path);
         CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
         
         __weak typeof(self) wSelf = self;
         void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
-            __strong typeof(wSelf) sSelf = wSelf;
-            if (!sSelf || !layer) return;
-            [layer jp_addBackwardsAnimationWithKeyPath:keyPath
-                                             fromValue:[UIBezierPath bezierPathWithCGPath:layer.path]
-                                               toValue:path
-                                    timingFunctionName:timingFunctionName
-                                              duration:duration];
+            if (!wSelf) return;
+            [layer jpir_addBackwardsAnimationWithKeyPath:keyPath
+                                               fromValue:[UIBezierPath bezierPathWithCGPath:layer.path]
+                                                 toValue:path
+                                      timingFunctionName:timingFunctionName
+                                                duration:duration];
         };
         layerPathAnimate(_leftTopDot, leftTopDotPath);
         layerPathAnimate(_leftBottomDot, leftBottomDotPath);
@@ -1432,11 +1439,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         if (!sSelf) return;
         
         // 修正图片方向
-        image = [image jp_fixOrientation];
+        image = [image jpir_fixOrientation];
         
         // 镜像处理
-        if (isVerticalityMirror) image = [image jp_verticalityMirror];
-        if (isHorizontalMirror) image = [image jp_horizontalMirror];
+        if (isVerticalityMirror) image = [image jpir_verticalityMirror];
+        if (isHorizontalMirror) image = [image jpir_horizontalMirror];
         
         // 获取裁剪区域
         CGFloat imageScale = image.scale;
@@ -1472,11 +1479,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         
         // 裁剪并旋转图片
         CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
-        image = [[UIImage imageWithCGImage:imgRef] jp_rotate:orientation];
+        image = [[UIImage imageWithCGImage:imgRef] jpir_rotate:orientation];
         CGImageRelease(imgRef);
         
         // 压缩图片
-        if (scale < 1.0) image = [image jp_resizeImageWithScale:scale];
+        if (scale < 1.0) image = [image jpir_resizeImageWithScale:scale];
         
         // 输出压缩图片
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1767,61 +1774,233 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
             
         case JPLeftMid: {
-            x += translation.x;
-            
-            if (x < self.maxResizeX) {
-                x = self.maxResizeX;
-            }
-            
-            w = _diagonal.x - x;
-            
-            if (w < _minImageWH) {
-                w = _minImageWH;
+            if (_isArbitrarily) {
+                x += translation.x;
+                
+                if (x < self.maxResizeX) {
+                    x = self.maxResizeX;
+                }
+                
+                w = _diagonal.x - x;
+                
+                if (w < _minImageWH) {
+                    w = _minImageWH;
+                    x = _diagonal.x - w;
+                }
+            } else {
+                w -= translation.x;
+                h = w / _resizeWHScale;
+                
+                CGFloat maxResizeMaxW = self.maxResizeW;
+                if (w > maxResizeMaxW) {
+                    w = maxResizeMaxW;
+                    h = w / _resizeWHScale;
+                }
+                CGFloat maxResizeMaxH = self.maxResizeH;
+                if (h > maxResizeMaxH) {
+                    h = maxResizeMaxH;
+                    w = h * _resizeWHScale;
+                }
+                if (w < _minImageWH && h < _minImageWH) {
+                    if (_resizeWHScale >= 1) {
+                        w = _minImageWH;
+                        h = w / _resizeWHScale;
+                    } else {
+                        h = _minImageWH;
+                        w = h * _resizeWHScale;
+                    }
+                }
+                
+                // x轴方向的对立位置不变，所以由x确定w、h
                 x = _diagonal.x - w;
+                if (x < self.maxResizeX) {
+                    x = self.maxResizeX;
+                    w = _diagonal.x - x;
+                    h = w / _resizeWHScale;
+                }
+                
+                // 再确定y
+                y = _diagonal.y - h * 0.5;
+                if (y < self.maxResizeY) {
+                    y = self.maxResizeY;
+                }
+                CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
+                if ((y + h) > maxResizeMaxY) {
+                    y = maxResizeMaxY - h;
+                }
             }
             break;
         }
             
         case JPRightMid: {
-            w += translation.x;
-            
-            CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
-            if ((x + w) > maxResizeMaxX) {
-                w = maxResizeMaxX - _diagonal.x;
-            }
-            
-            if (w < _minImageWH) {
-                w = _minImageWH;
+            if (_isArbitrarily) {
+                w += translation.x;
+                
+                CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
+                if ((x + w) > maxResizeMaxX) {
+                    w = maxResizeMaxX - _diagonal.x;
+                }
+                
+                if (w < _minImageWH) {
+                    w = _minImageWH;
+                }
+            } else {
+                w += translation.x;
+                h = w / _resizeWHScale;
+                
+                CGFloat maxResizeMaxW = self.maxResizeW;
+                if (w > maxResizeMaxW) {
+                    w = maxResizeMaxW;
+                    h = w / _resizeWHScale;
+                }
+                CGFloat maxResizeMaxH = self.maxResizeH;
+                if (h > maxResizeMaxH) {
+                    h = maxResizeMaxH;
+                    w = h * _resizeWHScale;
+                }
+                if (w < _minImageWH && h < _minImageWH) {
+                    if (_resizeWHScale >= 1) {
+                        w = _minImageWH;
+                        h = w / _resizeWHScale;
+                    } else {
+                        h = _minImageWH;
+                        w = h * _resizeWHScale;
+                    }
+                }
+                
+                // x轴方向的对立位置不变，所以由x确定w、h
+                x = _diagonal.x;
+                CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
+                if ((x + w) > maxResizeMaxX) {
+                    w = maxResizeMaxX - x;
+                    h = w / _resizeWHScale;
+                }
+                
+                // 再确定y
+                y = _diagonal.y - h * 0.5;
+                if (y < self.maxResizeY) {
+                    y = self.maxResizeY;
+                }
+                CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
+                if ((y + h) > maxResizeMaxY) {
+                    y = maxResizeMaxY - h;
+                }
             }
             break;
         }
             
         case JPTopMid: {
-            y += translation.y;
-            
-            if (y < self.maxResizeY) {
-                y = self.maxResizeY;
-            }
-            
-            h = _diagonal.y - y;
-            
-            if (h < _minImageWH) {
-                h = _minImageWH;
+            if (_isArbitrarily) {
+                y += translation.y;
+                
+                if (y < self.maxResizeY) {
+                    y = self.maxResizeY;
+                }
+                
+                h = _diagonal.y - y;
+                
+                if (h < _minImageWH) {
+                    h = _minImageWH;
+                    y = _diagonal.y - h;
+                }
+            } else {
+                h -= translation.y;
+                w = h * _resizeWHScale;
+                
+                CGFloat maxResizeMaxW = self.maxResizeW;
+                if (w > maxResizeMaxW) {
+                    w = maxResizeMaxW;
+                    h = w / _resizeWHScale;
+                }
+                CGFloat maxResizeMaxH = self.maxResizeH;
+                if (h > maxResizeMaxH) {
+                    h = maxResizeMaxH;
+                    w = h * _resizeWHScale;
+                }
+                if (w < _minImageWH && h < _minImageWH) {
+                    if (_resizeWHScale >= 1) {
+                        w = _minImageWH;
+                        h = w / _resizeWHScale;
+                    } else {
+                        h = _minImageWH;
+                        w = h * _resizeWHScale;
+                    }
+                }
+                
+                // y轴方向的对立位置不变，所以由y确定w、h
                 y = _diagonal.y - h;
+                if (y < self.maxResizeY) {
+                    y = self.maxResizeY;
+                    h = _diagonal.y - y;
+                    w = h * _resizeWHScale;
+                }
+                
+                // 再确定x
+                x = _diagonal.x - w * 0.5;
+                CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
+                if ((x + w) > maxResizeMaxX) {
+                    x = maxResizeMaxX - w;
+                }
+                if (x < self.maxResizeX) {
+                    x = self.maxResizeX;
+                }
             }
             break;
         }
             
         case JPBottomMid: {
-            h += translation.y;
-            
-            CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
-            if ((y + h) > maxResizeMaxY) {
-                h = maxResizeMaxY - _diagonal.y;
-            }
-            
-            if (h < _minImageWH) {
-                h = _minImageWH;
+            if (_isArbitrarily) {
+                h += translation.y;
+                
+                CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
+                if ((y + h) > maxResizeMaxY) {
+                    h = maxResizeMaxY - _diagonal.y;
+                }
+                
+                if (h < _minImageWH) {
+                    h = _minImageWH;
+                }
+            } else {
+                h += translation.y;
+                w = h * _resizeWHScale;
+                
+                CGFloat maxResizeMaxW = self.maxResizeW;
+                if (w > maxResizeMaxW) {
+                    w = maxResizeMaxW;
+                    h = w / _resizeWHScale;
+                }
+                CGFloat maxResizeMaxH = self.maxResizeH;
+                if (h > maxResizeMaxH) {
+                    h = maxResizeMaxH;
+                    w = h * _resizeWHScale;
+                }
+                if (w < _minImageWH && h < _minImageWH) {
+                    if (_resizeWHScale >= 1) {
+                        w = _minImageWH;
+                        h = w / _resizeWHScale;
+                    } else {
+                        h = _minImageWH;
+                        w = h * _resizeWHScale;
+                    }
+                }
+                
+                // y轴方向的对立位置不变，所以由y确定w、h
+                y = _diagonal.y;
+                CGFloat maxResizeMaxY = CGRectGetMaxY(self.maxResizeFrame);
+                if ((y + h) > maxResizeMaxY) {
+                    h = maxResizeMaxY - y;
+                    w = h * _resizeWHScale;
+                }
+                
+                // 再确定x
+                x = _diagonal.x - w * 0.5;
+                CGFloat maxResizeMaxX = CGRectGetMaxX(self.maxResizeFrame);
+                if ((x + w) > maxResizeMaxX) {
+                    x = maxResizeMaxX - w;
+                }
+                if (x < self.maxResizeX) {
+                    x = self.maxResizeX;
+                }
             }
             break;
         }
@@ -1911,7 +2090,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     } else if (CGRectContainsPoint(rightBotRect, point)) {
         _currHorn = JPRightBottom;
         _diagonal = CGPointMake(x, y);
-    } else if (_isArbitrarily) {
+    } else {
         CGRect leftMidRect = CGRectNull;
         CGRect rightMidRect = CGRectNull;
         CGRect topMidRect = CGRectNull;
@@ -1945,9 +2124,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             _currHorn = JPCenter;
             return NO;
         }
-    } else {
-        _currHorn = JPCenter;
-        return NO;
     }
     
     _startResizeW = w;

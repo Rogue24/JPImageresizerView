@@ -36,14 +36,14 @@
     JPImageresizerConfigure *configure2 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Girl.jpg"] isLight:NO make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
-        .jp_strokeColor([UIColor magentaColor]);
+        .jp_strokeColor([UIColor orangeColor]);
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
     JPImageresizerConfigure *configure3 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Lotus.jpg"] isLight:YES make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
-        .jp_strokeColor([UIColor cyanColor]);
+        .jp_strokeColor([UIColor blueColor]);
     }];
     
     NSString *title4 = @"其他样式";
@@ -94,12 +94,29 @@
         .jp_maskAlpha(0);
     }];
     
-    self.configures = @[@{@"title": title1, @"configure": configure1, @"statusBarStyle": @(UIStatusBarStyleLightContent)},
-                        @{@"title": title2, @"configure": configure2, @"statusBarStyle": @(UIStatusBarStyleLightContent)},
-                        @{@"title": title3, @"configure": configure3, @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        @{@"title": title4, @"configure": configure4, @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        @{@"title": title5, @"configure": configure5, @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        @{@"title": title6, @"configure": configure6, @"statusBarStyle": @(UIStatusBarStyleLightContent)}];
+    self.configures = @[@{@"title": title1,
+                          @"configure": configure1,
+                          @"statusBarStyle": @(UIStatusBarStyleLightContent)},
+                        
+                        @{@"title": title2,
+                          @"configure": configure2,
+                          @"statusBarStyle": @(UIStatusBarStyleLightContent)},
+                        
+                        @{@"title": title3,
+                          @"configure": configure3,
+                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
+                        
+                        @{@"title": title4,
+                          @"configure": configure4,
+                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
+                        
+                        @{@"title": title5,
+                          @"configure": configure5,
+                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
+                        
+                        @{@"title": title6,
+                          @"configure": configure6,
+                          @"statusBarStyle": @(UIStatusBarStyleLightContent)}];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }

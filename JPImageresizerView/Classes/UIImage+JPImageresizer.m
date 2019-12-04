@@ -1,19 +1,19 @@
 //
-//  UIImage+JPExtension.m
+//  UIImage+JPImageresizer.m
 //  DesignSpaceRestructure
 //
 //  Created by 周健平 on 2017/12/19.
 //  Copyright © 2017年 周健平. All rights reserved.
 //
 
-#import "UIImage+JPExtension.h"
+#import "UIImage+JPImageresizer.h"
 
-@implementation UIImage (JPExtension)
+@implementation UIImage (JPImageresizer)
 
 #pragma mark - 修改方向
 
 /** 修正图片的方向 */
-- (UIImage *)jp_fixOrientation {
+- (UIImage *)jpir_fixOrientation {
     
     UIImageOrientation orientation = self.imageOrientation;
     if (orientation == UIImageOrientationUp) return self;
@@ -97,7 +97,7 @@
 }
 
 /** 按指定方向旋转图片 */
-- (UIImage*)jp_rotate:(UIImageOrientation)orientation {
+- (UIImage*)jpir_rotate:(UIImageOrientation)orientation {
     
     CGImageRef imageRef = self.CGImage;
     CGRect bounds = CGRectMake(0, 0, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
@@ -187,27 +187,27 @@
 #pragma mark - 镜像翻转
 
 /** 沿Y轴翻转 */
-- (UIImage *)jp_verticalityMirror {
-    return [self jp_rotate:UIImageOrientationUpMirrored];
+- (UIImage *)jpir_verticalityMirror {
+    return [self jpir_rotate:UIImageOrientationUpMirrored];
 }
 
 /** 沿X轴翻转 */
-- (UIImage *)jp_horizontalMirror {
-    return [self jp_rotate:UIImageOrientationDownMirrored];
+- (UIImage *)jpir_horizontalMirror {
+    return [self jpir_rotate:UIImageOrientationDownMirrored];
 }
 
 #pragma makr - 压缩
 
 /** 按比例压缩 */
-- (UIImage *)jp_resizeImageWithScale:(CGFloat)scale {
-    return [self jp_resizeImageWithLogicWidth:(self.size.width * scale)];
+- (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale {
+    return [self jpir_resizeImageWithLogicWidth:(self.size.width * scale)];
 }
 
 /** 按逻辑宽度压缩 */
-- (UIImage *)jp_resizeImageWithLogicWidth:(CGFloat)logicWidth {
+- (UIImage *)jpir_resizeImageWithLogicWidth:(CGFloat)logicWidth {
     if (logicWidth >= self.size.width) return self;
     CGFloat w = logicWidth;
-    CGFloat h = w * self.jp_hwRatio;
+    CGFloat h = w * self.jpir_hwRatio;
     @autoreleasepool {
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, self.scale);
         [self drawInRect:CGRectMake(0, 0, w, h)];
@@ -218,8 +218,8 @@
 }
 
 /** 按像素宽度压缩  */
-- (UIImage *)jp_resizeImageWithPixelWidth:(CGFloat)pixelWidth {
-    return [self jp_resizeImageWithLogicWidth:(pixelWidth / self.scale)];
+- (UIImage *)jpir_resizeImageWithPixelWidth:(CGFloat)pixelWidth {
+    return [self jpir_resizeImageWithLogicWidth:(pixelWidth / self.scale)];
 }
 
 #pragma makr - other
@@ -233,7 +233,7 @@
 }
 
 /** 图片高宽比 */
-- (CGFloat)jp_hwRatio {
+- (CGFloat)jpir_hwRatio {
     return (self.size.height / self.size.width);
 }
 

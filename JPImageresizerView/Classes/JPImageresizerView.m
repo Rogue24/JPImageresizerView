@@ -131,6 +131,14 @@
     [self setIsPreview:isPreview animated:YES];
 }
 
+- (void)setBorderImage:(UIImage *)borderImage {
+    self.frameView.borderImage = borderImage;
+}
+
+- (void)setBorderImageRectInset:(CGPoint)borderImageRectInset {
+    self.frameView.borderImageRectInset = borderImageRectInset;
+}
+
 #pragma mark - getter
 
 - (JPImageresizerMaskType)maskType {
@@ -180,6 +188,14 @@
 
 - (BOOL)isPreview {
     return _frameView.isPreview;
+}
+
+- (UIImage *)borderImage {
+    return self.frameView.borderImage;
+}
+
+- (CGPoint)borderImageRectInset {
+    return self.frameView.borderImageRectInset;
 }
 
 #pragma mark - init
@@ -355,7 +371,7 @@
     }
     if (_verticalityMirror == verticalityMirror) return;
     _verticalityMirror = verticalityMirror;
-    [self setMirror:NO animated:isAnimated];
+    [self changeMirror:NO animated:isAnimated];
 }
 
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated {
@@ -365,7 +381,7 @@
     }
     if (_horizontalMirror == horizontalMirror) return;
     _horizontalMirror = horizontalMirror;
-    [self setMirror:YES animated:isAnimated];
+    [self changeMirror:YES animated:isAnimated];
 }
 
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated {
@@ -395,7 +411,7 @@
     self.directionIndex += (isNormal ? 1 : -1);
     JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
-    NSTimeInterval duration = 0.22;
+    NSTimeInterval duration = 0.25;
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         self.scrollView.layer.transform = svTransform;
         self.frameView.layer.transform = fvTransform;
@@ -470,7 +486,19 @@
 
 #pragma mark - private method
 
-- (void)setMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
+- (UIImage *)setupBorderImage:(UIImage *)borderImage
+         borderImageCapInsets:(UIEdgeInsets)borderImageCapInsets
+      borderImageResizingMode:(UIImageResizingMode)borderImageResizingMode {
+    if (UIEdgeInsetsEqualToEdgeInsets(borderImageCapInsets, UIEdgeInsetsZero)) {
+        self.frameView.borderImage = borderImage;
+        return borderImage;
+    }
+    borderImage = [borderImage resizableImageWithCapInsets:borderImageCapInsets resizingMode:borderImageResizingMode];
+    self.frameView.borderImage = borderImage;
+    return borderImage;
+}
+
+- (void)changeMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
     CATransform3D transform = self.layer.transform;
     BOOL mirror;
     if (isHorizontalMirror) {
@@ -572,34 +600,6 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
     [self.frameView endedImageresizer];
-}
-
-- (UIImage *)setupBorderImage:(UIImage *)borderImage
-         borderImageCapInsets:(UIEdgeInsets)borderImageCapInsets
-      borderImageResizingMode:(UIImageResizingMode)borderImageResizingMode {
-    if (UIEdgeInsetsEqualToEdgeInsets(borderImageCapInsets, UIEdgeInsetsZero)) {
-        self.frameView.borderImage = borderImage;
-        return borderImage;
-    }
-    borderImage = [borderImage resizableImageWithCapInsets:borderImageCapInsets resizingMode:borderImageResizingMode];
-    self.frameView.borderImage = borderImage;
-    return borderImage;
-}
-
-- (void)setBorderImage:(UIImage *)borderImage {
-    self.frameView.borderImage = borderImage;
-}
-
-- (UIImage *)borderImage {
-    return self.frameView.borderImage;
-}
-
-- (void)setBorderImageRectInset:(CGPoint)borderImageRectInset {
-    self.frameView.borderImageRectInset = borderImageRectInset;
-}
-
-- (CGPoint)borderImageRectInset {
-    return self.frameView.borderImageRectInset;
 }
 
 @end
