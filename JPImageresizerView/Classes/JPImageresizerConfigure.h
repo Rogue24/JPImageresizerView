@@ -55,7 +55,7 @@
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic, assign) CGFloat maskAlpha;
 
-/** 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向） */
+/** 裁剪宽高比（0则为任意比例） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */

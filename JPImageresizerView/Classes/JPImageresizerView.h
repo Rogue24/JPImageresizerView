@@ -96,7 +96,7 @@
 @property (nonatomic) CGFloat maskAlpha;
 
 /**
- * 裁剪宽高比（0则为任意比例，可控8个方向，固定比例为4个方向）
+ * 裁剪宽高比（0则为任意比例）
  * 设置该值会调用 -setResizeWHScale: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = NO，isAnimated = YES）
  */
 @property (nonatomic) CGFloat resizeWHScale;
@@ -155,7 +155,7 @@
  @param resizeWHScale --- 目标裁剪宽高比
  @param isToBeArbitrarily --- 设置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  @param isAnimated --- 是否带动画效果
- @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例，可控8个方向，固定比例为4个方向）
+ @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例）
  */
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
