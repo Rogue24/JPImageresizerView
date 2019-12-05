@@ -1,6 +1,6 @@
 //
 //  JPImageresizerTypedef.h
-//  Pods
+//  JPImageresizerView
 //
 //  Created by 周健平 on 2018/4/22.
 //
@@ -10,9 +10,9 @@
 
 /**
  * 遮罩样式
- * JPNormalMaskType：    通常类型，bgColor能任意设置
- * JPLightBlurMaskType： 明亮高斯模糊，bgColor强制为白色，maskAlpha可自行修改，建议为0.3
- * JPDarkBlurMaskType：  暗黑高斯模糊，bgColor强制为黑色，maskAlpha可自行修改，建议为0.3
+ * JPNormalMaskType：通常类型，bgColor能任意设置
+ * JPLightBlurMaskType：明亮高斯模糊，bgColor强制为白色，maskAlpha可自行修改，建议为0.3
+ * JPDarkBlurMaskType：暗黑高斯模糊，bgColor强制为黑色，maskAlpha可自行修改，建议为0.3
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
     JPNormalMaskType, // default
@@ -22,9 +22,9 @@ typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
 
 /**
  * 边框样式
- * JPConciseFrameType：               简洁样式，可拖拽8个方向（固定比例则4个方向）
- * JPConciseWithoutOtherDotFrameType：简洁样式，可拖拽4个方向（4角）
- * JPClassicFrameType：               经典样式，类似微信的裁剪边框样式，可拖拽4个方向
+ * JPConciseFrameType：简洁样式
+ * JPConciseWithoutOtherDotFrameType：隐藏中间4个点的简洁样式
+ * JPClassicFrameType：经典样式，类似微信的裁剪边框样式
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
     JPConciseFrameType, // default
@@ -35,9 +35,9 @@ typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
 /**
  * 动画曲线
  * JPAnimationCurveEaseInOut：慢进慢出，中间快
- * JPAnimationCurveEaseIn：   由慢到快
- * JPAnimationCurveEaseOut：  由快到慢
- * JPAnimationCurveLinear：   匀速
+ * JPAnimationCurveEaseIn：由慢到快
+ * JPAnimationCurveEaseOut：由快到慢
+ * JPAnimationCurveLinear：匀速
  */
 typedef NS_ENUM(NSUInteger, JPAnimationCurve) {
     JPAnimationCurveEaseInOut, // default
@@ -48,9 +48,9 @@ typedef NS_ENUM(NSUInteger, JPAnimationCurve) {
 
 /**
  * 当前方向
- * JPImageresizerVerticalUpDirection：     垂直向上
- * JPImageresizerHorizontalLeftDirection： 水平向左
- * JPImageresizerVerticalDownDirection：   垂直向下
+ * JPImageresizerVerticalUpDirection：垂直向上
+ * JPImageresizerHorizontalLeftDirection：水平向左
+ * JPImageresizerVerticalDownDirection：垂直向下
  * JPImageresizerHorizontalRightDirection：水平向右
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {

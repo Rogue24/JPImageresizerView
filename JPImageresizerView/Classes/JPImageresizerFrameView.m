@@ -22,6 +22,7 @@ struct JPRGBAColor {
 
 typedef NS_ENUM(NSUInteger, JPRectHorn) {
     JPCenter,
+    
     JPLeftTop,
     JPLeftMid,
     JPLeftBottom,
