@@ -39,12 +39,12 @@
  @brief 工厂方法
  @param resizeImage --- 裁剪图片
  @param frame --- 相对父视图的区域
- @param maskType --- 遮罩样式
  @param frameType --- 边框样式
  @param animationCurve --- 动画曲线
- @param strokeColor ---裁剪线颜色
+ @param blurEffect --- 模糊效果
  @param bgColor --- 背景颜色
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
+ @param strokeColor ---裁剪线颜色
  @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
  @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
  @param resizeWHScale --- 裁剪宽高比
@@ -52,18 +52,20 @@
  @param borderImage --- 边框图片（若为nil则使用frameType的边框）
  @param borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
  @param maximumZoomScale --- 最大缩放比例
+ @param isRoundResize --- 是否初始化圆切（若为YES则resizeWHScale为1）
+ @param isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
  */
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage
                               frame:(CGRect)frame
-                           maskType:(JPImageresizerMaskType)maskType
                           frameType:(JPImageresizerFrameType)frameType
                      animationCurve:(JPAnimationCurve)animationCurve
-                        strokeColor:(UIColor *)strokeColor
+                         blurEffect:(UIBlurEffect *)blurEffect
                             bgColor:(UIColor *)bgColor
                           maskAlpha:(CGFloat)maskAlpha
+                        strokeColor:(UIColor *)strokeColor
                       verBaseMargin:(CGFloat)verBaseMargin
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
@@ -71,11 +73,10 @@
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
                    maximumZoomScale:(CGFloat)maximumZoomScale
+                      isRoundResize:(BOOL)isRoundResize
+                      isShowMidDots:(BOOL)isShowMidDots
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
-
-/** 遮罩样式（目前初始化后不可再更改） */
-@property (nonatomic, readonly) JPImageresizerMaskType maskType;
 
 /** 边框样式 */
 @property (nonatomic) JPImageresizerFrameType frameType;
@@ -86,14 +87,17 @@
 /** 裁剪的图片 */
 @property (nonatomic) UIImage *resizeImage;
 
-/** 裁剪线颜色 */
-@property (nonatomic) UIColor *strokeColor;
+/** 模糊效果 */
+@property (nonatomic) UIBlurEffect *blurEffect;
 
 /** 背景颜色 */
 @property (nonatomic) UIColor *bgColor;
 
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic) CGFloat maskAlpha;
+
+/** 裁剪线颜色 */
+@property (nonatomic) UIColor *strokeColor;
 
 /**
  * 裁剪宽高比（0则为任意比例）
@@ -149,6 +153,25 @@
 /** 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距） */
 @property (nonatomic) CGPoint borderImageRectInset;
 
+/** 是否显示中间的4个点（上、下、左、右的中点） */
+@property (nonatomic) BOOL isShowMidDots;
+
+/*!
+ @method
+ @brief 设置颜色
+ @param blurEffect --- 模糊效果
+ @param strokeColor --- 裁剪线颜色
+ @param bgColor --- 背景颜色
+ @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
+ @param isAnimated --- 是否带动画效果
+ @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例）
+ */
+- (void)setupBlurEffect:(UIBlurEffect *)blurEffect
+                bgColor:(UIColor *)bgColor
+              maskAlpha:(CGFloat)maskAlpha
+            strokeColor:(UIColor *)strokeColor
+               animated:(BOOL)isAnimated;
+
 /*!
  @method
  @brief 设置裁剪宽高比
@@ -158,6 +181,14 @@
  @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例）
  */
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+/*!
+ @method
+ @brief 圆切
+ @param isAnimated --- 是否带动画效果
+ @discussion 以圆形裁剪，此状态下边框图片会隐藏，并且宽高比是1:1，恢复矩形则重设resizeWHScale
+ */
+- (void)roundResize:(BOOL)isAnimated;
 
 /*!
  @method

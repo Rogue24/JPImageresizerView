@@ -9,16 +9,21 @@
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
 
+@interface JPProxy : NSProxy
++ (instancetype)proxyWithTarget:(id)target;
+@property (nonatomic, weak) id target;
+@end
+
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
                   contentSize:(CGSize)contentSize
-                     maskType:(JPImageresizerMaskType)maskType
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                  strokeColor:(UIColor *)strokeColor
-                    fillColor:(UIColor *)fillColor
+                   blurEffect:(UIBlurEffect *)blurEffect
+                      bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha
+                  strokeColor:(UIColor *)strokeColor
                 verBaseMargin:(CGFloat)verBaseMargin
                 horBaseMargin:(CGFloat)horBaseMargin
                 resizeWHScale:(CGFloat)resizeWHScale
@@ -26,10 +31,10 @@
                     imageView:(UIImageView *)imageView
                   borderImage:(UIImage *)borderImage
          borderImageRectInset:(CGPoint)borderImageRectInset
+                isRoundResize:(BOOL)isRoundResize
+                isShowMidDots:(BOOL)isShowMidDots
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
-
-@property (nonatomic, assign, readonly) JPImageresizerMaskType maskType;
 
 @property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
 
@@ -37,19 +42,21 @@
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-@property (nonatomic, strong) UIColor *strokeColor;
-
-@property (nonatomic, strong) UIColor *fillColor;
-
+@property (nonatomic, strong) UIBlurEffect *blurEffect;
+@property (nonatomic, strong) UIColor *bgColor;
 @property (nonatomic, assign) CGFloat maskAlpha;
+@property (nonatomic, strong) UIColor *strokeColor;
+- (void)setupBlurEffect:(UIBlurEffect *)blurEffect
+                bgColor:(UIColor *)bgColor
+              maskAlpha:(CGFloat)maskAlpha
+            strokeColor:(UIColor *)strokeColor
+               animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign, readonly) CGRect imageresizerFrame;
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 - (void)roundResize:(BOOL)isAnimated;
-
-@property (nonatomic, assign) BOOL isShowMidDots;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
@@ -70,6 +77,8 @@
 
 @property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, assign) CGPoint borderImageRectInset;
+
+@property (nonatomic, assign) BOOL isShowMidDots;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);

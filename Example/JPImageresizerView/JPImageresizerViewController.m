@@ -98,7 +98,7 @@
                                                   10 + 50 + JPDiffTabBarH,
                                                   10);
     
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Beauty.jpg"] isLight:YES make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Beauty.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])

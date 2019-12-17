@@ -10,6 +10,20 @@
 #import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 
+@implementation JPProxy
++ (instancetype)proxyWithTarget:(id)target {
+    JPProxy *proxy = [self alloc];
+    proxy.target = target;
+    return proxy;
+}
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
+    return [self.target methodSignatureForSelector:sel];
+}
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    [invocation invokeWithTarget:self.target];
+}
+@end
+
 /** keypath */
 #define JP_KEYPATH(objc, keyPath) @(((void)objc.keyPath, #keyPath))
 
@@ -47,14 +61,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIImageView *imageView;
-@property (nonatomic, weak) UIView *blurContentView;
-@property (nonatomic, strong) UIBlurEffect *blurEffect;
-@property (nonatomic, weak) UIVisualEffectView *blurEffectView;
+@property (nonatomic, weak) UIVisualEffectView *blurView;
 @property (nonatomic, weak) UIImageView *borderImageView;
 - (CGRect)borderImageViewFrame;
 
-// 背景
-@property (nonatomic, weak) CAShapeLayer *bgLayer;
+// 遮罩图层
+@property (nonatomic, weak) CAShapeLayer *maskLayer;
 // 线框
 @property (nonatomic, weak) CAShapeLayer *frameLayer;
 // 左上中下点
@@ -118,6 +130,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     UIViewAnimationOptions _animationOption;
     NSTimeInterval _defaultDuration;
     
+    UIColor *_fillColor;
     struct JPRGBAColor _fillRgba;
     
     JPRectHorn _currHorn;
@@ -133,37 +146,26 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _originWHScale = originImageFrame.size.width / originImageFrame.size.height;
 }
 
-- (void)setFillColor:(UIColor *)fillColor {
-    if (self.maskType == JPLightBlurMaskType) {
-        fillColor = [UIColor whiteColor];
-    } else if (self.maskType == JPDarkBlurMaskType) {
-        fillColor = [UIColor blackColor];
-    }
-    _fillRgba = [self createRgbaWithColor:fillColor];
-    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (_isPreview ? 1 : _maskAlpha)];
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    if (self.blurContentView) {
-        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
-    } else {
-        self.bgLayer.fillColor = _fillColor.CGColor;
-    }
-    [CATransaction commit];
+- (void)setBgColor:(UIColor *)bgColor {
+    _bgColor = bgColor;
+    _fillRgba = [self createRgbaWithColor:bgColor];
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r
+                                 green:_fillRgba.jp_g
+                                  blue:_fillRgba.jp_b
+                                 alpha:_fillRgba.jp_a * (_isPreview ? 1 : _maskAlpha)];
+    self.blurView.layer.backgroundColor = _fillColor.CGColor;
+    self.superview.layer.backgroundColor = bgColor.CGColor;
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
     if (maskAlpha < 0) maskAlpha = 0;
     if (maskAlpha > 1) maskAlpha = 1;
     _maskAlpha = maskAlpha;
-    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (_isPreview ? 1 : maskAlpha)];
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    if (self.blurContentView) {
-        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
-    } else {
-        self.bgLayer.fillColor = _fillColor.CGColor;
-    }
-    [CATransaction commit];
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r
+                                 green:_fillRgba.jp_g
+                                  blue:_fillRgba.jp_b
+                                 alpha:_fillRgba.jp_a * (_isPreview ? 1 : maskAlpha)];
+    self.blurView.layer.backgroundColor = _fillColor.CGColor;
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
@@ -198,7 +200,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (_isRound) {
         [self setIsRound:NO animated:isAnimated];
-        _resizeWHScale -= 1;
+        _resizeWHScale += 1;
     }
     if (resizeWHScale > 0 && [self isHorizontalDirection:_rotationDirection]) resizeWHScale = 1.0 / resizeWHScale;
     if (_resizeWHScale == resizeWHScale && !isToBeArbitrarily) return;
@@ -219,9 +221,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _resizeWHScale = 1;
     _isArbitrarily = NO;
     _isToBeArbitrarily = NO;
-    CGRect adjustResizeFrame = [self adjustResizeFrame];
-    _imageresizerFrame = adjustResizeFrame;
-    [self adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:_defaultDuration];
+    if (self.superview) {
+        CGRect adjustResizeFrame = [self adjustResizeFrame];
+        _imageresizerFrame = adjustResizeFrame;
+        [self adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:_defaultDuration];
+    }
 }
 
 - (void)setIsRound:(BOOL)isRound animated:(BOOL)isAnimated {
@@ -239,17 +243,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     } else {
         [self updateAllLayersOpacity];
     }
-}
-
-- (void)setIsShowMidDots:(BOOL)isShowMidDots {
-    if (_isShowMidDots == isShowMidDots) return;
-    _isShowMidDots = isShowMidDots;
-    if (_borderImage || _isPreview) return;
-    CGFloat opacity = isShowMidDots ? 1.0 : 0.0;
-    _leftMidDot.opacity = opacity;
-    _rightMidDot.opacity = opacity;
-    _topMidDot.opacity = opacity;
-    _bottomMidDot.opacity = opacity;
 }
 
 - (void)setIsPreview:(BOOL)isPreview {
@@ -309,22 +302,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             layerOpacityAnimate(_topMidDot, toMidDotOpacity);
             layerOpacityAnimate(_bottomMidDot, toMidDotOpacity);
         }
-        if (self.blurContentView) {
-            [self.blurContentView.layer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.blurContentView.layer, backgroundColor) fromValue:((id)self.blurContentView.layer.backgroundColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
-        } else {
-            [self.bgLayer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.bgLayer, fillColor) fromValue:((id)self.bgLayer.fillColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
-        }
+        [self.blurView.layer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.blurView.layer, backgroundColor) fromValue:((id)self.blurView.layer.backgroundColor) toValue:_fillColor timingFunctionName:timingFunctionName duration:duration];
     } else {
         _borderImageView.alpha = opacity;
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [self setupFrameLayerOpacity:opacity otherLayersOpacity:otherOpacity midDotOpacity:midDotOpacity];
-    if (self.blurContentView) {
-        self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
-    } else {
-        self.bgLayer.fillColor = _fillColor.CGColor;
-    }
+    self.blurView.layer.backgroundColor = _fillColor.CGColor;
     [CATransaction commit];
 }
 
@@ -443,6 +428,22 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     if (initialResizeWHScale < 0.0) initialResizeWHScale = 0.0;
     _initialResizeWHScale = initialResizeWHScale;
     [self checkIsCanRecovery];
+}
+
+- (void)setIsShowMidDots:(BOOL)isShowMidDots {
+    if (_isShowMidDots == isShowMidDots) return;
+    _isShowMidDots = isShowMidDots;
+    if (_borderImage || _isPreview) return;
+    CGFloat opacity = isShowMidDots ? 1.0 : 0.0;
+    _leftMidDot.opacity = opacity;
+    _rightMidDot.opacity = opacity;
+    _topMidDot.opacity = opacity;
+    _bottomMidDot.opacity = opacity;
+}
+
+- (void)setBlurEffect:(UIBlurEffect *)blurEffect {
+    _blurEffect = blurEffect;
+    self.blurView.effect = blurEffect;
 }
 
 #pragma mark - getter
@@ -570,7 +571,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (UIImageView *)borderImageView {
     if (!_borderImageView) {
         UIImageView *borderImageView = [[UIImageView alloc] initWithFrame:self.borderImageViewFrame];
-        #warning 细节处理
         borderImageView.layer.minificationFilter = kCAFilterNearest;
         borderImageView.layer.magnificationFilter = kCAFilterNearest;
         [self addSubview:borderImageView];
@@ -589,22 +589,24 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 #pragma mark - init
 
 - (instancetype)initWithFrame:(CGRect)frame
-                  contentSize:(CGSize)contentSize
-                     maskType:(JPImageresizerMaskType)maskType
-                    frameType:(JPImageresizerFrameType)frameType
-               animationCurve:(JPAnimationCurve)animationCurve
-                  strokeColor:(UIColor *)strokeColor
-                    fillColor:(UIColor *)fillColor
-                    maskAlpha:(CGFloat)maskAlpha
-                verBaseMargin:(CGFloat)verBaseMargin
-                horBaseMargin:(CGFloat)horBaseMargin
-                resizeWHScale:(CGFloat)resizeWHScale
-                   scrollView:(UIScrollView *)scrollView
-                    imageView:(UIImageView *)imageView
-                  borderImage:(UIImage *)borderImage
-         borderImageRectInset:(CGPoint)borderImageRectInset
-    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
- imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
+                 contentSize:(CGSize)contentSize
+                   frameType:(JPImageresizerFrameType)frameType
+              animationCurve:(JPAnimationCurve)animationCurve
+                  blurEffect:(UIBlurEffect *)blurEffect
+                     bgColor:(UIColor *)bgColor
+                   maskAlpha:(CGFloat)maskAlpha
+                 strokeColor:(UIColor *)strokeColor
+               verBaseMargin:(CGFloat)verBaseMargin
+               horBaseMargin:(CGFloat)horBaseMargin
+               resizeWHScale:(CGFloat)resizeWHScale
+                  scrollView:(UIScrollView *)scrollView
+                   imageView:(UIImageView *)imageView
+                 borderImage:(UIImage *)borderImage
+        borderImageRectInset:(CGPoint)borderImageRectInset
+               isRoundResize:(BOOL)isRoundResize
+               isShowMidDots:(BOOL)isShowMidDots
+   imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
@@ -617,49 +619,35 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         _minImageWH = 70.0;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         _contentSize = contentSize;
-        _maskType = maskType;
         _horBaseMargin = horBaseMargin;
         _verBaseMargin = verBaseMargin;
         _imageresizerIsCanRecovery = [imageresizerIsCanRecovery copy];
         _imageresizerIsPrepareToScale = [imageresizerIsPrepareToScale copy];
+        _isShowMidDots = isShowMidDots;
         _diffRotLength = 1000;
-        
         _bgFrame = CGRectMake(self.bounds.origin.x - _diffRotLength,
                               self.bounds.origin.y - _diffRotLength,
                               self.bounds.size.width + _diffRotLength * 2,
                               self.bounds.size.height + _diffRotLength * 2);
         
-        _isShowMidDots = YES;
+        _blurEffect = blurEffect;
+        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:_blurEffect];
+        blurView.frame = _bgFrame;
+        [self addSubview:blurView];
+        self.blurView = blurView;
         
-        if (maskType != JPNormalMaskType) {
-            UIView *blurContentView = [[UIView alloc] initWithFrame:_bgFrame];
-            [self addSubview:blurContentView];
-            self.blurContentView = blurContentView;
-            
-            if (maskType == JPLightBlurMaskType) {
-                self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-            } else {
-                self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-            }
-            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:self.blurEffect];
-            blurEffectView.frame = blurContentView.bounds;
-            [blurContentView addSubview:blurEffectView];
-            self.blurEffectView = blurEffectView;
-            
-            CAShapeLayer *bgLayer = [CAShapeLayer layer];
-            bgLayer.frame = blurContentView.bounds;
-            bgLayer.fillColor = [UIColor blackColor].CGColor;
-            blurContentView.layer.mask = bgLayer;
-            self.bgLayer = bgLayer;
-        } else {
-            self.bgLayer = [self createShapeLayer:0];
-            
-        }
-        self.bgLayer.fillRule = kCAFillRuleEvenOdd;
+        CAShapeLayer *maskLayer = [CAShapeLayer layer];
+        maskLayer.frame = blurView.bounds;
+        maskLayer.fillColor = [UIColor blackColor].CGColor;
+        maskLayer.fillRule = kCAFillRuleEvenOdd;
+        blurView.layer.mask = maskLayer;
+        self.maskLayer = maskLayer;
         
-        _maskAlpha = maskAlpha;
         _strokeColor = strokeColor;
-        self.fillColor = fillColor;
+        if (maskAlpha < 0) maskAlpha = 0;
+        if (maskAlpha > 1) maskAlpha = 1;
+        _maskAlpha = maskAlpha;
+        self.bgColor = bgColor;
         
         _borderImageRectInset = borderImageRectInset;
         if (borderImage) {
@@ -673,8 +661,13 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         self.scrollView = scrollView;
         self.imageView = imageView;
         
-        if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale - 1.0;
-        self.resizeWHScale = resizeWHScale;
+        if (isRoundResize) {
+            [self roundResize:NO];
+        } else {
+            if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale - 1.0;
+            self.resizeWHScale = resizeWHScale;
+        }
+        
         self.initialResizeWHScale = resizeWHScale;
         
         UIPanGestureRecognizer *panGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
@@ -695,11 +688,20 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     [self willDie];
 }
 
+#pragma mark - override method
+
+#ifdef __IPHONE_13_0
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    self.strokeColor = _strokeColor;
+    self.bgColor = _bgColor;
+}
+#endif
+
 #pragma mark - timer
 
 - (BOOL)addTimer {
     BOOL isHasTimer = [self removeTimer];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.65 target:self selector:@selector(timerHandle) userInfo:nil repeats:NO]; // default 0.65
+    self.timer = [NSTimer timerWithTimeInterval:0.65 target:[JPProxy proxyWithTarget:self] selector:@selector(timerHandle) userInfo:nil repeats:NO]; // default 0.65
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
     return isHasTimer;
 }
@@ -999,16 +1001,16 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)hideOrShowBlurEffect:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
-    if (self.maskType == JPNormalMaskType) return;
+    if (!self.blurEffect) return;
     if (_isHideBlurEffect == isHide) return;
     _isHideBlurEffect = isHide;
     UIVisualEffect *effect = isHide ? nil : self.blurEffect;
     if (duration > 0) {
         [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-            self.blurEffectView.effect = effect;
+            self.blurView.effect = effect;
         } completion:nil];
     } else {
-        self.blurEffectView.effect = effect;
+        self.blurView.effect = effect;
     }
 }
 
@@ -1040,23 +1042,17 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
-    #warning 设置圆路径
     CGFloat radius = _isRound ? imageresizerFrame.size.width * 0.5 : 0.1;
+    
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
     
-    UIBezierPath *bgPath;
-    if (self.blurContentView) {
-        bgPath = [UIBezierPath bezierPathWithRect:self.blurContentView.bounds];
-        CGRect frame = imageresizerFrame;
-        frame.origin.x += _diffRotLength;
-        frame.origin.y += _diffRotLength;
-        [bgPath appendPath:[UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:radius]];
-    } else {
-        bgPath = [UIBezierPath bezierPathWithRect:_bgFrame];
-        [bgPath appendPath:framePath];
-    }
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
+    CGRect frame = imageresizerFrame;
+    frame.origin.x += _diffRotLength;
+    frame.origin.y += _diffRotLength;
+    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:radius]];
     
-    NSString *keyPath = JP_KEYPATH(self.bgLayer, path);
+    NSString *keyPath = JP_KEYPATH(self.maskLayer, path);
     CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
     __weak typeof(self) wSelf = self;
     void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
@@ -1074,14 +1070,14 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
                 self.borderImageView.frame = borderImageViewFrame;
             } completion:nil];
-            layerPathAnimate(_bgLayer, bgPath);
+            layerPathAnimate(_maskLayer, maskPath);
             layerPathAnimate(_frameLayer, framePath);
         } else {
             _borderImageView.frame = borderImageViewFrame;
         }
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        _bgLayer.path = bgPath.CGPath;
+        _maskLayer.path = maskPath.CGPath;
         _frameLayer.path = framePath.CGPath;
         [CATransaction commit];
         return;
@@ -1185,7 +1181,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             layerPathAnimate(_verRightLine, verRightLinePath);
         }
         
-        layerPathAnimate(_bgLayer, bgPath);
+        layerPathAnimate(_maskLayer, maskPath);
         layerPathAnimate(_frameLayer, framePath);
     }
     
@@ -1209,7 +1205,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         _verRightLine.path = verRightLinePath.CGPath;
     }
     
-    _bgLayer.path = bgPath.CGPath;
+    _maskLayer.path = maskPath.CGPath;
     _frameLayer.path = framePath.CGPath;
     
     [CATransaction commit];
@@ -1426,6 +1422,37 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     [CATransaction setDisableActions:YES];
     self.frameType = frameType;
     [CATransaction commit];
+}
+
+- (void)setupBlurEffect:(UIBlurEffect *)blurEffect
+                bgColor:(UIColor *)bgColor
+              maskAlpha:(CGFloat)maskAlpha
+            strokeColor:(UIColor *)strokeColor
+               animated:(BOOL)isAnimated {
+    
+    if (maskAlpha < 0) maskAlpha = 0;
+    if (maskAlpha > 1) maskAlpha = 1;
+    _maskAlpha = maskAlpha;
+    
+    _bgColor = bgColor;
+    _fillRgba = [self createRgbaWithColor:bgColor];
+    _fillColor = [UIColor colorWithRed:_fillRgba.jp_r
+                                 green:_fillRgba.jp_g
+                                  blue:_fillRgba.jp_b
+                                 alpha:_fillRgba.jp_a * (_isPreview ? 1 : _maskAlpha)];
+    
+    void (^animations)(void) = ^{
+        self.strokeColor = strokeColor;
+        self.blurEffect = blurEffect;
+        self.blurView.layer.backgroundColor = self->_fillColor.CGColor;
+        self.superview.layer.backgroundColor = bgColor.CGColor;
+    };
+    
+    if (isAnimated) {
+        [UIView animateWithDuration:_defaultDuration delay:0 options:_animationOption animations:animations completion:nil];
+    } else {
+        animations();
+    }
 }
 
 - (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {

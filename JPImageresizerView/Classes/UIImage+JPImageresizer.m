@@ -1,6 +1,6 @@
 //
 //  UIImage+JPImageresizer.m
-//  DesignSpaceRestructure
+//  JPImageresizerView
 //
 //  Created by 周健平 on 2017/12/19.
 //  Copyright © 2017年 周健平. All rights reserved.
@@ -160,6 +160,14 @@
 
 #pragma mark - 旋转方向并切圆
 
+CG_INLINE CGRect
+JPRectSwapWH(CGRect rect) {
+    CGFloat width = rect.size.width;
+    rect.size.width = rect.size.height;
+    rect.size.height = width;
+    return rect;
+}
+
 - (UIImage *)jpir_rotate:(UIImageOrientation)orientation isRoundClip:(BOOL)isRoundClip {
     
     CGImageRef imageRef = self.CGImage;
@@ -189,26 +197,26 @@
             break;
             
         case UIImageOrientationLeft:
-            bounds = [self swapRectWH:bounds];
+            bounds = JPRectSwapWH(bounds);
             transform = CGAffineTransformMakeTranslation(0.0, rect.size.width);
             transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
             break;
             
         case UIImageOrientationLeftMirrored:
-            bounds = [self swapRectWH:bounds];
+            bounds = JPRectSwapWH(bounds);
             transform = CGAffineTransformMakeTranslation(rect.size.height, rect.size.width);
             transform = CGAffineTransformScale(transform, -1.0, 1.0);
             transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
             break;
             
         case UIImageOrientationRight:
-            bounds = [self swapRectWH:bounds];
+            bounds = JPRectSwapWH(bounds);
             transform = CGAffineTransformMakeTranslation(rect.size.height, 0.0);
             transform = CGAffineTransformRotate(transform, M_PI / 2.0);
             break;
             
         case UIImageOrientationRightMirrored:
-            bounds = [self swapRectWH:bounds];
+            bounds = JPRectSwapWH(bounds);
             transform = CGAffineTransformMakeScale(-1.0, 1.0);
             transform = CGAffineTransformRotate(transform, M_PI / 2.0);
             break;
@@ -280,16 +288,6 @@
     UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return resizedImage;
-}
-
-#pragma makr - other
-
-/** 交换宽高 */
-- (CGRect)swapRectWH:(CGRect)rect {
-    CGFloat width = rect.size.width;
-    rect.size.width = rect.size.height;
-    rect.size.height = width;
-    return rect;
 }
 
 @end

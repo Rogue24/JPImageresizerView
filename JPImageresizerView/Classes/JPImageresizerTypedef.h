@@ -9,21 +9,8 @@
 #pragma mark - 枚举
 
 /**
- * 遮罩样式
- * JPNormalMaskType：通常类型，bgColor能任意设置
- * JPLightBlurMaskType：明亮高斯模糊，bgColor强制为白色，maskAlpha可自行修改，建议为0.3
- * JPDarkBlurMaskType：暗黑高斯模糊，bgColor强制为黑色，maskAlpha可自行修改，建议为0.3
- */
-typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
-    JPNormalMaskType, // default
-    JPLightBlurMaskType,
-    JPDarkBlurMaskType
-};
-
-/**
  * 边框样式
  * JPConciseFrameType：简洁样式
- * JPConciseWithoutOtherDotFrameType：隐藏中间4个点的简洁样式
  * JPClassicFrameType：经典样式，类似微信的裁剪边框样式
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {

@@ -14,7 +14,7 @@
     configure
     .jp_resizeImage(resizeImage)
     .jp_viewFrame([UIScreen mainScreen].bounds)
-    .jp_maskType(JPNormalMaskType)
+    .jp_blurEffect(nil)
     .jp_frameType(JPConciseFrameType)
     .jp_animationCurve(JPAnimationCurveEaseOut)
     .jp_strokeColor(UIColor.whiteColor)
@@ -27,37 +27,27 @@
     .jp_contentInsets(UIEdgeInsetsZero)
     .jp_borderImage(nil)
     .jp_borderImageRectInset(CGPointZero)
-    .jp_maximumZoomScale(10.0);
+    .jp_maximumZoomScale(10.0)
+    .jp_isRoundResize(NO)
+    .jp_isShowMidDots(YES);
     !make ? : make(configure);
     return configure;
 }
 
-+ (instancetype)blurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage isLight:(BOOL)isLight make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerMaskType maskType = isLight ? JPLightBlurMaskType : JPDarkBlurMaskType;
++ (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
-        configure.jp_maskType(maskType).jp_maskAlpha(0.3);
+        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]).jp_bgColor([UIColor whiteColor]).jp_maskAlpha(0.3);
     }];
     !make ? : make(configure);
     return configure;
 }
 
-- (void)setMaskType:(JPImageresizerMaskType)maskType {
-    _maskType = maskType;
-    if (maskType == JPLightBlurMaskType) {
-        self.bgColor = [UIColor whiteColor];
-    } else if (maskType == JPDarkBlurMaskType) {
-        self.bgColor = [UIColor blackColor];
-    }
-}
-
-- (void)setBgColor:(UIColor *)bgColor {
-    if (self.maskType == JPLightBlurMaskType) {
-        _bgColor = [UIColor whiteColor];
-    } else if (self.maskType == JPDarkBlurMaskType) {
-        _bgColor = [UIColor blackColor];
-    } else {
-        _bgColor = bgColor;
-    }
++ (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
+        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]).jp_bgColor([UIColor blackColor]).jp_maskAlpha(0.3);
+    }];
+    !make ? : make(configure);
+    return configure;
 }
 
 - (JPImageresizerConfigure *(^)(UIImage *))jp_resizeImage {
@@ -70,13 +60,6 @@
 - (JPImageresizerConfigure *(^)(CGRect))jp_viewFrame {
     return ^(CGRect viewFrame) {
         self.viewFrame = viewFrame;
-        return self;
-    };
-}
-
-- (JPImageresizerConfigure *(^)(JPImageresizerMaskType))jp_maskType {
-    return ^(JPImageresizerMaskType maskType) {
-        self.maskType = maskType;
         return self;
     };
 }
@@ -95,9 +78,9 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(UIColor *))jp_strokeColor {
-    return ^(UIColor *strokeColor) {
-        self.strokeColor = strokeColor;
+- (JPImageresizerConfigure *(^)(UIBlurEffect *))jp_blurEffect {
+    return ^(UIBlurEffect *blurEffect) {
+        self.blurEffect = blurEffect;
         return self;
     };
 }
@@ -112,6 +95,13 @@
 - (JPImageresizerConfigure *(^)(CGFloat))jp_maskAlpha {
     return ^(CGFloat maskAlpha) {
         self.maskAlpha = maskAlpha;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIColor *))jp_strokeColor {
+    return ^(UIColor *strokeColor) {
+        self.strokeColor = strokeColor;
         return self;
     };
 }
@@ -175,6 +165,20 @@
 - (JPImageresizerConfigure *(^)(CGFloat))jp_maximumZoomScale {
     return ^(CGFloat maximumZoomScale) {
         self.maximumZoomScale = maximumZoomScale;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isRoundResize {
+    return ^(BOOL isRoundResize) {
+        self.isRoundResize = isRoundResize;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isShowMidDots {
+    return ^(BOOL isShowMidDots) {
+        self.isShowMidDots = isShowMidDots;
         return self;
     };
 }

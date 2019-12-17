@@ -32,18 +32,20 @@
     [self.frameView updateFrameType:frameType];
 }
 
+- (void)setBlurEffect:(UIBlurEffect *)blurEffect {
+    [self.frameView setupBlurEffect:blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha strokeColor:self.strokeColor animated:YES];
+}
+
 - (void)setBgColor:(UIColor *)bgColor {
-    if (bgColor == [UIColor clearColor]) bgColor = [UIColor blackColor];
-    self.backgroundColor = bgColor;
-    [self.frameView setFillColor:bgColor];
+    [self.frameView setupBlurEffect:self.blurEffect bgColor:bgColor maskAlpha:self.maskAlpha strokeColor:self.strokeColor animated:YES];
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
-    self.frameView.maskAlpha = maskAlpha;
+    [self.frameView setupBlurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:maskAlpha strokeColor:self.strokeColor animated:YES];
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
-    self.frameView.strokeColor = strokeColor;
+    [self.frameView setupBlurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha strokeColor:strokeColor animated:YES];
 }
 
 - (void)setResizeImage:(UIImage *)resizeImage {
@@ -139,18 +141,26 @@
     self.frameView.borderImageRectInset = borderImageRectInset;
 }
 
-#pragma mark - getter
-
-- (JPImageresizerMaskType)maskType {
-    return _frameView.maskType;
+- (void)setIsShowMidDots:(BOOL)isShowMidDots {
+    self.frameView.isShowMidDots = isShowMidDots;
 }
+
+#pragma mark - getter
 
 - (JPImageresizerFrameType)frameType {
     return _frameView.frameType;
 }
 
+- (UIBlurEffect *)blurEffect {
+    return _frameView.blurEffect;
+}
+
 - (UIColor *)bgColor {
-    return self.backgroundColor;
+    return _frameView.bgColor;
+}
+
+- (CGFloat)maskAlpha {
+    return _frameView.maskAlpha;
 }
 
 - (UIColor *)strokeColor {
@@ -178,10 +188,6 @@
     return 0.0;
 }
 
-- (CGFloat)maskAlpha {
-    return _frameView.maskAlpha;
-}
-
 - (BOOL)isLockResizeFrame {
     return !_frameView.panGR.enabled;
 }
@@ -191,11 +197,15 @@
 }
 
 - (UIImage *)borderImage {
-    return self.frameView.borderImage;
+    return _frameView.borderImage;
 }
 
 - (CGPoint)borderImageRectInset {
-    return self.frameView.borderImageRectInset;
+    return _frameView.borderImageRectInset;
+}
+
+- (BOOL)isShowMidDots {
+    return _frameView.isShowMidDots;
 }
 
 #pragma mark - init
@@ -205,12 +215,11 @@
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     JPImageresizerView *imageresizerView = [[self alloc] initWithResizeImage:configure.resizeImage
                                        frame:configure.viewFrame
-                                    maskType:configure.maskType
                                    frameType:configure.frameType
-                              animationCurve:configure.animationCurve
-                                 strokeColor:configure.strokeColor
+                              animationCurve:configure.animationCurve blurEffect:configure.blurEffect
                                      bgColor:configure.bgColor
                                    maskAlpha:configure.maskAlpha
+                                 strokeColor:configure.strokeColor
                                verBaseMargin:configure.verBaseMargin
                                horBaseMargin:configure.horBaseMargin
                                resizeWHScale:configure.resizeWHScale
@@ -218,6 +227,8 @@
                                  borderImage:configure.borderImage
                         borderImageRectInset:configure.borderImageRectInset
                             maximumZoomScale:configure.maximumZoomScale
+                               isRoundResize:configure.isRoundResize
+                               isShowMidDots:configure.isShowMidDots
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
     imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
@@ -226,12 +237,12 @@
 
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage
                               frame:(CGRect)frame
-                           maskType:(JPImageresizerMaskType)maskType
                           frameType:(JPImageresizerFrameType)frameType
                      animationCurve:(JPAnimationCurve)animationCurve
-                        strokeColor:(UIColor *)strokeColor
+                         blurEffect:(UIBlurEffect *)blurEffect
                             bgColor:(UIColor *)bgColor
                           maskAlpha:(CGFloat)maskAlpha
+                        strokeColor:(UIColor *)strokeColor
                       verBaseMargin:(CGFloat)verBaseMargin
                       horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
@@ -239,11 +250,14 @@
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
                    maximumZoomScale:(CGFloat)maximumZoomScale
+                      isRoundResize:(BOOL)isRoundResize
+                      isShowMidDots:(BOOL)isShowMidDots
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = YES;
         self.autoresizingMask = UIViewAutoresizingNone;
+        self.backgroundColor = bgColor;
         
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
@@ -260,8 +274,6 @@
         
         self.animationCurve = animationCurve;
         
-        self.bgColor = maskType == JPLightBlurMaskType ? UIColor.whiteColor : (maskType == JPDarkBlurMaskType ? UIColor.blackColor : bgColor);
-        
         [self setupScrollViewWithMaximumZoomScale:maximumZoomScale];
         
         [self setupImageViewWithImage:resizeImage];
@@ -269,12 +281,12 @@
         JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
                                            contentSize:_contentSize
-                                              maskType:maskType
                                              frameType:frameType
                                         animationCurve:animationCurve
-                                           strokeColor:strokeColor
-                                             fillColor:self.bgColor
+                                            blurEffect:blurEffect
+                                               bgColor:self.bgColor
                                              maskAlpha:maskAlpha
+                                           strokeColor:strokeColor
                                          verBaseMargin:_verBaseMargin
                                          horBaseMargin:_horBaseMargin
                                          resizeWHScale:resizeWHScale
@@ -282,6 +294,8 @@
                                              imageView:self.imageView
                                            borderImage:borderImage
                                   borderImageRectInset:borderImageRectInset
+                                         isRoundResize:isRoundResize
+                                         isShowMidDots:isShowMidDots
                              imageresizerIsCanRecovery:imageresizerIsCanRecovery
                           imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
         
@@ -356,12 +370,20 @@
 
 #pragma mark - puild method
 
+- (void)setupBlurEffect:(UIBlurEffect *)blurEffect bgColor:(UIColor *)bgColor maskAlpha:(CGFloat)maskAlpha strokeColor:(UIColor *)strokeColor animated:(BOOL)isAnimated; {
+    [self.frameView setupBlurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha strokeColor:strokeColor animated:isAnimated];
+}
+
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
     [self.frameView setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+}
+
+- (void)roundResize:(BOOL)isAnimated {
+    [self.frameView roundResize:isAnimated];
 }
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {

@@ -34,14 +34,14 @@
     }];
     
     NSString *title2 = @"深色毛玻璃遮罩";
-    JPImageresizerConfigure *configure2 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Girl.jpg"] isLight:NO make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure2 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Girl.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor orangeColor]);
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
-    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Lotus.jpg"] isLight:YES make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Lotus.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor blueColor]);
@@ -71,7 +71,7 @@
     // 设定拉伸区域
     stretchBorderImage = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
     
-    JPImageresizerConfigure *configure5 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Beauty.jpg"] isLight:YES make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure5 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Beauty.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
@@ -86,7 +86,7 @@
     // 设定平铺区域
     tileBorderImage = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
     
-    JPImageresizerConfigure *configure6 = [JPImageresizerConfigure blurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Woman.jpg"] isLight:NO make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure6 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Woman.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_frameType(JPClassicFrameType)

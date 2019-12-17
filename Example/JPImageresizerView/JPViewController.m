@@ -8,7 +8,12 @@
 
 #import "JPViewController.h"
 #import "JPImageViewController.h"
-#import <SVProgressHUD/SVProgressHUD.h>
+
+#import "JPConstant.h"
+#import "UIView+JPExtension.h"
+#import "UIView+JPPOP.h"
+#import "JPProgressHUD.h"
+#import "UIColor+JPExtension.h"
 
 @interface JPViewController ()
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
@@ -111,12 +116,58 @@
 }
 
 - (IBAction)one2one:(id)sender {
-    [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+//    [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    
+    UIBlurEffect *blurEffecct = nil;
+    NSInteger index = (NSInteger)(0 + (arc4random() % (5 - 0 + 1)));
+    switch (index) {
+        case 0:
+            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+            break;
+        case 1:
+            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+            break;
+        case 2:
+            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+            break;
+        case 3:
+            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
+            break;
+        default:
+            break;
+    }
+    
+    CGFloat alpha = (CGFloat)(0 + (arc4random() % (10 - 0 + 1))) / 10.0;
+    
+    UIColor *strokeColor;
+    UIColor *bgColor;
+    if (@available(iOS 13, *)) {
+        strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return JPRandomColor;
+            } else {
+                return JPRandomColor;
+            }
+        }];
+        
+        bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return JPRandomColor;
+            } else {
+                return JPRandomColor;
+            }
+        }];
+    } else {
+        strokeColor = JPRandomColor;
+        bgColor = JPRandomColor;
+    }
+    
+    [self.imageresizerView setupBlurEffect:blurEffecct bgColor:bgColor maskAlpha:alpha strokeColor:strokeColor animated:YES];
+    
 }
 
 - (IBAction)sixteen2nine:(id)sender {
-//    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
-    self.imageresizerView.frameView.isShowMidDots = !self.imageresizerView.frameView.isShowMidDots;
+    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {
@@ -131,36 +182,36 @@
 }
 
 - (IBAction)resize:(id)sender {
-    [SVProgressHUD show];
+    [JPProgressHUD show];
     
     __weak typeof(self) wSelf = self;
     
     // 1.自定义压缩比例进行裁剪
-    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-        // 裁剪完成，resizeImage为裁剪后的图片
-        // 注意循环引用
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf imageresizerDone:resizeImage];
-    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
-    
-    // 2.以原图尺寸进行裁剪
-//    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
 //        // 裁剪完成，resizeImage为裁剪后的图片
 //        // 注意循环引用
 //        __strong typeof(wSelf) sSelf = wSelf;
 //        if (!sSelf) return;
 //        [sSelf imageresizerDone:resizeImage];
-//    }];
+//    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
+    
+    // 2.以原图尺寸进行裁剪
+    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+        // 裁剪完成，resizeImage为裁剪后的图片
+        // 注意循环引用
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf imageresizerDone:resizeImage];
+    }];
 }
 
 - (void)imageresizerDone:(UIImage *)resizeImage {
     if (!resizeImage) {
-        [SVProgressHUD showErrorWithStatus:@"没有裁剪图片"];
+        [JPProgressHUD showErrorWithStatus:@"没有裁剪图片" userInteractionEnabled:YES];
         return;
     }
 
-    [SVProgressHUD dismiss];
+    [JPProgressHUD dismiss];
 
     JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
     vc.image = resizeImage;
