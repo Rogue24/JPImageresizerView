@@ -164,6 +164,7 @@
     
     [self.imageresizerView setupBlurEffect:blurEffecct bgColor:bgColor maskAlpha:alpha strokeColor:strokeColor animated:YES];
     
+    [self.imageresizerView roundResize:YES];
 }
 
 - (IBAction)sixteen2nine:(id)sender {

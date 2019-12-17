@@ -26,7 +26,6 @@
 		1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */; };
 		1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36622B2854A00B6B6AB /* Kobe.jpg */; };
 		1A0AB36A22B2854A00B6B6AB /* Girl.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36722B2854A00B6B6AB /* Girl.jpg */; };
-		1A0AB36B22B2854A00B6B6AB /* Lotus.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36822B2854A00B6B6AB /* Lotus.jpg */; };
 		1A10434623A495AE00D1B2DF /* JPConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433823A495AD00D1B2DF /* JPConstant.m */; };
 		1A10434723A495AE00D1B2DF /* JPProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433923A495AD00D1B2DF /* JPProgressHUD.m */; };
 		1A10434823A495AE00D1B2DF /* UIColor+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433A23A495AD00D1B2DF /* UIColor+JPExtension.m */; };
@@ -41,6 +40,7 @@
 		1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */; };
 		1A601A3A1FEBB523004B39A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README.md */; };
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
+		1AA6F3EF23A8F216008EFA8B /* Train.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1AA6F3EE23A8F216008EFA8B /* Train.jpg */; };
 		1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */; };
 		1AF66D4222FA536E006AE5F1 /* JPBrowseImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */; };
 		1AF66D4322FA536E006AE5F1 /* JPBrowseImagesBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3A22FA536E006AE5F1 /* JPBrowseImagesBottomView.m */; };
@@ -126,7 +126,6 @@
 		1A0AB36022B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		1A0AB36622B2854A00B6B6AB /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A0AB36722B2854A00B6B6AB /* Girl.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl.jpg; sourceTree = "<group>"; };
-		1A0AB36822B2854A00B6B6AB /* Lotus.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Lotus.jpg; sourceTree = "<group>"; };
 		1A10433723A495AD00D1B2DF /* UIView+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JPExtension.h"; sourceTree = "<group>"; };
 		1A10433823A495AD00D1B2DF /* JPConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPConstant.m; sourceTree = "<group>"; };
 		1A10433923A495AD00D1B2DF /* JPProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPProgressHUD.m; sourceTree = "<group>"; };
@@ -152,6 +151,7 @@
 		1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPImageViewController.m; sourceTree = "<group>"; };
 		1A601A381FEBB523004B39A1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1A601A391FEBB523004B39A1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		1AA6F3EE23A8F216008EFA8B /* Train.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Train.jpg; sourceTree = "<group>"; };
 		1AF66D3522FA536E006AE5F1 /* JPBrowseImagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesViewController.h; sourceTree = "<group>"; };
 		1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesTransition.m; sourceTree = "<group>"; };
 		1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImageCell.m; sourceTree = "<group>"; };
@@ -326,9 +326,9 @@
 			children = (
 				1A0AB36722B2854A00B6B6AB /* Girl.jpg */,
 				1A0AB36622B2854A00B6B6AB /* Kobe.jpg */,
-				1A0AB36822B2854A00B6B6AB /* Lotus.jpg */,
 				1A25802422F3E9BC00DB36B9 /* Woman.jpg */,
 				1A25802622F4130D00DB36B9 /* Beauty.jpg */,
+				1AA6F3EE23A8F216008EFA8B /* Train.jpg */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -568,7 +568,7 @@
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
-				1A0AB36B22B2854A00B6B6AB /* Lotus.jpg in Resources */,
+				1AA6F3EF23A8F216008EFA8B /* Train.jpg in Resources */,
 				1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */,
 				1A601A3A1FEBB523004B39A1 /* README.md in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,

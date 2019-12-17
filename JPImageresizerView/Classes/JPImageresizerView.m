@@ -284,7 +284,7 @@
                                              frameType:frameType
                                         animationCurve:animationCurve
                                             blurEffect:blurEffect
-                                               bgColor:self.bgColor
+                                               bgColor:bgColor
                                              maskAlpha:maskAlpha
                                            strokeColor:strokeColor
                                          verBaseMargin:_verBaseMargin

@@ -41,7 +41,7 @@
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
-    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Lotus.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Train.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor blueColor]);
