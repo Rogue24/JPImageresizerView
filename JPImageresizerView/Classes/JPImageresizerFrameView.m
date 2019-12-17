@@ -74,8 +74,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 @property (nonatomic, weak) CAShapeLayer *horBottomLine;
 @property (nonatomic, weak) CAShapeLayer *verLeftLine;
 @property (nonatomic, weak) CAShapeLayer *verRightLine;
-// 是否显示边线的中点
-@property (nonatomic, assign) BOOL isShowMidDot;
 
 @property (nonatomic, assign) CGRect originImageFrame;
 @property (nonatomic, assign) CGRect maxResizeFrame;
@@ -124,6 +122,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     
     JPRectHorn _currHorn;
     CGPoint _diagonal;
+    
+    BOOL _isRound;
 }
 
 #pragma mark - setter
@@ -196,18 +196,60 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
+    if (_isRound) {
+        [self setIsRound:NO animated:isAnimated];
+        _resizeWHScale -= 1;
+    }
     if (resizeWHScale > 0 && [self isHorizontalDirection:_rotationDirection]) resizeWHScale = 1.0 / resizeWHScale;
     if (_resizeWHScale == resizeWHScale && !isToBeArbitrarily) return;
     _resizeWHScale = resizeWHScale;
     _isArbitrarily = resizeWHScale <= 0;
     _isToBeArbitrarily = isToBeArbitrarily;
-    self.isShowMidDot = isToBeArbitrarily ? YES : _isArbitrarily;
     if (self.superview) {
         CGRect adjustResizeFrame = [self adjustResizeFrame];
         NSTimeInterval duration = isAnimated ? _defaultDuration : -1.0;
-        [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
+        _imageresizerFrame = adjustResizeFrame;
         [self adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:duration];
     }
+}
+
+- (void)roundResize:(BOOL)isAnimated {
+    if (_isRound) return;
+    [self setIsRound:YES animated:isAnimated];
+    _resizeWHScale = 1;
+    _isArbitrarily = NO;
+    _isToBeArbitrarily = NO;
+    CGRect adjustResizeFrame = [self adjustResizeFrame];
+    _imageresizerFrame = adjustResizeFrame;
+    [self adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:_defaultDuration];
+}
+
+- (void)setIsRound:(BOOL)isRound animated:(BOOL)isAnimated {
+    _isRound = isRound;
+    if (_borderImage) {
+        void (^animations)(void) = ^{
+            self.borderImageView.alpha = isRound ? 0 : 1;
+            self.frameLayer.lineWidth = isRound ? 1 : 0;
+        };
+        if (isAnimated) {
+            [UIView animateWithDuration:_defaultDuration delay:0 options:_animationOption animations:animations completion:nil];
+        } else {
+            animations();
+        }
+    } else {
+        [self updateAllLayersOpacity];
+    }
+}
+
+- (void)setIsShowMidDots:(BOOL)isShowMidDots {
+    if (_isShowMidDots == isShowMidDots) return;
+    _isShowMidDots = isShowMidDots;
+    if (_borderImage || _isPreview) return;
+    CGFloat opacity = isShowMidDots ? 1.0 : 0.0;
+    _leftMidDot.opacity = opacity;
+    _rightMidDot.opacity = opacity;
+    _topMidDot.opacity = opacity;
+    _bottomMidDot.opacity = opacity;
 }
 
 - (void)setIsPreview:(BOOL)isPreview {
@@ -218,19 +260,25 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _isPreview = isPreview;
     self.userInteractionEnabled = !isPreview;
     
-    CGFloat opacity = isPreview ? 0.0 : 1.0;
-    id toOpacity = @(opacity);
+    CGFloat opacity = _isPreview ? 0 : 1;
+    CGFloat otherOpacity = _isRound ? 0 : opacity;
+    CGFloat midDotOpacity = (_isShowMidDots && !_isRound) ? opacity : 0.0;
+    
     _fillColor = [UIColor colorWithRed:_fillRgba.jp_r green:_fillRgba.jp_g blue:_fillRgba.jp_b alpha:_fillRgba.jp_a * (isPreview ? 1 : _maskAlpha)];
     
     if (isAnimated) {
         NSTimeInterval duration = _defaultDuration;
         CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
         if (_borderImage) {
+            BOOL isRound = _isRound;
             [UIView animateWithDuration:_defaultDuration delay:0 options:_animationOption animations:^{
-                self.borderImageView.alpha = opacity;
+                self.borderImageView.alpha = isRound ? 0 : opacity;
+                self.frameLayer.opacity = isRound ? opacity : 0;
             } completion:nil];
         } else {
-            id toMidDotOpacity = @(_isArbitrarily ? opacity : 0.0);
+            id toOpacity = @(opacity);
+            id toOtherOpacity = @(otherOpacity);
+            id toMidDotOpacity = @(midDotOpacity);
             NSString *opacityKeyPath = JP_KEYPATH(_frameLayer, opacity);
             __weak typeof(self) wSelf = self;
             void (^layerOpacityAnimate)(CALayer *layer, id toValue) = ^(CALayer *layer, id toValue) {
@@ -243,14 +291,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                                                     duration:duration];
             };
             layerOpacityAnimate(_frameLayer, toOpacity);
-            layerOpacityAnimate(_horTopLine, toOpacity);
-            layerOpacityAnimate(_horBottomLine, toOpacity);
-            layerOpacityAnimate(_verLeftLine, toOpacity);
-            layerOpacityAnimate(_verRightLine, toOpacity);
-            layerOpacityAnimate(_leftTopDot, toOpacity);
-            layerOpacityAnimate(_leftBottomDot, toOpacity);
-            layerOpacityAnimate(_rightTopDot, toOpacity);
-            layerOpacityAnimate(_rightBottomDot, toOpacity);
+            
+            layerOpacityAnimate(_leftTopDot, toOtherOpacity);
+            layerOpacityAnimate(_leftBottomDot, toOtherOpacity);
+            layerOpacityAnimate(_rightTopDot, toOtherOpacity);
+            layerOpacityAnimate(_rightBottomDot, toOtherOpacity);
+            
+            if (_frameType == JPClassicFrameType) {
+                layerOpacityAnimate(_horTopLine, toOtherOpacity);
+                layerOpacityAnimate(_horBottomLine, toOtherOpacity);
+                layerOpacityAnimate(_verLeftLine, toOtherOpacity);
+                layerOpacityAnimate(_verRightLine, toOtherOpacity);
+            }
+            
             layerOpacityAnimate(_leftMidDot, toMidDotOpacity);
             layerOpacityAnimate(_rightMidDot, toMidDotOpacity);
             layerOpacityAnimate(_topMidDot, toMidDotOpacity);
@@ -266,7 +319,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [self updateShapeLayersOpacity:opacity];
+    [self setupFrameLayerOpacity:opacity otherLayersOpacity:otherOpacity midDotOpacity:midDotOpacity];
     if (self.blurContentView) {
         self.blurContentView.layer.backgroundColor = _fillColor.CGColor;
     } else {
@@ -294,8 +347,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setFrameType:(JPImageresizerFrameType)frameType {
     _frameType = frameType;
     
+    [self frameLayer];
+    
     if (_borderImage) {
-        [_frameLayer removeFromSuperlayer];
+        _frameLayer.lineWidth = _isRound ? 1.0 : 0;
+        [self updateShapeLayersStrokeColor];
+        
         [_horTopLine removeFromSuperlayer];
         [_horBottomLine removeFromSuperlayer];
         [_verLeftLine removeFromSuperlayer];
@@ -311,21 +368,8 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         return;
     }
     
-    [self frameLayer];
     CGFloat lineW = 0;
-    if (frameType == JPConciseFrameType ||
-        frameType == JPConciseWithoutOtherDotFrameType) {
-        if (frameType == JPConciseFrameType) {
-            [self leftMidDot];
-            [self rightMidDot];
-            [self topMidDot];
-            [self bottomMidDot];
-        } else {
-            [_leftMidDot removeFromSuperlayer];
-            [_rightMidDot removeFromSuperlayer];
-            [_topMidDot removeFromSuperlayer];
-            [_bottomMidDot removeFromSuperlayer];
-        }
+    if (frameType == JPConciseFrameType) {
         [_horTopLine removeFromSuperlayer];
         [_horBottomLine removeFromSuperlayer];
         [_verLeftLine removeFromSuperlayer];
@@ -336,19 +380,28 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         [self horBottomLine];
         [self verLeftLine];
         [self verRightLine];
+        lineW = _arrLineW;
+    }
+    
+    if (_isShowMidDots) {
+        self.leftMidDot.lineWidth = lineW;
+        self.rightMidDot.lineWidth = lineW;
+        self.topMidDot.lineWidth = lineW;
+        self.bottomMidDot.lineWidth = lineW;
+    } else {
         [_leftMidDot removeFromSuperlayer];
         [_rightMidDot removeFromSuperlayer];
         [_topMidDot removeFromSuperlayer];
         [_bottomMidDot removeFromSuperlayer];
-        lineW = _arrLineW;
     }
+    
     self.leftTopDot.lineWidth = lineW;
     self.leftBottomDot.lineWidth = lineW;
     self.rightTopDot.lineWidth = lineW;
     self.rightBottomDot.lineWidth = lineW;
     
     [self updateShapeLayersStrokeColor];
-    [self updateShapeLayersOpacity:(_isPreview ? 0.0 : 1.0)];
+    [self updateAllLayersOpacity];
     if (!CGRectIsEmpty(_imageresizerFrame)) {
         [self updateImageresizerFrame:_imageresizerFrame animateDuration:0];
     }
@@ -384,21 +437,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setIsPrepareToScale:(BOOL)isPrepareToScale {
     _isPrepareToScale = isPrepareToScale;
     !self.imageresizerIsPrepareToScale ? : self.imageresizerIsPrepareToScale(isPrepareToScale);
-}
-
-- (void)setIsShowMidDot:(BOOL)isShowMidDot {
-    if (_frameType != JPConciseFrameType || _borderImage || _isPreview) {
-        isShowMidDot = NO;
-    }
-    if (_isShowMidDot == isShowMidDot) {
-        return;
-    }
-    _isShowMidDot = isShowMidDot;
-    CGFloat midDotOpacity = isShowMidDot ? 1.0 : 0.0;
-    _leftMidDot.opacity = midDotOpacity;
-    _rightMidDot.opacity = midDotOpacity;
-    _topMidDot.opacity = midDotOpacity;
-    _bottomMidDot.opacity = midDotOpacity;
 }
 
 - (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
@@ -532,6 +570,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (UIImageView *)borderImageView {
     if (!_borderImageView) {
         UIImageView *borderImageView = [[UIImageView alloc] initWithFrame:self.borderImageViewFrame];
+        #warning 细节处理
+        borderImageView.layer.minificationFilter = kCAFilterNearest;
+        borderImageView.layer.magnificationFilter = kCAFilterNearest;
         [self addSubview:borderImageView];
         _borderImageView = borderImageView;
     }
@@ -587,6 +628,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
                               self.bounds.origin.y - _diffRotLength,
                               self.bounds.size.width + _diffRotLength * 2,
                               self.bounds.size.height + _diffRotLength * 2);
+        
+        _isShowMidDots = YES;
+        
         if (maskType != JPNormalMaskType) {
             UIView *blurContentView = [[UIView alloc] initWithFrame:_bgFrame];
             [self addSubview:blurContentView];
@@ -706,67 +750,90 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
-    CGFloat dotWH = _dotWH;
+    CGFloat dotWH = _isRound ? 0 : _dotWH;
     UIBezierPath *dotPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - dotWH * 0.5, position.y - dotWH * 0.5, dotWH, dotWH)];
     return dotPath;
 }
 
 - (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(JPRectHorn)horn {
     CGFloat arrLineW = _arrLineW;
-    CGFloat arrLength = _arrLength;
+    CGFloat arrLength = _isRound ? 0 : _arrLength;
+    CGFloat halfArrLineW = _isRound ? 0 : (arrLineW * 0.5);
+    
+    CGPoint startPoint = position;
+    CGPoint endPoint = position;
     UIBezierPath *path = [UIBezierPath bezierPath];
-    CGFloat halfArrLineW = arrLineW * 0.5;
-    CGPoint firstPoint = CGPointZero;
-    CGPoint secondPoint = CGPointZero;
-    CGPoint thirdPoint = CGPointZero;
     switch (horn) {
         case JPLeftTop:
         {
             position.x -= halfArrLineW;
             position.y -= halfArrLineW;
-            firstPoint = CGPointMake(position.x, position.y + arrLength);
-            thirdPoint = CGPointMake(position.x + arrLength, position.y);
+            startPoint = CGPointMake(position.x, position.y + arrLength);
+            endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-            
         case JPLeftBottom:
         {
             position.x -= halfArrLineW;
             position.y += halfArrLineW;
-            firstPoint = CGPointMake(position.x, position.y - arrLength);
-            thirdPoint = CGPointMake(position.x + arrLength, position.y);
+            startPoint = CGPointMake(position.x, position.y - arrLength);
+            endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-            
         case JPRightTop:
         {
             position.x += halfArrLineW;
             position.y -= halfArrLineW;
-            firstPoint = CGPointMake(position.x - arrLength, position.y);
-            thirdPoint = CGPointMake(position.x, position.y + arrLength);
+            startPoint = CGPointMake(position.x - arrLength, position.y);
+            endPoint = CGPointMake(position.x, position.y + arrLength);
             break;
         }
-            
         case JPRightBottom:
         {
             position.x += halfArrLineW;
             position.y += halfArrLineW;
-            firstPoint = CGPointMake(position.x - arrLength, position.y);
-            thirdPoint = CGPointMake(position.x, position.y - arrLength);
+            startPoint = CGPointMake(position.x - arrLength, position.y);
+            endPoint = CGPointMake(position.x, position.y - arrLength);
             break;
         }
-            
-        default:
+        case JPTopMid:
         {
-            firstPoint = position;
-            thirdPoint = position;
+            arrLength *= 0.85;
+            position.y -= halfArrLineW;
+            startPoint = CGPointMake(position.x - arrLength, position.y);
+            endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
+        case JPBottomMid:
+        {
+            arrLength *= 0.85;
+            position.y += halfArrLineW;
+            startPoint = CGPointMake(position.x - arrLength, position.y);
+            endPoint = CGPointMake(position.x + arrLength, position.y);
+            break;
+        }
+        case JPLeftMid:
+        {
+            arrLength *= 0.85;
+            position.x -= halfArrLineW;
+            startPoint = CGPointMake(position.x, position.y - arrLength);
+            endPoint = CGPointMake(position.x, position.y + arrLength);
+            break;
+        }
+        case JPRightMid:
+        {
+            arrLength *= 0.85;
+            position.x += halfArrLineW;
+            startPoint = CGPointMake(position.x, position.y - arrLength);
+            endPoint = CGPointMake(position.x, position.y + arrLength);
+            break;
+        }
+        default:
+            break;
     }
-    secondPoint = position;
-    [path moveToPoint:firstPoint];
-    [path addLineToPoint:secondPoint];
-    [path addLineToPoint:thirdPoint];
+    [path moveToPoint:startPoint];
+    [path addLineToPoint:position];
+    [path addLineToPoint:endPoint];
     return path;
 }
 
@@ -859,62 +926,76 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 #pragma mark - private method
 
 - (void)updateShapeLayersStrokeColor {
-    if (_borderImage) return;
     CGColorRef strokeCGColor = _strokeColor.CGColor;
-    CGColorRef clearCGColor = [UIColor clearColor].CGColor;
     _frameLayer.strokeColor = strokeCGColor;
-    if (_frameType == JPConciseFrameType ||
-        _frameType == JPConciseWithoutOtherDotFrameType) {
-        _leftTopDot.fillColor = strokeCGColor;
-        _leftBottomDot.fillColor = strokeCGColor;
-        _rightTopDot.fillColor = strokeCGColor;
-        _rightBottomDot.fillColor = strokeCGColor;
-        
-        _leftTopDot.strokeColor = clearCGColor;
-        _leftBottomDot.strokeColor = clearCGColor;
-        _rightTopDot.strokeColor = clearCGColor;
-        _rightBottomDot.strokeColor = clearCGColor;
-        
-        _leftMidDot.fillColor = strokeCGColor;
-        _rightMidDot.fillColor = strokeCGColor;
-        _topMidDot.fillColor = strokeCGColor;
-        _bottomMidDot.fillColor = strokeCGColor;
+    
+    if (_borderImage) return;
+    CGColorRef clearCGColor = [UIColor clearColor].CGColor;
+    
+    CGColorRef dotFillColor;
+    CGColorRef dotStrokeColor;
+    if (_frameType == JPConciseFrameType) {
+        dotFillColor = strokeCGColor;
+        dotStrokeColor = clearCGColor;
     } else {
-        _leftTopDot.strokeColor = strokeCGColor;
-        _leftBottomDot.strokeColor = strokeCGColor;
-        _rightTopDot.strokeColor = strokeCGColor;
-        _rightBottomDot.strokeColor = strokeCGColor;
-        
-        _leftTopDot.fillColor = clearCGColor;
-        _leftBottomDot.fillColor = clearCGColor;
-        _rightTopDot.fillColor = clearCGColor;
-        _rightBottomDot.fillColor = clearCGColor;
-        
+        dotFillColor = clearCGColor;
+        dotStrokeColor = strokeCGColor;
         _horTopLine.strokeColor = strokeCGColor;
         _horBottomLine.strokeColor = strokeCGColor;
         _verLeftLine.strokeColor = strokeCGColor;
         _verRightLine.strokeColor = strokeCGColor;
     }
+    
+    // setup fillColor
+    _leftTopDot.fillColor = dotFillColor;
+    _leftBottomDot.fillColor = dotFillColor;
+    _rightTopDot.fillColor = dotFillColor;
+    _rightBottomDot.fillColor = dotFillColor;
+    
+    _leftMidDot.fillColor = dotFillColor;
+    _rightMidDot.fillColor = dotFillColor;
+    _topMidDot.fillColor = dotFillColor;
+    _bottomMidDot.fillColor = dotFillColor;
+    
+    // setup strokeColor
+    _leftTopDot.strokeColor = dotStrokeColor;
+    _leftBottomDot.strokeColor = dotStrokeColor;
+    _rightTopDot.strokeColor = dotStrokeColor;
+    _rightBottomDot.strokeColor = dotStrokeColor;
+    
+    _leftMidDot.strokeColor = dotStrokeColor;
+    _rightMidDot.strokeColor = dotStrokeColor;
+    _topMidDot.strokeColor = dotStrokeColor;
+    _bottomMidDot.strokeColor = dotStrokeColor;
 }
 
-- (void)updateShapeLayersOpacity:(CGFloat)opacity {
+- (void)updateAllLayersOpacity {
+    CGFloat opacity = _isPreview ? 0 : 1;
+    CGFloat otherOpacity = _isRound ? 0 : opacity;
+    CGFloat midDotOpacity = (_isShowMidDots && !_isRound) ? opacity : 0.0;
+    [self setupFrameLayerOpacity:opacity otherLayersOpacity:otherOpacity midDotOpacity:midDotOpacity];
+}
+    
+- (void)setupFrameLayerOpacity:(CGFloat)flOpacity otherLayersOpacity:(CGFloat)olOpacity midDotOpacity:(CGFloat)mdOpacity {
+    _frameLayer.opacity = flOpacity;
     if (_borderImage) return;
-    _frameLayer.opacity = opacity;
-    _horTopLine.opacity = opacity;
-    _horBottomLine.opacity = opacity;
-    _verLeftLine.opacity = opacity;
-    _verRightLine.opacity = opacity;
-    _leftTopDot.opacity = opacity;
-    _leftBottomDot.opacity = opacity;
-    _rightTopDot.opacity = opacity;
-    _rightBottomDot.opacity = opacity;
-    if (_frameType == JPConciseFrameType) {
-        CGFloat midDotOpacity = _isArbitrarily ? opacity : 0.0;
-        _leftMidDot.opacity = midDotOpacity;
-        _rightMidDot.opacity = midDotOpacity;
-        _topMidDot.opacity = midDotOpacity;
-        _bottomMidDot.opacity = midDotOpacity;
+    
+    _leftTopDot.opacity = olOpacity;
+    _leftBottomDot.opacity = olOpacity;
+    _rightTopDot.opacity = olOpacity;
+    _rightBottomDot.opacity = olOpacity;
+    
+    if (_frameType == JPClassicFrameType) {
+        _horTopLine.opacity = olOpacity;
+        _horBottomLine.opacity = olOpacity;
+        _verLeftLine.opacity = olOpacity;
+        _verRightLine.opacity = olOpacity;
     }
+    
+    _leftMidDot.opacity = mdOpacity;
+    _rightMidDot.opacity = mdOpacity;
+    _topMidDot.opacity = mdOpacity;
+    _bottomMidDot.opacity = mdOpacity;
 }
 
 - (void)hideOrShowBlurEffect:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
@@ -932,8 +1013,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)hideOrShowFrameLine:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
+    if (_frameType != JPClassicFrameType) return;
     if (_borderImage) return;
-    if (self.frameType != JPClassicFrameType) return;
+    if (_isRound) return;
     if (_isHideFrameLine == isHide) return;
     _isHideFrameLine = isHide;
     CGFloat toOpacity = isHide ? 0 : 1;
@@ -958,18 +1040,33 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
+    #warning 设置圆路径
+    CGFloat radius = _isRound ? imageresizerFrame.size.width * 0.5 : 0.1;
+    UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
+    
     UIBezierPath *bgPath;
-    UIBezierPath *framePath = [UIBezierPath bezierPathWithRect:imageresizerFrame];
     if (self.blurContentView) {
         bgPath = [UIBezierPath bezierPathWithRect:self.blurContentView.bounds];
         CGRect frame = imageresizerFrame;
         frame.origin.x += _diffRotLength;
         frame.origin.y += _diffRotLength;
-        [bgPath appendPath:[UIBezierPath bezierPathWithRect:frame]];
+        [bgPath appendPath:[UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:radius]];
     } else {
         bgPath = [UIBezierPath bezierPathWithRect:_bgFrame];
         [bgPath appendPath:framePath];
     }
+    
+    NSString *keyPath = JP_KEYPATH(self.bgLayer, path);
+    CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
+    __weak typeof(self) wSelf = self;
+    void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
+        if (!wSelf) return;
+        [layer jpir_addBackwardsAnimationWithKeyPath:keyPath
+                                           fromValue:[UIBezierPath bezierPathWithCGPath:layer.path]
+                                             toValue:path
+                                  timingFunctionName:timingFunctionName
+                                            duration:duration];
+    };
     
     if (_borderImage) {
         CGRect borderImageViewFrame = self.borderImageViewFrame;
@@ -977,17 +1074,15 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
                 self.borderImageView.frame = borderImageViewFrame;
             } completion:nil];
-            [self.bgLayer jpir_addBackwardsAnimationWithKeyPath:JP_KEYPATH(self.bgLayer, path)
-                                                      fromValue:[UIBezierPath bezierPathWithCGPath:self.bgLayer.path]
-                                                        toValue:bgPath
-                                             timingFunctionName:_kCAMediaTimingFunction
-                                                       duration:duration];
+            layerPathAnimate(_bgLayer, bgPath);
+            layerPathAnimate(_frameLayer, framePath);
         } else {
             _borderImageView.frame = borderImageViewFrame;
         }
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        self.bgLayer.path = bgPath.CGPath;
+        _bgLayer.path = bgPath.CGPath;
+        _frameLayer.path = framePath.CGPath;
         [CATransaction commit];
         return;
     }
@@ -1014,23 +1109,48 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     UIBezierPath *verLeftLinePath;
     UIBezierPath *verRightLinePath;
     
-    if (_frameType == JPConciseFrameType || _frameType == JPConciseWithoutOtherDotFrameType) {
-        leftTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerY)];
-        leftBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY)];
-        rightTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY)];
-        rightBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY)];
-        
-        if (_frameType == JPConciseFrameType) {
-            leftMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY)];
-            rightMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY)];
-            topMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY)];
-            bottomMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY)];
+    if (_frameType == JPConciseFrameType) {
+        if (_isRound) {
+            CGPoint center = CGPointMake(imageresizerMidX, imageresizerMidY);
+            CGFloat radius = imageresizerFrame.size.width * 0.5;
+            CGFloat lineLength = sqrt(pow(radius, 2) * 0.5);
+            
+            leftTopDotPath = [self dotPathWithPosition:CGPointMake(center.x - lineLength, center.y - lineLength)];
+            leftBottomDotPath = [self dotPathWithPosition:CGPointMake(center.x - lineLength, center.y + lineLength)];
+            rightTopDotPath = [self dotPathWithPosition:CGPointMake(center.x + lineLength, center.y - lineLength)];
+            rightBottomDotPath = [self dotPathWithPosition:CGPointMake(center.x + lineLength, center.y + lineLength)];
+        } else {
+            leftTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerY)];
+            leftBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY)];
+            rightTopDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY)];
+            rightBottomDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY)];
         }
+        
+        leftMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY)];
+        rightMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY)];
+        topMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY)];
+        bottomMidDotPath = [self dotPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY)];
     } else {
-        leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:JPLeftTop];
-        leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:JPLeftBottom];
-        rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) rectHorn:JPRightTop];
-        rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) rectHorn:JPRightBottom];
+        if (_isRound) {
+            CGPoint center = CGPointMake(imageresizerMidX, imageresizerMidY);
+            CGFloat radius = imageresizerFrame.size.width * 0.5;
+            CGFloat lineLength = sqrt(pow(radius, 2) * 0.5);
+            
+            leftTopDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y - lineLength) rectHorn:JPLeftTop];
+            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y + lineLength) rectHorn:JPLeftBottom];
+            rightTopDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y - lineLength) rectHorn:JPRightTop];
+            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y + lineLength) rectHorn:JPRightBottom];
+        } else {
+            leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:JPLeftTop];
+            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:JPLeftBottom];
+            rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) rectHorn:JPRightTop];
+            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) rectHorn:JPRightBottom];
+        }
+        
+        leftMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY) rectHorn:JPLeftMid];
+        rightMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY) rectHorn:JPRightMid];
+        topMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY) rectHorn:JPTopMid];
+        bottomMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY) rectHorn:JPBottomMid];
         
         CGFloat imageresizerW = imageresizerFrame.size.width;
         CGFloat imageresizerH = imageresizerFrame.size.height;
@@ -1044,56 +1164,54 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     }
     
     if (duration > 0) {
-        NSString *keyPath = JP_KEYPATH(self.bgLayer, path);
-        CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
+        if (_leftTopDot.opacity) {
+            layerPathAnimate(_leftTopDot, leftTopDotPath);
+            layerPathAnimate(_leftBottomDot, leftBottomDotPath);
+            layerPathAnimate(_rightTopDot, rightTopDotPath);
+            layerPathAnimate(_rightBottomDot, rightBottomDotPath);
+        }
         
-        __weak typeof(self) wSelf = self;
-        void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
-            if (!wSelf) return;
-            [layer jpir_addBackwardsAnimationWithKeyPath:keyPath
-                                               fromValue:[UIBezierPath bezierPathWithCGPath:layer.path]
-                                                 toValue:path
-                                      timingFunctionName:timingFunctionName
-                                                duration:duration];
-        };
-        layerPathAnimate(_leftTopDot, leftTopDotPath);
-        layerPathAnimate(_leftBottomDot, leftBottomDotPath);
-        layerPathAnimate(_rightTopDot, rightTopDotPath);
-        layerPathAnimate(_rightBottomDot, rightBottomDotPath);
-        if (_frameType == JPConciseFrameType) {
+        if (_leftMidDot.opacity) {
             layerPathAnimate(_leftMidDot, leftMidDotPath);
             layerPathAnimate(_rightMidDot, rightMidDotPath);
             layerPathAnimate(_topMidDot, topMidDotPath);
             layerPathAnimate(_bottomMidDot, bottomMidDotPath);
-        } else if (_frameType == JPClassicFrameType) {
+        }
+        
+        if (_frameType == JPClassicFrameType) {
             layerPathAnimate(_horTopLine, horTopLinePath);
             layerPathAnimate(_horBottomLine, horBottomLinePath);
             layerPathAnimate(_verLeftLine, verLeftLinePath);
             layerPathAnimate(_verRightLine, verRightLinePath);
         }
+        
         layerPathAnimate(_bgLayer, bgPath);
         layerPathAnimate(_frameLayer, framePath);
     }
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
+    
     _leftTopDot.path = leftTopDotPath.CGPath;
     _leftBottomDot.path = leftBottomDotPath.CGPath;
     _rightTopDot.path = rightTopDotPath.CGPath;
     _rightBottomDot.path = rightBottomDotPath.CGPath;
-    if (_frameType == JPConciseFrameType) {
-        _leftMidDot.path = leftMidDotPath.CGPath;
-        _rightMidDot.path = rightMidDotPath.CGPath;
-        _topMidDot.path = topMidDotPath.CGPath;
-        _bottomMidDot.path = bottomMidDotPath.CGPath;
-    } else if (_frameType == JPClassicFrameType) {
+    
+    _leftMidDot.path = leftMidDotPath.CGPath;
+    _rightMidDot.path = rightMidDotPath.CGPath;
+    _topMidDot.path = topMidDotPath.CGPath;
+    _bottomMidDot.path = bottomMidDotPath.CGPath;
+    
+    if (_frameType == JPClassicFrameType) {
         _horTopLine.path = horTopLinePath.CGPath;
         _horBottomLine.path = horBottomLinePath.CGPath;
         _verLeftLine.path = verLeftLinePath.CGPath;
         _verRightLine.path = verRightLinePath.CGPath;
     }
+    
     _bgLayer.path = bgPath.CGPath;
     _frameLayer.path = framePath.CGPath;
+    
     [CATransaction commit];
 }
 
@@ -1106,7 +1224,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
-    [self updateImageresizerFrame:[self baseImageresizerFrame] animateDuration:-1.0];
+    _imageresizerFrame = [self baseImageresizerFrame];
     [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
 }
 
@@ -1135,19 +1253,31 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     h -= 2 * y;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
+    if (_borderImage) {
+        _frameLayer.lineWidth = _isRound ? 1.0 : 0.0;
+        return;
+    }
+    
     _frameLayer.lineWidth = 1.0;
+    
     CGFloat lineW = 0;
-    if (_frameType == JPClassicFrameType) lineW = _arrLineW;
+    if (_frameType == JPClassicFrameType) {
+        _horTopLine.lineWidth = 0.5;
+        _horBottomLine.lineWidth = 0.5;
+        _verLeftLine.lineWidth = 0.5;
+        _verRightLine.lineWidth = 0.5;
+        lineW = _arrLineW;
+    }
+    
     _leftTopDot.lineWidth = lineW;
     _leftBottomDot.lineWidth = lineW;
     _rightTopDot.lineWidth = lineW;
     _rightBottomDot.lineWidth = lineW;
     
-    lineW = 0.5;
-    _horTopLine.lineWidth = lineW;
-    _horBottomLine.lineWidth = lineW;
-    _verLeftLine.lineWidth = lineW;
-    _verRightLine.lineWidth = lineW;
+    _leftMidDot.lineWidth = lineW;
+    _rightMidDot.lineWidth = lineW;
+    _topMidDot.lineWidth = lineW;
+    _bottomMidDot.lineWidth = lineW;
 }
 
 - (void)adjustImageresizerFrame:(CGRect)adjustResizeFrame
@@ -1362,8 +1492,6 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 }
 
 - (void)recoveryWithDuration:(NSTimeInterval)duration {
-    self.isShowMidDot = _isToBeArbitrarily ? YES : _isArbitrarily;
-    
     [self updateRotationDirection:JPImageresizerVerticalUpDirection];
     
     CGRect adjustResizeFrame = _isArbitrarily ? [self baseImageresizerFrame] : [self adjustResizeFrame];
@@ -1389,10 +1517,9 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     self.window.userInteractionEnabled = YES;
 }
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete scale:(CGFloat)scale {
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale {
     if (!complete) return;
-    
-    if (scale <= 0) {
+    if (compressScale <= 0) {
         complete(nil);
         return;
     }
@@ -1419,76 +1546,38 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             break;
     }
     
-    BOOL isVerticalityMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
-    BOOL isHorizontalMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
+    BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
+    BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     if ([self isHorizontalDirection:_rotationDirection]) {
-        BOOL temp = isVerticalityMirror;
-        isVerticalityMirror = isHorizontalMirror;
-        isHorizontalMirror = temp;
+        BOOL temp = isVerMirror;
+        isVerMirror = isHorMirror;
+        isHorMirror = temp;
     }
     
-    __block UIImage *image = self.imageView.image;
+    UIImage *image = self.imageView.image;
     
     CGRect imageViewBounds = self.imageView.bounds;
-    CGFloat imageViewWidth = imageViewBounds.size.width;
     
     CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     
+    CGFloat relativeWidth = imageViewBounds.size.width;
+    
+    BOOL isRoundClip = _isRound;
+    
     __weak typeof(self) wSelf = self;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        
-        // 修正图片方向
-        image = [image jpir_fixOrientation];
-        
-        // 镜像处理
-        if (isVerticalityMirror) image = [image jpir_verticalityMirror];
-        if (isHorizontalMirror) image = [image jpir_horizontalMirror];
-        
-        // 获取裁剪区域
-        CGFloat imageScale = image.scale;
-        CGFloat imageWidth = image.size.width * imageScale;
-        CGFloat imageHeight = image.size.height * imageScale;
-        // 宽高比不变，所以宽度高度的比例是一样
-        CGFloat cropScale = imageWidth / imageViewWidth;
-        CGFloat cropX = cropFrame.origin.x * cropScale;
-        CGFloat cropY = cropFrame.origin.y * cropScale;
-        CGFloat cropW = cropFrame.size.width * cropScale;
-        CGFloat cropH = cropFrame.size.height * cropScale;
-        if (cropX < 0) {
-            cropW += -cropX;
-            cropX = 0;
-        }
-        if (cropY < 0) {
-            cropH += -cropY;
-            cropY = 0;
-        }
-        CGFloat cropMaxX = cropX + cropW;
-        if (cropMaxX > imageWidth) {
-            cropW -= (cropMaxX - imageWidth);
-            cropMaxX = cropX + cropW;
-        }
-        CGFloat cropMaxY = cropY + cropH;
-        if (cropMaxY > imageHeight) {
-            cropH -= (cropMaxY - imageHeight);
-            cropMaxY = cropY + cropH;
-        }
-        if (isVerticalityMirror) cropX = imageWidth - cropMaxX;
-        if (isHorizontalMirror) cropY = imageHeight - cropMaxY;
-        CGRect cropRect = CGRectMake(cropX, cropY, cropW, cropH);
-        
-        // 裁剪并旋转图片
-        CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, cropRect);
-        image = [[UIImage imageWithCGImage:imgRef] jpir_rotate:orientation];
-        CGImageRelease(imgRef);
-        
-        // 压缩图片
-        if (scale < 1.0) image = [image jpir_resizeImageWithScale:scale];
-        
-        // 输出压缩图片
+        UIImage *resultImage = [UIImage jpir_resultImageWithImage:image
+                                                        cropFrame:cropFrame
+                                                    relativeWidth:relativeWidth
+                                                      isVerMirror:isVerMirror
+                                                      isHorMirror:isHorMirror
+                                                rotateOrientation:orientation
+                                                      isRoundClip:isRoundClip
+                                                    compressScale:compressScale];
         dispatch_async(dispatch_get_main_queue(), ^{
-            complete(image);
+            complete(resultImage);
         });
     });
 }
@@ -2098,12 +2187,12 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         CGRect botMidRect = CGRectNull;
         CGFloat midX = CGRectGetMidX(frame);
         CGFloat midY = CGRectGetMidY(frame);
-        if (_edgeLineIsEnabled) {
+        if (_edgeLineIsEnabled && !_isRound) {
             leftMidRect = CGRectMake(x - halfScopeWH, y + halfScopeWH, scopeWH, h - scopeWH);
             rightMidRect = CGRectMake(maxX - halfScopeWH, y + halfScopeWH, scopeWH, h - scopeWH);
             topMidRect = CGRectMake(x + halfScopeWH, y - halfScopeWH, w - scopeWH, scopeWH);
             botMidRect = CGRectMake(x + halfScopeWH, maxY - halfScopeWH, w - scopeWH, scopeWH);
-        } else if (self.isShowMidDot) {
+        } else if (_isShowMidDots || _isRound) {
             leftMidRect = CGRectMake(x - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
             rightMidRect = CGRectMake(maxX - halfScopeWH, midY - halfScopeWH, scopeWH, scopeWH);
             topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);

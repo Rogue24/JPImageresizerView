@@ -47,6 +47,9 @@
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+- (void)roundResize:(BOOL)isAnimated;
+
+@property (nonatomic, assign) BOOL isShowMidDots;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
@@ -89,6 +92,6 @@
 - (void)horizontalMirrorWithDiffY:(CGFloat)diffY;
 - (void)mirrorDone;
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete scale:(CGFloat)scale;
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
 
 @end

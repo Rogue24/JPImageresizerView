@@ -115,7 +115,8 @@
 }
 
 - (IBAction)sixteen2nine:(id)sender {
-    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+//    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    self.imageresizerView.frameView.isShowMidDots = !self.imageresizerView.frameView.isShowMidDots;
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {
@@ -135,22 +136,22 @@
     __weak typeof(self) wSelf = self;
     
     // 1.自定义压缩比例进行裁剪
-//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-//        // 裁剪完成，resizeImage为裁剪后的图片
-//        // 注意循环引用
-//        __strong typeof(wSelf) sSelf = wSelf;
-//        if (!sSelf) return;
-//        [sSelf imageresizerDone:resizeImage];
-//    } scale:0.5]; // 这里压缩为原图尺寸的50%
-    
-    // 2.以原图尺寸进行裁剪
-    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
         // 裁剪完成，resizeImage为裁剪后的图片
         // 注意循环引用
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         [sSelf imageresizerDone:resizeImage];
-    }];
+    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
+    
+    // 2.以原图尺寸进行裁剪
+//    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+//        // 裁剪完成，resizeImage为裁剪后的图片
+//        // 注意循环引用
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        [sSelf imageresizerDone:resizeImage];
+//    }];
 }
 
 - (void)imageresizerDone:(UIImage *)resizeImage {
@@ -197,7 +198,7 @@
 - (IBAction)toBeArbitrarilyAction:(UIButton *)sender {
     sender.selected = !sender.selected;
     self.isToBeArbitrarily = sender.selected;
-    [self.imageresizerView setResizeWHScale:self.imageresizerView.resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:NO];
+    [self.imageresizerView setResizeWHScale:self.imageresizerView.resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
 
 @end

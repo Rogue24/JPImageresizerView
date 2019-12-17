@@ -133,7 +133,7 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
 ```objc
 // 使用自定义边框图片（例：平铺模式）
-UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
+UIImage *tileBorderImage = [[UIImage imageNamed:@"dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
 
 // 设置边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
 self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);

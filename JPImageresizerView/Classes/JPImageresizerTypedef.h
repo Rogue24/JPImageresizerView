@@ -28,7 +28,6 @@ typedef NS_ENUM(NSUInteger, JPImageresizerMaskType) {
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerFrameType) {
     JPConciseFrameType, // default
-    JPConciseWithoutOtherDotFrameType,
     JPClassicFrameType
 };
 

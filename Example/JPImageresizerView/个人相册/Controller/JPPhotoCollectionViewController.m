@@ -432,11 +432,11 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 }
 
 - (NSString *)getNavigationDismissIcon {
-    return @"jp_back";
+    return @"back";
 }
 
 - (NSString *)getNavigationOtherIcon {
-    return @"jp_clipper";
+    return @"clipper";
 }
 
 - (void)browseImagesVC:(JPBrowseImagesViewController *)browseImagesVC navigationOtherHandleWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {

@@ -10,7 +10,69 @@
 
 @implementation UIImage (JPImageresizer)
 
-#pragma mark - 修改方向
++ (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
+                             cropFrame:(CGRect)cropFrame
+                         relativeWidth:(CGFloat)relativeWidth
+                           isVerMirror:(BOOL)isVerMirror
+                           isHorMirror:(BOOL)isHorMirror
+                     rotateOrientation:(UIImageOrientation)orientation
+                           isRoundClip:(BOOL)isRoundClip
+                         compressScale:(CGFloat)compressScale {
+    @autoreleasepool {
+        // 修正图片方向
+        UIImage *resultImage = [originImage jpir_fixOrientation];
+
+        // 镜像处理
+        if (isVerMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationUpMirrored isRoundClip:NO];
+        if (isHorMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationDownMirrored isRoundClip:NO];
+
+        // 获取裁剪区域
+        CGFloat imageScale = resultImage.scale;
+        CGFloat imageWidth = resultImage.size.width * imageScale;
+        CGFloat imageHeight = resultImage.size.height * imageScale;
+        CGFloat cropScale = imageWidth / relativeWidth; // 宽高比不变，所以宽度高度的比例是一样
+        CGFloat cropX = cropFrame.origin.x * cropScale;
+        CGFloat cropY = cropFrame.origin.y * cropScale;
+        CGFloat cropW = cropFrame.size.width * cropScale;
+        CGFloat cropH = cropFrame.size.height * cropScale;
+        if (cropX < 0) {
+            cropW += -cropX;
+            cropX = 0;
+        }
+        if (cropY < 0) {
+            cropH += -cropY;
+            cropY = 0;
+        }
+        CGFloat cropMaxX = cropX + cropW;
+        if (cropMaxX > imageWidth) {
+            cropW -= (cropMaxX - imageWidth);
+            cropMaxX = cropX + cropW;
+        }
+        CGFloat cropMaxY = cropY + cropH;
+        if (cropMaxY > imageHeight) {
+            cropH -= (cropMaxY - imageHeight);
+            cropMaxY = cropY + cropH;
+        }
+        if (isVerMirror) cropX = imageWidth - cropMaxX;
+        if (isHorMirror) cropY = imageHeight - cropMaxY;
+        CGRect cropRect = CGRectMake(cropX, cropY, cropW, cropH);
+        
+        // 裁剪
+        CGImageRef resultImgRef = CGImageCreateWithImageInRect(resultImage.CGImage, cropRect);
+
+        // 旋转并切圆
+        resultImage = [[UIImage imageWithCGImage:resultImgRef] jpir_rotate:orientation isRoundClip:isRoundClip];
+        
+        // 压缩图片
+        resultImage = [resultImage jpir_resizeImageWithScale:compressScale];
+        
+        CGImageRelease(resultImgRef);
+        return resultImage;
+    }
+}
+
+
+#pragma mark - 修正方向
 
 /** 修正图片的方向 */
 - (UIImage *)jpir_fixOrientation {
@@ -96,8 +158,9 @@
     return img;
 }
 
-/** 按指定方向旋转图片 */
-- (UIImage*)jpir_rotate:(UIImageOrientation)orientation {
+#pragma mark - 旋转方向并切圆
+
+- (UIImage *)jpir_rotate:(UIImageOrientation)orientation isRoundClip:(BOOL)isRoundClip {
     
     CGImageRef imageRef = self.CGImage;
     CGRect bounds = CGRectMake(0, 0, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
@@ -107,7 +170,8 @@
     switch (orientation)
     {
         case UIImageOrientationUp:
-            return self;
+            if (!isRoundClip) return self;
+            break;
             
         case UIImageOrientationUpMirrored:
             transform = CGAffineTransformMakeTranslation(rect.size.width, 0.0);
@@ -150,7 +214,8 @@
             break;
             
         default:
-            return self;
+            if (!isRoundClip) return self;
+            break;
     }
     
     UIImage *newImage = nil;
@@ -168,7 +233,6 @@
             CGContextScaleCTM(ctx, -1.0, 1.0);
             CGContextTranslateCTM(ctx, -rect.size.height, 0.0);
             break;
-            
         default:
             CGContextScaleCTM(ctx, 1.0, -1.0);
             CGContextTranslateCTM(ctx, 0.0, -rect.size.height);
@@ -176,50 +240,46 @@
     }
     
     CGContextConcatCTM(ctx, transform);
-    CGContextDrawImage(UIGraphicsGetCurrentContext(), rect, imageRef);
     
+    if (isRoundClip) {
+        CGRect clipRect = rect;
+        CGFloat radius;
+        if (clipRect.size.width >= clipRect.size.height) {
+            clipRect.origin.x = (clipRect.size.width - clipRect.size.height) * 0.5;
+            clipRect.size.width = clipRect.size.height;
+            radius = clipRect.size.height;
+        } else {
+            clipRect.origin.y = (clipRect.size.height - clipRect.size.width) * 0.5;
+            clipRect.size.height = clipRect.size.width;
+            radius = clipRect.size.width;
+        }
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:clipRect cornerRadius:radius];
+        CGContextAddPath(ctx, path.CGPath);
+        CGContextClip(ctx);
+    }
+    
+    CGContextDrawImage(ctx, rect, imageRef);
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     return newImage;
 }
 
-#pragma mark - 镜像翻转
-
-/** 沿Y轴翻转 */
-- (UIImage *)jpir_verticalityMirror {
-    return [self jpir_rotate:UIImageOrientationUpMirrored];
-}
-
-/** 沿X轴翻转 */
-- (UIImage *)jpir_horizontalMirror {
-    return [self jpir_rotate:UIImageOrientationDownMirrored];
-}
-
 #pragma makr - 压缩
 
-/** 按比例压缩 */
+/** 按比例换算为逻辑宽度进行压缩 */
 - (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale {
-    return [self jpir_resizeImageWithLogicWidth:(self.size.width * scale)];
-}
-
-/** 按逻辑宽度压缩 */
-- (UIImage *)jpir_resizeImageWithLogicWidth:(CGFloat)logicWidth {
-    if (logicWidth >= self.size.width) return self;
+    if (scale <= 0 || scale >= 1) return self;
+    
+    CGFloat logicWidth = self.size.width * scale;
     CGFloat w = logicWidth;
-    CGFloat h = w * self.jpir_hwRatio;
-    @autoreleasepool {
-        UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, self.scale);
-        [self drawInRect:CGRectMake(0, 0, w, h)];
-        UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return resizedImage;
-    }
-}
-
-/** 按像素宽度压缩  */
-- (UIImage *)jpir_resizeImageWithPixelWidth:(CGFloat)pixelWidth {
-    return [self jpir_resizeImageWithLogicWidth:(pixelWidth / self.scale)];
+    CGFloat h = w * (self.size.height / self.size.width);
+    
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, self.scale);
+    [self drawInRect:CGRectMake(0, 0, w, h)];
+    UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return resizedImage;
 }
 
 #pragma makr - other
@@ -230,11 +290,6 @@
     rect.size.width = rect.size.height;
     rect.size.height = width;
     return rect;
-}
-
-/** 图片高宽比 */
-- (CGFloat)jpir_hwRatio {
-    return (self.size.height / self.size.width);
 }
 
 @end

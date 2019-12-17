@@ -467,21 +467,21 @@
 }
 
 - (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
-    [self imageresizerWithComplete:complete scale:1.0];
+    [self imageresizerWithComplete:complete compressScale:1.0];
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete scale:(CGFloat)scale {
+- (void)imageresizerWithComplete:(void (^)(UIImage *))complete compressScale:(CGFloat)compressScale {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !complete ? : complete(nil);
         return;
     }
-    if (scale <= 0) {
+    if (compressScale <= 0) {
         JPLog(@"压缩比例不能小于或等于0");
         !complete ? : complete(nil);
         return;
     }
-    [self.frameView imageresizerWithComplete:complete scale:scale];
+    [self.frameView imageresizerWithComplete:complete compressScale:compressScale];
 }
 
 #pragma mark - private method

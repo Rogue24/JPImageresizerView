@@ -9,6 +9,7 @@
 #import "JPTableViewController.h"
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
+#import "JPImageresizerViewController.h"
 
 @interface JPTableViewController ()
 @property (nonatomic, copy) NSArray *configures;
@@ -60,7 +61,7 @@
     
     NSString *title5 = @"自定义边框图片（拉伸模式）";
     
-    UIImage *stretchBorderImage = [UIImage imageNamed:@"jp_real_line"];
+    UIImage *stretchBorderImage = [UIImage imageNamed:@"real_line"];
     // 裁剪掉上下多余的空白部分
     CGFloat inset = 1.5 * stretchBorderImage.scale;
     CGImageRef sbImageRef = stretchBorderImage.CGImage;
@@ -81,7 +82,7 @@
     
     NSString *title6 = @"自定义边框图片（平铺模式）";
     
-    UIImage *tileBorderImage = [UIImage imageNamed:@"jp_dotted_line"];
+    UIImage *tileBorderImage = [UIImage imageNamed:@"dotted_line"];
     // 设定平铺区域
     tileBorderImage = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
     
@@ -160,6 +161,10 @@
         vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
         vc.configure = dic[@"configure"];
         [self.navigationController pushViewController:vc animated:YES];
+        
+//        JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
+//        [self.navigationController pushViewController:vc animated:YES];
+        
     } else {
         __weak typeof(self) wSelf = self;
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
