@@ -9,12 +9,6 @@
 #import "JPViewController.h"
 #import "JPImageViewController.h"
 
-#import "JPConstant.h"
-#import "UIView+JPExtension.h"
-#import "UIView+JPPOP.h"
-#import "JPProgressHUD.h"
-#import "UIColor+JPExtension.h"
-
 @interface JPViewController ()
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
@@ -102,84 +96,13 @@
 
 - (IBAction)recovery:(id)sender {
     // 1.按当前【resizeWHScale】进行重置
-    [self.imageresizerView recoveryByCurrentResizeWHScale];
+//    [self.imageresizerView recoveryByCurrentResizeWHScale];
     
     // 2.按【initialResizeWHScale】进行重置
-//    [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
+    [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
     
     // 3.按【目标裁剪宽高比】进行重置
 //    [self.imageresizerView recoveryByTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
-}
-
-- (IBAction)anyScale:(id)sender {
-    self.imageresizerView.resizeWHScale = 0;
-}
-
-- (IBAction)one2one:(id)sender {
-//    [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
-    
-    UIBlurEffect *blurEffecct = nil;
-    NSInteger index = (NSInteger)(0 + (arc4random() % (5 - 0 + 1)));
-    switch (index) {
-        case 0:
-            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
-            break;
-        case 1:
-            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-            break;
-        case 2:
-            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-            break;
-        case 3:
-            blurEffecct = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
-            break;
-        default:
-            break;
-    }
-    
-    CGFloat alpha = (CGFloat)(0 + (arc4random() % (10 - 0 + 1))) / 10.0;
-    
-    UIColor *strokeColor;
-    UIColor *bgColor;
-    if (@available(iOS 13, *)) {
-        strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return JPRandomColor;
-            } else {
-                return JPRandomColor;
-            }
-        }];
-        
-        bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return JPRandomColor;
-            } else {
-                return JPRandomColor;
-            }
-        }];
-    } else {
-        strokeColor = JPRandomColor;
-        bgColor = JPRandomColor;
-    }
-    
-    [self.imageresizerView setupBlurEffect:blurEffecct bgColor:bgColor maskAlpha:alpha strokeColor:strokeColor animated:YES];
-    
-    [self.imageresizerView roundResize:YES];
-}
-
-- (IBAction)sixteen2nine:(id)sender {
-    [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
-}
-
-- (IBAction)replaceImage:(UIButton *)sender {
-    sender.selected = !sender.selected;
-    UIImage *image;
-    if (sender.selected) {
-        image = [UIImage imageNamed:@"Kobe.jpg"];
-    } else {
-        image = [UIImage imageNamed:@"Girl.jpg"];
-    }
-    self.imageresizerView.resizeImage = image;
 }
 
 - (IBAction)resize:(id)sender {
@@ -251,6 +174,156 @@
     sender.selected = !sender.selected;
     self.isToBeArbitrarily = sender.selected;
     [self.imageresizerView setResizeWHScale:self.imageresizerView.resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+}
+- (IBAction)changeResizeWHScale:(id)sender {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"任意比例" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"原切" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView roundResize:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"1 : 1" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:1 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"2 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:(2.0 / 3.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"3 : 5" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:(3.0 / 5.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"7 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:(7.0 / 3.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"9 : 16" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:(9.0 / 16.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"16 : 9" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.imageresizerView setResizeWHScale:(16.0 / 9.0) isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
+}
+
+- (IBAction)changeBlurEffect:(id)sender {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除模糊效果" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.blurEffect = nil;
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"ExtraLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Light" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Dark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    }]];
+    if (@available(iOS 10, *)) {
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"Regular" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
+        }]];
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"Prominent" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent];
+        }]];
+        
+        if (@available(iOS 13, *)) {
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterial];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterial];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterial];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterialLight];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterialLight];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialLight];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterialLight];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterialLight];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterialDark];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterialDark];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialDark];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterialDark];
+            }]];
+            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterialDark];
+            }]];
+        }
+    }
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
+}
+
+- (IBAction)changeRandomColor:(id)sender {
+    CGFloat alpha = (CGFloat)JPRandomNumber(0, 10) / 10.0;
+    UIColor *strokeColor;
+    UIColor *bgColor;
+    if (@available(iOS 13, *)) {
+        strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return JPRandomColor;
+            } else {
+                return JPRandomColor;
+            }
+        }];
+        bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return JPRandomColor;
+            } else {
+                return JPRandomColor;
+            }
+        }];
+    } else {
+        strokeColor = JPRandomColor;
+        bgColor = JPRandomColor;
+    }
+    [self.imageresizerView setupBlurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:alpha strokeColor:strokeColor animated:YES];
+}
+
+- (IBAction)replaceImage:(UIButton *)sender {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Girl.jpg"];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Woman" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Woman.jpg"];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Beauty" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Beauty.jpg"];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Train" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Train.jpg"];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
 }
 
 @end

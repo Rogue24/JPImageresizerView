@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -86,9 +86,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="tOm-KP-cSJ"/>
                                 </constraints>
-                                <state key="normal" title="任意比例"/>
+                                <state key="normal" title="更换比例"/>
                                 <connections>
-                                    <action selector="anyScale:" destination="whP-gf-Uak" eventType="touchUpInside" id="zqy-Wq-2Od"/>
+                                    <action selector="changeResizeWHScale:" destination="whP-gf-Uak" eventType="touchUpInside" id="V5v-xP-H5g"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tRo-kT-cgg">
@@ -97,9 +97,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="t1t-pq-2T2"/>
                                 </constraints>
-                                <state key="normal" title="1 : 1"/>
+                                <state key="normal" title="模糊效果"/>
                                 <connections>
-                                    <action selector="one2one:" destination="whP-gf-Uak" eventType="touchUpInside" id="vKh-uu-Zra"/>
+                                    <action selector="changeBlurEffect:" destination="whP-gf-Uak" eventType="touchUpInside" id="8rM-uc-R7x"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gFY-kS-d4M">
@@ -108,9 +108,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="8Jd-kN-jK9"/>
                                 </constraints>
-                                <state key="normal" title="16 : 9"/>
+                                <state key="normal" title="随机颜色"/>
                                 <connections>
-                                    <action selector="sixteen2nine:" destination="whP-gf-Uak" eventType="touchUpInside" id="GEh-1B-W5x"/>
+                                    <action selector="changeRandomColor:" destination="whP-gf-Uak" eventType="touchUpInside" id="O0W-gg-ORh"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTM-rw-zlm">

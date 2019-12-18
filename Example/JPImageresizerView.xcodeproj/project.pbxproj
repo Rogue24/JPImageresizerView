@@ -41,6 +41,8 @@
 		1A601A3A1FEBB523004B39A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README.md */; };
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
 		1AA6F3EF23A8F216008EFA8B /* Train.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1AA6F3EE23A8F216008EFA8B /* Train.jpg */; };
+		1AA6F3F323A9B91D008EFA8B /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */; };
+		1AA6F3F623A9B984008EFA8B /* NSString+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */; };
 		1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */; };
 		1AF66D4222FA536E006AE5F1 /* JPBrowseImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */; };
 		1AF66D4322FA536E006AE5F1 /* JPBrowseImagesBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3A22FA536E006AE5F1 /* JPBrowseImagesBottomView.m */; };
@@ -152,6 +154,11 @@
 		1A601A381FEBB523004B39A1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1A601A391FEBB523004B39A1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		1AA6F3EE23A8F216008EFA8B /* Train.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Train.jpg; sourceTree = "<group>"; };
+		1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSolveTool.m; sourceTree = "<group>"; };
+		1AA6F3F223A9B91D008EFA8B /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
+		1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JPExtension.m"; sourceTree = "<group>"; };
+		1AA6F3F523A9B984008EFA8B /* NSString+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JPExtension.h"; sourceTree = "<group>"; };
 		1AF66D3522FA536E006AE5F1 /* JPBrowseImagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesViewController.h; sourceTree = "<group>"; };
 		1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesTransition.m; sourceTree = "<group>"; };
 		1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImageCell.m; sourceTree = "<group>"; };
@@ -351,6 +358,10 @@
 				1A10434523A495AE00D1B2DF /* UIView+JPPOP.m */,
 				1A10433C23A495AD00D1B2DF /* UIViewController+JPExtension.h */,
 				1A10434423A495AE00D1B2DF /* UIViewController+JPExtension.m */,
+				1AA6F3F223A9B91D008EFA8B /* JPSolveTool.h */,
+				1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */,
+				1AA6F3F523A9B984008EFA8B /* NSString+JPExtension.h */,
+				1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */,
 			);
 			path = JPHelper;
 			sourceTree = "<group>";
@@ -448,6 +459,7 @@
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F59C195388D20070C39A /* JPAppDelegate.h */,
 				6003F59D195388D20070C39A /* JPAppDelegate.m */,
+				1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -668,9 +680,11 @@
 				1AF66D4522FA536E006AE5F1 /* JPBrowseImageModel.m in Sources */,
 				1A10434F23A4A29400D1B2DF /* JPImageresizerViewController.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
+				1AA6F3F623A9B984008EFA8B /* NSString+JPExtension.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */,
+				1AA6F3F323A9B91D008EFA8B /* JPSolveTool.m in Sources */,
 				1A10434723A495AE00D1B2DF /* JPProgressHUD.m in Sources */,
 				1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */,
 				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
@@ -835,7 +849,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = AH737FZCJM;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/JPImageresizerView/PrefixHeader.pch";
 				INFOPLIST_FILE = "JPImageresizerView/JPImageresizerView-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -855,7 +869,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = AH737FZCJM;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/JPImageresizerView/PrefixHeader.pch";
 				INFOPLIST_FILE = "JPImageresizerView/JPImageresizerView-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

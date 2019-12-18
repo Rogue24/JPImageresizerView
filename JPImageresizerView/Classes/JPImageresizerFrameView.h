@@ -36,9 +36,11 @@
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
+@property (nonatomic, weak, readonly) UIPanGestureRecognizer *panGR;
+
 @property (nonatomic, assign, readonly) JPImageresizerFrameType frameType;
 
-@property (nonatomic, weak, readonly) UIPanGestureRecognizer *panGR;
+@property (nonatomic, assign, readonly) NSTimeInterval defaultDuration;
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
@@ -85,7 +87,7 @@
 
 - (void)updateFrameType:(JPImageresizerFrameType)frameType;
 
-- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin;
+- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin duration:(NSTimeInterval)duration;;
 
 - (void)startImageresizer;
 - (void)endedImageresizer;

@@ -1,0 +1,20 @@
+//
+//  PrefixHeader.pch
+//  JPImageresizerView
+//
+//  Created by 周健平 on 2019/12/18.
+//  Copyright © 2019 ZhouJianPing. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import "JPImageresizerView.h"
+#import "JPSolveTool.h"
+#import "JPMacro.h"
+#import "UIView+JPExtension.h"
+#import "UIView+JPPOP.h"
+#import "UIColor+JPExtension.h"
+#import "JPProgressHUD.h"
+
+#endif /* PrefixHeader_pch */

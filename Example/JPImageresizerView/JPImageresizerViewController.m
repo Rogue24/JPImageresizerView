@@ -7,12 +7,6 @@
 //
 
 #import "JPImageresizerViewController.h"
-#import "JPImageresizerView.h"
-#import "JPConstant.h"
-#import "JPMacro.h"
-#import "UIView+JPExtension.h"
-#import "UIView+JPPOP.h"
-#import "JPProgressHUD.h"
 
 @interface JPImageresizerViewController ()
 @property (weak, nonatomic) IBOutlet UIVisualEffectView *topToolBar;

@@ -84,19 +84,34 @@
 /** 动画曲线（默认是线性Linear） */
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-/** 裁剪的图片 */
+/**
+ * 裁剪的图片
+ * 设置该值会调用 -setResizeImage: animated: transition: 方法（isAnimated = YES，transition = UIViewAnimationTransitionCurlUp）
+ */
 @property (nonatomic) UIImage *resizeImage;
 
-/** 模糊效果 */
+/**
+ * 模糊效果
+ * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ */
 @property (nonatomic) UIBlurEffect *blurEffect;
 
-/** 背景颜色 */
+/**
+ * 背景颜色
+ * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ */
 @property (nonatomic) UIColor *bgColor;
 
-/** 遮罩颜色的透明度（背景颜色 * 透明度） */
+/**
+ * 遮罩颜色的透明度（背景颜色 * 透明度）
+ * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ */
 @property (nonatomic) CGFloat maskAlpha;
 
-/** 裁剪线颜色 */
+/**
+ * 裁剪线颜色
+ * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ */
 @property (nonatomic) UIColor *strokeColor;
 
 /**
@@ -158,13 +173,23 @@
 
 /*!
  @method
+ @brief 更换裁剪的图片
+ @param resizeImage --- 裁剪的图片
+ @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationTransitionNone则由淡入淡出效果代替）
+ @param isAnimated --- 是否带动画效果
+ @discussion 更换裁剪的图片，裁剪宽高比会重置
+ */
+- (void)setResizeImage:(UIImage *)resizeImage animated:(BOOL)isAnimated transition:(UIViewAnimationTransition)transition;
+
+/*!
+ @method
  @brief 设置颜色
  @param blurEffect --- 模糊效果
  @param strokeColor --- 裁剪线颜色
  @param bgColor --- 背景颜色
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param isAnimated --- 是否带动画效果
- @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例）
+ @discussion 同时修改UI元素
  */
 - (void)setupBlurEffect:(UIBlurEffect *)blurEffect
                 bgColor:(UIColor *)bgColor

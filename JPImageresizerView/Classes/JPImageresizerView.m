@@ -49,18 +49,17 @@
 }
 
 - (void)setResizeImage:(UIImage *)resizeImage {
-    self.imageView.image = resizeImage;
-    [self updateSubviewLayouts];
+    [self setResizeImage:resizeImage animated:YES transition:UIViewAnimationTransitionCurlUp];
 }
 
 - (void)setVerBaseMargin:(CGFloat)verBaseMargin {
     _verBaseMargin = verBaseMargin;
-    [self updateSubviewLayouts];
+    [self updateSubviewLayouts:self.imageView.image duration:0];
 }
 
 - (void)setHorBaseMargin:(CGFloat)horBaseMargin {
     _horBaseMargin = horBaseMargin;
-    [self updateSubviewLayouts];
+    [self updateSubviewLayouts:self.imageView.image duration:0];
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
@@ -344,31 +343,56 @@
 }
 
 - (void)setupImageViewWithImage:(UIImage *)image {
-    CGFloat width = (self.frame.size.width - _contentInsets.left - _contentInsets.right);
-    CGFloat height = (self.frame.size.height - _contentInsets.top - _contentInsets.bottom);
-    CGFloat maxW = width - 2 * _horBaseMargin;
-    CGFloat maxH = height - 2 * _verBaseMargin;
-    CGFloat whScale = image.size.width / image.size.height;
-    CGFloat w = maxW;
-    CGFloat h = w / whScale;
-    if (h > maxH) {
-        h = maxH;
-        w = h * whScale;
-    }
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.frame = CGRectMake(0, 0, w, h);
     imageView.userInteractionEnabled = YES;
     [self.scrollView addSubview:imageView];
     _imageView = imageView;
+    [self updateImageViewFrameWithImage:image];
+}
+
+- (void)updateImageViewFrameWithImage:(UIImage *)image {
+    CGFloat maxWidth = self.frame.size.width - _contentInsets.left - _contentInsets.right - 2 * _horBaseMargin;
+    CGFloat maxHeight = self.frame.size.height - _contentInsets.top - _contentInsets.bottom - 2 * _verBaseMargin;
+    CGFloat imgViewW = maxWidth;
+    CGFloat imgViewH = imgViewW * (image.size.height / image.size.width);
+    if (imgViewH > maxHeight) {
+        imgViewH = maxHeight;
+        imgViewW = imgViewH * (image.size.width / image.size.height);
+    }
+    self.imageView.frame = CGRectMake(0, 0, imgViewW, imgViewH);
+    self.scrollView.contentSize = self.imageView.bounds.size;
     
-    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
-    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
-    self.scrollView.contentSize = imageView.bounds.size;
-    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
-    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
+    CGFloat horInset = (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5;
+    CGFloat verInset = (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5;
+    self.scrollView.contentInset = UIEdgeInsetsMake(verInset, horInset, verInset, horInset);
+    self.scrollView.contentOffset = CGPointMake(-horInset, -verInset);
 }
 
 #pragma mark - puild method
+
+- (void)setResizeImage:(UIImage *)resizeImage animated:(BOOL)isAnimated transition:(UIViewAnimationTransition)transition {
+    if (isAnimated) {
+        if (transition == UIViewAnimationTransitionNone) {
+            NSTimeInterval duration = 0.3;
+            [UIView transitionWithView:self.imageView duration:duration options:(_animationOption | UIViewAnimationOptionTransitionCrossDissolve) animations:^{
+                self.imageView.image = resizeImage;
+            } completion:nil];
+            [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
+                [self updateSubviewLayouts:resizeImage duration:duration];
+            } completion:nil];
+        } else {
+            NSTimeInterval duration = 0.45;
+            [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
+                [UIView setAnimationTransition:transition forView:self.imageView cache:YES];
+                self.imageView.image = resizeImage;
+                [self updateSubviewLayouts:resizeImage duration:duration];
+            } completion:nil];
+        }
+    } else {
+        self.imageView.image = resizeImage;
+        [self updateSubviewLayouts:resizeImage duration:0];
+    }
+}
 
 - (void)setupBlurEffect:(UIBlurEffect *)blurEffect bgColor:(UIColor *)bgColor maskAlpha:(CGFloat)maskAlpha strokeColor:(UIColor *)strokeColor animated:(BOOL)isAnimated; {
     [self.frameView setupBlurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha strokeColor:strokeColor animated:isAnimated];
@@ -412,10 +436,10 @@
 }
 
 - (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
-    self.imageView.image = resizeImage;
     _verBaseMargin = verBaseMargin;
     _horBaseMargin = horBaseMargin;
-    [self updateSubviewLayouts];
+    self.imageView.image = resizeImage;
+    [self updateSubviewLayouts:resizeImage duration:0];
 }
 
 - (void)rotation {
@@ -570,32 +594,13 @@
     }
 }
 
-- (void)updateSubviewLayouts {
+- (void)updateSubviewLayouts:(UIImage *)image duration:(NSTimeInterval)duration {
     self.directionIndex = 0;
-    
     self.scrollView.layer.transform = CATransform3DIdentity;
     self.scrollView.minimumZoomScale = 1.0;
     self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
-    
-    CGFloat maxW = self.frame.size.width - 2 * _horBaseMargin;
-    CGFloat maxH = self.frame.size.height - 2 * _verBaseMargin;
-    CGFloat whScale = self.imageView.image.size.width / self.imageView.image.size.height;
-    CGFloat w = maxW;
-    CGFloat h = w / whScale;
-    if (h > maxH) {
-        h = maxH;
-        w = h * whScale;
-    }
-    self.imageView.frame = CGRectMake(0, 0, w, h);
-    
-    CGFloat verticalInset = (self.scrollView.bounds.size.height - h) * 0.5;
-    CGFloat horizontalInset = (self.scrollView.bounds.size.width - w) * 0.5;
-    
-    self.scrollView.contentSize = self.imageView.bounds.size;
-    self.scrollView.contentInset = UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset);
-    self.scrollView.contentOffset = CGPointMake(-horizontalInset, -verticalInset);
-    
-    [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin];
+    [self updateImageViewFrameWithImage:image];
+    [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin duration:duration];
 }
 
 #pragma mark - <UIScrollViewDelegate>

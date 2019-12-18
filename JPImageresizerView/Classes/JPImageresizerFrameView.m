@@ -448,6 +448,10 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 #pragma mark - getter
 
+- (NSTimeInterval)defaultDuration {
+    return _defaultDuration;
+}
+
 - (CGFloat)maxResizeX {
     return self.maxResizeFrame.origin.x;
 }
@@ -681,7 +685,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
-    if (self.superview) [self updateImageOriginFrameWithDirection:_rotationDirection];
+    if (self.superview) [self updateImageOriginFrameWithDirection:_rotationDirection duration:-1.0];
 }
 
 - (void)dealloc {
@@ -1211,7 +1215,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     [CATransaction commit];
 }
 
-- (void)updateImageOriginFrameWithDirection:(JPImageresizerRotationDirection)rotationDirection {
+- (void)updateImageOriginFrameWithDirection:(JPImageresizerRotationDirection)rotationDirection duration:(NSTimeInterval)duration {
     [self removeTimer];
     _baseImageW = self.imageView.bounds.size.width;
     _baseImageH = self.imageView.bounds.size.height;
@@ -1221,7 +1225,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self updateRotationDirection:rotationDirection];
     _imageresizerFrame = [self baseImageresizerFrame];
-    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
+    [self adjustImageresizerFrame:[self adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 
 - (void)updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
@@ -1455,11 +1459,11 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     }
 }
 
-- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
+- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin duration:(NSTimeInterval)duration {
     _verBaseMargin = verBaseMargin;
     _horBaseMargin = horBaseMargin;
     self.layer.transform = CATransform3DIdentity;
-    [self updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection];
+    [self updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection duration:duration];
 }
 
 - (void)startImageresizer {
