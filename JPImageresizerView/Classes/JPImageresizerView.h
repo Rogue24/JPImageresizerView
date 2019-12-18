@@ -217,6 +217,13 @@
 
 /*!
  @method
+ @brief 是否正在圆切
+ @return YES：圆切，NO：矩形
+ */
+- (BOOL)isRoundResizing;
+
+/*!
+ @method
  @brief 设置是否垂直镜像
  @param verticalityMirror --- 是否垂直镜像
  @param isAnimated --- 是否带动画效果
@@ -265,6 +272,13 @@
 
 /*!
  @method
+ @brief 重置回圆切状态
+ @discussion 以圆切状态回到最初状态
+ */
+- (void)recoveryToRoundResize;
+
+/*!
+ @method
  @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale =  initialResizeWHScale
@@ -292,7 +306,7 @@
  @method
  @brief 压缩尺寸裁剪
  @param complete --- 裁剪完成的回调
- @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 1000 --> 500 x 500）
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;

@@ -44,7 +44,7 @@
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-@property (nonatomic, strong) UIBlurEffect *blurEffect;
+@property (nonatomic) UIBlurEffect *blurEffect;
 @property (nonatomic, strong) UIColor *bgColor;
 @property (nonatomic, assign) CGFloat maskAlpha;
 @property (nonatomic, strong) UIColor *strokeColor;
@@ -58,7 +58,9 @@
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
 - (void)roundResize:(BOOL)isAnimated;
+- (BOOL)isRoundResizing;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
@@ -94,6 +96,7 @@
 
 - (void)rotationWithDirection:(JPImageresizerRotationDirection)direction rotationDuration:(NSTimeInterval)rotationDuration;
 
+- (void)willRecoveryToRoundResize;
 - (void)willRecoveryByResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone;

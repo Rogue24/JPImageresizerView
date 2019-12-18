@@ -95,6 +95,11 @@
 }
 
 - (IBAction)recovery:(id)sender {
+    if ([self.imageresizerView isRoundResizing]) {
+        [self.imageresizerView recoveryToRoundResize];
+        return;
+    }
+    
     // 1.按当前【resizeWHScale】进行重置
 //    [self.imageresizerView recoveryByCurrentResizeWHScale];
     
@@ -284,18 +289,22 @@
     UIColor *strokeColor;
     UIColor *bgColor;
     if (@available(iOS 13, *)) {
+        UIColor *strokeColor1 = JPRandomColor;
+        UIColor *strokeColor2 = JPRandomColor;
         strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
             if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return JPRandomColor;
+                return strokeColor1;
             } else {
-                return JPRandomColor;
+                return strokeColor2;
             }
         }];
+        UIColor *bgColor1 = JPRandomColor;
+        UIColor *bgColor2 = JPRandomColor;
         bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
             if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return JPRandomColor;
+                return bgColor1;
             } else {
-                return JPRandomColor;
+                return bgColor2;
             }
         }];
     } else {

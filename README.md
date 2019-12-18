@@ -229,7 +229,7 @@ self.imageresizerView.isPreview = YES;
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
 // scale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
-// 例：scale = 0.5，1000 x 1000 --> 500 x 500
+// 例：scale = 0.5，1000 x 500 --> 500 x 250
 
 // 1.自定义压缩比例进行裁剪
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {

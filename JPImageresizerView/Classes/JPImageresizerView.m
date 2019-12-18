@@ -256,7 +256,7 @@
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = YES;
         self.autoresizingMask = UIViewAutoresizingNone;
-        self.backgroundColor = bgColor;
+        self.layer.backgroundColor = bgColor.CGColor;
         
         _verBaseMargin = verBaseMargin;
         _horBaseMargin = horBaseMargin;
@@ -410,6 +410,10 @@
     [self.frameView roundResize:isAnimated];
 }
 
+- (BOOL)isRoundResizing {
+    return self.frameView.isRoundResizing;
+}
+
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
         JPLog(@"裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
@@ -465,21 +469,33 @@
     } completion:nil];
 }
 
+- (void)recoveryToRoundResize {
+    [self __recoveryByTargetResizeWHScale:1 isToBeArbitrarily:NO isToRoundResize:YES];
+}
+
 - (void)recoveryByCurrentResizeWHScale {
-    [self recoveryByTargetResizeWHScale:self.resizeWHScale isToBeArbitrarily:NO];
+    [self __recoveryByTargetResizeWHScale:self.resizeWHScale isToBeArbitrarily:NO isToRoundResize:NO];
 }
 
 - (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily {
-    [self recoveryByTargetResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+    [self __recoveryByTargetResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:isToBeArbitrarily isToRoundResize:NO];
 }
 
 - (void)recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+    [self __recoveryByTargetResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily isToRoundResize:NO];
+}
+
+- (void)__recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily isToRoundResize:(BOOL)isToRoundResize {
     if (!self.frameView.isCanRecovery) {
         JPLog(@"已经是初始状态，不需要重置");
         return;
     }
     
-    [self.frameView willRecoveryByResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+    if (isToRoundResize) {
+        [self.frameView willRecoveryToRoundResize];
+    } else {
+        [self.frameView willRecoveryByResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+    }
     
     self.directionIndex = 0;
     

@@ -71,8 +71,7 @@
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage(stretchBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-2, -2))
-        .jp_maskAlpha(0);
+        .jp_borderImageRectInset(CGPointMake(-2, -2));
     }];
     
     NSString *title6 = @"自定义边框图片（平铺模式）";
@@ -86,8 +85,7 @@
         .jp_contentInsets(contentInsets)
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage(tileBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-1.75, -1.75))
-        .jp_maskAlpha(0);
+        .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
     }];
     
     self.configures = @[@{@"title": title1,
