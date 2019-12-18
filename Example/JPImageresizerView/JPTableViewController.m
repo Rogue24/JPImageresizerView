@@ -46,10 +46,10 @@
     JPImageresizerConfigure *configure4 = [JPImageresizerConfigure defaultConfigureWithResizeImage:[UIImage imageNamed:@"Kobe.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_maskAlpha(0.5)
-        .jp_strokeColor([UIColor yellowColor])
+        .jp_strokeColor(JPRandomColor)
         .jp_frameType(JPClassicFrameType)
         .jp_contentInsets(contentInsets)
-        .jp_bgColor([UIColor orangeColor])
+        .jp_bgColor(JPRandomColor)
         .jp_isClockwiseRotation(YES)
         .jp_animationCurve(JPAnimationCurveEaseOut);
     }];

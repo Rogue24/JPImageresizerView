@@ -180,7 +180,7 @@
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"任意比例" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self.imageresizerView setResizeWHScale:0 isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"原切" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"圆切" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self.imageresizerView roundResize:YES];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"1 : 1" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

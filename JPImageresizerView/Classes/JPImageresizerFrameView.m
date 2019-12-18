@@ -637,6 +637,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         _blurEffect = blurEffect;
         UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:_blurEffect];
         blurView.frame = _bgFrame;
+        blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
         
