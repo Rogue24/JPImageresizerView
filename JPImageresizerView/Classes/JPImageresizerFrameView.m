@@ -28,26 +28,23 @@
 /** keypath */
 #define JP_KEYPATH(objc, keyPath) @(((void)objc.keyPath, #keyPath))
 
-typedef NS_ENUM(NSUInteger, JPRectHorn) {
-    JPCenter,
-    
-    JPLeftTop,
-    JPLeftMid,
-    JPLeftBottom,
-    
-    JPRightTop,
-    JPRightMid,
-    JPRightBottom,
-    
-    JPTopMid,
-    JPBottomMid
+typedef NS_ENUM(NSUInteger, JPDotRegion) {
+    JPDR_Center,
+    JPDR_LeftTop,
+    JPDR_LeftMid,
+    JPDR_LeftBottom,
+    JPDR_RightTop,
+    JPDR_RightMid,
+    JPDR_RightBottom,
+    JPDR_TopMid,
+    JPDR_BottomMid
 };
 
-typedef NS_ENUM(NSUInteger, JPLinePosition) {
-    JPHorizontalTop,
-    JPHorizontalBottom,
-    JPVerticalLeft,
-    JPVerticalRight
+typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
+    JPILP_HorTop,
+    JPILP_HorBottom,
+    JPILP_VerLeft,
+    JPILP_VerRight
 };
 
 @interface JPImageresizerFrameView ()
@@ -98,10 +95,19 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 @implementation JPImageresizerFrameView
 {
+    CGFloat _frameLayerLineW;
+    
     CGFloat _dotWH;
+    CGFloat _halfDotWH;
+    
     CGFloat _arrLineW;
+    CGFloat _halfArrLineW;
     CGFloat _arrLength;
+    CGFloat _midArrLength;
+    
     CGFloat _scopeWH;
+    CGFloat _halfScopeWH;
+    
     CGFloat _minImageWH;
     CGFloat _baseImageW;
     CGFloat _baseImageH;
@@ -124,7 +130,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     NSTimeInterval _defaultDuration;
     NSTimeInterval _blurDuration;
     
-    JPRectHorn _currHorn;
+    JPDotRegion _currDR;
     CGPoint _diagonal;
     
     BOOL _isRound;
@@ -212,10 +218,29 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 
 - (void)setIsRound:(BOOL)isRound animated:(BOOL)isAnimated {
     _isRound = isRound;
+    
+    if (isRound) {
+        _frameLayerLineW = 1.5;
+        _dotWH =  0.0;
+        _halfDotWH = 0.0;
+        _halfArrLineW = 0.0;
+        _arrLength = 0.0;
+        _midArrLength = 0.0;
+    } else {
+        _frameLayerLineW = _borderImage ? 0.0 : 1.0;
+        _dotWH =  12.0;
+        _halfDotWH = _dotWH * 0.5;
+        _halfArrLineW = _arrLineW * 0.5;
+        _arrLength = 20.0;
+        _midArrLength = _arrLength * 0.85;
+    }
+    
     if (_borderImage) {
+        CGFloat alpha = (isRound || _isPreview) ? 0 : 1;
+        CGFloat lineWidth = _frameLayerLineW;
         void (^animations)(void) = ^{
-            self.borderImageView.alpha = isRound ? 0 : 1;
-            self.frameLayer.lineWidth = isRound ? 1 : 0;
+            self.borderImageView.alpha = alpha;
+            self.frameLayer.lineWidth = lineWidth;
         };
         if (isAnimated) {
             [UIView animateWithDuration:_defaultDuration delay:0 options:_animationOption animations:animations completion:nil];
@@ -223,6 +248,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
             animations();
         }
     } else {
+        self.frameLayer.lineWidth = _frameLayerLineW;
         [self updateAllLayersOpacity];
     }
 }
@@ -291,7 +317,7 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
         }
     } else {
         [self.blurView setIsMaskAlpha:!isPreview duration:0];
-        _borderImageView.alpha = opacity;
+        _borderImageView.alpha = _isRound ? 0 : opacity;
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -303,9 +329,11 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
     _borderImage = borderImage;
     if (borderImage) {
         self.borderImageView.image = borderImage;
-        _borderImageView.alpha = _isPreview ? 0.0 : 1.0;
+        _borderImageView.alpha = (_isPreview || _isRound) ? 0.0 : 1.0;
+        _frameLayerLineW = _isRound ? 1.5 : 0.0;
     } else {
         [_borderImageView removeFromSuperview];
+        _frameLayerLineW = _isRound ? 1.5 : 1.0;
     }
     [self setFrameType:_frameType];
 }
@@ -318,12 +346,10 @@ typedef NS_ENUM(NSUInteger, JPLinePosition) {
 - (void)setFrameType:(JPImageresizerFrameType)frameType {
     _frameType = frameType;
     
-    [self frameLayer];
+    self.frameLayer.lineWidth = _frameLayerLineW;
     
     if (_borderImage) {
-        _frameLayer.lineWidth = _isRound ? 1.0 : 0;
         [self updateShapeLayersStrokeColor];
-        
         [_horTopLine removeFromSuperlayer];
         [_horBottomLine removeFromSuperlayer];
         [_verLeftLine removeFromSuperlayer];
@@ -610,10 +636,9 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         _edgeLineIsEnabled = YES;
         _defaultDuration = 0.27;
         _blurDuration = 0.17;
-        _dotWH = 12.0;
         _arrLineW = 2.5;
-        _arrLength = 20.0;
         _scopeWH = 50.0;
+        _halfScopeWH = _scopeWH * 0.5;
         _minImageWH = 70.0;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         _contentSize = contentSize;
@@ -641,6 +666,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         blurView.layer.mask = maskLayer;
         self.maskLayer = maskLayer;
         
+        _frameLayerLineW = isRoundResize ? 1.5 : (borderImage ? 0.0 : 1.0);
         _borderImageRectInset = borderImageRectInset;
         if (borderImage) {
             _frameType = frameType;
@@ -656,7 +682,12 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         if (isRoundResize) {
             [self roundResize:NO];
         } else {
-            if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale - 1.0;
+            _dotWH = 12.0;
+            _halfDotWH = _dotWH * 0.5;
+            _halfArrLineW = _arrLineW * 0.5;
+            _arrLength = 20.0;
+            _midArrLength = _arrLength * 0.85;
+            if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale + 1.0;
             self.resizeWHScale = resizeWHScale;
         }
         
@@ -733,21 +764,19 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 }
 
 - (UIBezierPath *)dotPathWithPosition:(CGPoint)position {
-    CGFloat dotWH = _isRound ? 0 : _dotWH;
-    UIBezierPath *dotPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - dotWH * 0.5, position.y - dotWH * 0.5, dotWH, dotWH)];
-    return dotPath;
+    return [UIBezierPath bezierPathWithOvalInRect:CGRectMake(position.x - _halfDotWH, position.y - _halfDotWH, _dotWH, _dotWH)];
 }
 
-- (UIBezierPath *)arrPathWithPosition:(CGPoint)position rectHorn:(JPRectHorn)horn {
-    CGFloat arrLineW = _arrLineW;
-    CGFloat arrLength = _isRound ? 0 : _arrLength;
-    CGFloat halfArrLineW = _isRound ? 0 : (arrLineW * 0.5);
+- (UIBezierPath *)arrPathWithPosition:(CGPoint)position dotRegion:(JPDotRegion)dotRegion {
+    CGFloat arrLength = _arrLength;
+    CGFloat halfArrLineW = _halfArrLineW;
     
     CGPoint startPoint = position;
     CGPoint endPoint = position;
     UIBezierPath *path = [UIBezierPath bezierPath];
-    switch (horn) {
-        case JPLeftTop:
+    
+    switch (dotRegion) {
+        case JPDR_LeftTop:
         {
             position.x -= halfArrLineW;
             position.y -= halfArrLineW;
@@ -755,7 +784,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-        case JPLeftBottom:
+        case JPDR_LeftBottom:
         {
             position.x -= halfArrLineW;
             position.y += halfArrLineW;
@@ -763,7 +792,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-        case JPRightTop:
+        case JPDR_RightTop:
         {
             position.x += halfArrLineW;
             position.y -= halfArrLineW;
@@ -771,7 +800,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             endPoint = CGPointMake(position.x, position.y + arrLength);
             break;
         }
-        case JPRightBottom:
+        case JPDR_RightBottom:
         {
             position.x += halfArrLineW;
             position.y += halfArrLineW;
@@ -779,33 +808,33 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             endPoint = CGPointMake(position.x, position.y - arrLength);
             break;
         }
-        case JPTopMid:
+        case JPDR_TopMid:
         {
-            arrLength *= 0.85;
+            arrLength = _midArrLength;
             position.y -= halfArrLineW;
             startPoint = CGPointMake(position.x - arrLength, position.y);
             endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-        case JPBottomMid:
+        case JPDR_BottomMid:
         {
-            arrLength *= 0.85;
+            arrLength = _midArrLength;
             position.y += halfArrLineW;
             startPoint = CGPointMake(position.x - arrLength, position.y);
             endPoint = CGPointMake(position.x + arrLength, position.y);
             break;
         }
-        case JPLeftMid:
+        case JPDR_LeftMid:
         {
-            arrLength *= 0.85;
+            arrLength = _midArrLength;
             position.x -= halfArrLineW;
             startPoint = CGPointMake(position.x, position.y - arrLength);
             endPoint = CGPointMake(position.x, position.y + arrLength);
             break;
         }
-        case JPRightMid:
+        case JPDR_RightMid:
         {
-            arrLength *= 0.85;
+            arrLength = _midArrLength;
             position.x += halfArrLineW;
             startPoint = CGPointMake(position.x, position.y - arrLength);
             endPoint = CGPointMake(position.x, position.y + arrLength);
@@ -820,18 +849,18 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     return path;
 }
 
-- (UIBezierPath *)linePathWithLinePosition:(JPLinePosition)linePosition location:(CGPoint)location length:(CGFloat)length {
+- (UIBezierPath *)linePathWithLinePosition:(JPInsideLinePosition)linePosition location:(CGPoint)location length:(CGFloat)length {
     UIBezierPath *path = [UIBezierPath bezierPath];
     CGPoint point = CGPointZero;
     switch (linePosition) {
-        case JPHorizontalTop:
-        case JPHorizontalBottom:
+        case JPILP_HorTop:
+        case JPILP_HorBottom:
         {
             point = CGPointMake(location.x + length, location.y);
             break;
         }
-        case JPVerticalLeft:
-        case JPVerticalRight:
+        case JPILP_VerLeft:
+        case JPILP_VerRight:
         {
             point = CGPointMake(location.x, location.y + length);
             break;
@@ -1099,31 +1128,31 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             CGFloat radius = imageresizerFrame.size.width * 0.5;
             CGFloat lineLength = sqrt(pow(radius, 2) * 0.5);
             
-            leftTopDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y - lineLength) rectHorn:JPLeftTop];
-            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y + lineLength) rectHorn:JPLeftBottom];
-            rightTopDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y - lineLength) rectHorn:JPRightTop];
-            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y + lineLength) rectHorn:JPRightBottom];
+            leftTopDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y - lineLength) dotRegion:JPDR_LeftTop];
+            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x - lineLength, center.y + lineLength) dotRegion:JPDR_LeftBottom];
+            rightTopDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y - lineLength) dotRegion:JPDR_RightTop];
+            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(center.x + lineLength, center.y + lineLength) dotRegion:JPDR_RightBottom];
         } else {
-            leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) rectHorn:JPLeftTop];
-            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) rectHorn:JPLeftBottom];
-            rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) rectHorn:JPRightTop];
-            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) rectHorn:JPRightBottom];
+            leftTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerY) dotRegion:JPDR_LeftTop];
+            leftBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMaxY) dotRegion:JPDR_LeftBottom];
+            rightTopDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerY) dotRegion:JPDR_RightTop];
+            rightBottomDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMaxY) dotRegion:JPDR_RightBottom];
         }
         
-        leftMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY) rectHorn:JPLeftMid];
-        rightMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY) rectHorn:JPRightMid];
-        topMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY) rectHorn:JPTopMid];
-        bottomMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY) rectHorn:JPBottomMid];
+        leftMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerX, imageresizerMidY) dotRegion:JPDR_LeftMid];
+        rightMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMaxX, imageresizerMidY) dotRegion:JPDR_RightMid];
+        topMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerY) dotRegion:JPDR_TopMid];
+        bottomMidDotPath = [self arrPathWithPosition:CGPointMake(imageresizerMidX, imageresizerMaxY) dotRegion:JPDR_BottomMid];
         
         CGFloat imageresizerW = imageresizerFrame.size.width;
         CGFloat imageresizerH = imageresizerFrame.size.height;
         CGFloat oneThirdW = imageresizerW / 3.0;
         CGFloat oneThirdH = imageresizerH / 3.0;
         
-        horTopLinePath = [self linePathWithLinePosition:JPHorizontalTop location:CGPointMake(imageresizerX, imageresizerY + oneThirdH) length:imageresizerW];
-        horBottomLinePath = [self linePathWithLinePosition:JPHorizontalBottom location:CGPointMake(imageresizerX, imageresizerY + oneThirdH * 2) length:imageresizerW];
-        verLeftLinePath = [self linePathWithLinePosition:JPVerticalLeft location:CGPointMake(imageresizerX + oneThirdW, imageresizerY) length:imageresizerH];
-        verRightLinePath = [self linePathWithLinePosition:JPVerticalRight location:CGPointMake(imageresizerX + oneThirdW * 2, imageresizerY) length:imageresizerH];
+        horTopLinePath = [self linePathWithLinePosition:JPILP_HorTop location:CGPointMake(imageresizerX, imageresizerY + oneThirdH) length:imageresizerW];
+        horBottomLinePath = [self linePathWithLinePosition:JPILP_HorBottom location:CGPointMake(imageresizerX, imageresizerY + oneThirdH * 2) length:imageresizerW];
+        verLeftLinePath = [self linePathWithLinePosition:JPILP_VerLeft location:CGPointMake(imageresizerX + oneThirdW, imageresizerY) length:imageresizerH];
+        verRightLinePath = [self linePathWithLinePosition:JPILP_VerRight location:CGPointMake(imageresizerX + oneThirdW * 2, imageresizerY) length:imageresizerH];
     }
     
     if (duration > 0) {
@@ -1216,12 +1245,9 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     h -= 2 * y;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
-    if (_borderImage) {
-        _frameLayer.lineWidth = _isRound ? 1.0 : 0.0;
-        return;
-    }
+    self.frameLayer.lineWidth = _frameLayerLineW;
     
-    _frameLayer.lineWidth = 1.0;
+    if (_borderImage) return;
     
     CGFloat lineW = 0;
     if (_frameType == JPClassicFrameType) {
@@ -1314,7 +1340,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     
     self.superview.userInteractionEnabled = NO;
     [self.blurView setIsBlur:YES duration:_blurDuration];
-    [self hideOrShowFrameLine:NO animateDuration:duration];
+    [self hideOrShowFrameLine:NO animateDuration:_blurDuration];
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
     if (duration > 0) {
         [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
@@ -1424,7 +1450,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     self.isPrepareToScale = YES;
     [self removeTimer];
     [self.blurView setIsBlur:NO duration:_blurDuration];
-    [self hideOrShowFrameLine:YES animateDuration:_defaultDuration];
+    [self hideOrShowFrameLine:YES animateDuration:_blurDuration];
 }
 
 - (void)endedImageresizer {
@@ -1611,9 +1637,9 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     CGFloat w = _imageresizerFrame.size.width;
     CGFloat h = _imageresizerFrame.size.height;
     
-    switch (_currHorn) {
+    switch (_currDR) {
             
-        case JPLeftTop: {
+        case JPDR_LeftTop: {
             if (_isArbitrarily) {
                 x += translation.x;
                 y += translation.y;
@@ -1678,7 +1704,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPLeftBottom: {
+        case JPDR_LeftBottom: {
             if (_isArbitrarily) {
                 x += translation.x;
                 h += translation.y;
@@ -1739,7 +1765,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPRightTop: {
+        case JPDR_RightTop: {
             if (_isArbitrarily) {
                 y += translation.y;
                 w += translation.x;
@@ -1801,7 +1827,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPRightBottom: {
+        case JPDR_RightBottom: {
             if (_isArbitrarily) {
                 w += translation.x;
                 h += translation.y;
@@ -1858,7 +1884,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPLeftMid: {
+        case JPDR_LeftMid: {
             if (_isArbitrarily) {
                 x += translation.x;
                 
@@ -1917,7 +1943,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPRightMid: {
+        case JPDR_RightMid: {
             if (_isArbitrarily) {
                 w += translation.x;
                 
@@ -1974,7 +2000,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPTopMid: {
+        case JPDR_TopMid: {
             if (_isArbitrarily) {
                 y += translation.y;
                 
@@ -2033,7 +2059,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             break;
         }
             
-        case JPBottomMid: {
+        case JPDR_BottomMid: {
             if (_isArbitrarily) {
                 h += translation.y;
                 
@@ -2137,18 +2163,18 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     if (!_panGR.enabled) {
-        _currHorn = JPCenter;
+        _currDR = JPDR_Center;
         return NO;
     }
     
     CGRect frame = _imageresizerFrame;
     CGFloat scopeWH = _scopeWH;
-    CGFloat halfScopeWH = scopeWH * 0.5;
+    CGFloat halfScopeWH = _halfScopeWH;
     
     if (_edgeLineIsEnabled &&
         (!CGRectContainsPoint(CGRectInset(frame, -halfScopeWH, -halfScopeWH), point) ||
          CGRectContainsPoint(CGRectInset(frame, halfScopeWH, halfScopeWH), point))) {
-        _currHorn = JPCenter;
+        _currDR = JPDR_Center;
         return NO;
     }
     
@@ -2164,16 +2190,16 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     CGRect rightTopRect = CGRectMake(maxX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
     CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     if (CGRectContainsPoint(leftTopRect, point)) {
-        _currHorn = JPLeftTop;
+        _currDR = JPDR_LeftTop;
         _diagonal = CGPointMake(maxX, maxY);
     } else if (CGRectContainsPoint(leftBotRect, point)) {
-        _currHorn = JPLeftBottom;
+        _currDR = JPDR_LeftBottom;
         _diagonal = CGPointMake(maxX, y);
     } else if (CGRectContainsPoint(rightTopRect, point)) {
-        _currHorn = JPRightTop;
+        _currDR = JPDR_RightTop;
         _diagonal = CGPointMake(x, maxY);
     } else if (CGRectContainsPoint(rightBotRect, point)) {
-        _currHorn = JPRightBottom;
+        _currDR = JPDR_RightBottom;
         _diagonal = CGPointMake(x, y);
     } else {
         CGRect leftMidRect = CGRectNull;
@@ -2194,19 +2220,19 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
         }
         if (CGRectContainsPoint(leftMidRect, point)) {
-            _currHorn = JPLeftMid;
+            _currDR = JPDR_LeftMid;
             _diagonal = CGPointMake(maxX, midY);
         } else if (CGRectContainsPoint(rightMidRect, point)) {
-            _currHorn = JPRightMid;
+            _currDR = JPDR_RightMid;
             _diagonal = CGPointMake(x, midY);
         } else if (CGRectContainsPoint(topMidRect, point)) {
-            _currHorn = JPTopMid;
+            _currDR = JPDR_TopMid;
             _diagonal = CGPointMake(midX, maxY);
         } else if (CGRectContainsPoint(botMidRect, point)) {
-            _currHorn = JPBottomMid;
+            _currDR = JPDR_BottomMid;
             _diagonal = CGPointMake(midX, y);
         } else {
-            _currHorn = JPCenter;
+            _currDR = JPDR_Center;
             return NO;
         }
     }
