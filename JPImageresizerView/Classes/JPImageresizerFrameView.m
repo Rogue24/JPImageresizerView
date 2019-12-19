@@ -117,8 +117,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGFloat _verBaseMargin;
     CGFloat _horBaseMargin;
     CGFloat _diffHalfW;
-    CGFloat _diffRotLength;
-    CGRect _bgFrame; // 扩大旋转时的区域（防止旋转时有空白区域）
+    CGFloat _diffRotLength; // 扩大遮罩的区域（防止旋转时有空白区域）
     CGSize _contentSize;
     
     BOOL _isHideFrameLine;
@@ -134,6 +133,9 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGPoint _diagonal;
     
     BOOL _isRound;
+    
+    NSString *_pathAnimKey;
+    NSString *_opacityAnimKey;
 }
 
 #pragma mark - setter
@@ -285,7 +287,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
             id toOpacity = @(opacity);
             id toOtherOpacity = @(otherOpacity);
             id toMidDotOpacity = @(midDotOpacity);
-            NSString *opacityKeyPath = JP_KEYPATH(_frameLayer, opacity);
+            NSString *opacityKeyPath = _opacityAnimKey;
             __weak typeof(self) wSelf = self;
             void (^layerOpacityAnimate)(CALayer *layer, id toValue) = ^(CALayer *layer, id toValue) {
                 __strong typeof(wSelf) sSelf = wSelf;
@@ -633,13 +635,18 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
-        _edgeLineIsEnabled = YES;
+        self.animationCurve = animationCurve;
+        self.scrollView = scrollView;
+        self.imageView = imageView;
+        
         _defaultDuration = 0.27;
-        _blurDuration = 0.17;
+        _blurDuration = 0.3;
         _arrLineW = 2.5;
         _scopeWH = 50.0;
         _halfScopeWH = _scopeWH * 0.5;
         _minImageWH = 70.0;
+        
+        _edgeLineIsEnabled = YES;
         _rotationDirection = JPImageresizerVerticalUpDirection;
         _contentSize = contentSize;
         _horBaseMargin = horBaseMargin;
@@ -648,13 +655,10 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         _imageresizerIsPrepareToScale = [imageresizerIsPrepareToScale copy];
         _strokeColor = strokeColor;
         _isShowMidDots = isShowMidDots;
-        _diffRotLength = 1000;
-        _bgFrame = CGRectMake(self.bounds.origin.x - _diffRotLength,
-                              self.bounds.origin.y - _diffRotLength,
-                              self.bounds.size.width + _diffRotLength * 2,
-                              self.bounds.size.height + _diffRotLength * 2);
+        _diffRotLength = [UIScreen mainScreen].bounds.size.height - scrollView.bounds.size.height;
         
-        JPBlurView *blurView = [[JPBlurView alloc] initWithFrame:_bgFrame blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
+        CGRect blurFrame = CGRectInset(self.bounds, -_diffRotLength, -_diffRotLength);
+        JPBlurView *blurView = [[JPBlurView alloc] initWithFrame:blurFrame blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
         blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
@@ -666,18 +670,18 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         blurView.layer.mask = maskLayer;
         self.maskLayer = maskLayer;
         
+        _pathAnimKey = JP_KEYPATH(maskLayer, path);
+        _opacityAnimKey = JP_KEYPATH(maskLayer, opacity);
+        
         _frameLayerLineW = isRoundResize ? 1.5 : (borderImage ? 0.0 : 1.0);
         _borderImageRectInset = borderImageRectInset;
+        
         if (borderImage) {
             _frameType = frameType;
             self.borderImage = borderImage;
         } else {
             self.frameType = frameType;
         }
-        
-        self.animationCurve = animationCurve;
-        self.scrollView = scrollView;
-        self.imageView = imageView;
         
         if (isRoundResize) {
             [self roundResize:NO];
@@ -687,6 +691,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             _halfArrLineW = _arrLineW * 0.5;
             _arrLength = 20.0;
             _midArrLength = _arrLength * 0.85;
+            
             if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale + 1.0;
             self.resizeWHScale = resizeWHScale;
         }
@@ -1019,7 +1024,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0) {
         CGFloat fromOpacity = isHide ? 1 : 0;
-        NSString *keyPath = JP_KEYPATH(_horTopLine, opacity);
+        NSString *keyPath = _opacityAnimKey;
         CABasicAnimation *anim = [CABasicAnimation jpir_backwardsAnimationWithKeyPath:keyPath fromValue:@(fromOpacity) toValue:@(toOpacity) timingFunctionName:_kCAMediaTimingFunction duration:duration];
         [_horTopLine addAnimation:anim forKey:keyPath];
         [_horBottomLine addAnimation:anim forKey:keyPath];
@@ -1043,12 +1048,12 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
-    CGRect frame = imageresizerFrame;
-    frame.origin.x += _diffRotLength;
-    frame.origin.y += _diffRotLength;
-    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:radius]];
+    CGRect maskFrame = imageresizerFrame;
+    maskFrame.origin.x += _diffRotLength;
+    maskFrame.origin.y += _diffRotLength;
+    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:maskFrame cornerRadius:radius]];
     
-    NSString *keyPath = JP_KEYPATH(self.maskLayer, path);
+    NSString *keyPath = _pathAnimKey;
     CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
     __weak typeof(self) wSelf = self;
     void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
@@ -1328,6 +1333,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     void (^completeBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
+        [sSelf.blurView setIsBlur:YES duration:sSelf->_blurDuration];
         sSelf.superview.userInteractionEnabled = YES;
         if (sSelf->_isToBeArbitrarily) {
             sSelf->_isToBeArbitrarily = NO;
@@ -1339,7 +1345,6 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     };
     
     self.superview.userInteractionEnabled = NO;
-    [self.blurView setIsBlur:YES duration:_blurDuration];
     [self hideOrShowFrameLine:NO animateDuration:_blurDuration];
     [self updateImageresizerFrame:adjustResizeFrame animateDuration:duration];
     if (duration > 0) {

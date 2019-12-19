@@ -36,7 +36,7 @@
 
 + (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
-        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]).jp_bgColor([UIColor whiteColor]).jp_maskAlpha(0.3);
+        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]).jp_bgColor([UIColor whiteColor]).jp_maskAlpha(0.25);
     }];
     !make ? : make(configure);
     return configure;
@@ -44,7 +44,7 @@
 
 + (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
-        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]).jp_bgColor([UIColor blackColor]).jp_maskAlpha(0.3);
+        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]).jp_bgColor([UIColor blackColor]).jp_maskAlpha(0.25);
     }];
     !make ? : make(configure);
     return configure;

@@ -26,7 +26,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = self.configure.bgColor;
+    self.view.backgroundColor = JPRandomColor;
     self.frameType = self.configure.frameType;
     self.borderImage = self.configure.borderImage;
     self.recoveryBtn.enabled = NO;

@@ -39,7 +39,7 @@
     JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Train.jpg"] make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
-        .jp_strokeColor([UIColor blueColor]);
+        .jp_strokeColor([UIColor yellowColor]);
     }];
     
     NSString *title4 = @"其他样式";
