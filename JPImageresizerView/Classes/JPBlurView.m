@@ -14,85 +14,152 @@
 
 @implementation JPBlurView
 {
-    UIBlurEffect *_blurEffect;
-    UIColor *_fillColor;
     BOOL _isBlur;
+    UIBlurEffect *_blurEffect;
+    UIColor *_bgColor;
+    CGFloat _maskAlpha;
+    BOOL _isMaskAlpha;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame blurEffect:(UIBlurEffect *)blurEffect fillColor:(UIColor *)fillColor {
+- (instancetype)initWithFrame:(CGRect)frame
+                   blurEffect:(UIBlurEffect *)blurEffect
+                      bgColor:(UIColor *)bgColor
+                    maskAlpha:(CGFloat)maskAlpha {
     if (self = [super initWithFrame:frame]) {
-        _fillColor = fillColor;
+        _isBlur = blurEffect != nil;
         _blurEffect = blurEffect;
+        _bgColor = bgColor;
+        _maskAlpha = maskAlpha;
+        _isMaskAlpha = YES;
         
         UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:nil];
         visualEffectView.frame = self.bounds;
         visualEffectView.userInteractionEnabled = NO;
         [self addSubview:visualEffectView];
         _visualEffectView = visualEffectView;
-        
+
         CALayer *fillLayer = [CALayer layer];
         fillLayer.frame = self.bounds;
+        fillLayer.opacity = maskAlpha;
         [self.layer addSublayer:fillLayer];
         _fillLayer = fillLayer;
         
-        _isBlur = blurEffect != nil;
         if (_isBlur) {
             visualEffectView.effect = blurEffect;
         } else {
-            fillLayer.backgroundColor = fillColor.CGColor;
+            fillLayer.backgroundColor = bgColor.CGColor;
         }
     }
     return self;
 }
 
-- (UIBlurEffect *)blurEffect {
-    return _blurEffect;
-}
-
-- (UIColor *)fillColor {
-    return _fillColor;
-}
-
 - (BOOL)isBlur {
     return _isBlur;
 }
-
-- (void)setIsBlur:(BOOL)isBlur {
-    [self setIsBlur:isBlur animated:NO];
+- (UIBlurEffect *)blurEffect {
+    return _blurEffect;
+}
+- (UIColor *)bgColor {
+    return _bgColor;
+}
+- (CGFloat)maskAlpha {
+    return _maskAlpha;
+}
+- (BOOL)isMaskAlpha {
+    return _isMaskAlpha;
 }
 
-- (void)setIsBlur:(BOOL)isBlur animated:(BOOL)isAnimated {
-    [self setBlurEffect:_blurEffect fillColor:_fillColor isBlur:isBlur animated:isAnimated];
-}
-
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect animated:(BOOL)isAnimated {
-    [self setBlurEffect:blurEffect fillColor:_fillColor isBlur:_isBlur animated:isAnimated];
-}
-
-- (void)setFillColor:(UIColor *)fillColor animated:(BOOL)isAnimated {
-    [self setBlurEffect:_blurEffect fillColor:fillColor isBlur:_isBlur animated:isAnimated];
-}
-
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect fillColor:(UIColor *)fillColor isBlur:(BOOL)isBlur animated:(BOOL)isAnimated {
-    if (_blurEffect == blurEffect && _fillColor == fillColor && _isBlur == isBlur) return;
-    _blurEffect = blurEffect;
-    _fillColor = fillColor;
+- (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration {
     _isBlur = isBlur;
-#warning 怎么办呢~
-    [self __setBlurEffect:(_isBlur ? _blurEffect : nil)
-                fillColor:(_isBlur ? UIColor.clearColor : _fillColor)
-                 animated:isAnimated];
+    [self __blurEffectAnimation:duration];
+}
+- (void)setBlurEffect:(UIBlurEffect *)blurEffect duration:(NSTimeInterval)duration {
+    _blurEffect = blurEffect;
+    [self __blurEffectAnimation:duration];
+}
+- (void)setBgColor:(UIColor *)bgColor duration:(NSTimeInterval)duration {
+    _bgColor = bgColor;
+    [self __blurEffectAnimation:duration];
+}
+- (void)setMaskAlpha:(BOOL)maskAlpha duration:(NSTimeInterval)duration {
+    _maskAlpha = maskAlpha;
+    [self __maskAlphaAnimation:duration];
+}
+- (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration {
+    _isMaskAlpha = isMaskAlpha;
+    [self __maskAlphaAnimation:duration];
 }
 
-- (void)__setBlurEffect:(UIBlurEffect *)blurEffect fillColor:(UIColor *)fillColor animated:(BOOL)isAnimated {
-    if (isAnimated) {
-        [UIView animateWithDuration:0.18 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+- (void)setupIsBlur:(BOOL)isBlur
+         blurEffect:(UIBlurEffect *)blurEffect
+            bgColor:(UIColor *)bgColor
+          maskAlpha:(CGFloat)maskAlpha
+        isMaskAlpha:(BOOL)isMaskAlpha
+           duration:(NSTimeInterval)duration {
+    _isBlur = isBlur;
+    _blurEffect = blurEffect;
+    _bgColor = bgColor;
+    _maskAlpha = maskAlpha;
+    _isMaskAlpha = isMaskAlpha;
+    blurEffect = _isBlur ? _blurEffect : nil;
+    bgColor = _isMaskAlpha ? ((_isBlur && _blurEffect) ? UIColor.clearColor : _bgColor) : _bgColor;
+    maskAlpha = _isMaskAlpha ? maskAlpha : 1;
+    if (duration > 0) {
+        [UIView animateWithDuration:duration animations:^{
             self.visualEffectView.effect = blurEffect;
-            self.fillLayer.backgroundColor = fillColor.CGColor;
-        } completion:nil];
+            self.fillLayer.backgroundColor = bgColor.CGColor;
+            self.fillLayer.opacity = maskAlpha;
+        }];
     } else {
         self.visualEffectView.effect = blurEffect;
-        self.fillLayer.backgroundColor = fillColor.CGColor;
+        self.fillLayer.backgroundColor = bgColor.CGColor;
+        self.fillLayer.opacity = maskAlpha;
+    }
+ }
+
+- (void)__blurEffectAnimation:(NSTimeInterval)duration {
+    if (duration > 0) {
+        [UIView animateWithDuration:duration animations:^{
+            self.visualEffectView.effect = self->_isBlur ? self->_blurEffect : nil;
+            if (self->_isMaskAlpha) {
+                self.fillLayer.backgroundColor = (self->_isBlur && self->_blurEffect) ? UIColor.clearColor.CGColor : self->_bgColor.CGColor;
+                self.fillLayer.opacity = self->_maskAlpha;
+            } else {
+                self.fillLayer.backgroundColor = self->_bgColor.CGColor;
+                self.fillLayer.opacity = 1;
+            }
+        }];
+    } else {
+        self.visualEffectView.effect = self->_isBlur ? self->_blurEffect : nil;
+        if (self->_isMaskAlpha) {
+            self.fillLayer.backgroundColor = (self->_isBlur && self->_blurEffect) ? UIColor.clearColor.CGColor : self->_bgColor.CGColor;
+            self.fillLayer.opacity = self->_maskAlpha;
+        } else {
+            self.fillLayer.backgroundColor = self->_bgColor.CGColor;
+            self.fillLayer.opacity = 1;
+        }
+    }
+}
+
+- (void)__maskAlphaAnimation:(NSTimeInterval)duration {
+    if (duration > 0) {
+        [UIView animateWithDuration:duration animations:^{
+            if (self->_isMaskAlpha) {
+                self.fillLayer.backgroundColor = self->_isBlur ? UIColor.clearColor.CGColor : self->_bgColor.CGColor;
+                self.fillLayer.opacity = self->_maskAlpha;
+            } else {
+                self.fillLayer.backgroundColor = self->_bgColor.CGColor;
+                self.fillLayer.opacity = 1;
+            }
+        }];
+    } else {
+        if (self->_isMaskAlpha) {
+            self.fillLayer.backgroundColor = self->_isBlur ? UIColor.clearColor.CGColor : self->_bgColor.CGColor;
+            self.fillLayer.opacity = self->_maskAlpha;
+        } else {
+            self.fillLayer.backgroundColor = self->_bgColor.CGColor;
+            self.fillLayer.opacity = 1;
+        }
     }
 }
 

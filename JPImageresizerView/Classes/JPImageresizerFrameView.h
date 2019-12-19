@@ -44,15 +44,15 @@
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-@property (nonatomic) UIBlurEffect *blurEffect;
-@property (nonatomic, strong) UIColor *bgColor;
-@property (nonatomic, assign) CGFloat maskAlpha;
 @property (nonatomic, strong) UIColor *strokeColor;
-- (void)setupBlurEffect:(UIBlurEffect *)blurEffect
-                bgColor:(UIColor *)bgColor
-              maskAlpha:(CGFloat)maskAlpha
-            strokeColor:(UIColor *)strokeColor
-               animated:(BOOL)isAnimated;
+@property (nonatomic) UIBlurEffect *blurEffect;
+@property (nonatomic) UIColor *bgColor;
+@property (nonatomic) CGFloat maskAlpha;
+- (void)setupStrokeColor:(UIColor *)strokeColor
+              blurEffect:(UIBlurEffect *)blurEffect
+                 bgColor:(UIColor *)bgColor
+               maskAlpha:(CGFloat)maskAlpha
+                animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign, readonly) CGRect imageresizerFrame;
 

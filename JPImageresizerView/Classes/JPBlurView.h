@@ -8,13 +8,27 @@
 #import <UIKit/UIKit.h>
 
 @interface JPBlurView : UIView
-- (instancetype)initWithFrame:(CGRect)frame blurEffect:(UIBlurEffect *)blurEffect fillColor:(UIColor *)fillColor;
-- (UIBlurEffect *)blurEffect;
-- (UIColor *)fillColor;
-- (BOOL)isBlur;
+- (instancetype)initWithFrame:(CGRect)frame
+                   blurEffect:(UIBlurEffect *)blurEffect
+                      bgColor:(UIColor *)bgColor
+                    maskAlpha:(CGFloat)maskAlpha;
 
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect animated:(BOOL)isAnimated;
-- (void)setFillColor:(UIColor *)fillColor animated:(BOOL)isAnimated;
-- (void)setIsBlur:(BOOL)isBlur animated:(BOOL)isAnimated;
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect fillColor:(UIColor *)fillColor isBlur:(BOOL)isBlur animated:(BOOL)isAnimated;
+- (BOOL)isBlur;
+- (UIBlurEffect *)blurEffect;
+- (UIColor *)bgColor;
+- (CGFloat)maskAlpha;
+- (BOOL)isMaskAlpha;
+
+- (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration;
+- (void)setBlurEffect:(UIBlurEffect *)blurEffect duration:(NSTimeInterval)duration;
+- (void)setBgColor:(UIColor *)bgColor duration:(NSTimeInterval)duration;
+- (void)setMaskAlpha:(BOOL)maskAlpha duration:(NSTimeInterval)duration;
+- (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration;
+
+- (void)setupIsBlur:(BOOL)isBlur
+         blurEffect:(UIBlurEffect *)blurEffect
+            bgColor:(UIColor *)bgColor
+          maskAlpha:(CGFloat)maskAlpha
+        isMaskAlpha:(BOOL)isMaskAlpha
+           duration:(NSTimeInterval)duration;
 @end

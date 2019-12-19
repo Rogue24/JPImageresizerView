@@ -92,25 +92,25 @@
 
 /**
  * 模糊效果
- * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) UIBlurEffect *blurEffect;
 
 /**
  * 背景颜色
- * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) UIColor *bgColor;
 
 /**
  * 遮罩颜色的透明度（背景颜色 * 透明度）
- * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) CGFloat maskAlpha;
 
 /**
  * 裁剪线颜色
- * 设置该值会调用 -setupBlurEffect: bgColor: maskAlpha: strokeColor: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) UIColor *strokeColor;
 
@@ -184,18 +184,18 @@
 /*!
  @method
  @brief 设置颜色
- @param blurEffect --- 模糊效果
  @param strokeColor --- 裁剪线颜色
+ @param blurEffect --- 模糊效果
  @param bgColor --- 背景颜色
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param isAnimated --- 是否带动画效果
  @discussion 同时修改UI元素
  */
-- (void)setupBlurEffect:(UIBlurEffect *)blurEffect
-                bgColor:(UIColor *)bgColor
-              maskAlpha:(CGFloat)maskAlpha
-            strokeColor:(UIColor *)strokeColor
-               animated:(BOOL)isAnimated;
+- (void)setupStrokeColor:(UIColor *)strokeColor
+              blurEffect:(UIBlurEffect *)blurEffect
+                 bgColor:(UIColor *)bgColor
+               maskAlpha:(CGFloat)maskAlpha
+                animated:(BOOL)isAnimated;
 
 /*!
  @method

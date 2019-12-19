@@ -33,19 +33,19 @@
 }
 
 - (void)setBlurEffect:(UIBlurEffect *)blurEffect {
-    [self.frameView setupBlurEffect:blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha strokeColor:self.strokeColor animated:YES];
+    [self.frameView setupStrokeColor:self.strokeColor blurEffect:blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha animated:YES];
 }
 
 - (void)setBgColor:(UIColor *)bgColor {
-    [self.frameView setupBlurEffect:self.blurEffect bgColor:bgColor maskAlpha:self.maskAlpha strokeColor:self.strokeColor animated:YES];
+    [self.frameView setupStrokeColor:self.strokeColor blurEffect:self.blurEffect bgColor:bgColor maskAlpha:self.maskAlpha animated:YES];
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
-    [self.frameView setupBlurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:maskAlpha strokeColor:self.strokeColor animated:YES];
+    [self.frameView setupStrokeColor:self.strokeColor blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:maskAlpha animated:YES];
 }
 
 - (void)setStrokeColor:(UIColor *)strokeColor {
-    [self.frameView setupBlurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha strokeColor:strokeColor animated:YES];
+    [self.frameView setupStrokeColor:strokeColor blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha animated:YES];
 }
 
 - (void)setResizeImage:(UIImage *)resizeImage {
@@ -394,8 +394,16 @@
     }
 }
 
-- (void)setupBlurEffect:(UIBlurEffect *)blurEffect bgColor:(UIColor *)bgColor maskAlpha:(CGFloat)maskAlpha strokeColor:(UIColor *)strokeColor animated:(BOOL)isAnimated; {
-    [self.frameView setupBlurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha strokeColor:strokeColor animated:isAnimated];
+- (void)setupStrokeColor:(UIColor *)strokeColor
+              blurEffect:(UIBlurEffect *)blurEffect
+                 bgColor:(UIColor *)bgColor
+               maskAlpha:(CGFloat)maskAlpha
+                animated:(BOOL)isAnimated {
+    [self.frameView setupStrokeColor:strokeColor
+                          blurEffect:blurEffect
+                             bgColor:bgColor
+                           maskAlpha:maskAlpha
+                            animated:isAnimated];
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
@@ -508,8 +516,8 @@
     frame.origin.x = x;
     frame.origin.y = y;
     
-    // 做3d旋转时会遮盖住上层的控件，设置为-400即可
-    self.layer.zPosition = -400;
+    // 做3d旋转时会遮盖住上层的控件，设置为-500即可
+    self.layer.zPosition = -500;
     NSTimeInterval duration = 0.45;
     [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
         
@@ -586,8 +594,8 @@
     };
     
     if (isAnimated) {
-        // 做3d旋转时会遮盖住上层的控件，设置为-400即可
-        self.layer.zPosition = -400;
+        // 做3d旋转时会遮盖住上层的控件，设置为-500即可
+        self.layer.zPosition = -500;
         transform.m34 = 1.0 / 1500.0;
         if (isHorizontalMirror) {
             transform.m34 *= -1.0;

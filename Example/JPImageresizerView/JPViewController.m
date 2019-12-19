@@ -285,7 +285,7 @@
 }
 
 - (IBAction)changeRandomColor:(id)sender {
-    CGFloat alpha = (CGFloat)JPRandomNumber(0, 10) / 10.0;
+    CGFloat maskAlpha = (CGFloat)JPRandomNumber(0, 10) / 10.0;
     UIColor *strokeColor;
     UIColor *bgColor;
     if (@available(iOS 13, *)) {
@@ -311,7 +311,7 @@
         strokeColor = JPRandomColor;
         bgColor = JPRandomColor;
     }
-    [self.imageresizerView setupBlurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:alpha strokeColor:strokeColor animated:YES];
+    [self.imageresizerView setupStrokeColor:strokeColor blurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:maskAlpha animated:YES];
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {
