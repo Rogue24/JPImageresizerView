@@ -9,11 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
 
-@interface JPProxy : NSProxy
-+ (instancetype)proxyWithTarget:(id)target;
-@property (nonatomic, weak) id target;
-@end
-
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -108,4 +103,9 @@
 
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
 
+@end
+
+@interface JPImageresizerProxy : NSProxy
++ (instancetype)proxyWithTarget:(id)target;
+@property (nonatomic, weak) id target;
 @end

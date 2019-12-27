@@ -11,20 +11,6 @@
 #import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 
-@implementation JPProxy
-+ (instancetype)proxyWithTarget:(id)target {
-    JPProxy *proxy = [self alloc];
-    proxy.target = target;
-    return proxy;
-}
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
-    return [self.target methodSignatureForSelector:sel];
-}
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    [invocation invokeWithTarget:self.target];
-}
-@end
-
 /** keypath */
 #define JP_KEYPATH(objc, keyPath) @(((void)objc.keyPath, #keyPath))
 
@@ -729,7 +715,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 
 - (BOOL)addTimer {
     BOOL isHasTimer = [self removeTimer];
-    self.timer = [NSTimer timerWithTimeInterval:0.65 target:[JPProxy proxyWithTarget:self] selector:@selector(timerHandle) userInfo:nil repeats:NO]; // default 0.65
+    self.timer = [NSTimer timerWithTimeInterval:0.65 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(timerHandle) userInfo:nil repeats:NO]; // default 0.65
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
     return isHasTimer;
 }
@@ -2247,4 +2233,18 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     return YES;
 }
 
+@end
+
+@implementation JPImageresizerProxy
++ (instancetype)proxyWithTarget:(id)target {
+    JPImageresizerProxy *proxy = [self alloc];
+    proxy.target = target;
+    return proxy;
+}
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
+    return [self.target methodSignatureForSelector:sel];
+}
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    [invocation invokeWithTarget:self.target];
+}
 @end
