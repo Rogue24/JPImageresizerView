@@ -53,8 +53,8 @@
 		5883AD2CE2077A62C123562D3BB2278D /* Pods-JPImageresizerView_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B07B1A577002F47D4C302732524EB8 /* Pods-JPImageresizerView_Example-dummy.m */; };
 		58F2738EC91760FC72B5350114FD856B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBCD5169B524477639A9A41855A47F99 /* QuartzCore.framework */; };
 		595B7889F71FE1092BD06D58E5034770 /* CALayer+JPImageresizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FCFCA1258E8366552D330E00A83F51 /* CALayer+JPImageresizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5A4FD593F0C8B5DA8F3A7E8A51F1092B /* JPBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 910B68CB60A3885D593CBB04CD535147 /* JPBlurView.m */; };
-		5C474D6AB2E32A163A232FA3A505A999 /* JPBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B529F12E74D7550EEDC4F9C443B876E /* JPBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5A4FD593F0C8B5DA8F3A7E8A51F1092B /* JPImageresizerBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 910B68CB60A3885D593CBB04CD535147 /* JPImageresizerBlurView.m */; };
+		5C474D6AB2E32A163A232FA3A505A999 /* JPImageresizerBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B529F12E74D7550EEDC4F9C443B876E /* JPImageresizerBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DDE0FA0FCF57398A89540CC541F0492 /* POPAnimationTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8781B0CF9B052B5876AA2667127355A5 /* POPAnimationTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		638179457800E16C4961F13E32301CEF /* View+MASAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F323020A0FB3F63EF0A027DBD9E02D6F /* View+MASAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		639823F0E3192619D110887799AD778B /* POPAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A9833D10D1C75156803A3F2B46A3DE90 /* POPAnimationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -205,7 +205,7 @@
 		37CD971EF640FCB0DF78D01924837E40 /* POPCGUtils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPCGUtils.h; path = pop/POPCGUtils.h; sourceTree = "<group>"; };
 		398E0D4DBDAFEEA803997AFB653D143A /* SVProgressHUD-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SVProgressHUD-prefix.pch"; sourceTree = "<group>"; };
 		3A4AFB2426515D904BEB7B188D990D2D /* POPCustomAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPCustomAnimation.h; path = pop/POPCustomAnimation.h; sourceTree = "<group>"; };
-		3B529F12E74D7550EEDC4F9C443B876E /* JPBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBlurView.h; path = JPImageresizerView/Classes/JPBlurView.h; sourceTree = "<group>"; };
+		3B529F12E74D7550EEDC4F9C443B876E /* JPImageresizerBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerBlurView.h; path = JPImageresizerView/Classes/JPImageresizerBlurView.h; sourceTree = "<group>"; };
 		3CBD25722CED4AA0CC92AF10F88FB7CF /* POPMath.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = POPMath.mm; path = pop/POPMath.mm; sourceTree = "<group>"; };
 		4192401C61A2B38DA64FEB5C00A6EADC /* JPImageresizerView.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPImageresizerView.xcconfig; sourceTree = "<group>"; };
 		4198E437C6D6FC239714511A799AC28F /* UnitBezier.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = UnitBezier.h; path = pop/WebCore/UnitBezier.h; sourceTree = "<group>"; };
@@ -255,7 +255,7 @@
 		8E2420C8C921DD7BF6E4BE9029EE1AB7 /* POPDecayAnimationInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPDecayAnimationInternal.h; path = pop/POPDecayAnimationInternal.h; sourceTree = "<group>"; };
 		8E2EAE15A4F60F2ECCDBC03D6D6BD3C7 /* TransformationMatrix.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = TransformationMatrix.cpp; path = pop/WebCore/TransformationMatrix.cpp; sourceTree = "<group>"; };
 		90207ADB1701B9DA5501956627434FFD /* JPLiquidLayout-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JPLiquidLayout-Info.plist"; sourceTree = "<group>"; };
-		910B68CB60A3885D593CBB04CD535147 /* JPBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBlurView.m; path = JPImageresizerView/Classes/JPBlurView.m; sourceTree = "<group>"; };
+		910B68CB60A3885D593CBB04CD535147 /* JPImageresizerBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerBlurView.m; path = JPImageresizerView/Classes/JPImageresizerBlurView.m; sourceTree = "<group>"; };
 		9171A8041C12EDA383C6B7255C1540C8 /* POPBasicAnimationInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPBasicAnimationInternal.h; path = pop/POPBasicAnimationInternal.h; sourceTree = "<group>"; };
 		91A0FF8B35320604FEDA15C8DC5ACAD1 /* POPGeometry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPGeometry.h; path = pop/POPGeometry.h; sourceTree = "<group>"; };
 		91B2FEEE7BF4ABCE10D7ADB8F8657256 /* JPImageresizerView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPImageresizerView-prefix.pch"; sourceTree = "<group>"; };
@@ -402,8 +402,8 @@
 				4D6F1F5B59C2AF15F24A652CAFE190A5 /* JPImageresizerView.m */,
 				BF60CAEC16AE95E27CDE36A9EB676555 /* JPImageresizerFrameView.h */,
 				8C73A9FBAE9635337AD7BB6A291D6BCE /* JPImageresizerFrameView.m */,
-				3B529F12E74D7550EEDC4F9C443B876E /* JPBlurView.h */,
-				910B68CB60A3885D593CBB04CD535147 /* JPBlurView.m */,
+				3B529F12E74D7550EEDC4F9C443B876E /* JPImageresizerBlurView.h */,
+				910B68CB60A3885D593CBB04CD535147 /* JPImageresizerBlurView.m */,
 				F6FCFCA1258E8366552D330E00A83F51 /* CALayer+JPImageresizer.h */,
 				4D26B13054AF7B9ABA1AF2483D5FFC9F /* CALayer+JPImageresizer.m */,
 				2B11134516723D9627D38D8DBDF2876C /* UIImage+JPImageresizer.h */,
@@ -755,7 +755,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				595B7889F71FE1092BD06D58E5034770 /* CALayer+JPImageresizer.h in Headers */,
-				5C474D6AB2E32A163A232FA3A505A999 /* JPBlurView.h in Headers */,
+				5C474D6AB2E32A163A232FA3A505A999 /* JPImageresizerBlurView.h in Headers */,
 				39FF34A456FB51C8CC40D7D575F038DF /* JPImageresizerConfigure.h in Headers */,
 				723831CE876ECE19B198BCB452CEE6AC /* JPImageresizerFrameView.h in Headers */,
 				96BAED528C80CFFFA03529D689016AD2 /* JPImageresizerTypedef.h in Headers */,
@@ -1036,7 +1036,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E5CF8DC9EBEF2F456899F34B51DB8C47 /* CALayer+JPImageresizer.m in Sources */,
-				5A4FD593F0C8B5DA8F3A7E8A51F1092B /* JPBlurView.m in Sources */,
+				5A4FD593F0C8B5DA8F3A7E8A51F1092B /* JPImageresizerBlurView.m in Sources */,
 				5674266478D0D9442C59528E44FF94F3 /* JPImageresizerConfigure.m in Sources */,
 				85A0870D9C828B8C3A2E4A8942DD261F /* JPImageresizerFrameView.m in Sources */,
 				13ABAF0E0128D7D08BD870907023EF14 /* JPImageresizerView-dummy.m in Sources */,

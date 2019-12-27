@@ -1,6 +1,6 @@
 //
 //  JPImageresizerFrameView.h
-//  DesignSpaceRestructure
+//  JPImageresizerView
 //
 //  Created by 周健平 on 2017/12/11.
 //  Copyright © 2017年 周健平. All rights reserved.

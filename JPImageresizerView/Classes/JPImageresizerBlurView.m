@@ -1,18 +1,18 @@
 //
-//  JPBlurView.m
+//  JPImageresizerBlurView.m
 //  JPImageresizerView
 //
 //  Created by 周健平 on 2019/12/18.
 //
 
-#import "JPBlurView.h"
+#import "JPImageresizerBlurView.h"
 
-@interface JPBlurView ()
+@interface JPImageresizerBlurView ()
 @property (nonatomic, weak) UIVisualEffectView *visualEffectView;
 @property (nonatomic, weak) UIView *fillView;
 @end
 
-@implementation JPBlurView
+@implementation JPImageresizerBlurView
 {
     BOOL _isBlur;
     UIBlurEffect *_blurEffect;
@@ -39,6 +39,7 @@
         _visualEffectView = visualEffectView;
 
         UIView *fillView = [[UIView alloc] initWithFrame:self.bounds];
+        fillView.userInteractionEnabled = NO;
         fillView.layer.backgroundColor = bgColor.CGColor;
         fillView.alpha = _isMaskAlpha ? (_isBlur ? 0 : maskAlpha) : 1;
         [self addSubview:fillView];

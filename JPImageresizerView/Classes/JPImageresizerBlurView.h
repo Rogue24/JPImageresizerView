@@ -1,5 +1,5 @@
 //
-//  JPBlurView.h
+//  JPImageresizerBlurView.h
 //  JPImageresizerView
 //
 //  Created by 周健平 on 2019/12/18.
@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JPBlurView : UIView
+@interface JPImageresizerBlurView : UIView
 - (instancetype)initWithFrame:(CGRect)frame
                    blurEffect:(UIBlurEffect *)blurEffect
                       bgColor:(UIColor *)bgColor

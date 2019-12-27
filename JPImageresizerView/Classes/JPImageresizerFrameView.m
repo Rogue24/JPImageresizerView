@@ -1,13 +1,13 @@
 //
 //  JPImageresizerFrameView.m
-//  DesignSpaceRestructure
+//  JPImageresizerView
 //
 //  Created by 周健平 on 2017/12/11.
 //  Copyright © 2017年 周健平. All rights reserved.
 //
 
 #import "JPImageresizerFrameView.h"
-#import "JPBlurView.h"
+#import "JPImageresizerBlurView.h"
 #import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
 
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIImageView *imageView;
-@property (nonatomic, weak) JPBlurView *blurView;
+@property (nonatomic, weak) JPImageresizerBlurView *blurView;
 @property (nonatomic, weak) UIImageView *borderImageView;
 - (CGRect)borderImageViewFrame;
 
@@ -644,7 +644,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         _diffRotLength = [UIScreen mainScreen].bounds.size.height - scrollView.bounds.size.height;
         
         CGRect blurFrame = CGRectInset(self.bounds, -_diffRotLength, -_diffRotLength);
-        JPBlurView *blurView = [[JPBlurView alloc] initWithFrame:blurFrame blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
+        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:blurFrame blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
         blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
