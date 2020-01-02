@@ -47,9 +47,9 @@
 
 #### 初始化
 ```objc
-// 方式一：使用工厂方法配置参数
 // 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、最大缩放比例、是否圆切、可否重置的回调、是否预备缩放的回调
 
+// 配置初始参数
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
     configure
@@ -63,6 +63,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
+// 创建imageresizerView
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
     // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
