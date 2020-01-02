@@ -48,38 +48,7 @@
 #### 初始化
 ```objc
 // 方式一：使用工厂方法配置参数
-// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、最大缩放比例、可否重置的回调、是否预备缩放的回调
-
-JPImageresizerView *imageresizerView = [[JPImageresizerView alloc]
-                    initWithResizeImage:[UIImage imageNamed:@"Girl.jpg"]
-                    frame:frame
-                    maskType:JPConciseFrameType
-                    frameType:JPConciseFrameType
-                    animationCurve:JPAnimationCurveLinear
-                    strokeColor:[UIColor whiteColor]
-                    bgColor:[UIColor blackColor]
-                    maskAlpha:0.75
-                    verBaseMargin:10.0
-                    horBaseMargin:10.0
-                    resizeWHScale:0.0
-                    contentInsets:UIEdgeInsetsZero
-                    borderImage:nil
-                    borderImageRectInset:CGPointZero 
-                    maximumZoomScale:10.0
-                    imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-                        // 可在这里监听到是否可以重置
-                        // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
-                        // 具体操作可参照Demo
-                        // 注意循环引用
-                    }
-                    imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
-                        // 可在这里监听到裁剪区域是否预备缩放至适合范围
-                        // 如果预备缩放（isPrepareToScale为YES），此时裁剪、旋转、镜像功能不可用，可在这里做相应处理，例如将对应按钮设置为不可点或隐藏
-                        // 具体操作可参照Demo
-                        // 注意循环引用
-                    }];
-
-// 方式二：使用JPImageresizerConfigure配置好参数再创建【推荐】
+// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、最大缩放比例、是否圆切、可否重置的回调、是否预备缩放的回调
 
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
@@ -244,7 +213,7 @@ self.imageresizerView.isPreview = YES;
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
     // 裁剪完成，resizeImage为裁剪后的图片
     // 注意循环引用
-} scale:0.7]; // 例：压缩为原图尺寸的70%
+} compressScale:0.7]; // 例：压缩为原图尺寸的70%
 
 // 2.以原图尺寸进行裁剪
 [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
