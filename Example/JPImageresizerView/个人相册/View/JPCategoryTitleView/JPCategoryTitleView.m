@@ -167,11 +167,11 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
 }
 
 - (void)updateSelectedLineFrame:(CGRect)frame {
-    CGFloat offsetX = frame.origin.x - (self.frame.size.width - frame.size.width) * 0.5;
+    CGFloat offsetX = frame.origin.x - (self.jp_width - frame.size.width) * 0.5;
+    CGFloat maxOffsetX = self.contentSize.width - self.jp_width;
     CGFloat minOffsetX = 0;
-    CGFloat maxOffsetX = self.contentSize.width - self.frame.size.width;
-    if (offsetX < minOffsetX) offsetX = minOffsetX;
     if (offsetX > maxOffsetX) offsetX = maxOffsetX;
+    if (offsetX < minOffsetX) offsetX = minOffsetX;
     POPBasicAnimation *anim = [POPBasicAnimation animationWithPropertyNamed:kPOPCollectionViewContentOffset];
     anim.duration = 0.35;
     anim.toValue = @(CGPointMake(offsetX, 0));

@@ -320,10 +320,10 @@
 			children = (
 				1A0AB35522B247DB00B6B6AB /* JPCategoryTitleView.h */,
 				1A0AB35822B247DB00B6B6AB /* JPCategoryTitleView.m */,
-				1A0AB35422B247DB00B6B6AB /* JPCategoryTitleCell.h */,
-				1A0AB35622B247DB00B6B6AB /* JPCategoryTitleCell.m */,
 				1A0AB35722B247DB00B6B6AB /* JPCategoryTitleViewModel.h */,
 				1A0AB35322B247DB00B6B6AB /* JPCategoryTitleViewModel.m */,
+				1A0AB35422B247DB00B6B6AB /* JPCategoryTitleCell.h */,
+				1A0AB35622B247DB00B6B6AB /* JPCategoryTitleCell.m */,
 			);
 			path = JPCategoryTitleView;
 			sourceTree = "<group>";
