@@ -20,8 +20,8 @@
         4.支持上左下右的旋转；
         5.水平和垂直的镜像翻转；
         6.两种边框样式；
-        7.支持圆框裁剪
-        8.自定义遮罩和边框的颜色、高斯模糊样式；
+        7.支持圆框裁剪；
+        8.自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
         9.自定义边框图片。
 
     注意：
@@ -65,7 +65,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
-// 2.创建imageresizerView
+// 2.创建JPImageresizerView对象
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
     // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
@@ -139,17 +139,17 @@ self.imageresizerView.resizeWHScale = 1.0;
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
 ```objc
 // 设置圆切
-// 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上左下右的中部可拖动。
+// 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上、左、下、右的中部均可拖动。
 [self.imageresizerView roundResize:YES];
 
 // 还原矩形
-// 只需设置一下resizeWHScale即可
+// 只需设置一下resizeWHScale为任意值即可
 self.imageresizerView.resizeWHScale = 0.0;
 ```
 
 #### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
 ```objc
-// 设置毛玻璃背景（默认带动画效果）
+// 设置毛玻璃样式（默认带动画效果）
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
 
 // 设置边框颜色（默认带动画效果）
@@ -235,8 +235,8 @@ self.imageresizerView.isPreview = YES;
 ```objc
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
-// scale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
-// 例：scale = 0.5，1000 x 500 --> 500 x 250
+// compressScale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
+// 例：compressScale = 0.5，1000 x 500 --> 500 x 250
 
 // 1.自定义压缩比例进行裁剪
 [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
