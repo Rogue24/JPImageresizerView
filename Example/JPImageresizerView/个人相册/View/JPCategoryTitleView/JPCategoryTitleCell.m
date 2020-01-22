@@ -36,14 +36,14 @@
             UILabel *aLabel = [[UILabel alloc] init];
             aLabel.textAlignment = NSTextAlignmentCenter;
             aLabel.font = JPCategoryTitleCell.titleFont;
-            aLabel.textColor = [UIColor colorWithRed:0 green:0 blue:1 alpha:0.5];
+            aLabel.textColor = JPRGBAColor(88, 144, 255, 0.5);
             aLabel;
         });
         [self addSubview:titleLabel];
         self.titleLabel = titleLabel;
         
         CAShapeLayer *countLayer = [CAShapeLayer layer];
-        countLayer.fillColor = [UIColor colorWithRed:0 green:0 blue:1 alpha:0.5].CGColor;
+        countLayer.fillColor = JPRGBAColor(88, 144, 255, 0.5).CGColor;
         countLayer.lineWidth = 0;
         [self.layer addSublayer:countLayer];
         self.countLayer = countLayer;
@@ -65,7 +65,7 @@
     _titleVM = titleVM;
     
     self.isSelected = titleVM.isSelected;
-    self.titleLabel.textColor = titleVM.isSelected ? UIColor.blueColor : [UIColor colorWithRed:0 green:0 blue:1 alpha:0.5];
+    self.titleLabel.textColor = JPRGBAColor(88, 144, 255, (titleVM.isSelected ? 1 : 0.5));
     
     self.titleLabel.text = titleVM.title;
     self.titleLabel.frame = titleVM.titleFrame;
@@ -79,12 +79,9 @@
 - (void)updateSelectedState:(BOOL)isSelected animate:(BOOL)animate {
     if (self.isSelected == isSelected) return;
     self.isSelected = isSelected;
-    UIColor *textColor = isSelected ? UIColor.blueColor : [UIColor colorWithRed:0 green:0 blue:1 alpha:0.5];
+    UIColor *textColor = JPRGBAColor(88, 144, 255, (isSelected ? 1 : 0.5));
     if (animate) {
-        POPBasicAnimation *anim = [POPBasicAnimation animationWithPropertyNamed:kPOPLabelTextColor];
-        anim.toValue = textColor;
-        anim.duration = 0.35;
-        [self.titleLabel pop_addAnimation:anim forKey:@"textColor"];
+        [self.titleLabel jp_addPOPBasicAnimationWithPpropertyNamed:kPOPLabelTextColor beginTime:0 duration:0.35 toValue:textColor completionBlock:nil];
     } else {
         self.titleLabel.textColor = textColor;
     }
@@ -93,7 +90,7 @@
 - (void)setColorProgress:(CGFloat)colorProgress {
     _colorProgress = colorProgress;
     CGFloat a = 0.5 + colorProgress * 0.5;
-    self.titleLabel.textColor = [UIColor colorWithRed:0 green:0 blue:1 alpha:a];
+    self.titleLabel.textColor = JPRGBAColor(88, 144, 255, a);
 }
 
 @end

@@ -236,7 +236,6 @@
 				1A0AB2F022B22B0F00B6B6AB /* Controller */,
 				1A0AB2F622B22B0F00B6B6AB /* View */,
 				1A0AB2DD22B22B0F00B6B6AB /* ViewModel */,
-				1A0AB2F522B22B0F00B6B6AB /* Model */,
 				1A0AB2FC22B22B0F00B6B6AB /* Tool */,
 				1A0AB2E222B22B0F00B6B6AB /* Category */,
 				1A0AB2E922B22B0F00B6B6AB /* WMPageController */,
@@ -290,13 +289,6 @@
 				1A0AB2F122B22B0F00B6B6AB /* JPPhotoCollectionViewController.m */,
 			);
 			path = Controller;
-			sourceTree = "<group>";
-		};
-		1A0AB2F522B22B0F00B6B6AB /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		1A0AB2F622B22B0F00B6B6AB /* View */ = {

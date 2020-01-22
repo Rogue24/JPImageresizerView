@@ -7,7 +7,6 @@
 //
 
 #import "JPCategoryTitleView.h"
-#import <pop/POP.h>
 
 @interface JPCategoryTitleView () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 @property (nonatomic, weak) CALayer *selectedLine;
@@ -21,17 +20,18 @@
     CGFloat _cellSpace;
 }
 
+
 static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategoryCell";
 
 + (JPCategoryTitleView *)categoryTitleViewWithSideMargin:(CGFloat)sideMargin cellSpace:(CGFloat)cellSpace {
+    
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.sectionInset = UIEdgeInsetsMake(0, sideMargin, 0, sideMargin);
     flowLayout.minimumLineSpacing = cellSpace;
     flowLayout.minimumInteritemSpacing = cellSpace;
     flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
-    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
-    return [[self alloc] initWithFrame:CGRectMake(0, isX ? 88 : 64, [UIScreen mainScreen].bounds.size.width, JPCategoryTitleCell.cellHeight) collectionViewLayout:flowLayout sideMargin:sideMargin cellSpace:cellSpace];
+    return [[self alloc] initWithFrame:CGRectMake(0, JPNavTopMargin, JPPortraitScreenWidth, JPCategoryTitleCell.cellHeight) collectionViewLayout:flowLayout sideMargin:sideMargin cellSpace:cellSpace];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -43,7 +43,7 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
         _sideMargin = sideMargin;
         _cellSpace = cellSpace;
         
-        self.backgroundColor = UIColor.whiteColor;
+        self.backgroundColor = [UIColor clearColor];
         self.dataSource = self;
         self.delegate = self;
         self.showsHorizontalScrollIndicator = NO;
@@ -52,16 +52,18 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
         [self registerClass:JPCategoryTitleCell.class forCellWithReuseIdentifier:JPPictureChooseCategoryCellID];
         
         CALayer *selectedLine = [CALayer layer];
-        selectedLine.backgroundColor = UIColor.blueColor.CGColor;
-        selectedLine.frame = CGRectMake(0, frame.size.height - 2, 0, 2);
+        selectedLine.backgroundColor = JPRGBAColor(88, 144, 255, 1).CGColor;
+        selectedLine.frame = CGRectMake(0, frame.size.height - 1, 0, 1);
+        selectedLine.cornerRadius = 0.5;
+        selectedLine.masksToBounds = YES;
         selectedLine.zPosition = 1;
         selectedLine.opacity = 0;
         [self.layer addSublayer:selectedLine];
         self.selectedLine = selectedLine;
         
         CALayer *line = [CALayer layer];
-        line.backgroundColor = UIColor.lightGrayColor.CGColor;
-        line.frame = CGRectMake(0, frame.size.height - 0.35, frame.size.width, 0.35);
+        line.backgroundColor = JPRGBAColor(88, 144, 255, 0.1).CGColor;
+        line.frame = CGRectMake(0, frame.size.height - (JPSeparateLineThick + 0.01), frame.size.width, JPSeparateLineThick + 0.01);
         [self.layer addSublayer:line];
         self.bottomLine = line;
     }
@@ -72,7 +74,7 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
     [super setContentSize:contentSize];
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    self.bottomLine.frame = CGRectMake(0, self.frame.size.height - 0.35, (contentSize.width > self.frame.size.width ? contentSize.width : self.frame.size.width) * 2, 0.35);
+    self.bottomLine.frame = CGRectMake(0, self.frame.size.height - 1, (contentSize.width > self.frame.size.width ? contentSize.width : self.frame.size.width) * 2, 1);
     [CATransaction commit];
 }
 
@@ -166,6 +168,24 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
     }
 }
 
+- (void)reloadCount:(NSInteger)count inIndex:(NSInteger)index {
+    JPCategoryTitleViewModel *titleVM = self.titleVMs[index];
+    if (titleVM.count.integerValue == count) return;
+    
+    titleVM.count = [NSString stringWithFormat:@"%zd", count];
+    
+    CGFloat x = _sideMargin;
+    for (NSInteger i = 0; i < self.titleVMs.count; i++) {
+        JPCategoryTitleViewModel *titleVM = self.titleVMs[i];
+        titleVM.cellFrame = CGRectMake(x, 0, titleVM.cellSize.width, titleVM.cellSize.height);
+        x += (_cellSpace + titleVM.cellSize.width);
+    }
+    
+    [UIView performWithoutAnimation:^{
+        [self reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index inSection:0]]];
+    }];
+}
+
 - (void)updateSelectedLineFrame:(CGRect)frame {
     CGFloat offsetX = frame.origin.x - (self.jp_width - frame.size.width) * 0.5;
     CGFloat maxOffsetX = self.contentSize.width - self.jp_width;
@@ -245,12 +265,9 @@ static NSString *const JPPictureChooseCategoryCellID = @"JPPictureChooseCategory
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     if (self.isNeedAnimated) {
         cell.alpha = 0;
-        CGRect cellFrame = cell.frame;
-        cellFrame.origin.x += [UIScreen mainScreen].bounds.size.width;
-        cell.frame = cellFrame;
-        cellFrame.origin.x -= [UIScreen mainScreen].bounds.size.width;
+        cell.jp_x += JPPortraitScreenWidth;
         [UIView animateWithDuration:1.0 delay:0.04 * indexPath.item usingSpringWithDamping:0.8 initialSpringVelocity:0.5 options:0 animations:^{
-            cell.frame = cellFrame;
+            cell.jp_x -= JPPortraitScreenWidth;
             cell.alpha = 1;
         } completion:^(BOOL finished) {
             if (indexPath.item == collectionView.visibleCells.count - 1) {

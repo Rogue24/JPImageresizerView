@@ -7,15 +7,10 @@
 //
 
 #import "JPAppDelegate.h"
-#import <SVProgressHUD/SVProgressHUD.h>
 
 @implementation JPAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [SVProgressHUD setMaxSupportedWindowLevel:UIWindowLevelAlert];
-    [SVProgressHUD setMinimumDismissTimeInterval:1.3];
-    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
-    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     return YES;
 }
 

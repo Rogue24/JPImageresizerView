@@ -148,12 +148,17 @@
 }
 
 - (IBAction)pop:(id)sender {
+    CATransition *cubeAnim = [CATransition animation];
+    cubeAnim.duration = 0.5;
+    cubeAnim.type = @"cube";
+    cubeAnim.subtype = kCATransitionFromLeft;
+    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
+    
     if (self.navigationController.viewControllers.count <= 1) {
-        [UIView transitionWithView:self.view.window duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-            [self dismissViewControllerAnimated:NO completion:nil];
-        } completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     } else {
-        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:NO];
     }
 }
 

@@ -11,11 +11,10 @@
 #import "JPAlbumViewModel.h"
 #import "JPPhotoCollectionViewController.h"
 #import "JPCategoryTitleView.h"
-#import <SVProgressHUD/SVProgressHUD.h>
 #import <pop/POP.h>
 #import "JPViewController.h"
 
-@interface JPPhotoViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate, WMPageControllerDataSource, WMPageControllerDelegate, JPPhotoCollectionViewControllerDelegate>
+@interface JPPhotoViewController () <UINavigationControllerDelegate, WMPageControllerDataSource, WMPageControllerDelegate, JPPhotoCollectionViewControllerDelegate>
 @property (nonatomic, weak) WMPageController *pageCtr;
 @property (nonatomic, weak) UILabel *navTitleLabel;
 @property (nonatomic, weak) JPCategoryTitleView *titleView;
@@ -47,7 +46,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupBase];
-    [self setupNavigationBar];
     [self setupCategoryTitleView];
     [self setupPageController];
     [self setupDataSource];
@@ -66,20 +64,9 @@
 #pragma mark - setup
 
 - (void)setupBase {
+    self.title = @"用户相册";
     self.view.backgroundColor = UIColor.whiteColor;
     self.automaticallyAdjustsScrollViewInsets = NO;
-}
-
-- (void)setupNavigationBar {
-    self.title = @"用户相册";
-    UIButton *camceraBtn = ({
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-        [btn setTitle:@"拍照" forState:UIControlStateNormal];
-        [btn addTarget:self action:@selector(camcera) forControlEvents:UIControlEventTouchUpInside];
-        btn;
-    });
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:camceraBtn];
 }
 
 - (void)setupCategoryTitleView {
@@ -148,20 +135,11 @@
     }
 }
 
-- (void)camcera {
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI cameraAuthorityWithAllowAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf photograph];
-    } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil];
-}
-
 #pragma mark - 配置相册数据源
 
 - (void)setupDataSource {
     self.pageContentViewFrames = [NSMutableDictionary dictionary];
-    [SVProgressHUD show];
+    [JPProgressHUD show];
     __weak typeof(self) wSelf = self;
     [JPPhotoToolSI getAllAssetCollectionWithFastEnumeration:^(PHAssetCollection *collection, NSInteger index, NSInteger totalCount) {
         __strong typeof(wSelf) sSelf = wSelf;
@@ -176,68 +154,11 @@
         CGRect frame = CGRectMake(x, y, w, h);
         sSelf.pageContentViewFrames[@(index)] = @(frame);
     } completion:^{
-        [SVProgressHUD dismiss];
+        [JPProgressHUD dismiss];
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         [sSelf.titleView reloadDataWithAnimated:YES];
         [sSelf.pageCtr reloadData];
-    }];
-}
-
-#pragma mark - 拍照
-
-- (void)photograph {
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
-#pragma mark - UIImagePickerController相关逻辑
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    
-    if (picker.sourceType != UIImagePickerControllerSourceTypeCamera) return;
-    
-    // 获取选择的图片
-    UIImage *image = info[UIImagePickerControllerOriginalImage];
-    if (!image) {
-        if (@available(iOS 13.0, *)) {
-            NSURL *url = info[UIImagePickerControllerImageURL];
-            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
-        }
-    }
-    if (!image) {
-        [SVProgressHUD showInfoWithStatus:@"无法获取"];
-        return;
-    }
-    
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI savePhotoWithImage:image successHandle:^(NSString *assetID) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        
-        [picker dismissViewControllerAnimated:YES completion:^{
-            [sSelf imageresizerWithImage:image];
-            
-            if (sSelf.titleView.titleVMs.count == 0) return;
-            JPAlbumViewModel *albumVM = (JPAlbumViewModel *)sSelf.titleView.titleVMs.firstObject;
-            albumVM.count = [NSString stringWithFormat:@"%zd", albumVM.count.integerValue + 1];
-            [sSelf.titleView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:0 inSection:0]]];
-            
-            for (JPPhotoCollectionViewController *pcVC in sSelf.pageCtr.childViewControllers) {
-                if (pcVC.albumVM == albumVM) {
-                    PHAsset *asset = [JPPhotoToolSI getNewestAsset];
-                    JPPhotoViewModel *photoVM = [[JPPhotoViewModel alloc] initWithAsset:asset];
-                    [pcVC insertPhotoVM:photoVM atIndex:0];
-                    break;
-                }
-            }
-        }];
-        
-    } failHandle:^{
-        [SVProgressHUD showErrorWithStatus:@"图片保存失败"];
-        [picker dismissViewControllerAnimated:YES completion:nil];
     }];
 }
 
@@ -262,17 +183,11 @@
 #pragma mark - 请求照片
 
 - (void)pcVC:(JPPhotoCollectionViewController *)pcVC requestPhotosWithIndex:(NSInteger)index {
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     [pcVC requestPhotosWithComplete:^(NSInteger photoTotal) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        JPAlbumViewModel *albumVM = (JPAlbumViewModel *)sSelf.titleView.titleVMs[index];
-        if (albumVM.count.integerValue != photoTotal) {
-            albumVM.count = [NSString stringWithFormat:@"%zd", photoTotal];
-            [UIView performWithoutAnimation:^{
-                [sSelf.titleView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index inSection:0]]];
-            }];
-        }
+        @jp_strongify(self);
+        if (!self) return;
+        [self.titleView reloadCount:photoTotal inIndex:index];
     }];
 }
 
@@ -290,7 +205,7 @@
 
 - (UIViewController *)pageController:(WMPageController *)pageController viewControllerAtIndex:(NSInteger)index {
     JPAlbumViewModel *albumVM = (JPAlbumViewModel *)self.titleView.titleVMs[index];
-    JPPhotoCollectionViewController *pcVC = [JPPhotoCollectionViewController pcVCWithAlbumVM:albumVM sideMargin:8 cellSpace:2 maxWHSclae:(16.0 / 9.0) maxCol:4 pcVCDelegate:self];
+    JPPhotoCollectionViewController *pcVC = [JPPhotoCollectionViewController pcVCWithAlbumVM:albumVM sideMargin:5 cellSpace:1 maxWHSclae:(16.0 / 9.0) maxCol:3 pcVCDelegate:self];
     self.photoCollectionVCs[@(index)] = pcVC;
     return pcVC;
 }
@@ -371,7 +286,7 @@
         // 若 0 < offsetX < 375，0 < progress < 1，本来 sourceIndex = 0，targetIndex = 1
         // 但 375 <= offsetX，progress >= 1，导致 sourceIndex = 1，targetIndex = 2
         if (progress >= 1) {
-//            NSLog(@"向左改变");
+//            JPLog(@"向左改变");
             if (targetIndex == totalCount) {
                 progress = 1;
                 targetIndex -= 1;
@@ -398,7 +313,7 @@
         // 若 375 <= offsetX < 750，0 < progress <= 1，本来 targetIndex = 1，sourceIndex = 2
         // 但 375 > offsetX，progress > 1，导致 targetIndex = 0，sourceIndex = 1
         if (progress > 1) {
-//            NSLog(@"向右改变");
+//            JPLog(@"向右改变");
             if (sourceIndex == totalCount) {
                 progress = 1;
                 targetIndex -= 1;

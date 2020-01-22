@@ -22,6 +22,8 @@
 
 - (void)reloadDataWithAnimated:(BOOL)animated;
 
+- (void)reloadCount:(NSInteger)count inIndex:(NSInteger)index;
+
 - (void)updateSelectedLineWithSourceIndex:(NSInteger)sourceIndex targetIndex:(NSInteger)targetIndex progress:(CGFloat)progress;
 - (void)resetSelectedLine;
 

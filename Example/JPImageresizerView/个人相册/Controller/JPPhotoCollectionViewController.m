@@ -12,7 +12,6 @@
 #import "NoDataView.h"
 #import "JPPhotoCollectionViewFlowLayout.h"
 #import "JPBrowseImagesViewController.h"
-#import <SVProgressHUD/SVProgressHUD.h>
 #import "JPViewController.h"
 
 @interface JPPhotoCollectionViewController () <JPBrowseImagesDelegate>
@@ -346,20 +345,20 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 
 #pragma mark - <UIScrollViewDelegate>
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI updateCachedAssetsWithStartCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
-        getAssetsCompletion(assets);
-    } stopCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
-        getAssetsCompletion(assets);
-    }];
-}
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+//    __weak typeof(self) wSelf = self;
+//    [JPPhotoToolSI updateCachedAssetsWithStartCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
+//        getAssetsCompletion(assets);
+//    } stopCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
+//        getAssetsCompletion(assets);
+//    }];
+//}
 
 #pragma mark - Asset Caching
 
@@ -420,15 +419,15 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     __weak typeof(self) wSelf = self;
     __weak JPBrowseImageModel *wModel = cell.model;
     __weak typeof(photoVM) wPhotoVM = photoVM;
-    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:photoVM.originPhotoSize isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
+    [JPPhotoToolSI requestOriginalPhotoImageForAsset:photoVM.asset isFastMode:NO isFixOrientation:NO isJustGetFinalPhoto:YES resultHandler:^(PHAsset *requestAsset, UIImage *resultImage, BOOL isFinalImage) {
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf || !wModel || !wPhotoVM) return;
-        !completeBlock ? : completeBlock(index, wModel, result);
+        !completeBlock ? : completeBlock(index, wModel, resultImage);
     }];
 }
 
 - (void)requestImageFailWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {
-    [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
+    [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
 }
 
 - (NSString *)getNavigationDismissIcon {
@@ -440,19 +439,16 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 }
 
 - (void)browseImagesVC:(JPBrowseImagesViewController *)browseImagesVC navigationOtherHandleWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {
-    JPPhotoViewModel *photoVM = self.photoVMs[index];
-    [SVProgressHUD show];
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI requestLargePhotoForAsset:photoVM.asset targetSize:CGSizeMake(photoVM.asset.pixelWidth, photoVM.asset.pixelHeight) isFastMode:NO isShouldFixOrientation:NO resultHandler:^(PHAsset *requestAsset, UIImage *result, NSDictionary *info) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        if (result) {
-            [SVProgressHUD dismiss];
-            [sSelf imageresizerWithImage:result fromVC:browseImagesVC];
-        } else {
-            [SVProgressHUD showErrorWithStatus:@"照片获取失败"];
-        }
-    }];
+    JPBrowseImageCell *cell = (JPBrowseImageCell *)[browseImagesVC.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    if (cell.isSetingImage) {
+        [JPProgressHUD showInfoWithStatus:@"照片获取中请稍后" userInteractionEnabled:YES];
+        return;
+    }
+    if (!cell.isSetImageSuccess) {
+        [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
+        return;
+    }
+    [self imageresizerWithImage:cell.imageView.image fromVC:browseImagesVC];
 }
 
 #pragma mark - 裁剪照片
@@ -474,10 +470,14 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:vc];
     navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
     
-    [UIView transitionWithView:fromVC.view.window duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-        [fromVC presentViewController:navCtr animated:NO completion:nil];
-    } completion:nil];
+    CATransition *cubeAnim = [CATransition animation];
+    cubeAnim.duration = 0.5;
+    cubeAnim.type = @"cube";
+    cubeAnim.subtype = kCATransitionFromRight;
+    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
     
+    [fromVC presentViewController:navCtr animated:NO completion:nil];
 }
 
 @end

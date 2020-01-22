@@ -24,8 +24,7 @@
     CGFloat bigWidth = [UIScreen mainScreen].bounds.size.width;
     _bigPhotoSize = CGSizeMake(bigWidth, bigWidth / _jp_whScale);
     
-    CGFloat originWidth = [UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].scale;
-    _originPhotoSize = CGSizeMake(originWidth, originWidth / _jp_whScale);
+    _originPhotoSize = CGSizeMake(asset.pixelWidth, asset.pixelHeight);
 }
 
 - (void)setJp_itemFrame:(CGRect)jp_itemFrame {

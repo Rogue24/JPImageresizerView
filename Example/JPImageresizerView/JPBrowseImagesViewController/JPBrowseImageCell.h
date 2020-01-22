@@ -18,6 +18,8 @@
 @property (nonatomic, assign, readonly) NSInteger index;
 @property (nonatomic, assign) BOOL isShowProgress;
 @property (nonatomic, assign) BOOL isDisplaying;
+@property (nonatomic, assign) BOOL isSetingImage;
+@property (nonatomic, assign) BOOL isSetImageSuccess;
 
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIImageView *imageView;

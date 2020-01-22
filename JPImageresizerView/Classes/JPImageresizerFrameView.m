@@ -11,9 +11,6 @@
 #import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 
-/** keypath */
-#define JP_KEYPATH(objc, keyPath) @(((void)objc.keyPath, #keyPath))
-
 typedef NS_ENUM(NSUInteger, JPDotRegion) {
     JPDR_Center,
     JPDR_LeftTop,
@@ -119,9 +116,6 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGPoint _diagonal;
     
     BOOL _isRound;
-    
-    NSString *_pathAnimKey;
-    NSString *_opacityAnimKey;
 }
 
 #pragma mark - setter
@@ -270,27 +264,19 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
                 self.frameLayer.opacity = isRound ? opacity : 0;
             } completion:nil];
         } else {
-            id toOpacity = @(opacity);
-            id toOtherOpacity = @(otherOpacity);
-            id toMidDotOpacity = @(midDotOpacity);
-            NSString *opacityKeyPath = _opacityAnimKey;
-            __weak typeof(self) wSelf = self;
             void (^layerOpacityAnimate)(CALayer *layer, id toValue) = ^(CALayer *layer, id toValue) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf || !layer) return;
-                [layer jpir_addBackwardsAnimationWithKeyPath:opacityKeyPath
-                                                   fromValue:@(layer.opacity)
-                                                     toValue:toValue
-                                          timingFunctionName:timingFunctionName
-                                                    duration:duration];
+                if (!layer) return;
+                [layer jpir_addBackwardsAnimationWithKeyPath:@"opacity" fromValue:@(layer.opacity) toValue:toValue timingFunctionName:timingFunctionName duration:duration];
             };
+            
+            id toOpacity = @(opacity);
             layerOpacityAnimate(_frameLayer, toOpacity);
             
+            id toOtherOpacity = @(otherOpacity);
             layerOpacityAnimate(_leftTopDot, toOtherOpacity);
             layerOpacityAnimate(_leftBottomDot, toOtherOpacity);
             layerOpacityAnimate(_rightTopDot, toOtherOpacity);
             layerOpacityAnimate(_rightBottomDot, toOtherOpacity);
-            
             if (_frameType == JPClassicFrameType) {
                 layerOpacityAnimate(_horTopLine, toOtherOpacity);
                 layerOpacityAnimate(_horBottomLine, toOtherOpacity);
@@ -298,6 +284,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
                 layerOpacityAnimate(_verRightLine, toOtherOpacity);
             }
             
+            id toMidDotOpacity = @(midDotOpacity);
             layerOpacityAnimate(_leftMidDot, toMidDotOpacity);
             layerOpacityAnimate(_rightMidDot, toMidDotOpacity);
             layerOpacityAnimate(_topMidDot, toMidDotOpacity);
@@ -656,9 +643,6 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         blurView.layer.mask = maskLayer;
         self.maskLayer = maskLayer;
         
-        _pathAnimKey = JP_KEYPATH(maskLayer, path);
-        _opacityAnimKey = JP_KEYPATH(maskLayer, opacity);
-        
         _frameLayerLineW = isRoundResize ? 1.5 : (borderImage ? 0.0 : 1.0);
         _borderImageRectInset = borderImageRectInset;
         
@@ -1010,7 +994,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     CGFloat toOpacity = isHide ? 0 : 1;
     if (duration > 0) {
         CGFloat fromOpacity = isHide ? 1 : 0;
-        NSString *keyPath = _opacityAnimKey;
+        NSString *keyPath = @"opacity";
         CABasicAnimation *anim = [CABasicAnimation jpir_backwardsAnimationWithKeyPath:keyPath fromValue:@(fromOpacity) toValue:@(toOpacity) timingFunctionName:_kCAMediaTimingFunction duration:duration];
         [_horTopLine addAnimation:anim forKey:keyPath];
         [_horBottomLine addAnimation:anim forKey:keyPath];
@@ -1039,21 +1023,15 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     maskFrame.origin.y += _diffRotLength;
     [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:maskFrame cornerRadius:radius]];
     
-    NSString *keyPath = _pathAnimKey;
-    CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
-    __weak typeof(self) wSelf = self;
-    void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
-        if (!wSelf) return;
-        [layer jpir_addBackwardsAnimationWithKeyPath:keyPath
-                                           fromValue:[UIBezierPath bezierPathWithCGPath:layer.path]
-                                             toValue:path
-                                  timingFunctionName:timingFunctionName
-                                            duration:duration];
-    };
-    
     if (_borderImage) {
         CGRect borderImageViewFrame = self.borderImageViewFrame;
         if (duration > 0) {
+            CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
+            void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
+                if (!layer) return;
+                [layer jpir_addBackwardsAnimationWithKeyPath:@"path" fromValue:(id)layer.path toValue:path timingFunctionName:timingFunctionName duration:duration];
+            };
+            
             [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
                 self.borderImageView.frame = borderImageViewFrame;
             } completion:nil];
@@ -1147,6 +1125,12 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     }
     
     if (duration > 0) {
+        CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
+        void (^layerPathAnimate)(CAShapeLayer *layer, UIBezierPath *path) = ^(CAShapeLayer *layer, UIBezierPath *path) {
+            if (!layer) return;
+            [layer jpir_addBackwardsAnimationWithKeyPath:@"path" fromValue:(id)layer.path toValue:path timingFunctionName:timingFunctionName duration:duration];
+        };
+        
         if (_leftTopDot.opacity) {
             layerPathAnimate(_leftTopDot, leftTopDotPath);
             layerPathAnimate(_leftBottomDot, leftBottomDotPath);
@@ -1290,7 +1274,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     UIEdgeInsets contentInset = [self scrollViewContentInsetWithAdjustResizeFrame:adjustResizeFrame];
     
     // contentOffset
-    __block CGPoint contentOffset;
+    CGPoint contentOffset = scrollView.contentOffset;
     if (isAdvanceUpdateOffset) {
         contentOffset = [self convertPoint:imageresizerFrame.origin toView:imageView];
         contentOffset.x = -contentInset.left + contentOffset.x * scrollView.zoomScale;
@@ -1300,34 +1284,30 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     // minimumZoomScale
     scrollView.minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:adjustResizeFrame.size];
     
-    __weak typeof(self) wSelf = self;
     void (^zoomBlock)(void) = ^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
         [scrollView setContentInset:contentInset];
         if (isAdvanceUpdateOffset) {
             [scrollView setContentOffset:contentOffset animated:NO];
         }
         [scrollView zoomToRect:zoomFrame animated:NO];
         if (!isAdvanceUpdateOffset) {
-            contentOffset = [sSelf convertPoint:sSelf.imageresizerFrame.origin toView:imageView];
-            contentOffset.x = -contentInset.left + contentOffset.x * scrollView.zoomScale;
-            contentOffset.y = -contentInset.top + contentOffset.y * scrollView.zoomScale;
-            [scrollView setContentOffset:contentOffset animated:NO];
+            CGPoint offset = [self convertPoint:self.imageresizerFrame.origin toView:imageView];
+            offset.x = -contentInset.left + offset.x * scrollView.zoomScale;
+            offset.y = -contentInset.top + offset.y * scrollView.zoomScale;
+            [scrollView setContentOffset:offset animated:NO];
         }
     };
+    
     void (^completeBlock)(void) = ^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf.blurView setIsBlur:YES duration:sSelf->_blurDuration];
-        sSelf.superview.userInteractionEnabled = YES;
-        if (sSelf->_isToBeArbitrarily) {
-            sSelf->_isToBeArbitrarily = NO;
-            sSelf->_resizeWHScale = 0;
-            sSelf->_isArbitrarily = YES;
+        [self.blurView setIsBlur:YES duration:self->_blurDuration];
+        self.superview.userInteractionEnabled = YES;
+        if (self->_isToBeArbitrarily) {
+            self->_isToBeArbitrarily = NO;
+            self->_resizeWHScale = 0;
+            self->_isArbitrarily = YES;
         }
-        [sSelf checkIsCanRecovery];
-        sSelf.isPrepareToScale = NO;
+        [self checkIsCanRecovery];
+        self.isPrepareToScale = NO;
     };
     
     self.superview.userInteractionEnabled = NO;
@@ -1337,7 +1317,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
             zoomBlock();
         } completion:^(BOOL finished) {
-            completeBlock();
+            if (finished) completeBlock();
         }];
     } else {
         zoomBlock();

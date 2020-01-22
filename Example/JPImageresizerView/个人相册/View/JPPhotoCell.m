@@ -29,8 +29,8 @@
         _noSelBorderWidth = 0.35;
         _seledBorderWidth = 1.5;
         
-        _noSelBorderColor = UIColor.lightGrayColor;
-        _seledBorderColor = UIColor.blueColor;
+        _noSelBorderColor = JPRGBAColor(202, 202, 202, 0.3);
+        _seledBorderColor = JPRGBColor(88, 144, 255);
         
         self.backgroundColor = [UIColor whiteColor];
         
@@ -96,7 +96,6 @@
     [CATransaction commit];
 }
 
-
 - (void)setPhotoVM:(JPPhotoViewModel *)photoVM {
     _photoVM = photoVM;
     
@@ -124,14 +123,14 @@
     self.stateView.layer.opacity = opacity;
     [CATransaction commit];
     
-    __weak typeof(self) wSelf = self;
-    [[JPPhotoTool sharedInstance] requestThumbnailPhotoForAsset:photoVM.asset targetSize:photoVM.abbPhotoSize isJustGetFinalPhoto:photoVM.isJustGetFinalPhoto resultHandler:^(PHAsset *requestAsset, UIImage *result) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
+    @jp_weakify(self);
+    [JPPhotoToolSI requestThumbnailPhotoImageForAsset:photoVM.asset targetSize:photoVM.abbPhotoSize resultHandler:^(PHAsset *requestAsset, UIImage *resultImage, BOOL isFinalImage) {
+        @jp_strongify(self);
+        if (!self) return;
         if (requestAsset == self.photoVM.asset) {
-            sSelf.imageView.image = result;
+            self.imageView.image = resultImage;
         } else {
-            NSLog(@"不一样？");
+            JPLog(@"不一样？");
         }
     }];
 }

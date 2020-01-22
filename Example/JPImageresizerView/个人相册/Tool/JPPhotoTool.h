@@ -6,25 +6,21 @@
 //  Copyright © 2017年 Infinitee. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 
 #define JPPhotoToolSI [JPPhotoTool sharedInstance]
 
-typedef void(^AssetCollectionFastEnumeration)(PHAssetCollection *collection, NSInteger index, NSInteger totalCount);
-typedef void(^AssetFastEnumeration)(PHAsset *asset, NSInteger index, NSInteger totalCount);
+typedef void(^JPAssetCollectionFastEnumeration)(PHAssetCollection *collection, NSInteger index, NSInteger totalCount);
+typedef void(^JPAssetFastEnumeration)(PHAsset *asset, NSInteger index, NSInteger totalCount);
 
-typedef void(^GetAssetsCompletion)(NSArray *assets);
-typedef void(^AssetsCachingHandle)(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion);
+typedef void(^JPGetAssetsCompletion)(NSArray *assets);
+typedef void(^JPAssetsCachingHandle)(NSArray *indexPaths, JPGetAssetsCompletion getAssetsCompletion);
+
+typedef void(^JPPhotoImageResultHandler)(PHAsset *requestAsset, UIImage *resultImage, BOOL isFinalImage);
+typedef void(^JPLivePhotoResultHandler)(PHAsset *requestAsset, PHLivePhoto *livePhoto, BOOL isFinalLivePhoto);
 
 @interface JPPhotoTool : NSObject
-
-@property (nonatomic, strong) PHCachingImageManager *imageManager;
-@property (nonatomic, assign) CGRect previousPreheatRect;
-
-- (void)setupCollectionView:(UICollectionView *)collectionView thumbnailPhotoSize:(CGSize)thumbnailPhotoSize;
-- (void)resetCachedAssets;
-- (void)updateCachedAssetsWithStartCachingBlock:(AssetsCachingHandle)startCachingBlock stopCachingBlock:(AssetsCachingHandle)stopCachingBlock;
 
 /*!
  @method
@@ -32,13 +28,16 @@ typedef void(^AssetsCachingHandle)(NSArray *indexPaths, GetAssetsCompletion getA
  @discussion 单例
  @result 获取手机相册工具单例
  */
-+ (instancetype)sharedInstance;
+JPSingtonInterface
 
-/** 取消监听 */
-- (void)unRegisterChange;
+#pragma mark - 访问权限
 
-/** 相册发生改变时调用的block */
-@property (nonatomic, copy) void(^photoLibraryDidChangeHandler)(PHAssetCollection *assetCollection, PHFetchResultChangeDetails *changeDetails, PHFetchResult *fetchResult);
+/**
+ @method
+ @brief 是否有相册的访问权限
+ @discussion 相册的访问权限
+ */
+- (BOOL)isAllowAlbumAccessAuthority;
 
 /**
  @method
@@ -61,36 +60,53 @@ typedef void(^AssetsCachingHandle)(NSArray *indexPaths, GetAssetsCompletion getA
                    alreadyRefuseAccessAuthorityHandler:(void (^)(void))alreadyRefuseBlock
                           canNotAccessAuthorityHandler:(void (^)(void))canNotBlock;
 
-/**
- @method
- @brief 根据获取的PHAsset对象，解析照片并缓存
- @discussion PHAsset对象
- */
-- (void)requestThumbnailPhotoForAsset:(PHAsset *)asset
-                        resultHandler:(void (^)(PHAsset *requestAsset, UIImage *result))resultHandler;
-- (void)requestThumbnailPhotoForAsset:(PHAsset *)asset
-                           targetSize:(CGSize)targetSize
-                  isJustGetFinalPhoto:(BOOL)isJustGetFinalPhoto
-                        resultHandler:(void (^)(PHAsset *requestAsset, UIImage *result))resultHandler;
+#pragma mark - 相册监听
+
+/** 取消监听 */
+- (void)unRegisterChange;
+
+/** 相册发生改变时调用的block */
+@property (nonatomic, copy) void(^photoLibraryDidChangeHandler)(PHAssetCollection *assetCollection, PHFetchResultChangeDetails *changeDetails, PHFetchResult *fetchResult);
+
+#pragma mark - 获取相册
 
 /**
  @method
- @brief 根据获取的PHAsset对象，解析指定尺寸照片
- @discussion PHAsset对象
+ @brief 获取所有相册
  */
-- (void)requestLargePhotoForAsset:(PHAsset *)asset
-                       targetSize:(CGSize)targetSize
-                       isFastMode:(BOOL)isFastMode
-           isShouldFixOrientation:(BOOL)isFixOrientation
-                    resultHandler:(void (^)(PHAsset *requestAsset, UIImage *result, NSDictionary *info))resultHandler;
+- (void)getAllAssetCollectionWithFastEnumeration:(JPAssetCollectionFastEnumeration)fastEnumeration
+                                      completion:(void(^)(void))completion;
 
-- (void)requestOriginalPhotoForAsset:(PHAsset *)asset
-                          targetSize:(CGSize)targetSize
-                          isFastMode:(BOOL)isFastMode
-              isShouldFixOrientation:(BOOL)isFixOrientation
-                 isJustGetFinalPhoto:(BOOL)isJustGetFinalPhoto
-                       resultHandler:(void (^)(PHAsset *requestAsset, UIImage *result, NSDictionary *info))resultHandler;
+/**
+ @method
+ @brief 获取所有【系统创建】的相册
+ */
+- (void)getAllSystemCreateAssetCollectionWithFastEnumeration:(JPAssetCollectionFastEnumeration)fastEnumeration
+                                                  completion:(void(^)(void))completion;
 
+/**
+ @method
+ @brief 获取所有【用户创建】的相册
+ */
+- (void)getAllUserCreateAssetCollectionWithFastEnumeration:(JPAssetCollectionFastEnumeration)fastEnumeration
+                                                completion:(void(^)(void))completion;
+
+#pragma mark - 获取照片
+
+/**
+ @method
+ @brief 获取【所有】相册内所有照片资源
+ */
+- (void)getAllAssetInPhotoAblumWithFastEnumeration:(JPAssetFastEnumeration)fastEnumeration
+                                        completion:(void(^)(void))completion;
+
+/**
+ @method
+ @brief 获取【指定】相册内所有照片资源，assetCollection为nil则获取全部照片
+ */
+- (void)getAssetsInAssetCollection:(PHAssetCollection *)assetCollection
+                   fastEnumeration:(JPAssetFastEnumeration)fastEnumeration
+                        completion:(void(^)(void))completion;
 
 /**
  @method
@@ -99,45 +115,60 @@ typedef void(^AssetsCachingHandle)(NSArray *indexPaths, GetAssetsCompletion getA
  */
 - (PHAsset *)getNewestAsset;
 
-
-//- (PHAssetCollection *)appAssetCollection;
-
+#pragma mark - 解析照片
 
 /**
  @method
- @brief 获取【所有】相册内所有照片资源
+ @brief 根据获取的PHAsset对象，解析固定尺寸的照片并缓存
+ @discussion PHAsset对象
  */
-- (void)getAllAssetInPhotoAblumWithFastEnumeration:(AssetFastEnumeration)fastEnumeration
-                                        completion:(void(^)(void))completion;
+- (void)requestThumbnailPhotoImageForAsset:(PHAsset *)asset
+                             resultHandler:(JPPhotoImageResultHandler)resultHandler;
 
 /**
  @method
- @brief 获取【指定】相册内所有照片资源，assetCollection为nil则获取全部照片
+ @brief 根据获取的PHAsset对象，解析指定尺寸的照片并缓存
+ @discussion PHAsset对象
  */
-- (void)getAssetsInAssetCollection:(PHAssetCollection *)assetCollection
-                   fastEnumeration:(AssetFastEnumeration)fastEnumeration
-                        completion:(void(^)(void))completion;
+- (void)requestThumbnailPhotoImageForAsset:(PHAsset *)asset
+                                targetSize:(CGSize)targetSize
+                             resultHandler:(JPPhotoImageResultHandler)resultHandler;
 
 /**
  @method
- @brief 获取所有相册
+ @brief 根据获取的PHAsset对象，解析原图尺寸的照片
+ @discussion PHAsset对象
  */
-- (void)getAllAssetCollectionWithFastEnumeration:(AssetCollectionFastEnumeration)fastEnumeration
-                                      completion:(void(^)(void))completion;
+- (void)requestOriginalPhotoImageForAsset:(PHAsset *)asset
+                               isFastMode:(BOOL)isFastMode
+                         isFixOrientation:(BOOL)isFixOrientation
+                      isJustGetFinalPhoto:(BOOL)isJustGetFinalPhoto
+                            resultHandler:(JPPhotoImageResultHandler)resultHandler;
 
 /**
  @method
- @brief 获取所有【系统创建】的相册
+ @brief 根据获取的PHAsset对象，解析指定尺寸的照片
+ @discussion PHAsset对象
  */
-- (void)getAllSystemCreateAssetCollectionWithFastEnumeration:(AssetCollectionFastEnumeration)fastEnumeration
-                                                  completion:(void(^)(void))completion;
+- (void)requestPhotoImageForAsset:(PHAsset *)asset
+                       targetSize:(CGSize)targetSize
+                       isFastMode:(BOOL)isFastMode
+                 isFixOrientation:(BOOL)isFixOrientation
+              isJustGetFinalPhoto:(BOOL)isJustGetFinalPhoto
+                    resultHandler:(JPPhotoImageResultHandler)resultHandler;
 
 /**
  @method
- @brief 获取所有【用户创建】的相册
+ @brief 根据获取的PHAsset对象，解析指定尺寸的实况照片
+ @discussion PHAsset对象
  */
-- (void)getAllUserCreateAssetCollectionWithFastEnumeration:(AssetCollectionFastEnumeration)fastEnumeration
-                                                completion:(void(^)(void))completion;
+- (void)requestLivePhotoForAsset:(PHAsset *)asset
+                      targetSize:(CGSize)targetSize
+                         options:(PHLivePhotoRequestOptions *)options
+             isJustGetFinalPhoto:(BOOL)isJustGetFinalPhoto
+                   resultHandler:(JPLivePhotoResultHandler)resultHandler;
+
+#pragma mark - 保存照片/文件
 
 /**
  @method
@@ -151,5 +182,30 @@ typedef void(^AssetsCachingHandle)(NSArray *indexPaths, GetAssetsCompletion getA
  @method
  @brief 保存图片到【App相册】
  */
-- (BOOL)savePhotoToAppAlbumSuccessWithImage:(UIImage *)image;
+- (void)savePhotoToAppAlbumWithImage:(UIImage *)image
+                       successHandle:(void (^)(NSString *assetID))successHandle
+                          failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle;
+
+/**
+ @method
+ @brief 保存文件到【相机胶卷】
+ */
+- (void)saveFileWithFileURL:(NSURL *)fileURL
+              successHandle:(void (^)(NSString *assetID))successHandle
+                 failHandle:(void (^)(void))failHandle;
+
+/**
+ @method
+ @brief 保存文件到【App相册】
+ */
+- (void)saveFileToAppAlbumWithFileURL:(NSURL *)fileURL
+                        successHandle:(void (^)(NSString *assetID))successHandle
+                           failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle;
+
+#pragma mark - 缓存处理
+
+- (void)resetCachedAssets;
+- (void)updateCachedAssetsWithColloectionView:(UICollectionView *)collectionView
+                            startCachingBlock:(JPAssetsCachingHandle)startCachingBlock
+                             stopCachingBlock:(JPAssetsCachingHandle)stopCachingBlock;
 @end

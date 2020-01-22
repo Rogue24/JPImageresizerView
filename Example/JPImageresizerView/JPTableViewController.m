@@ -176,11 +176,17 @@
         }
         vc.configure.resizeImage = [UIImage imageNamed:imageName];
         
-        [self.navigationController pushViewController:vc animated:YES];
+        CATransition *cubeAnim = [CATransition animation];
+        cubeAnim.duration = 0.5;
+        cubeAnim.type = @"cube";
+        cubeAnim.subtype = kCATransitionFromRight;
+        cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
+        
+        [self.navigationController pushViewController:vc animated:NO];
         
 //        JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
 //        [self.navigationController pushViewController:vc animated:YES];
-        
     } else {
         __weak typeof(self) wSelf = self;
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
@@ -188,7 +194,7 @@
             if (!sSelf) return;
             JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
             [sSelf.navigationController pushViewController:vc animated:YES];
-        } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:YES];
+        } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
         
     }
 }

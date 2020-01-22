@@ -41,7 +41,11 @@
 }
 
 - (void)savePhotoToAppAlbum {
-    [[JPPhotoTool sharedInstance] savePhotoToAppAlbumSuccessWithImage:self.image];
+    [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.image successHandle:^(NSString *assetID) {
+        [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+    } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+        [JPProgressHUD showSuccessWithStatus:@"保存失败" userInteractionEnabled:YES];
+    }];
 }
 
 - (void)dealloc {

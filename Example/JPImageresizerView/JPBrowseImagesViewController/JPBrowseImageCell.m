@@ -17,8 +17,6 @@
 @property (nonatomic, assign) BOOL recover;
 @property (nonatomic, assign) BOOL canPan;
 @property (nonatomic, assign) BOOL isHideProgress;
-@property (nonatomic, assign) BOOL isSetingImage;
-@property (nonatomic, assign) BOOL isSetImageSuccess;
 
 //@property (nonatomic, weak) PHLivePhotoView *livePHView;
 @property (nonatomic, weak) UIImageView *originImgView;

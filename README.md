@@ -6,10 +6,10 @@
 
 英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
 
-## 简介（当前版本：1.3.4）
+## 简介（当前版本：1.3.5）
 ### 文档暂时只更新了版本功能，具体可先查看Demo（新版Demo目前构建中，文档届时也一同翻新）
 
-#### 1.2.1~1.3.4 更新内容
+#### 1.2.1~1.3.5 更新内容
     1.新增圆切样式；
     2.中间的点/块可隐藏；
     3.可动态切换图片、设置线框颜色和背景颜色，可设置是否带有动画效果；
@@ -91,12 +91,10 @@ if (@available(iOS 11.0, *)) {
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
 self.imageresizerView.resizeWHScale = 16.0 / 9.0;
 
-// initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
-self.imageresizerView.initialResizeWHScale = 0.0; // 可随意修改该参数
-
-// 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
-// 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
 // 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
+// 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
+// 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
+self.imageresizerView.initialResizeWHScale = 0.0; // 默认为初始化时的resizeWHScale，此后可自行修改该参数
 ```
 
 #### 更改边框样式
@@ -137,6 +135,24 @@ self.imageresizerView.resizeWHScale = 1.0;
 // 默认切换之后保存最新的 resizeWHScale，且自带动画效果，相当于：
 [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
 ```
+
+#### 切换毛玻璃背景、线框颜色、背景遮罩颜色&透明度
+```objc
+// 切换毛玻璃背景
+self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+
+// 切换线框颜色
+self.imageresizerView.strokeColor = UIColor.whiteColor;
+
+// 切换背景遮罩颜色
+self.imageresizerView.bgColor = UIColor.blackColor;
+
+// 切换毛背景遮罩透明度
+self.imageresizerView.maskAlpha = 0.5;
+
+[self.imageresizerView setupStrokeColor:strokeColor blurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark] bgColor:UIColor.blackColor maskAlpha: 0.5 animated:YES];
+```
+可动态切换图片、设置线框颜色和背景颜色，可设置是否带有动画效果
 
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
