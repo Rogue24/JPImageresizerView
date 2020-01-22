@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
+[简书上的文档](https://www.jianshu.com/p/dec3e33bbce1)
 [英文文档（English document）](https://www.jianshu.com/p/5600da5c9bf6)
 
 ## 简介（当前版本：1.3.5）
