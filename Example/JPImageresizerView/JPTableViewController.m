@@ -24,26 +24,26 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(50 + JPDiffStatusBarH, 10, (40 + 30 + 30 + 10) + JPDiffTabBarH, 10);
     
     NSString *title1 = @"默认样式";
-    JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:[UIImage imageNamed:@"Girl.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure.jp_contentInsets(contentInsets);
     }];
     
     NSString *title2 = @"深色毛玻璃遮罩";
-    JPImageresizerConfigure *configure2 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Girl.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure2 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor orangeColor]);
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
-    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Train.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor yellowColor]);
     }];
     
     NSString *title4 = @"其他样式";
-    JPImageresizerConfigure *configure4 = [JPImageresizerConfigure defaultConfigureWithResizeImage:[UIImage imageNamed:@"Kobe.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure4 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_maskAlpha(0.5)
         .jp_strokeColor(JPRandomColor)
@@ -66,7 +66,7 @@
     // 设定拉伸区域
     stretchBorderImage = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
     
-    JPImageresizerConfigure *configure5 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Beauty.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure5 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
@@ -80,7 +80,7 @@
     // 设定平铺区域
     tileBorderImage = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
     
-    JPImageresizerConfigure *configure6 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:[UIImage imageNamed:@"Woman.jpg"] make:^(JPImageresizerConfigure *configure) {
+    JPImageresizerConfigure *configure6 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_contentInsets(contentInsets)
         .jp_frameType(JPClassicFrameType)
@@ -153,6 +153,29 @@
         NSDictionary *dic = self.configures[indexPath.row];
         vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
         vc.configure = dic[@"configure"];
+        
+        NSString *imageName;
+        NSInteger index = 1 + arc4random() % 9;
+        if (index > 5) {
+            switch (index) {
+                case 6:
+                    imageName = @"Kobe.jpg";
+                    break;
+                case 7:
+                    imageName = @"Woman.jpg";
+                    break;
+                case 8:
+                    imageName = @"Beauty.jpg";
+                    break;
+                default:
+                    imageName = @"Train.jpg";
+                    break;
+            }
+        } else {
+            imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
+        }
+        vc.configure.resizeImage = [UIImage imageNamed:imageName];
+        
         [self.navigationController pushViewController:vc animated:YES];
         
 //        JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];

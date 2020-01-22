@@ -317,19 +317,25 @@
 - (IBAction)replaceImage:(UIButton *)sender {
     UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Girl.jpg"];
+        UIImage *image;
+        do {
+            NSInteger index = 1 + arc4random() % 5;
+            NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
+            image = [UIImage imageNamed:girlImageName];
+        } while (self.imageresizerView.resizeImage == image);
+        self.imageresizerView.resizeImage = image;
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
+        self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Woman" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Woman.jpg"];
+        self.imageresizerView.resizeImage = [UIImage imageNamed:@"Woman.jpg"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Beauty" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Beauty.jpg"];
+        self.imageresizerView.resizeImage = [UIImage imageNamed:@"Beauty.jpg"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Train" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-       self.imageresizerView.resizeImage = [UIImage imageNamed:@"Train.jpg"];
+        self.imageresizerView.resizeImage = [UIImage imageNamed:@"Train.jpg"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertCtr animated:YES completion:nil];
