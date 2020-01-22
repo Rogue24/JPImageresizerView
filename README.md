@@ -4,18 +4,10 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
-英文文档（English document）：https://www.jianshu.com/p/5600da5c9bf6
+[英文文档（English document）](https://www.jianshu.com/p/5600da5c9bf6)
 
 ## 简介（当前版本：1.3.5）
-### 文档暂时只更新了版本功能，具体可先查看Demo（新版Demo目前构建中，文档届时也一同翻新）
-
-#### 1.2.1~1.3.5 更新内容
-    1.新增圆切样式；
-    2.中间的点/块可隐藏；
-    3.可动态切换图片、设置线框颜色和背景颜色，可设置是否带有动画效果；
-    4.毛玻璃效果可设置系统现有的所有效果；
-    5.适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；
-    6.优化逻辑。
+***新版Demo目前构建中，文档届时也一同翻新。***
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -27,7 +19,7 @@
         5.水平和垂直的镜像翻转；
         6.两种边框样式；
         7.支持圆框裁剪
-        8.自定义遮罩和线框的颜色、高斯模糊样式；
+        8.自定义遮罩和边框的颜色、高斯模糊样式；
         9.自定义边框图片。
 
     注意：
@@ -47,9 +39,17 @@
 
 #### 初始化
 ```objc
-// 可设置参数：裁剪的图片、frame、遮罩样式、边框样式、动画曲线、裁剪线颜色、背景色、遮罩透明度、垂直和水平的间距、裁剪的宽高比、裁剪区域的内边距、边框图片、边框图片与边线的偏移量、最大缩放比例、是否圆切、可否重置的回调、是否预备缩放的回调
-
-// 配置初始参数
+// 1.配置初始参数（更多可查看JPImageresizerConfigure的头文件）
+/**
+ * 部分配置参数：
+ * 1.裁剪的图片
+ * 2.毛玻璃样式
+ * 3.边框图片
+ * 4.边框样式&颜色
+ * 5.背景色
+ * 6.遮罩透明度
+ * 7.裁剪的宽高比
+ */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
     configure
@@ -63,7 +63,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
-// 创建imageresizerView
+// 2.创建imageresizerView
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
     // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
@@ -76,25 +76,22 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
     // 注意循环引用
 }];
 
-// 添加到视图上
+// 3.添加到视图上
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
-// 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
+// 创建后也可以动态修改以上大部分参数（除了maskType和contentInsets）
+self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"]; // 更换裁剪图片（默认带动画效果）
+self.imageresizerView.resizeWHScale = 16.0 / 9.0; // 修改裁剪宽高比
+self.imageresizerView.initialResizeWHScale = 0.0; // 默认为初始化时的resizeWHScale，调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
+
+// 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO
+// 不然imageresizerView会随导航栏或状态栏的变化产生偏移
 if (@available(iOS 11.0, *)) {
 
 } else {
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
-
-// 创建后也可以修改以上部分参数（除了maskType和contentInsets）
-self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"];
-self.imageresizerView.resizeWHScale = 16.0 / 9.0;
-
-// 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
-// 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
-// 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
-self.imageresizerView.initialResizeWHScale = 0.0; // 默认为初始化时的resizeWHScale，此后可自行修改该参数
 ```
 
 #### 更改边框样式
@@ -136,23 +133,36 @@ self.imageresizerView.resizeWHScale = 1.0;
 [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
 ```
 
-#### 切换毛玻璃背景、线框颜色、背景遮罩颜色&透明度
+#### 圆切
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
 ```objc
-// 切换毛玻璃背景
+// 设置圆切
+// 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上左下右的中部可拖动。
+[self.imageresizerView roundResize:YES];
+
+// 还原矩形
+// 只需设置一下resizeWHScale即可
+self.imageresizerView.resizeWHScale = 0.0;
+```
+
+#### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
+```objc
+// 设置毛玻璃背景（默认带动画效果）
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
 
-// 切换线框颜色
+// 设置边框颜色（默认带动画效果）
 self.imageresizerView.strokeColor = UIColor.whiteColor;
 
-// 切换背景遮罩颜色
+// 设置背景颜色（默认带动画效果）
 self.imageresizerView.bgColor = UIColor.blackColor;
 
-// 切换毛背景遮罩透明度
-self.imageresizerView.maskAlpha = 0.5;
+// 设置遮罩透明度（默认带动画效果）
+// PS：跟毛玻璃互斥，当设置了毛玻璃则遮罩为透明
+self.imageresizerView.maskAlpha = 0.5; // blurEffect = nil 才生效
 
+// 一步设置毛玻璃样式、边框颜色、背景颜色、遮罩透明度
 [self.imageresizerView setupStrokeColor:strokeColor blurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark] bgColor:UIColor.blackColor maskAlpha: 0.5 animated:YES];
 ```
-可动态切换图片、设置线框颜色和背景颜色，可设置是否带有动画效果
 
 #### 镜像翻转
 ![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
@@ -250,6 +260,14 @@ self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
+
+#### 1.2.1~1.3.5 更新内容
+    1.新增圆切样式；
+    2.中间的点/块可隐藏；
+    3.可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；
+    4.毛玻璃效果可设置系统现有的所有效果；
+    5.适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；
+    6.优化逻辑。
 
 #### 1.2.0 更新内容
     1.固定比例的裁剪宽高比，裁剪边框也均可拖拽8个方向；
