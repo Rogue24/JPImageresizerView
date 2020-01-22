@@ -41,7 +41,7 @@
         4.更多的参数设定；
         5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
 
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/h05JLQ3kCA.gif)
+![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
 ## 如何使用
 

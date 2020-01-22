@@ -619,6 +619,8 @@
 }
 
 - (void)updateSubviewLayouts:(UIImage *)image duration:(NSTimeInterval)duration {
+    if (self.horizontalMirror) [self setHorizontalMirror:NO animated:NO];
+    if (self.verticalityMirror) [self setVerticalityMirror:NO animated:NO];
     self.directionIndex = 0;
     self.scrollView.layer.transform = CATransform3DIdentity;
     self.scrollView.minimumZoomScale = 1.0;
