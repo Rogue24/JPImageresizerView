@@ -2133,8 +2133,9 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 #pragma mark - super method
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    _currDR = JPDR_Center;
+    
     if (!_panGR.enabled) {
-        _currDR = JPDR_Center;
         return NO;
     }
     
@@ -2145,7 +2146,6 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     if (_edgeLineIsEnabled &&
         (!CGRectContainsPoint(CGRectInset(frame, -halfScopeWH, -halfScopeWH), point) ||
          CGRectContainsPoint(CGRectInset(frame, halfScopeWH, halfScopeWH), point))) {
-        _currDR = JPDR_Center;
         return NO;
     }
     
@@ -2160,25 +2160,31 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     CGRect leftBotRect = CGRectMake(x - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
     CGRect rightTopRect = CGRectMake(maxX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
     CGRect rightBotRect = CGRectMake(maxX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
-    if (CGRectContainsPoint(leftTopRect, point)) {
-        _currDR = JPDR_LeftTop;
-        _diagonal = CGPointMake(maxX, maxY);
-    } else if (CGRectContainsPoint(leftBotRect, point)) {
-        _currDR = JPDR_LeftBottom;
-        _diagonal = CGPointMake(maxX, y);
-    } else if (CGRectContainsPoint(rightTopRect, point)) {
-        _currDR = JPDR_RightTop;
-        _diagonal = CGPointMake(x, maxY);
-    } else if (CGRectContainsPoint(rightBotRect, point)) {
-        _currDR = JPDR_RightBottom;
-        _diagonal = CGPointMake(x, y);
-    } else {
+    
+    if (!_isRound) {
+        if (CGRectContainsPoint(leftTopRect, point)) {
+            _currDR = JPDR_LeftTop;
+            _diagonal = CGPointMake(maxX, maxY);
+        } else if (CGRectContainsPoint(leftBotRect, point)) {
+            _currDR = JPDR_LeftBottom;
+            _diagonal = CGPointMake(maxX, y);
+        } else if (CGRectContainsPoint(rightTopRect, point)) {
+            _currDR = JPDR_RightTop;
+            _diagonal = CGPointMake(x, maxY);
+        } else if (CGRectContainsPoint(rightBotRect, point)) {
+            _currDR = JPDR_RightBottom;
+            _diagonal = CGPointMake(x, y);
+        }
+    }
+    
+    if (_currDR == JPDR_Center) {
         CGRect leftMidRect = CGRectNull;
         CGRect rightMidRect = CGRectNull;
         CGRect topMidRect = CGRectNull;
         CGRect botMidRect = CGRectNull;
         CGFloat midX = CGRectGetMidX(frame);
         CGFloat midY = CGRectGetMidY(frame);
+        
         if (_edgeLineIsEnabled && !_isRound) {
             leftMidRect = CGRectMake(x - halfScopeWH, y + halfScopeWH, scopeWH, h - scopeWH);
             rightMidRect = CGRectMake(maxX - halfScopeWH, y + halfScopeWH, scopeWH, h - scopeWH);
@@ -2190,6 +2196,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             topMidRect = CGRectMake(midX - halfScopeWH, y - halfScopeWH, scopeWH, scopeWH);
             botMidRect = CGRectMake(midX - halfScopeWH, maxY - halfScopeWH, scopeWH, scopeWH);
         }
+        
         if (CGRectContainsPoint(leftMidRect, point)) {
             _currDR = JPDR_LeftMid;
             _diagonal = CGPointMake(maxX, midY);
@@ -2203,7 +2210,6 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             _currDR = JPDR_BottomMid;
             _diagonal = CGPointMake(midX, y);
         } else {
-            _currDR = JPDR_Center;
             return NO;
         }
     }

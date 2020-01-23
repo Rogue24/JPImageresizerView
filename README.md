@@ -9,7 +9,7 @@
 [英文文档（English document）](https://www.jianshu.com/p/5600da5c9bf6)
 
 ## 简介（当前版本：1.3.5）
-***新版Demo目前构建中，文档届时也一同翻新。***
+***新版Demo目前构建中。***
 
 仿微信裁剪图片的一个裁剪小工具。
 
