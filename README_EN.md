@@ -4,9 +4,9 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
-[简书上的文档](https://www.jianshu.com/p/5600da5c9bf6)
+[Jianshu](https://www.jianshu.com/p/5600da5c9bf6)
 
-[英文文档（English document）](https://www.jianshu.com/p/5600da5c9bf6)
+[Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
 ## Brief introduction (Current version: 1.3.6)
 ***The new demo is currently under construction.***
