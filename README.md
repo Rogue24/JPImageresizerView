@@ -35,7 +35,7 @@
         4.更多的参数设定；
         5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
 
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
+![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
 ## 如何使用
 
@@ -97,8 +97,8 @@ if (@available(iOS 11.0, *)) {
 ```
 
 #### 更改边框样式
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
+![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
+![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
 ```objc
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
@@ -106,8 +106,8 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 #### 自定义边框图片
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
+![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
+![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
 ```objc
 // 使用自定义边框图片（例：平铺模式）
 UIImage *tileBorderImage = [[UIImage imageNamed:@"dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -136,7 +136,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 ```
 
 #### 圆切
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
+![round_resize](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
 ```objc
 // 设置圆切
 // 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上、左、下、右的中部均可拖动。
@@ -167,7 +167,7 @@ self.imageresizerView.maskAlpha = 0.5; // blurEffect = nil 才生效
 ```
 
 #### 镜像翻转
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
+![mirror.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
 ```objc
 // 1.垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
@@ -338,7 +338,7 @@ self.imageresizerView.isAutoScale = NO;
 
     说明：平时裁剪头像区域一般都是使用1:1的比例，但如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给人一种图片尺寸改变了的错觉，所以个人建议进去页面后（例如控制器的viewDidApper时）再调用改方法重新调整宽高比（请看gif图效果），这样用户体验会好点。
 
-![image](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
+![修改裁剪宽高比的动画效果](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 
 #### 0.3.2 更新内容
     1.新增【裁剪区域预备缩放至适应范围的回调】，当预备缩放时裁剪、旋转、镜像功能不可用，可在这回调中作相应处理；
