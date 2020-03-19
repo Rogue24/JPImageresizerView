@@ -8,6 +8,12 @@
 
 #import "JPImageresizerView.h"
 
+#ifdef DEBUG
+#define JPIRLog(...) printf("%s %s 第%d行: %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String]);
+#else
+#define JPIRLog(...)
+#endif
+
 @interface JPImageresizerView () <UIScrollViewDelegate>
 @property (nonatomic, strong) NSMutableArray *allDirections;
 @property (nonatomic, assign) NSInteger directionIndex;
@@ -428,7 +434,7 @@
 
 - (void)__recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily isToRoundResize:(BOOL)isToRoundResize {
     if (!self.frameView.isCanRecovery) {
-        NSLog(@"jp_tip: 已经是初始状态，不需要重置");
+        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
         return;
     }
     
@@ -510,7 +516,7 @@
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
-        NSLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
     [self.frameView setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
@@ -526,7 +532,7 @@
 
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
-        NSLog(@"jp_tip: 裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
         return;
     }
     if (_verticalityMirror == verticalityMirror) return;
@@ -536,7 +542,7 @@
 
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
-        NSLog(@"jp_tip: 裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，镜像功能暂不可用，此时应该将镜像按钮设为不可点或隐藏");
         return;
     }
     if (_horizontalMirror == horizontalMirror) return;
@@ -558,7 +564,7 @@
 
 - (void)rotation {
     if (self.frameView.isPrepareToScale) {
-        NSLog(@"jp_tip: 裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
         return;
     }
     
@@ -601,12 +607,12 @@
 
 - (void)imageresizerWithComplete:(void (^)(UIImage *))complete compressScale:(CGFloat)compressScale {
     if (self.frameView.isPrepareToScale) {
-        NSLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !complete ? : complete(nil);
         return;
     }
     if (compressScale <= 0) {
-        NSLog(@"jp_tip: 压缩比例不能小于或等于0");
+        JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !complete ? : complete(nil);
         return;
     }
