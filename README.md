@@ -8,7 +8,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.3.6）
+## 简介（当前版本：1.3.7）
 ***新版Demo目前构建中。***
 
 仿微信裁剪图片的一个裁剪小工具。
