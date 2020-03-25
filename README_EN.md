@@ -11,7 +11,7 @@
 ## Brief introduction (Current version: 1.3.7)
 ***The new demo is currently under construction.***
 
-A small tool that mimics the clipping function in Wechat.
+Imitation WeChat picture clipping function of a small tool.
 
     Current functions:
         1. Zooming of area that can be tailored adaptively;
