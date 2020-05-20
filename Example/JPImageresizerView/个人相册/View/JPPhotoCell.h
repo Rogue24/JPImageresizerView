@@ -11,16 +11,16 @@
 #import "JPPhotoViewModel.h"
 
 @interface JPPhotoCell : UICollectionViewCell <JPPictureChooseCellProtocol>
-@property (nonatomic, assign) CGFloat startScale;
-@property (nonatomic, assign) CGFloat endScale;
-@property (nonatomic, assign) CGFloat totalScale;
+@property (nonatomic, weak) UIImageView *imageView;
+@property (nonatomic, weak) UIView *stateView;
 
 @property (nonatomic, strong) JPPhotoViewModel *photoVM;
 @property (nonatomic, copy) void (^longPressBlock)(JPPhotoCell *pCell);
 @property (nonatomic, copy) BOOL (^tapBlock)(JPPhotoCell *pCell);
 
-- (UIImage *)photo;
+@property (nonatomic, assign) CGFloat startScale;
+@property (nonatomic, assign) CGFloat endScale;
+@property (nonatomic, assign) CGFloat totalScale;
 
 - (void)updateSelectedState:(BOOL)isSelected animate:(BOOL)animate;
-
 @end

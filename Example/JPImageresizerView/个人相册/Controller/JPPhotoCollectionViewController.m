@@ -382,7 +382,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 #pragma mark - <JPBrowseImagesDelegate>
 
 - (UIImageView *)getOriginImageView:(NSInteger)currIndex {
-    JPBrowseImageCell *cell = (JPBrowseImageCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
+    JPPhotoCell *cell = (JPPhotoCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
     return cell.imageView;
 }
 

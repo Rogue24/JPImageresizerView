@@ -10,11 +10,6 @@
 #import <Masonry/Masonry.h>
 #import <pop/POP.h>
 
-@interface JPPhotoCell ()
-@property (nonatomic, weak) UIImageView *imageView;
-@property (nonatomic, weak) UIView *stateView;
-@end
-
 @implementation JPPhotoCell
 {
     CGFloat _noSelBorderWidth;
@@ -133,10 +128,6 @@
             JPLog(@"不一样？");
         }
     }];
-}
-
-- (UIImage *)photo {
-    return self.imageView.image;
 }
 
 - (void)updateSelectedState:(BOOL)isSelected animate:(BOOL)animate {
