@@ -30,7 +30,7 @@ Imitation WeChat picture clipping function of a small tool.
         3. More parameter setting;
         4. To achieve the effect of free dragging rotation direction.
         
-    Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being;
+    Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
 
 ![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -94,7 +94,7 @@ if (@available(iOS 11.0, *)) {
 }
 ```
 
-#### 横竖屏切换
+#### Horizontal and vertical screen switching
 ![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
 ```objc
 // This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
