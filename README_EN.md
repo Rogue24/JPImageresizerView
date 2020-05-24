@@ -8,8 +8,7 @@
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
-## Brief introduction (Current version: 1.3.7)
-***The new demo is currently under construction.***
+## Brief introduction (Current version: 1.3.8)
 
 Imitation WeChat picture clipping function of a small tool.
 
@@ -22,18 +21,16 @@ Imitation WeChat picture clipping function of a small tool.
         6. Two border styles;
         7. Supports circular clipping;
         8. Custom gaussian blur style, border color, background color, mask opacity;
-        9. Custom border image.
+        9. Custom border image;
+        10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching.
 
-    Note:
-        1. Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being;
-        2. At present, only vertical screen operation is supported.
-        
     Trying to update the content:
         1. Swift version;
-        2. Adapt horizontal and vertical screen switching;
-        3. More new border and mask styles;
-        4. More parameter setting;
-        5. To achieve the effect of free dragging rotation direction.
+        2. More new border and mask styles;
+        3. More parameter setting;
+        4. To achieve the effect of free dragging rotation direction.
+        
+    Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being;
 
 ![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -44,13 +41,14 @@ Imitation WeChat picture clipping function of a small tool.
 // 1. Configure initial parameters (see JPImageresizerConfigure.h for more details)
 /**
  * Some configuration parameters:
- * 1.clipping picture
- * 2.gaussian blur style
- * 3.custom border image
- * 4.border style & color
- * 5.background color
- * 6.mask opacity
- * 7.width-height ratio of the clipping
+ * 1.resizeImage: clipping picture
+ * 2.blurEffect: gaussian blur style
+ * 3.borderImage: custom border image
+ * 4.frameType & strokeColor: border style & color
+ * 5.bgColor: background color
+ * 6.maskAlpha: mask opacity
+ * 7.resizeWHScale: width-height ratio of the clipping
+ * 8.contentInsets: the inner margin between the crop region and the main view
  */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // Now that you have the default parameter values, you can set the parameters you want here (using chain programming)
@@ -96,6 +94,17 @@ if (@available(iOS 11.0, *)) {
 }
 ```
 
+#### 横竖屏切换
+![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
+```objc
+// This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
+// 1.updateFrame: Refresh frame (e.g. horizontal and vertical screen switching, incoming self.view.bounds Just).
+// 2.contentInsets：The inner margin between the crop region and the main view.
+// 3.duration：Animation Duration (< 0, No animation).
+//【Specific operation can refer to Demo】
+[self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
+```
+
 #### Change border style
 ![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
 ![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
@@ -120,6 +129,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 #### Switching resizeWHScale
+![switch resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 ```objc
 // 1.Custom parameter switching
 /**

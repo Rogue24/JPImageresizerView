@@ -22,13 +22,13 @@
         7.支持圆框裁剪；
         8.自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
         9.自定义边框图片；
-        10.支持横竖屏切换。
+        10.可动态修改视图区域和裁剪区域间距，支持横竖屏切换。
 
     努力着的更新内容：
         1.Swift版本；
-        3.更多新的边框和遮罩样式；
-        4.更多的参数设定；
-        5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
+        2.更多新的边框和遮罩样式；
+        3.更多的参数设定；
+        4.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
         
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
 
@@ -129,7 +129,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 #### 切换裁剪宽高比
-![修改裁剪宽高比的动画效果](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
+![switch resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
 ```objc
 // 1.自定义参数切换
 /**
