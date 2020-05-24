@@ -12,7 +12,7 @@
 
 + (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
                              cropFrame:(CGRect)cropFrame
-                         relativeWidth:(CGFloat)relativeWidth
+                          relativeSize:(CGSize)relativeSize
                            isVerMirror:(BOOL)isVerMirror
                            isHorMirror:(BOOL)isHorMirror
                      rotateOrientation:(UIImageOrientation)orientation

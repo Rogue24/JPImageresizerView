@@ -81,7 +81,7 @@
     self.isSelected = isSelected;
     UIColor *textColor = JPRGBAColor(88, 144, 255, (isSelected ? 1 : 0.5));
     if (animate) {
-        [self.titleLabel jp_addPOPBasicAnimationWithPpropertyNamed:kPOPLabelTextColor beginTime:0 duration:0.35 toValue:textColor completionBlock:nil];
+        [self.titleLabel jp_addPOPBasicAnimationWithPropertyNamed:kPOPLabelTextColor toValue:textColor duration:0.35];
     } else {
         self.titleLabel.textColor = textColor;
     }

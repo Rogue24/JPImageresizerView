@@ -45,10 +45,8 @@
  @param bgColor --- 背景颜色
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param strokeColor ---裁剪线颜色
- @param verBaseMargin --- 裁剪图片与裁剪区域的垂直间距
- @param horBaseMargin --- 裁剪图片与裁剪区域的水平间距
  @param resizeWHScale --- 裁剪宽高比
- @param contentInsets --- 裁剪区域与主视图的内边距，目前初始化后不可再更改
+ @param contentInsets --- 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
  @param borderImage --- 边框图片（若为nil则使用frameType的边框）
  @param borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
  @param maximumZoomScale --- 最大缩放比例
@@ -66,8 +64,6 @@
                             bgColor:(UIColor *)bgColor
                           maskAlpha:(CGFloat)maskAlpha
                         strokeColor:(UIColor *)strokeColor
-                      verBaseMargin:(CGFloat)verBaseMargin
-                      horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
                         borderImage:(UIImage *)borderImage
@@ -83,6 +79,9 @@
 
 /** 动画曲线（默认是线性Linear） */
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
+
+/** 缩放系数zoomScale为最小时的裁剪最大显示区域 */
+@property (readonly) CGSize baseContentMaxSize;
 
 /**
  * 裁剪的图片
@@ -131,12 +130,6 @@
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
-
-/** 裁剪图片与裁剪区域的垂直边距 */
-@property (nonatomic, assign) CGFloat verBaseMargin;
-
-/** 裁剪图片与裁剪区域的水平边距 */
-@property (nonatomic, assign) CGFloat horBaseMargin;
 
 /** 是否顺时针旋转（默认逆时针） */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
@@ -251,10 +244,10 @@
 
 /*!
  @method
- @brief 同时更新图片、垂直边距和水平边距
+ @brief 更新图片
  @discussion 同步更新
  */
-- (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin;
+- (void)updateResizeImage:(UIImage *)resizeImage;
 
 /*!
  @method
@@ -310,5 +303,14 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+
+/*!
+ @method
+ @brief 修改整体Frame
+ @param contentInsets --- 裁剪区域与主视图的内边距
+ @param duration --- 刷新时长（大于0即带有动画效果）
+ @discussion 可用在【横竖屏的切换】
+ */
+- (void)updateFrame:(CGRect)frame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
 @end

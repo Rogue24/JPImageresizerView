@@ -26,13 +26,6 @@
 		1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */; };
 		1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36622B2854A00B6B6AB /* Kobe.jpg */; };
 		1A0AB36A22B2854A00B6B6AB /* Girl1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36722B2854A00B6B6AB /* Girl1.jpg */; };
-		1A10434623A495AE00D1B2DF /* JPConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433823A495AD00D1B2DF /* JPConstant.m */; };
-		1A10434723A495AE00D1B2DF /* JPProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433923A495AD00D1B2DF /* JPProgressHUD.m */; };
-		1A10434823A495AE00D1B2DF /* UIColor+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433A23A495AD00D1B2DF /* UIColor+JPExtension.m */; };
-		1A10434923A495AE00D1B2DF /* UIView+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10433F23A495AD00D1B2DF /* UIView+JPExtension.m */; };
-		1A10434A23A495AE00D1B2DF /* UIScrollView+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10434323A495AE00D1B2DF /* UIScrollView+JPExtension.m */; };
-		1A10434B23A495AE00D1B2DF /* UIViewController+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10434423A495AE00D1B2DF /* UIViewController+JPExtension.m */; };
-		1A10434C23A495AE00D1B2DF /* UIView+JPPOP.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10434523A495AE00D1B2DF /* UIView+JPPOP.m */; };
 		1A10434F23A4A29400D1B2DF /* JPImageresizerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A10434E23A4A29400D1B2DF /* JPImageresizerViewController.m */; };
 		1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A25802422F3E9BC00DB36B9 /* Woman.jpg */; };
 		1A25802722F4130D00DB36B9 /* Beauty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A25802622F4130D00DB36B9 /* Beauty.jpg */; };
@@ -42,8 +35,6 @@
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
 		1A60C768241E3BA0000E1692 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A60C767241E3BA0000E1692 /* README.md */; };
 		1AA6F3EF23A8F216008EFA8B /* Train.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1AA6F3EE23A8F216008EFA8B /* Train.jpg */; };
-		1AA6F3F323A9B91D008EFA8B /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */; };
-		1AA6F3F623A9B984008EFA8B /* NSString+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */; };
 		1ABFEFE523D7E5E7003429B0 /* Girl4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE123D7E5E7003429B0 /* Girl4.jpg */; };
 		1ABFEFE623D7E5E7003429B0 /* Girl3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE223D7E5E7003429B0 /* Girl3.jpg */; };
 		1ABFEFE723D7E5E7003429B0 /* Girl2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE323D7E5E7003429B0 /* Girl2.jpg */; };
@@ -134,21 +125,6 @@
 		1A0AB36022B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		1A0AB36622B2854A00B6B6AB /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A0AB36722B2854A00B6B6AB /* Girl1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl1.jpg; sourceTree = "<group>"; };
-		1A10433723A495AD00D1B2DF /* UIView+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JPExtension.h"; sourceTree = "<group>"; };
-		1A10433823A495AD00D1B2DF /* JPConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPConstant.m; sourceTree = "<group>"; };
-		1A10433923A495AD00D1B2DF /* JPProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPProgressHUD.m; sourceTree = "<group>"; };
-		1A10433A23A495AD00D1B2DF /* UIColor+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+JPExtension.m"; sourceTree = "<group>"; };
-		1A10433B23A495AD00D1B2DF /* UIView+JPPOP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JPPOP.h"; sourceTree = "<group>"; };
-		1A10433C23A495AD00D1B2DF /* UIViewController+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+JPExtension.h"; sourceTree = "<group>"; };
-		1A10433D23A495AD00D1B2DF /* UIScrollView+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+JPExtension.h"; sourceTree = "<group>"; };
-		1A10433E23A495AD00D1B2DF /* JPConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPConstant.h; sourceTree = "<group>"; };
-		1A10433F23A495AD00D1B2DF /* UIView+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JPExtension.m"; sourceTree = "<group>"; };
-		1A10434023A495AD00D1B2DF /* JPMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMacro.h; sourceTree = "<group>"; };
-		1A10434123A495AD00D1B2DF /* UIColor+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+JPExtension.h"; sourceTree = "<group>"; };
-		1A10434223A495AD00D1B2DF /* JPProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPProgressHUD.h; sourceTree = "<group>"; };
-		1A10434323A495AE00D1B2DF /* UIScrollView+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+JPExtension.m"; sourceTree = "<group>"; };
-		1A10434423A495AE00D1B2DF /* UIViewController+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+JPExtension.m"; sourceTree = "<group>"; };
-		1A10434523A495AE00D1B2DF /* UIView+JPPOP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JPPOP.m"; sourceTree = "<group>"; };
 		1A10434D23A4A29400D1B2DF /* JPImageresizerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPImageresizerViewController.h; sourceTree = "<group>"; };
 		1A10434E23A4A29400D1B2DF /* JPImageresizerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPImageresizerViewController.m; sourceTree = "<group>"; };
 		1A25802422F3E9BC00DB36B9 /* Woman.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Woman.jpg; sourceTree = "<group>"; };
@@ -162,10 +138,6 @@
 		1A60C767241E3BA0000E1692 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1AA6F3EE23A8F216008EFA8B /* Train.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Train.jpg; sourceTree = "<group>"; };
 		1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSolveTool.m; sourceTree = "<group>"; };
-		1AA6F3F223A9B91D008EFA8B /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
-		1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JPExtension.m"; sourceTree = "<group>"; };
-		1AA6F3F523A9B984008EFA8B /* NSString+JPExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JPExtension.h"; sourceTree = "<group>"; };
 		1ABFEFE123D7E5E7003429B0 /* Girl4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl4.jpg; sourceTree = "<group>"; };
 		1ABFEFE223D7E5E7003429B0 /* Girl3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl3.jpg; sourceTree = "<group>"; };
 		1ABFEFE323D7E5E7003429B0 /* Girl2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl2.jpg; sourceTree = "<group>"; };
@@ -352,25 +324,6 @@
 		1A10433623A495AD00D1B2DF /* JPHelper */ = {
 			isa = PBXGroup;
 			children = (
-				1A10433E23A495AD00D1B2DF /* JPConstant.h */,
-				1A10433823A495AD00D1B2DF /* JPConstant.m */,
-				1A10434023A495AD00D1B2DF /* JPMacro.h */,
-				1A10434223A495AD00D1B2DF /* JPProgressHUD.h */,
-				1A10433923A495AD00D1B2DF /* JPProgressHUD.m */,
-				1A10434123A495AD00D1B2DF /* UIColor+JPExtension.h */,
-				1A10433A23A495AD00D1B2DF /* UIColor+JPExtension.m */,
-				1A10433D23A495AD00D1B2DF /* UIScrollView+JPExtension.h */,
-				1A10434323A495AE00D1B2DF /* UIScrollView+JPExtension.m */,
-				1A10433723A495AD00D1B2DF /* UIView+JPExtension.h */,
-				1A10433F23A495AD00D1B2DF /* UIView+JPExtension.m */,
-				1A10433B23A495AD00D1B2DF /* UIView+JPPOP.h */,
-				1A10434523A495AE00D1B2DF /* UIView+JPPOP.m */,
-				1A10433C23A495AD00D1B2DF /* UIViewController+JPExtension.h */,
-				1A10434423A495AE00D1B2DF /* UIViewController+JPExtension.m */,
-				1AA6F3F223A9B91D008EFA8B /* JPSolveTool.h */,
-				1AA6F3F123A9B91D008EFA8B /* JPSolveTool.m */,
-				1AA6F3F523A9B984008EFA8B /* NSString+JPExtension.h */,
-				1AA6F3F423A9B984008EFA8B /* NSString+JPExtension.m */,
 				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
 				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
 			);
@@ -644,18 +597,22 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JPImageresizerView_Example/Pods-JPImageresizerView_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/JPBasic/JPBasic.framework",
 				"${BUILT_PRODUCTS_DIR}/JPImageresizerView/JPImageresizerView.framework",
 				"${BUILT_PRODUCTS_DIR}/JPLiquidLayout/JPLiquidLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPBasic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPImageresizerView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPLiquidLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -675,16 +632,12 @@
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				1A0AB30122B22B0F00B6B6AB /* NSIndexSet+Convenience.m in Sources */,
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
-				1A10434A23A495AE00D1B2DF /* UIScrollView+JPExtension.m in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
-				1A10434B23A495AE00D1B2DF /* UIViewController+JPExtension.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				1AF66D4422FA536E006AE5F1 /* JPBrowseImagesViewController.m in Sources */,
-				1A10434C23A495AE00D1B2DF /* UIView+JPPOP.m in Sources */,
 				6003F5A7195388D20070C39A /* JPViewController.m in Sources */,
-				1A10434823A495AE00D1B2DF /* UIColor+JPExtension.m in Sources */,
 				1AF66D4622FA536E006AE5F1 /* JPBrowseImagesTopView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
@@ -692,21 +645,16 @@
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				1AF66D4222FA536E006AE5F1 /* JPBrowseImageCell.m in Sources */,
 				1A0AB30322B22B0F00B6B6AB /* UICollectionView+Convenience.m in Sources */,
-				1A10434923A495AE00D1B2DF /* UIView+JPExtension.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1AF66D4522FA536E006AE5F1 /* JPBrowseImageModel.m in Sources */,
 				1A10434F23A4A29400D1B2DF /* JPImageresizerViewController.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
-				1AA6F3F623A9B984008EFA8B /* NSString+JPExtension.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */,
-				1AA6F3F323A9B91D008EFA8B /* JPSolveTool.m in Sources */,
-				1A10434723A495AE00D1B2DF /* JPProgressHUD.m in Sources */,
 				1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */,
 				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
-				1A10434623A495AE00D1B2DF /* JPConstant.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,
 				1AF66D4322FA536E006AE5F1 /* JPBrowseImagesBottomView.m in Sources */,
 			);

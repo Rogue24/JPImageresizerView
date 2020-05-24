@@ -9,6 +9,11 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
+#define JPMargin 16.0
+#define LandscapeVerBtnSpace 10.0
+#define PortraitHorBtnSpace 20.0
+#define ButtonHeight 30.0
+
 #import "JPImageresizerView.h"
 #import "JPSolveTool.h"
 #import "JPMacro.h"

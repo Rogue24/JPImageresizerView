@@ -1,3 +1,5 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
 use_frameworks!
 
 target 'JPImageresizerView_Example' do
@@ -7,5 +9,10 @@ target 'JPImageresizerView_Example' do
   pod 'Masonry'
   pod 'pop'
   pod 'SVProgressHUD'
+  
+  pod 'JPBasic/JPConst'
+  pod 'JPBasic/JPCategory'
+  pod 'JPBasic/JPTool'
+  pod 'JPBasic/JPProgressHUD'
   
 end

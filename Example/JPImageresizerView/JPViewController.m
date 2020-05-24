@@ -21,16 +21,95 @@
 @property (nonatomic, assign) JPImageresizerFrameType frameType;
 @property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, assign) BOOL isToBeArbitrarily;
+
+@property (nonatomic, assign) UIDeviceOrientation orientation;
+
+@property (weak, nonatomic) IBOutlet UIButton *keepScaleBtn;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnLeftConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnTopConstraint;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomBtnWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomBtnPortraitBottomConstraints;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *resizeBtnRightConstraint;
+
+@property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *portraitConstraints;
+@property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
 @end
 
 @implementation JPViewController
 
+#pragma mark - 生命周期
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self __setupBase];
+    [self __setupConstraints];
+    [self __setupImageresizerView];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    if (@available(iOS 13.0, *)) {
+        [[UIApplication sharedApplication] setStatusBarStyle:(self.statusBarStyle == UIStatusBarStyleDefault ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent) animated:YES];
+    } else {
+        [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
+    }
+}
+
+- (void)dealloc {
+    NSLog(@"viewController is dead");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - 初始化
+
+- (void)__setupBase {
     self.view.backgroundColor = self.configure.bgColor;
     self.frameType = self.configure.frameType;
     self.borderImage = self.configure.borderImage;
     self.recoveryBtn.enabled = NO;
+    
+    // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
+    if (@available(iOS 11.0, *)) {
+        
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+}
+
+- (void)__setupConstraints {
+    self.bottomBtnWidthConstraint.constant = (JPPortraitScreenWidth - JPMargin * 2 - PortraitHorBtnSpace * 3) / 4.0;
+    self.bottomBtnPortraitBottomConstraints.constant = JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH;
+    
+    self.backBtnLeftConstraint.constant = JPMargin;
+    self.backBtnTopConstraint.constant = JPStatusBarH;
+    
+    self.orientation = [UIDevice currentDevice].orientation;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange) name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (void)__setupImageresizerView {
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
+    if ([UIScreen mainScreen].bounds.size.width > [UIScreen mainScreen].bounds.size.height) {
+        contentInsets.left += 96;
+        contentInsets.right += self.bottomBtnWidthConstraint.constant;
+        if ([UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeLeft) {
+            contentInsets.left += JPStatusBarH;
+            contentInsets.right += JPDiffTabBarH;
+        } else {
+            contentInsets.left += JPDiffTabBarH;
+            contentInsets.right += JPStatusBarH;
+        }
+        contentInsets.top = JPDiffTabBarH;
+        contentInsets.bottom = JPDiffTabBarH;
+    } else {
+        contentInsets.top += JPStatusBarH + ButtonHeight;
+        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
+    }
+    self.configure.contentInsets = contentInsets;
+    self.configure.viewFrame = [UIScreen mainScreen].bounds;
     
     __weak typeof(self) wSelf = self;
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
@@ -58,28 +137,112 @@
     // 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
     // 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
     // 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
+}
+
+#pragma mark - 监听屏幕旋转
+
+- (void)orientationDidChange {
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (orientation == UIDeviceOrientationUnknown ||
+        orientation == UIDeviceOrientationFaceUp ||
+        orientation == UIDeviceOrientationFaceDown ||
+        orientation == UIDeviceOrientationPortraitUpsideDown) {
+        return;
+    }
+    NSTimeInterval duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
+    [self setOrientation:orientation duration:duration];
+}
+
+- (void)setOrientation:(UIDeviceOrientation)orientation {
+    [self setOrientation:orientation duration:0];
+}
+
+- (void)setOrientation:(UIDeviceOrientation)orientation duration:(NSTimeInterval)duration {
+    if (_orientation == orientation) return;
+    _orientation = orientation;
     
-    // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
-    if (@available(iOS 11.0, *)) {
+    float portraitPriority;
+    float landscapePriority;
+    CGFloat backBtnLeft;
+    CGFloat backBtnTop;
+    CGFloat resizeBtnRight;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
+    
+    if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight) {
+        portraitPriority = 1;
+        landscapePriority = 999;
+        backBtnTop = JPMargin;
         
+        if (orientation == UIDeviceOrientationLandscapeLeft) {
+            backBtnLeft = JPStatusBarH;
+            resizeBtnRight = JPDiffTabBarH;
+        } else {
+            backBtnLeft = JPDiffTabBarH;
+            resizeBtnRight = JPStatusBarH;
+        }
+        
+        contentInsets.left += self.keepScaleBtn.jp_width + backBtnLeft;
+        contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
+        contentInsets.top = JPDiffTabBarH;
+        contentInsets.bottom = JPDiffTabBarH;
     } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
+        portraitPriority = 999;
+        landscapePriority = 1;
+        backBtnLeft = JPMargin;
+        resizeBtnRight = JPMargin;
+        if (orientation == UIDeviceOrientationPortrait) {
+            backBtnTop = JPStatusBarH;
+        } else {
+            backBtnTop = JPDiffTabBarH;
+        }
+        
+        contentInsets.top += JPStatusBarH + ButtonHeight;
+        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
     }
+    for (NSLayoutConstraint *constraint in self.portraitConstraints) {
+        constraint.priority = portraitPriority;
+    }
+    for (NSLayoutConstraint *constraint in self.landscapeConstraints) {
+        constraint.priority = landscapePriority;
+    }
+    self.backBtnLeftConstraint.constant = backBtnLeft;
+    self.backBtnTopConstraint.constant = backBtnTop;
+    self.resizeBtnRightConstraint.constant = resizeBtnRight;
+    
+    if (duration) {
+        UIViewAnimationOptions options;
+        switch (self.imageresizerView.animationCurve) {
+            case JPAnimationCurveEaseInOut:
+                options = UIViewAnimationOptionCurveEaseInOut;
+                break;
+            case JPAnimationCurveEaseIn:
+                options = UIViewAnimationOptionCurveEaseIn;
+                break;
+            case JPAnimationCurveEaseOut:
+                options = UIViewAnimationOptionCurveEaseOut;
+                break;
+            case JPAnimationCurveLinear:
+                options = UIViewAnimationOptionCurveLinear;
+                break;
+        }
+        
+        self.navigationController.view.clipsToBounds = NO;
+        self.imageresizerView.clipsToBounds = NO;
+        [UIView animateWithDuration:duration delay:0 options:options animations:^{
+            [self.view layoutIfNeeded];
+        } completion:^(BOOL finished) {
+            self.navigationController.view.clipsToBounds = YES;
+            self.imageresizerView.clipsToBounds = YES;
+        }];
+    } else {
+        [self.view layoutIfNeeded];
+    }
+    
+    [self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    if (@available(iOS 13.0, *)) {
-        [[UIApplication sharedApplication] setStatusBarStyle:(self.statusBarStyle == UIStatusBarStyleDefault ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent) animated:YES];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
-    }
-}
-
-- (void)dealloc {
-    NSLog(@"viewController is dead");
-}
+#pragma mark - 按钮点击事件
 
 - (IBAction)changeFrameType:(UIButton *)sender {
     sender.selected = !sender.selected;

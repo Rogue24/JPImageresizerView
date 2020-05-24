@@ -19,8 +19,6 @@
     - bgColor = [UIColor blackColor];
     - maskAlpha = 0.75;
     - strokeColor = [UIColor whiteColor];
-    - verBaseMargin = 10.0;
-    - horBaseMargin = 10.0;
     - resizeWHScale = 0.0;
     - contentInsets = UIEdgeInsetsZero;
     - borderImage = nil;
@@ -77,12 +75,6 @@
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
 
-/** 裁剪图片与裁剪区域的垂直边距 */
-@property (nonatomic, assign) CGFloat verBaseMargin;
-
-/** 裁剪图片与裁剪区域的水平边距 */
-@property (nonatomic, assign) CGFloat horBaseMargin;
-
 /** 裁剪区域与主视图的内边距 */
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 
@@ -114,8 +106,6 @@
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_verBaseMargin)(CGFloat verBaseMargin);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_horBaseMargin)(CGFloat horBaseMargin);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
 @property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);

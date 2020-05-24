@@ -22,7 +22,6 @@
 @implementation JPImageresizerView
 {
     UIEdgeInsets _contentInsets;
-    CGSize _contentSize;
     UIViewAnimationOptions _animationOption;
 }
 
@@ -50,16 +49,6 @@
 
 - (void)setResizeImage:(UIImage *)resizeImage {
     [self setResizeImage:resizeImage animated:YES transition:UIViewAnimationTransitionCurlUp];
-}
-
-- (void)setVerBaseMargin:(CGFloat)verBaseMargin {
-    _verBaseMargin = verBaseMargin;
-    [self __updateSubviewLayouts:self.imageView.image duration:0];
-}
-
-- (void)setHorBaseMargin:(CGFloat)horBaseMargin {
-    _horBaseMargin = horBaseMargin;
-    [self __updateSubviewLayouts:self.imageView.image duration:0];
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
@@ -150,6 +139,10 @@
     return _frameView.frameType;
 }
 
+- (CGSize)baseContentMaxSize {
+    return _frameView.baseContentMaxSize;
+}
+
 - (UIBlurEffect *)blurEffect {
     return _frameView.blurEffect;
 }
@@ -219,8 +212,6 @@
                                      bgColor:configure.bgColor
                                    maskAlpha:configure.maskAlpha
                                  strokeColor:configure.strokeColor
-                               verBaseMargin:configure.verBaseMargin
-                               horBaseMargin:configure.horBaseMargin
                                resizeWHScale:configure.resizeWHScale
                                contentInsets:configure.contentInsets
                                  borderImage:configure.borderImage
@@ -242,8 +233,6 @@
                             bgColor:(UIColor *)bgColor
                           maskAlpha:(CGFloat)maskAlpha
                         strokeColor:(UIColor *)strokeColor
-                      verBaseMargin:(CGFloat)verBaseMargin
-                      horBaseMargin:(CGFloat)horBaseMargin
                       resizeWHScale:(CGFloat)resizeWHScale
                       contentInsets:(UIEdgeInsets)contentInsets
                         borderImage:(UIImage *)borderImage
@@ -261,13 +250,11 @@
         self.autoresizingMask = UIViewAutoresizingNone;
         self.layer.backgroundColor = bgColor.CGColor;
         
-        _verBaseMargin = verBaseMargin;
-        _horBaseMargin = horBaseMargin;
         _contentInsets = contentInsets;
         
         CGFloat contentWidth = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
         CGFloat contentHeight = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
-        _contentSize = CGSizeMake(contentWidth, contentHeight);
+        CGSize baseContentMaxSize = CGSizeMake(contentWidth, contentHeight);
         
         self.allDirections = [@[@(JPImageresizerVerticalUpDirection),
                                 @(JPImageresizerHorizontalLeftDirection),
@@ -276,20 +263,18 @@
         
         self.animationCurve = animationCurve;
         
-        [self __setupScrollViewWithMaximumZoomScale:maximumZoomScale];
+        [self __setupScrollViewWithBaseContentMaxSize:baseContentMaxSize maxZoomScale:maximumZoomScale];
         [self __setupImageViewWithImage:resizeImage];
         
         JPImageresizerFrameView *frameView =
         [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
-                                           contentSize:_contentSize
+                                    baseContentMaxSize:baseContentMaxSize
                                              frameType:frameType
                                         animationCurve:animationCurve
                                             blurEffect:blurEffect
                                                bgColor:bgColor
                                              maskAlpha:maskAlpha
                                            strokeColor:strokeColor
-                                         verBaseMargin:_verBaseMargin
-                                         horBaseMargin:_horBaseMargin
                                          resizeWHScale:resizeWHScale
                                             scrollView:self.scrollView
                                              imageView:self.imageView
@@ -322,16 +307,23 @@
 
 #pragma mark - private method
 
-- (void)__setupScrollViewWithMaximumZoomScale:(CGFloat)maximumZoomScale {
-    CGFloat h = _contentSize.height;
-    CGFloat w = h * h / _contentSize.width;
-    CGFloat x = (_contentSize.width - w) * 0.5 + _contentInsets.left;
-    CGFloat y = (_contentSize.height - h) * 0.5 + _contentInsets.top;
+- (void)__setupScrollViewWithBaseContentMaxSize:(CGSize)baseContentMaxSize maxZoomScale:(CGFloat)maxZoomScale {
+    CGFloat w; // = hypot(self.bounds.size.width, self.bounds.size.height);
+    CGFloat h;
+    if (self.bounds.size.height > self.bounds.size.width) {
+        h = self.bounds.size.height * 2;
+        w = h;
+    } else {
+        w = self.bounds.size.width * 2;
+        h = w;
+    }
+    CGFloat x = (baseContentMaxSize.width - w) * 0.5 + _contentInsets.left;
+    CGFloat y = (baseContentMaxSize.height - h) * 0.5 + _contentInsets.top;
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     scrollView.frame = CGRectMake(x, y, w, h);
     scrollView.delegate = self;
     scrollView.minimumZoomScale = 1.0;
-    scrollView.maximumZoomScale = maximumZoomScale > 1.0 ? maximumZoomScale : 1.0;
+    scrollView.maximumZoomScale = maxZoomScale > 1.0 ? maxZoomScale : 1.0;
     scrollView.alwaysBounceVertical = YES;
     scrollView.alwaysBounceHorizontal = YES;
     scrollView.showsVerticalScrollIndicator = NO;
@@ -354,16 +346,23 @@
 
 - (void)__updateImageViewFrameWithImage:(UIImage *)image {
     NSAssert(image != nil, @"resizeImage cannot be nil.");
-    CGFloat maxWidth = self.frame.size.width - _contentInsets.left - _contentInsets.right - 2 * _horBaseMargin;
-    CGFloat maxHeight = self.frame.size.height - _contentInsets.top - _contentInsets.bottom - 2 * _verBaseMargin;
+    CGFloat maxWidth = self.frame.size.width - _contentInsets.left - _contentInsets.right;
+    CGFloat maxHeight = self.frame.size.height - _contentInsets.top - _contentInsets.bottom;
     CGFloat imgViewW = maxWidth;
     CGFloat imgViewH = imgViewW * (image.size.height / image.size.width);
     if (imgViewH > maxHeight) {
         imgViewH = maxHeight;
         imgViewW = imgViewH * (image.size.width / image.size.height);
     }
-    self.imageView.frame = CGRectMake(0, 0, imgViewW, imgViewH);
-    self.scrollView.contentSize = self.imageView.bounds.size;
+    CGRect imageViewBounds = CGRectMake(0, 0, imgViewW, imgViewH);
+    self.imageView.bounds = imageViewBounds;
+    
+    self.scrollView.layer.transform = CATransform3DIdentity;
+    self.scrollView.minimumZoomScale = 1.0;
+    self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
+    
+    self.imageView.frame = imageViewBounds;
+    self.scrollView.contentSize = imageViewBounds.size;
     
     CGFloat horInset = (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5;
     CGFloat verInset = (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5;
@@ -375,11 +374,8 @@
     if (self.horizontalMirror) [self setHorizontalMirror:NO animated:NO];
     if (self.verticalityMirror) [self setVerticalityMirror:NO animated:NO];
     self.directionIndex = 0;
-    self.scrollView.layer.transform = CATransform3DIdentity;
-    self.scrollView.minimumZoomScale = 1.0;
-    self.scrollView.zoomScale = self.scrollView.minimumZoomScale;
     [self __updateImageViewFrameWithImage:image];
-    [self.frameView updateImageresizerFrameWithVerBaseMargin:_verBaseMargin horBaseMargin:_horBaseMargin duration:duration];
+    [self.frameView updateImageOriginFrameWithDuration:duration];
 }
 
 - (void)__changeMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
@@ -449,8 +445,8 @@
     _horizontalMirror = NO;
     _verticalityMirror = NO;
     
-    CGFloat x = (_contentSize.width - self.scrollView.bounds.size.width) * 0.5 + _contentInsets.left;
-    CGFloat y = (_contentSize.height - self.scrollView.bounds.size.height) * 0.5 + _contentInsets.top;
+    CGFloat x = (self.baseContentMaxSize.width - self.scrollView.bounds.size.width) * 0.5 + _contentInsets.left;
+    CGFloat y = (self.baseContentMaxSize.height - self.scrollView.bounds.size.height) * 0.5 + _contentInsets.top;
     CGRect frame = self.scrollView.bounds;
     frame.origin.x = x;
     frame.origin.y = y;
@@ -555,9 +551,7 @@
     self.scrollView.userInteractionEnabled = !isPreview;
 }
 
-- (void)updateResizeImage:(UIImage *)resizeImage verBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin {
-    _verBaseMargin = verBaseMargin;
-    _horBaseMargin = horBaseMargin;
+- (void)updateResizeImage:(UIImage *)resizeImage {
     self.imageView.image = resizeImage;
     [self __updateSubviewLayouts:resizeImage duration:0];
 }
@@ -617,6 +611,17 @@
         return;
     }
     [self.frameView imageresizerWithComplete:complete compressScale:compressScale];
+}
+
+- (void)updateFrame:(CGRect)frame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration {
+    if (CGSizeEqualToSize(self.bounds.size, frame.size)) {
+        if (UIEdgeInsetsEqualToEdgeInsets(_contentInsets, contentInsets)) {
+            self.frame = frame;
+            return;
+        }
+    }
+    _contentInsets = contentInsets;
+    [self.frameView superViewUpdateFrame:frame contentInsets:contentInsets duration:duration];
 }
 
 #pragma mark - <UIScrollViewDelegate>

@@ -21,25 +21,17 @@
     [super viewDidLoad];
     self.title = @"Example";
     
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50 + JPDiffStatusBarH, 10, (40 + 30 + 30 + 10) + JPDiffTabBarH, 10);
-    
     NSString *title1 = @"默认样式";
-    JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure.jp_contentInsets(contentInsets);
-    }];
+    JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:nil];
     
     NSString *title2 = @"深色毛玻璃遮罩";
     JPImageresizerConfigure *configure2 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_contentInsets(contentInsets)
-        .jp_strokeColor([UIColor orangeColor]);
+        configure.jp_strokeColor([UIColor orangeColor]);
     }];
     
     NSString *title3 = @"浅色毛玻璃遮罩";
     JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_contentInsets(contentInsets)
-        .jp_strokeColor([UIColor yellowColor]);
+        configure.jp_strokeColor([UIColor yellowColor]);
     }];
     
     NSString *title4 = @"其他样式";
@@ -48,7 +40,6 @@
         .jp_maskAlpha(0.5)
         .jp_strokeColor(JPRandomColor)
         .jp_frameType(JPClassicFrameType)
-        .jp_contentInsets(contentInsets)
         .jp_bgColor(JPRandomColor)
         .jp_isClockwiseRotation(YES)
         .jp_animationCurve(JPAnimationCurveEaseOut);
@@ -68,7 +59,6 @@
     
     JPImageresizerConfigure *configure5 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
-        .jp_contentInsets(contentInsets)
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage(stretchBorderImage)
         .jp_borderImageRectInset(CGPointMake(-2, -2));
@@ -82,7 +72,6 @@
     
     JPImageresizerConfigure *configure6 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
-        .jp_contentInsets(contentInsets)
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage(tileBorderImage)
         .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
@@ -113,11 +102,17 @@
                           @"statusBarStyle": @(UIStatusBarStyleLightContent)}];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
+    
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+}
+
+- (void)dealloc {
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
 #pragma mark - Table view data source
@@ -195,7 +190,6 @@
             JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
             [sSelf.navigationController pushViewController:vc animated:YES];
         } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
-        
     }
 }
 

@@ -184,7 +184,7 @@ JPSingtonImplement(JPPhotoTool)
                         UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
                         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"不能访问照片" message:nil preferredStyle:UIAlertControllerStyleAlert];
                         [alertController addAction:action];
-                        [[UIView jp_getTopViewController] presentViewController:alertController animated:YES completion:nil];
+                        [[UIWindow jp_topViewControllerFromKeyWindow] presentViewController:alertController animated:YES completion:nil];
                     }
                     break;
                 }
@@ -268,7 +268,7 @@ JPSingtonImplement(JPPhotoTool)
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:action];
     [alertController addAction:cancel];
-    [[UIView jp_getTopViewController] presentViewController:alertController animated:YES completion:nil];
+    [[UIWindow jp_topViewControllerFromKeyWindow] presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - 相册监听

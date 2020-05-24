@@ -20,8 +20,6 @@
     .jp_strokeColor(UIColor.whiteColor)
     .jp_bgColor(UIColor.blackColor)
     .jp_maskAlpha(0.75)
-    .jp_verBaseMargin(10.0)
-    .jp_horBaseMargin(10.0)
     .jp_resizeWHScale(0.0)
     .jp_edgeLineIsEnabled(YES)
     .jp_contentInsets(UIEdgeInsetsZero)
@@ -116,20 +114,6 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_edgeLineIsEnabled {
     return ^(BOOL edgeLineIsEnabled) {
         self.edgeLineIsEnabled = edgeLineIsEnabled;
-        return self;
-    };
-}
-
-- (JPImageresizerConfigure *(^)(CGFloat))jp_verBaseMargin {
-    return ^(CGFloat verBaseMargin) {
-        self.verBaseMargin = verBaseMargin;
-        return self;
-    };
-}
-
-- (JPImageresizerConfigure *(^)(CGFloat))jp_horBaseMargin {
-    return ^(CGFloat horBaseMargin) {
-        self.horBaseMargin = horBaseMargin;
         return self;
     };
 }

@@ -12,15 +12,13 @@
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
-                  contentSize:(CGSize)contentSize
+           baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
                    blurEffect:(UIBlurEffect *)blurEffect
                       bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
-                verBaseMargin:(CGFloat)verBaseMargin
-                horBaseMargin:(CGFloat)horBaseMargin
                 resizeWHScale:(CGFloat)resizeWHScale
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
@@ -30,6 +28,8 @@
                 isShowMidDots:(BOOL)isShowMidDots
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
+
+@property (nonatomic, assign, readonly) CGSize baseContentMaxSize;
 
 @property (nonatomic, weak, readonly) UIPanGestureRecognizer *panGR;
 
@@ -84,7 +84,7 @@
 
 - (void)updateFrameType:(JPImageresizerFrameType)frameType;
 
-- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin duration:(NSTimeInterval)duration;;
+- (void)updateImageOriginFrameWithDuration:(NSTimeInterval)duration;
 
 - (void)startImageresizer;
 - (void)endedImageresizer;
@@ -103,6 +103,7 @@
 
 - (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
 
+- (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 @end
 
 @interface JPImageresizerProxy : NSProxy

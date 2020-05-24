@@ -97,11 +97,6 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGFloat _startResizeW;
     CGFloat _startResizeH;
     CGFloat _originWHScale;
-    CGFloat _verBaseMargin;
-    CGFloat _horBaseMargin;
-    CGFloat _diffHalfW;
-    CGFloat _diffRotLength; // 扩大遮罩的区域（防止旋转时有空白区域）
-    CGSize _contentSize;
     
     BOOL _isHideFrameLine;
     BOOL _isArbitrarily;
@@ -587,24 +582,22 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
 #pragma mark - init
 
 - (instancetype)initWithFrame:(CGRect)frame
-                 contentSize:(CGSize)contentSize
-                   frameType:(JPImageresizerFrameType)frameType
-              animationCurve:(JPAnimationCurve)animationCurve
-                  blurEffect:(UIBlurEffect *)blurEffect
-                     bgColor:(UIColor *)bgColor
-                   maskAlpha:(CGFloat)maskAlpha
-                 strokeColor:(UIColor *)strokeColor
-               verBaseMargin:(CGFloat)verBaseMargin
-               horBaseMargin:(CGFloat)horBaseMargin
-               resizeWHScale:(CGFloat)resizeWHScale
-                  scrollView:(UIScrollView *)scrollView
-                   imageView:(UIImageView *)imageView
-                 borderImage:(UIImage *)borderImage
-        borderImageRectInset:(CGPoint)borderImageRectInset
-               isRoundResize:(BOOL)isRoundResize
-               isShowMidDots:(BOOL)isShowMidDots
-   imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
-imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
+           baseContentMaxSize:(CGSize)baseContentMaxSize
+                    frameType:(JPImageresizerFrameType)frameType
+               animationCurve:(JPAnimationCurve)animationCurve
+                   blurEffect:(UIBlurEffect *)blurEffect
+                      bgColor:(UIColor *)bgColor
+                    maskAlpha:(CGFloat)maskAlpha
+                  strokeColor:(UIColor *)strokeColor
+                resizeWHScale:(CGFloat)resizeWHScale
+                   scrollView:(UIScrollView *)scrollView
+                    imageView:(UIImageView *)imageView
+                  borderImage:(UIImage *)borderImage
+         borderImageRectInset:(CGPoint)borderImageRectInset
+                isRoundResize:(BOOL)isRoundResize
+                isShowMidDots:(BOOL)isShowMidDots
+    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
@@ -621,17 +614,13 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         
         _edgeLineIsEnabled = YES;
         _rotationDirection = JPImageresizerVerticalUpDirection;
-        _contentSize = contentSize;
-        _horBaseMargin = horBaseMargin;
-        _verBaseMargin = verBaseMargin;
+        _baseContentMaxSize = baseContentMaxSize;
         _imageresizerIsCanRecovery = [imageresizerIsCanRecovery copy];
         _imageresizerIsPrepareToScale = [imageresizerIsPrepareToScale copy];
         _strokeColor = strokeColor;
         _isShowMidDots = isShowMidDots;
-        _diffRotLength = [UIScreen mainScreen].bounds.size.height - scrollView.bounds.size.height;
         
-        CGRect blurFrame = CGRectInset(self.bounds, -_diffRotLength, -_diffRotLength);
-        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:blurFrame blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
+        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
         blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
@@ -1018,10 +1007,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
-    CGRect maskFrame = imageresizerFrame;
-    maskFrame.origin.x += _diffRotLength;
-    maskFrame.origin.y += _diffRotLength;
-    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:maskFrame cornerRadius:radius]];
+    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius]];
     
     if (_borderImage) {
         CGRect borderImageViewFrame = self.borderImageViewFrame;
@@ -1186,7 +1172,6 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     [self removeTimer];
     _baseImageW = self.imageView.bounds.size.width;
     _baseImageH = self.imageView.bounds.size.height;
-    _diffHalfW = (self.bounds.size.width - _contentSize.width) * 0.5;
     CGFloat x = (self.bounds.size.width - _baseImageW) * 0.5;
     CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
@@ -1205,20 +1190,17 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 }
 
 - (void)updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
-    CGFloat x = 0;
-    CGFloat y = 0;
-    CGFloat w = self.bounds.size.width;
-    CGFloat h = self.bounds.size.height;
+    CGFloat w = _baseContentMaxSize.width;
+    CGFloat h = _baseContentMaxSize.height;
     if ([self isHorizontalDirection:direction]) {
-        x = (w - _contentSize.height) * 0.5 +  _verBaseMargin;
-        y = (h - _contentSize.width) * 0.5 + _horBaseMargin;
-    } else {
-        x = _diffHalfW + _horBaseMargin;
-        y = _verBaseMargin;
+        w = _baseContentMaxSize.height;
+        h = _baseContentMaxSize.width;
     }
-    w -= 2 * x;
-    h -= 2 * y;
+    CGFloat x = (self.bounds.size.width - w) * 0.5;
+    CGFloat y = (self.bounds.size.height - h) * 0.5;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
+    
+    if (_rotationDirection == direction) return;
     
     self.frameLayer.lineWidth = _frameLayerLineW;
     
@@ -1410,9 +1392,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     }
 }
 
-- (void)updateImageresizerFrameWithVerBaseMargin:(CGFloat)verBaseMargin horBaseMargin:(CGFloat)horBaseMargin duration:(NSTimeInterval)duration {
-    _verBaseMargin = verBaseMargin;
-    _horBaseMargin = horBaseMargin;
+- (void)updateImageOriginFrameWithDuration:(NSTimeInterval)duration {
     self.layer.transform = CATransform3DIdentity;
     [self updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection duration:duration];
 }
@@ -1443,7 +1423,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 
 - (void)verticalityMirrorWithDiffX:(CGFloat)diffX {
     CGFloat w = [self isHorizontalDirection:_rotationDirection] ? self.bounds.size.height : self.bounds.size.width;
-    CGFloat x = (_contentSize.width - w) * 0.5 + diffX;
+    CGFloat x = (_baseContentMaxSize.width - w) * 0.5 + diffX;
     CGRect frame = self.frame;
     frame.origin.x = x;
     self.scrollView.frame = frame;
@@ -1452,7 +1432,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
 
 - (void)horizontalMirrorWithDiffY:(CGFloat)diffY {
     CGFloat h = [self isHorizontalDirection:_rotationDirection] ? self.bounds.size.width : self.bounds.size.height;
-    CGFloat y = (_contentSize.height - h) * 0.5 + diffY;
+    CGFloat y = (_baseContentMaxSize.height - h) * 0.5 + diffY;
     CGRect frame = self.frame;
     frame.origin.y = y;
     self.scrollView.frame = frame;
@@ -1550,9 +1530,9 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
     
     CGRect imageViewBounds = self.imageView.bounds;
     
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
+    CGSize relativeSize = imageViewBounds.size;
     
-    CGFloat relativeWidth = imageViewBounds.size.width;
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     
     BOOL isRoundClip = _isRound;
     
@@ -1562,7 +1542,7 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
         if (!sSelf) return;
         UIImage *resultImage = [UIImage jpir_resultImageWithImage:image
                                                         cropFrame:cropFrame
-                                                    relativeWidth:relativeWidth
+                                                     relativeSize:relativeSize
                                                       isVerMirror:isVerMirror
                                                       isHorMirror:isHorMirror
                                                 rotateOrientation:orientation
@@ -1572,6 +1552,126 @@ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIs
             complete(resultImage);
         });
     });
+}
+
+- (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration {
+    [self removeTimer];
+    
+    CGFloat superViewW = superViewFrame.size.width;
+    CGFloat superViewH = superViewFrame.size.height;
+    CGRect superViewBounds = CGRectMake(0, 0, superViewW, superViewH);
+    
+    CGFloat contentWidth = superViewW - contentInsets.left - contentInsets.right;
+    CGFloat contentHeight = superViewH - contentInsets.top - contentInsets.bottom;
+    
+    CGFloat viewWH;
+    if (superViewH > superViewW) {
+        viewWH = superViewH * 2;
+    } else {
+        viewWH = superViewW * 2;
+    }
+    CGFloat viewX = (contentWidth - viewWH) * 0.5 + contentInsets.left;
+    CGFloat viewY = (contentHeight - viewWH) * 0.5 + contentInsets.top;
+    CGRect viewFrame = CGRectMake(viewX, viewY, viewWH, viewWH);
+    CGRect viewBounds = CGRectMake(0, 0, viewWH, viewWH);
+    
+    CGFloat imageWHScale = self.imageView.image.size.width / self.imageView.image.size.height;
+    CGFloat imgViewW = contentWidth;
+    CGFloat imgViewH = imgViewW / imageWHScale;
+    if (imgViewH > contentHeight) {
+        imgViewH = contentHeight;
+        imgViewW = imgViewH * imageWHScale;
+    }
+    CGFloat imgViewX = (viewWH - imgViewW) * 0.5;
+    CGFloat imgViewY = (viewWH - imgViewH) * 0.5;
+    CGRect imageViewFrame = CGRectMake(imgViewX, imgViewY, imgViewW, imgViewH);
+    CGRect imageViewBounds = CGRectMake(0, 0, imgViewW, imgViewH);
+    
+    _baseContentMaxSize = CGSizeMake(contentWidth, contentHeight);
+    _baseImageW = imgViewW;
+    _baseImageH = imgViewH;
+    self.originImageFrame = imageViewFrame;
+    [self updateMaxResizeFrameWithDirection:self.rotationDirection];
+    contentWidth = self.maxResizeW;
+    contentHeight = self.maxResizeH;
+    
+    CGFloat originImgViewW = self.imageView.bounds.size.width;
+    CGFloat originImgViewH = self.imageView.bounds.size.height;
+    CGRect originZoomFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
+    
+    CGFloat zoomScale;
+    CGFloat imageresizerW = contentWidth;
+    CGFloat imageresizerH = contentHeight;
+    CGFloat imageresizerX = (viewWH - imageresizerW) * 0.5;
+    CGFloat imageresizerY = (viewWH - imageresizerH) * 0.5;
+    if (originZoomFrame.size.width > originZoomFrame.size.height) {
+        zoomScale = originImgViewW / originZoomFrame.size.width;
+        imageresizerH = imageresizerW * (originZoomFrame.size.height / originZoomFrame.size.width);
+        if (imageresizerH > contentHeight) {
+            imageresizerH = contentHeight;
+            imageresizerW = imageresizerH * (originZoomFrame.size.width / originZoomFrame.size.height);
+            imageresizerX += (contentWidth - imageresizerW) * 0.5;
+        } else {
+            imageresizerY += (contentHeight - imageresizerH) * 0.5;
+        }
+        zoomScale = imageresizerW / imgViewW;
+        zoomScale = zoomScale * (originImgViewW / originZoomFrame.size.width);
+    } else {
+        imageresizerW = imageresizerH * (originZoomFrame.size.width / originZoomFrame.size.height);
+        if (imageresizerW > contentWidth) {
+            imageresizerW = contentWidth;
+            imageresizerH = imageresizerW * (originZoomFrame.size.height / originZoomFrame.size.width);
+            imageresizerY += (contentHeight - imageresizerH) * 0.5;
+        } else {
+            imageresizerX += (contentWidth - imageresizerW) * 0.5;
+        }
+        zoomScale = imageresizerH / imgViewH;
+        zoomScale = zoomScale * (originImgViewH / originZoomFrame.size.height);
+    }
+    
+    CGRect imageresizerFrame = CGRectMake(imageresizerX, imageresizerY, imageresizerW, imageresizerH);
+    CGFloat minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:imageresizerFrame.size];
+    
+    CGSize svContentSize = CGSizeMake(imgViewW * zoomScale, imgViewH * zoomScale);
+    
+    UIEdgeInsets svContentInset = UIEdgeInsetsMake(imageresizerY, imageresizerX, imageresizerY, imageresizerX);
+    
+    CGFloat offsetX = -imageresizerX + svContentSize.width * (originZoomFrame.origin.x / originImgViewW);
+    CGFloat offsetY = -imageresizerY + svContentSize.height * (originZoomFrame.origin.y / originImgViewH);
+    CGPoint svContentOffset = CGPointMake(offsetX, offsetY);
+    
+    void (^animations)(void) = ^{
+        self.superview.bounds = superViewBounds;
+        self.superview.frame = superViewFrame;
+        self.scrollView.frame = viewFrame;
+        self.frame = viewFrame;
+        self.blurView.frame = viewBounds;
+        self.maskLayer.frame = viewBounds;
+        
+        self.imageView.bounds = imageViewBounds;
+        
+        self.scrollView.minimumZoomScale = minimumZoomScale;
+        self.scrollView.zoomScale = zoomScale;
+        
+        self.imageView.frame = (CGRect){CGPointZero, svContentSize};
+        self.scrollView.contentSize = svContentSize;
+        self.scrollView.contentInset = svContentInset;
+        self.scrollView.contentOffset = svContentOffset;
+    };
+    
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
+        [self.blurView setIsBlur:YES duration:self->_blurDuration];
+        self.superview.userInteractionEnabled = YES;
+    };
+    
+    self.superview.userInteractionEnabled = NO;
+    [self updateImageresizerFrame:imageresizerFrame animateDuration:duration];
+    if (duration > 0) {
+        [UIView animateWithDuration:duration delay:0 options:_animationOption animations:animations completion:completion];
+    } else {
+        animations();
+        completion(YES);
+    }
 }
 
 #pragma mark - UIPanGestureRecognizer

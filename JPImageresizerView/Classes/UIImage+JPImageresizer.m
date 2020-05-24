@@ -12,7 +12,7 @@
 
 + (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
                              cropFrame:(CGRect)cropFrame
-                         relativeWidth:(CGFloat)relativeWidth
+                          relativeSize:(CGSize)relativeSize
                            isVerMirror:(BOOL)isVerMirror
                            isHorMirror:(BOOL)isHorMirror
                      rotateOrientation:(UIImageOrientation)orientation
@@ -26,51 +26,61 @@
         if (isVerMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationUpMirrored isRoundClip:NO];
         if (isHorMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationDownMirrored isRoundClip:NO];
 
-        // 获取裁剪区域
-        CGFloat imageScale = resultImage.scale;
-        CGFloat imageWidth = resultImage.size.width * imageScale;
-        CGFloat imageHeight = resultImage.size.height * imageScale;
-        CGFloat cropScale = imageWidth / relativeWidth; // 宽高比不变，所以宽度高度的比例是一样
-        CGFloat cropX = cropFrame.origin.x * cropScale;
-        CGFloat cropY = cropFrame.origin.y * cropScale;
-        CGFloat cropW = cropFrame.size.width * cropScale;
-        CGFloat cropH = cropFrame.size.height * cropScale;
-        if (cropX < 0) {
-            cropW += -cropX;
-            cropX = 0;
-        }
-        if (cropY < 0) {
-            cropH += -cropY;
-            cropY = 0;
-        }
-        CGFloat cropMaxX = cropX + cropW;
-        if (cropMaxX > imageWidth) {
-            cropW -= (cropMaxX - imageWidth);
-            cropMaxX = cropX + cropW;
-        }
-        CGFloat cropMaxY = cropY + cropH;
-        if (cropMaxY > imageHeight) {
-            cropH -= (cropMaxY - imageHeight);
-            cropMaxY = cropY + cropH;
-        }
-        if (isVerMirror) cropX = imageWidth - cropMaxX;
-        if (isHorMirror) cropY = imageHeight - cropMaxY;
-        CGRect cropRect = CGRectMake(cropX, cropY, cropW, cropH);
+        UIImage *finalImage = resultImage;
         
-        // 裁剪
-        CGImageRef resultImgRef = CGImageCreateWithImageInRect(resultImage.CGImage, cropRect);
-
+        if (!CGSizeEqualToSize(cropFrame.size, relativeSize)) {
+            cropFrame.size.width = floorf(cropFrame.size.width);
+            cropFrame.size.height = floorf(cropFrame.size.height);
+            CGFloat cropWHScale = cropFrame.size.width / cropFrame.size.height;
+            if (cropFrame.origin.x < 0) {
+                cropFrame.origin.x = 0;
+            }
+            if (CGRectGetMaxX(cropFrame) > relativeSize.width) {
+                cropFrame.origin.x = relativeSize.width - cropFrame.size.width;
+                if (cropFrame.origin.x < 0) {
+                    cropFrame.size.width += cropFrame.origin.x;
+                    cropFrame.size.height = cropFrame.size.width / cropWHScale;
+                    cropFrame.origin.x = 0;
+                }
+            }
+            if (cropFrame.origin.y < 0) {
+                cropFrame.origin.y = 0;
+            }
+            if (CGRectGetMaxY(cropFrame) > relativeSize.height) {
+                cropFrame.origin.y = relativeSize.height - cropFrame.size.height;
+                if (cropFrame.origin.y < 0) {
+                    cropFrame.size.height += cropFrame.origin.y;
+                    cropFrame.size.width = cropFrame.size.height * cropWHScale;
+                    cropFrame.origin.y = 0;
+                }
+            }
+            
+            // 获取裁剪区域
+            CGFloat imageScale = resultImage.scale;
+            CGFloat imageWidth = resultImage.size.width;
+            CGFloat imageHeight = resultImage.size.height;
+            CGFloat cropX = imageWidth * (cropFrame.origin.x / relativeSize.width);
+            CGFloat cropY = imageHeight * (cropFrame.origin.y / relativeSize.height);
+            CGFloat cropW = imageWidth * (cropFrame.size.width / relativeSize.width);
+            CGFloat cropH = imageHeight * (cropFrame.size.height / relativeSize.height);
+            if (isVerMirror) cropX = imageWidth - (cropX + cropW);
+            if (isHorMirror) cropY = imageHeight - (cropY + cropH);
+            // 裁剪
+            UIGraphicsBeginImageContextWithOptions(CGSizeMake(cropW, cropH), NO, imageScale);
+            [resultImage drawInRect:CGRectMake(-cropX, -cropY, imageWidth, imageHeight)];
+            finalImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        }
+        
         // 旋转并切圆
-        resultImage = [[UIImage imageWithCGImage:resultImgRef] jpir_rotate:orientation isRoundClip:isRoundClip];
+        finalImage = [finalImage jpir_rotate:orientation isRoundClip:isRoundClip];
         
         // 压缩图片
-        resultImage = [resultImage jpir_resizeImageWithScale:compressScale];
+        finalImage = [finalImage jpir_resizeImageWithScale:compressScale];
         
-        CGImageRelease(resultImgRef);
-        return resultImage;
+        return finalImage;
     }
 }
-
 
 #pragma mark - 修正方向
 

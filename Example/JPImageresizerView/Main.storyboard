@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -47,294 +47,390 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT">
-                                <rect key="frame" x="16" y="0.0" width="40" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0j-lu-XGP">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT" userLabel="返回按钮">
+                                        <rect key="frame" x="16" y="20" width="40" height="30"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="dsw-M4-uM9"/>
+                                            <constraint firstAttribute="height" constant="30" id="ndA-7J-OLc"/>
+                                        </constraints>
+                                        <state key="normal" title=" " image="back"/>
+                                        <connections>
+                                            <action selector="pop:" destination="whP-gf-Uak" eventType="touchUpInside" id="ZQs-Qd-Pnj"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oXP-jn-vnR">
+                                        <rect key="frame" x="253" y="20" width="66" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
+                                        <state key="normal" title="垂直镜像"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="verMirror:" destination="whP-gf-Uak" eventType="touchUpInside" id="RzT-Xv-4Oh"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0oe-Do-HA2">
+                                        <rect key="frame" x="182" y="20" width="66" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
+                                        <state key="normal" title="水平镜像"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="horMirror:" destination="whP-gf-Uak" eventType="touchUpInside" id="acy-4S-aNP"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PPx-fE-9xq">
+                                        <rect key="frame" x="142" y="20" width="35" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
+                                        <state key="normal" title="预览"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="previewAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="rTs-e6-sTe"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XaN-bE-0my">
+                                        <rect key="frame" x="41" y="20" width="96" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
+                                        <state key="normal" title="保持当前比例"/>
+                                        <state key="selected" title="保持任意比例"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="toBeArbitrarilyAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="WDj-nd-bOt"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7b-fV-KhW">
+                                        <rect key="frame" x="324" y="20" width="35" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
+                                        <state key="normal" title="锁定"/>
+                                        <state key="selected" title="解锁"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="lockFrame:" destination="whP-gf-Uak" eventType="touchUpInside" id="ueK-Js-HKO"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="40" id="dsw-M4-uM9"/>
-                                    <constraint firstAttribute="height" constant="30" id="ndA-7J-OLc"/>
+                                    <constraint firstItem="0oe-Do-HA2" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="29n-VG-iPK"/>
+                                    <constraint firstItem="XaN-bE-0my" firstAttribute="leading" secondItem="nkI-gv-FqT" secondAttribute="leading" priority="1" id="2QA-FR-WVW"/>
+                                    <constraint firstAttribute="trailing" secondItem="XaN-bE-0my" secondAttribute="trailing" priority="1" id="3eH-rc-qqa"/>
+                                    <constraint firstItem="0oe-Do-HA2" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" priority="999" id="5ev-cO-ag5"/>
+                                    <constraint firstItem="oXP-jn-vnR" firstAttribute="leading" secondItem="0oe-Do-HA2" secondAttribute="trailing" priority="999" constant="5" id="6Hx-Oi-nq8"/>
+                                    <constraint firstItem="oXP-jn-vnR" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" priority="999" id="7fu-zY-dnG"/>
+                                    <constraint firstItem="v7b-fV-KhW" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" priority="999" id="8BV-6h-vFj"/>
+                                    <constraint firstItem="XaN-bE-0my" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" priority="999" id="8LL-ng-rON"/>
+                                    <constraint firstItem="v7b-fV-KhW" firstAttribute="top" secondItem="oXP-jn-vnR" secondAttribute="bottom" priority="1" constant="10" id="8te-wY-nzj"/>
+                                    <constraint firstItem="0oe-Do-HA2" firstAttribute="top" secondItem="PPx-fE-9xq" secondAttribute="bottom" priority="1" constant="10" id="8z0-DD-GSK"/>
+                                    <constraint firstItem="PPx-fE-9xq" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" priority="999" id="93n-IR-dbW"/>
+                                    <constraint firstItem="oXP-jn-vnR" firstAttribute="leading" secondItem="nkI-gv-FqT" secondAttribute="leading" priority="1" id="Bgl-Ul-Ksh"/>
+                                    <constraint firstItem="PPx-fE-9xq" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="Bkd-9X-JFX"/>
+                                    <constraint firstAttribute="trailing" secondItem="v7b-fV-KhW" secondAttribute="trailing" priority="999" constant="16" id="IBw-x8-RHH"/>
+                                    <constraint firstItem="v7b-fV-KhW" firstAttribute="leading" secondItem="oXP-jn-vnR" secondAttribute="trailing" priority="999" constant="5" id="Jyn-dl-gCy"/>
+                                    <constraint firstItem="oXP-jn-vnR" firstAttribute="top" secondItem="0oe-Do-HA2" secondAttribute="bottom" priority="1" constant="10" id="MPa-7X-HJc"/>
+                                    <constraint firstItem="nkI-gv-FqT" firstAttribute="top" secondItem="d0j-lu-XGP" secondAttribute="top" constant="20" id="N8D-Uq-HI9"/>
+                                    <constraint firstItem="0oe-Do-HA2" firstAttribute="leading" secondItem="PPx-fE-9xq" secondAttribute="trailing" priority="999" constant="5" id="Qsg-IA-9sh"/>
+                                    <constraint firstItem="oXP-jn-vnR" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="Spb-mI-mHZ"/>
+                                    <constraint firstAttribute="bottom" secondItem="nkI-gv-FqT" secondAttribute="bottom" priority="999" id="ZAc-ti-xDu"/>
+                                    <constraint firstItem="PPx-fE-9xq" firstAttribute="leading" secondItem="nkI-gv-FqT" secondAttribute="leading" priority="1" id="cZ4-rU-aP4"/>
+                                    <constraint firstItem="v7b-fV-KhW" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="h8E-jd-jSW"/>
+                                    <constraint firstItem="nkI-gv-FqT" firstAttribute="leading" secondItem="d0j-lu-XGP" secondAttribute="leading" constant="16" id="i23-qr-FoR"/>
+                                    <constraint firstItem="PPx-fE-9xq" firstAttribute="top" secondItem="XaN-bE-0my" secondAttribute="bottom" priority="1" constant="10" id="ihf-DU-yhH"/>
+                                    <constraint firstItem="XaN-bE-0my" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="krH-re-TjO"/>
+                                    <constraint firstItem="XaN-bE-0my" firstAttribute="top" secondItem="nkI-gv-FqT" secondAttribute="bottom" priority="1" constant="10" id="sDW-up-aj6"/>
+                                    <constraint firstItem="0oe-Do-HA2" firstAttribute="leading" secondItem="nkI-gv-FqT" secondAttribute="leading" priority="1" id="tJb-Tl-ADd"/>
+                                    <constraint firstItem="v7b-fV-KhW" firstAttribute="leading" secondItem="nkI-gv-FqT" secondAttribute="leading" priority="1" id="vD7-zc-9Qh"/>
+                                    <constraint firstItem="PPx-fE-9xq" firstAttribute="leading" secondItem="XaN-bE-0my" secondAttribute="trailing" priority="999" constant="5" id="z6G-IY-fdR"/>
                                 </constraints>
-                                <state key="normal" title=" " image="back"/>
-                                <connections>
-                                    <action selector="pop:" destination="whP-gf-Uak" eventType="touchUpInside" id="ZQs-Qd-Pnj"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bmh-GN-dI9">
-                                <rect key="frame" x="20" y="567" width="69" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="更换样式"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="changeFrameType:" destination="whP-gf-Uak" eventType="touchUpInside" id="bDF-Nq-1sd"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Q2-Zj-NPf">
-                                <rect key="frame" x="197.5" y="567" width="69" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LCW-oZ-8f9">
+                                <rect key="frame" x="0.0" y="572" width="375" height="95"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gfg-EW-TwQ">
+                                        <rect key="frame" x="286.5" y="0.0" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="luG-Ph-lIk"/>
+                                            <constraint firstAttribute="width" constant="68.5" id="yOA-WF-CwK"/>
+                                        </constraints>
+                                        <state key="normal" title="裁剪"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="resize:" destination="whP-gf-Uak" eventType="touchUpInside" id="bQU-Ea-yQb"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Q2-Zj-NPf">
+                                        <rect key="frame" x="198" y="0.0" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="重置"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="recovery:" destination="whP-gf-Uak" eventType="touchUpInside" id="PIB-sK-Nia"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23z-V1-CXO">
+                                        <rect key="frame" x="109.5" y="0.0" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="旋转"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="rotate:" destination="whP-gf-Uak" eventType="touchUpInside" id="uaM-WC-hmI"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bmh-GN-dI9">
+                                        <rect key="frame" x="21" y="0.0" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="更换样式"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="changeFrameType:" destination="whP-gf-Uak" eventType="touchUpInside" id="bDF-Nq-1sd"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTM-rw-zlm">
+                                        <rect key="frame" x="286.5" y="45" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="更换图片"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="replaceImage:" destination="whP-gf-Uak" eventType="touchUpInside" id="KcA-LT-EnU"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tRo-kT-cgg">
+                                        <rect key="frame" x="109.5" y="45" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="模糊效果"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="changeBlurEffect:" destination="whP-gf-Uak" eventType="touchUpInside" id="8rM-uc-R7x"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LCH-xS-0qk">
+                                        <rect key="frame" x="21" y="45" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="更换比例"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="changeResizeWHScale:" destination="whP-gf-Uak" eventType="touchUpInside" id="V5v-xP-H5g"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gFY-kS-d4M">
+                                        <rect key="frame" x="198" y="45" width="68.5" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="随机颜色"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="changeRandomColor:" destination="whP-gf-Uak" eventType="touchUpInside" id="O0W-gg-ORh"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="XOv-95-U7d"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="leading" secondItem="Bmh-GN-dI9" secondAttribute="trailing" priority="999" constant="20" id="15z-oZ-Hgu"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="1AR-yA-fBK"/>
+                                    <constraint firstItem="LCH-xS-0qk" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="2BD-wv-WSf"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="2Dj-pt-tsY"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="2E3-Wo-W07"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="top" secondItem="3Q2-Zj-NPf" secondAttribute="bottom" priority="1" constant="10" id="2s8-3T-oQc"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" priority="999" id="4zf-Y2-fba"/>
+                                    <constraint firstAttribute="trailing" secondItem="gfg-EW-TwQ" secondAttribute="trailing" constant="20" id="6ep-sg-kxq"/>
+                                    <constraint firstItem="LCH-xS-0qk" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="8Uw-OX-6a0"/>
+                                    <constraint firstItem="Bmh-GN-dI9" firstAttribute="top" secondItem="23z-V1-CXO" secondAttribute="bottom" priority="1" constant="10" id="A4C-gt-mJt"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="top" secondItem="LCW-oZ-8f9" secondAttribute="top" priority="1" constant="57" id="Aa4-kX-BQw"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" priority="999" id="Dot-6M-Xgi"/>
+                                    <constraint firstItem="LCH-xS-0qk" firstAttribute="top" secondItem="Bmh-GN-dI9" secondAttribute="bottom" priority="1" constant="10" id="Eer-EH-csy"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="centerX" secondItem="23z-V1-CXO" secondAttribute="centerX" priority="999" id="FP4-Zo-ur7"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" priority="999" id="Fjd-4F-mhm"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="leading" secondItem="LCW-oZ-8f9" secondAttribute="leading" priority="1" id="GW1-uc-dva"/>
+                                    <constraint firstAttribute="bottom" secondItem="LCH-xS-0qk" secondAttribute="bottom" priority="999" constant="20" id="Hsg-df-T8p"/>
+                                    <constraint firstItem="gFY-kS-d4M" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" priority="999" id="IPv-mh-bPD"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="KVN-On-HXo"/>
+                                    <constraint firstItem="LCH-xS-0qk" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="Kls-C6-L3z"/>
+                                    <constraint firstItem="gFY-kS-d4M" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="LJR-1w-4z0"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="Mku-UQ-Pzz"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="QOl-nl-ZO3"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerX" secondItem="gFY-kS-d4M" secondAttribute="centerX" priority="999" id="SiX-kE-Akg"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="top" secondItem="LCW-oZ-8f9" secondAttribute="top" priority="999" id="TG0-Oe-UzR"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="TGC-IG-weu"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" priority="999" id="Uu5-hd-fb2"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" priority="999" id="VGU-J4-QNX"/>
+                                    <constraint firstItem="gFY-kS-d4M" firstAttribute="top" secondItem="tRo-kT-cgg" secondAttribute="bottom" priority="1" constant="10" id="Vh1-ow-0Fw"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="VoU-mJ-uow"/>
+                                    <constraint firstItem="LCH-xS-0qk" firstAttribute="centerX" secondItem="Bmh-GN-dI9" secondAttribute="centerX" priority="999" id="XZE-E8-0kO"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="XzA-h5-pFE"/>
+                                    <constraint firstItem="gFY-kS-d4M" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="YeZ-EH-u4Q"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="cdV-wx-Zla"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="top" secondItem="gfg-EW-TwQ" secondAttribute="bottom" priority="999" constant="15" id="f7N-pS-g8b"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="top" secondItem="LCH-xS-0qk" secondAttribute="bottom" priority="1" constant="10" id="gxu-Nd-J8r"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="top" secondItem="gfg-EW-TwQ" secondAttribute="bottom" priority="1" constant="10" id="hEa-i6-3rJ"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="top" secondItem="gFY-kS-d4M" secondAttribute="bottom" priority="1" constant="10" id="iuJ-vz-Cj7"/>
+                                    <constraint firstItem="Bmh-GN-dI9" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="lnC-tp-iUN"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="n8G-vU-HTe"/>
+                                    <constraint firstItem="gfg-EW-TwQ" firstAttribute="leading" secondItem="3Q2-Zj-NPf" secondAttribute="trailing" priority="999" constant="20" id="qIf-Oe-K3z"/>
+                                    <constraint firstItem="23z-V1-CXO" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="sKw-8q-z3S"/>
+                                    <constraint firstItem="tRo-kT-cgg" firstAttribute="centerX" secondItem="gfg-EW-TwQ" secondAttribute="centerX" priority="1" id="vxx-De-SI7"/>
+                                    <constraint firstItem="gFY-kS-d4M" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="wYm-sm-aIN"/>
+                                    <constraint firstItem="JTM-rw-zlm" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="wZ4-Fo-4mx"/>
+                                    <constraint firstItem="3Q2-Zj-NPf" firstAttribute="leading" secondItem="23z-V1-CXO" secondAttribute="trailing" priority="999" constant="20" id="zFc-3r-u0I"/>
                                 </constraints>
-                                <state key="normal" title="重置"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="recovery:" destination="whP-gf-Uak" eventType="touchUpInside" id="PIB-sK-Nia"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gfg-EW-TwQ">
-                                <rect key="frame" x="286.5" y="567" width="68.5" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="luG-Ph-lIk"/>
-                                </constraints>
-                                <state key="normal" title="裁剪"/>
-                                <state key="disabled">
-                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="resize:" destination="whP-gf-Uak" eventType="touchUpInside" id="bQU-Ea-yQb"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LCH-xS-0qk">
-                                <rect key="frame" x="20" y="617" width="69" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="tOm-KP-cSJ"/>
-                                </constraints>
-                                <state key="normal" title="更换比例"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="changeResizeWHScale:" destination="whP-gf-Uak" eventType="touchUpInside" id="V5v-xP-H5g"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tRo-kT-cgg">
-                                <rect key="frame" x="109" y="617" width="68.5" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="t1t-pq-2T2"/>
-                                </constraints>
-                                <state key="normal" title="模糊效果"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="changeBlurEffect:" destination="whP-gf-Uak" eventType="touchUpInside" id="8rM-uc-R7x"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gFY-kS-d4M">
-                                <rect key="frame" x="197.5" y="617" width="69" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="8Jd-kN-jK9"/>
-                                </constraints>
-                                <state key="normal" title="随机颜色"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="changeRandomColor:" destination="whP-gf-Uak" eventType="touchUpInside" id="O0W-gg-ORh"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTM-rw-zlm">
-                                <rect key="frame" x="286.5" y="617" width="68.5" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="BS6-tH-roq"/>
-                                </constraints>
-                                <state key="normal" title="更换图片"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="replaceImage:" destination="whP-gf-Uak" eventType="touchUpInside" id="KcA-LT-EnU"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23z-V1-CXO">
-                                <rect key="frame" x="109" y="567" width="68.5" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="jtx-J9-EjR"/>
-                                </constraints>
-                                <state key="normal" title="旋转"/>
-                                <state key="disabled">
-                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="rotate:" destination="whP-gf-Uak" eventType="touchUpInside" id="uaM-WC-hmI"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7b-fV-KhW">
-                                <rect key="frame" x="324" y="0.0" width="35" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
-                                <state key="normal" title="锁定"/>
-                                <state key="selected" title="解锁"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="lockFrame:" destination="whP-gf-Uak" eventType="touchUpInside" id="ueK-Js-HKO"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oXP-jn-vnR">
-                                <rect key="frame" x="253" y="0.0" width="66" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
-                                <state key="normal" title="垂直镜像"/>
-                                <state key="disabled">
-                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="verMirror:" destination="whP-gf-Uak" eventType="touchUpInside" id="RzT-Xv-4Oh"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0oe-Do-HA2">
-                                <rect key="frame" x="182" y="0.0" width="66" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
-                                <state key="normal" title="水平镜像"/>
-                                <state key="disabled">
-                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="horMirror:" destination="whP-gf-Uak" eventType="touchUpInside" id="acy-4S-aNP"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PPx-fE-9xq">
-                                <rect key="frame" x="142" y="0.0" width="35" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
-                                <state key="normal" title="预览"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="previewAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="rTs-e6-sTe"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XaN-bE-0my">
-                                <rect key="frame" x="41" y="0.0" width="96" height="30"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="0.0"/>
-                                <state key="normal" title="保持当前比例"/>
-                                <state key="selected" title="保持任意比例"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="toBeArbitrarilyAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="WDj-nd-bOt"/>
-                                </connections>
-                            </button>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="width" secondItem="23z-V1-CXO" secondAttribute="width" id="0l5-aT-QjY"/>
-                            <constraint firstItem="23z-V1-CXO" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" id="2n6-bl-LYj"/>
-                            <constraint firstItem="gFY-kS-d4M" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="3gp-NH-Iaa"/>
-                            <constraint firstItem="XaN-bE-0my" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="5Qo-1I-aNg"/>
-                            <constraint firstItem="JTM-rw-zlm" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="7YP-11-YGd"/>
-                            <constraint firstItem="0oe-Do-HA2" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="82e-EC-Uq1"/>
-                            <constraint firstItem="tRo-kT-cgg" firstAttribute="leading" secondItem="LCH-xS-0qk" secondAttribute="trailing" constant="20" id="95S-0z-r6v"/>
-                            <constraint firstItem="3Q2-Zj-NPf" firstAttribute="height" secondItem="23z-V1-CXO" secondAttribute="height" id="GCu-Q3-Jh3"/>
-                            <constraint firstItem="PPx-fE-9xq" firstAttribute="height" secondItem="XaN-bE-0my" secondAttribute="height" id="I9n-k2-p1q"/>
-                            <constraint firstItem="nkI-gv-FqT" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="16" id="LIw-oG-B2l"/>
-                            <constraint firstItem="tRo-kT-cgg" firstAttribute="centerY" secondItem="LCH-xS-0qk" secondAttribute="centerY" id="O05-ui-gVp"/>
-                            <constraint firstItem="oXP-jn-vnR" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="OHq-Ho-Pjc"/>
-                            <constraint firstAttribute="trailing" secondItem="v7b-fV-KhW" secondAttribute="trailing" constant="16" id="PSt-ox-y6G"/>
-                            <constraint firstItem="v7b-fV-KhW" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="QVu-I3-lRP"/>
-                            <constraint firstItem="0oe-Do-HA2" firstAttribute="leading" secondItem="PPx-fE-9xq" secondAttribute="trailing" constant="5" id="Qgb-Ot-fpn"/>
-                            <constraint firstItem="oXP-jn-vnR" firstAttribute="height" secondItem="nkI-gv-FqT" secondAttribute="height" id="QoJ-TU-gti"/>
-                            <constraint firstItem="v7b-fV-KhW" firstAttribute="leading" secondItem="oXP-jn-vnR" secondAttribute="trailing" constant="5" id="SrA-p2-LZi"/>
-                            <constraint firstItem="nkI-gv-FqT" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" id="TDE-bk-d5x"/>
-                            <constraint firstItem="23z-V1-CXO" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="UNM-Dn-kel"/>
-                            <constraint firstItem="0oe-Do-HA2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" symbolic="YES" id="Ub2-X0-mva"/>
-                            <constraint firstItem="oXP-jn-vnR" firstAttribute="leading" secondItem="0oe-Do-HA2" secondAttribute="trailing" constant="5" id="VzM-Da-chJ"/>
-                            <constraint firstItem="gFY-kS-d4M" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="XaB-2E-03e"/>
-                            <constraint firstItem="Mvr-aV-6Um" firstAttribute="top" secondItem="LCH-xS-0qk" secondAttribute="bottom" constant="20" id="Y8G-4k-4Ql"/>
-                            <constraint firstItem="JTM-rw-zlm" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="Zga-WL-TvR"/>
-                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="centerY" secondItem="23z-V1-CXO" secondAttribute="centerY" id="bFZ-cW-SBM"/>
-                            <constraint firstItem="LCH-xS-0qk" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" id="bkW-YY-q6b"/>
-                            <constraint firstItem="v7b-fV-KhW" firstAttribute="height" secondItem="XaN-bE-0my" secondAttribute="height" id="cw6-C8-7hO"/>
-                            <constraint firstItem="gFY-kS-d4M" firstAttribute="leading" secondItem="tRo-kT-cgg" secondAttribute="trailing" constant="20" id="e7q-I2-FJT"/>
-                            <constraint firstItem="3Q2-Zj-NPf" firstAttribute="leading" secondItem="23z-V1-CXO" secondAttribute="trailing" constant="20" id="eCG-8s-MNo"/>
-                            <constraint firstItem="0oe-Do-HA2" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="eDL-8g-w7J"/>
-                            <constraint firstItem="3Q2-Zj-NPf" firstAttribute="centerY" secondItem="23z-V1-CXO" secondAttribute="centerY" id="emC-nY-48s"/>
-                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="leading" secondItem="3Q2-Zj-NPf" secondAttribute="trailing" constant="20" id="hxK-Jh-kc1"/>
-                            <constraint firstItem="v7b-fV-KhW" firstAttribute="centerY" secondItem="nkI-gv-FqT" secondAttribute="centerY" id="k3h-DD-Q4R"/>
-                            <constraint firstItem="Bmh-GN-dI9" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="20" id="lJj-JR-VTR"/>
-                            <constraint firstItem="JTM-rw-zlm" firstAttribute="leading" secondItem="gFY-kS-d4M" secondAttribute="trailing" constant="20" id="mHZ-UZ-JrS"/>
-                            <constraint firstItem="tRo-kT-cgg" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="pyE-sd-tJK"/>
-                            <constraint firstItem="LCH-xS-0qk" firstAttribute="top" secondItem="23z-V1-CXO" secondAttribute="bottom" constant="20" id="qsa-mP-37m"/>
-                            <constraint firstAttribute="trailing" secondItem="gfg-EW-TwQ" secondAttribute="trailing" constant="20" id="r6G-0Y-qT4"/>
-                            <constraint firstItem="gFY-kS-d4M" firstAttribute="height" secondItem="LCH-xS-0qk" secondAttribute="height" id="rGV-v1-yy1"/>
-                            <constraint firstItem="PPx-fE-9xq" firstAttribute="leading" secondItem="XaN-bE-0my" secondAttribute="trailing" constant="5" id="rim-bV-9ex"/>
-                            <constraint firstItem="23z-V1-CXO" firstAttribute="leading" secondItem="Bmh-GN-dI9" secondAttribute="trailing" constant="20" id="rx6-GP-MwR"/>
-                            <constraint firstItem="tRo-kT-cgg" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="scE-Zp-5WH"/>
-                            <constraint firstAttribute="trailing" secondItem="JTM-rw-zlm" secondAttribute="trailing" constant="20" id="tiY-6f-Wdm"/>
-                            <constraint firstItem="23z-V1-CXO" firstAttribute="width" secondItem="Bmh-GN-dI9" secondAttribute="width" id="ujj-1r-NId"/>
-                            <constraint firstItem="3Q2-Zj-NPf" firstAttribute="width" secondItem="23z-V1-CXO" secondAttribute="width" id="xbf-CA-YQm"/>
-                            <constraint firstItem="JTM-rw-zlm" firstAttribute="width" secondItem="LCH-xS-0qk" secondAttribute="width" id="xs1-Qw-V3n"/>
-                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="height" secondItem="23z-V1-CXO" secondAttribute="height" id="yDn-8o-1u4"/>
-                            <constraint firstItem="0oe-Do-HA2" firstAttribute="centerY" secondItem="PPx-fE-9xq" secondAttribute="centerY" id="yxi-im-H4e"/>
+                            <constraint firstItem="d0j-lu-XGP" firstAttribute="top" secondItem="TpU-gO-2f1" secondAttribute="top" id="AZQ-go-NvO"/>
+                            <constraint firstAttribute="trailing" secondItem="d0j-lu-XGP" secondAttribute="trailing" priority="999" id="BC1-5e-oI6"/>
+                            <constraint firstItem="d0j-lu-XGP" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" id="Rtf-Bk-Y2b"/>
+                            <constraint firstAttribute="bottom" secondItem="LCW-oZ-8f9" secondAttribute="bottom" id="SxE-4i-1uX"/>
+                            <constraint firstItem="LCW-oZ-8f9" firstAttribute="top" secondItem="TpU-gO-2f1" secondAttribute="top" priority="1" id="cM9-XK-xNy"/>
+                            <constraint firstAttribute="bottom" secondItem="d0j-lu-XGP" secondAttribute="bottom" priority="1" id="e4w-kj-iFh"/>
+                            <constraint firstItem="LCW-oZ-8f9" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" priority="999" id="klh-fd-spu"/>
+                            <constraint firstAttribute="trailing" secondItem="LCW-oZ-8f9" secondAttribute="trailing" id="oDc-e1-qBJ"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backBtnLeftConstraint" destination="i23-qr-FoR" id="gwb-LW-JgH"/>
+                        <outlet property="backBtnTopConstraint" destination="N8D-Uq-HI9" id="2tw-2D-7Di"/>
+                        <outlet property="bottomBtnPortraitBottomConstraints" destination="Hsg-df-T8p" id="Dd6-Zv-LMs"/>
+                        <outlet property="bottomBtnWidthConstraint" destination="yOA-WF-CwK" id="kWd-BA-GSj"/>
                         <outlet property="horMirrorBtn" destination="0oe-Do-HA2" id="S1z-Me-zon"/>
+                        <outlet property="keepScaleBtn" destination="XaN-bE-0my" id="F9f-Lg-X0d"/>
                         <outlet property="recoveryBtn" destination="3Q2-Zj-NPf" id="ggM-oQ-YKY"/>
                         <outlet property="resizeBtn" destination="gfg-EW-TwQ" id="byh-NM-clX"/>
+                        <outlet property="resizeBtnRightConstraint" destination="6ep-sg-kxq" id="uqI-e1-Ob4"/>
                         <outlet property="rotateBtn" destination="23z-V1-CXO" id="GTg-AX-9J0"/>
                         <outlet property="verMirrorBtn" destination="oXP-jn-vnR" id="j0v-DQ-ffa"/>
-                        <outletCollection property="processBtns" destination="23z-V1-CXO" id="RAh-nQ-vVN"/>
-                        <outletCollection property="processBtns" destination="3Q2-Zj-NPf" id="TEJ-IF-Mpd"/>
+                        <outletCollection property="portraitConstraints" destination="BC1-5e-oI6" id="RVT-XR-Syd"/>
+                        <outletCollection property="portraitConstraints" destination="ZAc-ti-xDu" id="z0R-48-jO9"/>
+                        <outletCollection property="portraitConstraints" destination="8BV-6h-vFj" id="pTS-fz-QwN"/>
+                        <outletCollection property="portraitConstraints" destination="7fu-zY-dnG" id="PAg-Eb-9Iy"/>
+                        <outletCollection property="portraitConstraints" destination="5ev-cO-ag5" id="Ie0-9t-0Go"/>
+                        <outletCollection property="portraitConstraints" destination="93n-IR-dbW" id="CKW-DW-orQ"/>
+                        <outletCollection property="portraitConstraints" destination="8LL-ng-rON" id="5DX-xK-hWM"/>
+                        <outletCollection property="portraitConstraints" destination="Jyn-dl-gCy" id="63u-9U-Ecz"/>
+                        <outletCollection property="portraitConstraints" destination="6Hx-Oi-nq8" id="klL-9Z-5o4"/>
+                        <outletCollection property="portraitConstraints" destination="Qsg-IA-9sh" id="xQt-22-SuH"/>
+                        <outletCollection property="portraitConstraints" destination="z6G-IY-fdR" id="hqR-eX-Sw5"/>
+                        <outletCollection property="portraitConstraints" destination="IBw-x8-RHH" id="XMd-FO-E2y"/>
+                        <outletCollection property="landscapeConstraints" destination="vD7-zc-9Qh" id="1mM-Dp-ckI"/>
+                        <outletCollection property="landscapeConstraints" destination="8te-wY-nzj" id="x4B-M2-Aeh"/>
+                        <outletCollection property="landscapeConstraints" destination="Bgl-Ul-Ksh" id="S9h-7F-AV4"/>
+                        <outletCollection property="landscapeConstraints" destination="MPa-7X-HJc" id="B2X-3R-TwT"/>
+                        <outletCollection property="landscapeConstraints" destination="tJb-Tl-ADd" id="XFA-VG-cco"/>
+                        <outletCollection property="landscapeConstraints" destination="8z0-DD-GSK" id="OTX-cX-Q3z"/>
+                        <outletCollection property="landscapeConstraints" destination="cZ4-rU-aP4" id="K9L-VT-L3k"/>
+                        <outletCollection property="landscapeConstraints" destination="ihf-DU-yhH" id="Qo5-F8-ZOa"/>
+                        <outletCollection property="landscapeConstraints" destination="2QA-FR-WVW" id="JdZ-1O-V0k"/>
+                        <outletCollection property="landscapeConstraints" destination="sDW-up-aj6" id="4yC-GK-dt8"/>
+                        <outletCollection property="landscapeConstraints" destination="3eH-rc-qqa" id="Z4I-jC-iyU"/>
                         <outletCollection property="processBtns" destination="gfg-EW-TwQ" id="MYq-1x-nSJ"/>
-                        <outletCollection property="processBtns" destination="LCH-xS-0qk" id="tGK-YC-v2V"/>
-                        <outletCollection property="processBtns" destination="tRo-kT-cgg" id="q9R-u5-vsU"/>
-                        <outletCollection property="processBtns" destination="gFY-kS-d4M" id="xzh-yn-3Py"/>
-                        <outletCollection property="processBtns" destination="JTM-rw-zlm" id="vgx-zU-7an"/>
+                        <outletCollection property="processBtns" destination="3Q2-Zj-NPf" id="TEJ-IF-Mpd"/>
+                        <outletCollection property="processBtns" destination="23z-V1-CXO" id="RAh-nQ-vVN"/>
                         <outletCollection property="processBtns" destination="Bmh-GN-dI9" id="Bhm-ys-Git"/>
+                        <outletCollection property="processBtns" destination="JTM-rw-zlm" id="vgx-zU-7an"/>
+                        <outletCollection property="processBtns" destination="gFY-kS-d4M" id="xzh-yn-3Py"/>
+                        <outletCollection property="processBtns" destination="tRo-kT-cgg" id="q9R-u5-vsU"/>
+                        <outletCollection property="processBtns" destination="LCH-xS-0qk" id="tGK-YC-v2V"/>
+                        <outletCollection property="portraitConstraints" destination="qIf-Oe-K3z" id="MJI-Sb-T6a"/>
+                        <outletCollection property="portraitConstraints" destination="TG0-Oe-UzR" id="MkY-bO-7hS"/>
+                        <outletCollection property="portraitConstraints" destination="f7N-pS-g8b" id="cH1-2Z-LJG"/>
+                        <outletCollection property="portraitConstraints" destination="zFc-3r-u0I" id="ifF-Ow-olE"/>
+                        <outletCollection property="portraitConstraints" destination="VGU-J4-QNX" id="vGI-XV-18p"/>
+                        <outletCollection property="portraitConstraints" destination="SiX-kE-Akg" id="4Mk-qt-fvc"/>
+                        <outletCollection property="portraitConstraints" destination="FP4-Zo-ur7" id="9PQ-my-gvC"/>
+                        <outletCollection property="portraitConstraints" destination="15z-oZ-Hgu" id="SH9-Ik-a2Y"/>
+                        <outletCollection property="portraitConstraints" destination="Dot-6M-Xgi" id="eAa-3X-cFY"/>
+                        <outletCollection property="portraitConstraints" destination="XZE-E8-0kO" id="Iyb-wm-sNV"/>
+                        <outletCollection property="portraitConstraints" destination="4zf-Y2-fba" id="SHB-vU-WiY"/>
+                        <outletCollection property="portraitConstraints" destination="Fjd-4F-mhm" id="YM0-wK-yVE"/>
+                        <outletCollection property="portraitConstraints" destination="IPv-mh-bPD" id="W8i-mj-2vO"/>
+                        <outletCollection property="portraitConstraints" destination="Uu5-hd-fb2" id="aSJ-i1-2gK"/>
+                        <outletCollection property="landscapeConstraints" destination="GW1-uc-dva" id="c4b-oF-ese"/>
+                        <outletCollection property="landscapeConstraints" destination="Aa4-kX-BQw" id="ARJ-6U-cOx"/>
+                        <outletCollection property="landscapeConstraints" destination="lnC-tp-iUN" id="A3u-uA-df9"/>
+                        <outletCollection property="landscapeConstraints" destination="sKw-8q-z3S" id="Yvf-89-VEW"/>
+                        <outletCollection property="landscapeConstraints" destination="XzA-h5-pFE" id="rfT-wW-2aM"/>
+                        <outletCollection property="landscapeConstraints" destination="hEa-i6-3rJ" id="sP7-mp-LF8"/>
+                        <outletCollection property="landscapeConstraints" destination="2s8-3T-oQc" id="8fc-Wu-djZ"/>
+                        <outletCollection property="landscapeConstraints" destination="A4C-gt-mJt" id="Jc7-9a-ia7"/>
+                        <outletCollection property="portraitConstraints" destination="klh-fd-spu" id="l1w-CX-0Bc"/>
+                        <outletCollection property="landscapeConstraints" destination="cM9-XK-xNy" id="KUP-eH-ERW"/>
+                        <outletCollection property="portraitConstraints" destination="Hsg-df-T8p" id="viJ-8A-Cb7"/>
+                        <outletCollection property="landscapeConstraints" destination="Kls-C6-L3z" id="crT-xo-qjc"/>
+                        <outletCollection property="landscapeConstraints" destination="gxu-Nd-J8r" id="kCL-ov-b2f"/>
+                        <outletCollection property="landscapeConstraints" destination="Eer-EH-csy" id="KBM-Y8-mTS"/>
+                        <outletCollection property="landscapeConstraints" destination="vxx-De-SI7" id="gMc-4m-xgM"/>
+                        <outletCollection property="landscapeConstraints" destination="Vh1-ow-0Fw" id="W4P-aX-VqB"/>
+                        <outletCollection property="landscapeConstraints" destination="LJR-1w-4z0" id="S0F-v9-dO9"/>
+                        <outletCollection property="landscapeConstraints" destination="iuJ-vz-Cj7" id="EHr-qi-CdA"/>
+                        <outletCollection property="landscapeConstraints" destination="e4w-kj-iFh" id="d0j-Z4-gdr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
