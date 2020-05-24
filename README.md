@@ -281,7 +281,7 @@ self.imageresizerView.isAutoScale = NO;
 1.2.1~1.3.6 | 1. 新增圆切样式；<br>2. 中间的点/块可隐藏；<br>3. 可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；<br>4. 毛玻璃效果可设置系统现有的所有效果；<br>5. 适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；<br>6. 优化逻辑。  
 1.2.0 | 1. 固定比例的裁剪宽高比，裁剪边框也均可拖拽8个方向；<br>2. 优化了显示/隐藏毛玻璃效果。  
 1.1.2~1.1.5 | 1. 优化计算逻辑；<br>2. 初始化时可自定义最大缩放比例（maximumZoomScale）。
-1.1.1 | 1. 新增 imageresizeWHScale 属性，获取当前裁剪框的宽高比；<br>2. 新增 isToBeArbitrarily 关键字，用于设置裁剪宽高比、重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0），即可以继续任意拖拽裁剪框，对设置裁剪宽高比、重置等方法进行了修改，详情请查看Demo；<br>3.直接设置 resizeWHScale、verticalityMirror、horizontalMirror、isPreview 默认自带动画效果（isAnimated = YES，其中 resizeWHScale 的 isToBeArbitrarily = NO）。
+1.1.1 | 1. 新增 imageresizeWHScale 属性，获取当前裁剪框的宽高比；<br>2. 新增 isToBeArbitrarily 关键字，用于设置裁剪宽高比、重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0），即可以继续任意拖拽裁剪框，对设置裁剪宽高比、重置等方法进行了修改，详情请查看Demo；<br>3. 直接设置 resizeWHScale、verticalityMirror、horizontalMirror、isPreview 默认自带动画效果（isAnimated = YES，其中 resizeWHScale 的 isToBeArbitrarily = NO）。
 1.1.0 | 1. 现在可以自定义边框图片，新增borderImage（边框图片）和borderImageRectInset（边框图片与边线的偏移量）接口用于设置自定义边框图片；<br>2. 优化计算逻辑。
 1.0.1~1.0.4 | 1. recovery方法更名为recoveryByInitialResizeWHScale，意思按initialResizeWHScale进行重置，避免误导。<br>2. 裁剪后不再按参照宽度来进行压缩了，现在按比例来进行压缩（现在使用scale，referenceWidth已废除）；<br>3. 优化了裁剪和压缩逻辑；
 1.0.0 | 1. 新增了isPreview属性，用于预览裁剪后的区域；<br>2. 新增了initialResizeWHScale属性，初始裁剪宽高比，重置时resizeWHScale会重置为该属性的值；<br>3. 新增recoveryByCurrentResizeWHScale方法，重置时不改变resizeWHScale；<br>4. 新增recoveryByResizeWHScale:方法，重置时可修改成任意resizeWHScale；<br>5. 修复了不断切换resizeWHScale时不断缩放的问题；<br>6. 优化了切换resizeWHScale、手指拖动时的交互效果。
@@ -295,7 +295,7 @@ self.imageresizerView.isAutoScale = NO;
 0.3.3 | 新增resizeWHScale的动画形式的设置接口（-setResizeWHScale:animated:）。<br>说明：平时裁剪头像区域一般都是使用1:1的比例，但如果一进去就以该比例呈现，就会立马裁掉超出区域，可能会给人一种图片尺寸改变了的错觉，所以个人建议进去页面后（例如控制器的viewDidApper时）再调用改方法重新调整宽高比（请看gif图效果），这样用户体验会好点。
 0.3.2 | 1. 新增【裁剪区域预备缩放至适应范围的回调】，当预备缩放时裁剪、旋转、镜像功能不可用，可在这回调中作相应处理；<br>2. 修改【旋转后是否自动缩放】的属性名 isAutoScale -> isRotatedAutoScale。
 0.3.0 | 1. 修正旋转水平方向时自动整体自适应缩小的问题，现在为图片宽度比图片高度小时才自适应，也可以手动设定；<br>2. 新增锁定功能，裁剪区域可锁定，无法继续拖动；<br>3. 新增镜像功能，可进行垂直方向和水平方向镜像操作。
-0.2.3 | 1. 修复相册照片方向错乱的bug；<br>2. 修复水平方向边框点和线有所缩小的问题；<br>3.更正属性的注释。
+0.2.3 | 1. 修复相册照片方向错乱的bug；<br>2. 修复水平方向边框点和线有所缩小的问题；<br>3. 更正属性的注释。
 0.2.0 | 1. 新增高斯模糊的遮罩样式；<br>2. 可设置动画曲线；<br>3. 可设置裁剪区域的内边距；<br>4. 新增JPImageresizerConfigure类，更加方便设定参数。
 
 ## 安装
