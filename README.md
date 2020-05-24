@@ -9,7 +9,6 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
 ## 简介（当前版本：1.3.8）
-$\checkmark$
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -22,17 +21,16 @@ $\checkmark$
         6.两种边框样式；
         7.支持圆框裁剪；
         8.自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
-        9.自定义边框图片。
-        10.支持横竖屏切换
+        9.自定义边框图片；
+        10.支持横竖屏切换。
 
-    注意：
-        1.由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout；
-        
     努力着的更新内容：
         1.Swift版本；
         3.更多新的边框和遮罩样式；
         4.更多的参数设定；
         5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
+        
+    注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
 
 ![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
