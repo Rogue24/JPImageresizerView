@@ -306,7 +306,8 @@
 
 /*!
  @method
- @brief 修改整体Frame
+ @brief 修改视图整体Frame
+ @param frame --- 刷新的Frame（例如横竖屏切换，传入self.view.bounds即可）
  @param contentInsets --- 裁剪区域与主视图的内边距
  @param duration --- 刷新时长（大于0即带有动画效果）
  @discussion 可用在【横竖屏的切换】
