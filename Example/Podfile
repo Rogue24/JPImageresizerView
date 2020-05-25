@@ -12,7 +12,6 @@ target 'JPImageresizerView_Example' do
   
   pod 'JPBasic/JPConst'
   pod 'JPBasic/JPCategory'
-  pod 'JPBasic/JPTool'
   pod 'JPBasic/JPProgressHUD'
   
 end

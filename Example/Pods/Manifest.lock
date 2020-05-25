@@ -6,22 +6,16 @@ PODS:
   - JPBasic/JPConst (0.1.2)
   - JPBasic/JPProgressHUD (0.1.2):
     - SVProgressHUD
-  - JPBasic/JPTool (0.1.2):
-    - JPBasic/JPCategory
-    - JPBasic/JPConst
-    - YYText
-  - JPImageresizerView (1.3.7)
+  - JPImageresizerView (1.3.8)
   - JPLiquidLayout (0.1.1)
   - Masonry (1.1.0)
   - pop (1.0.12)
   - SVProgressHUD (2.2.5)
-  - YYText (1.0.7)
 
 DEPENDENCIES:
   - JPBasic/JPCategory
   - JPBasic/JPConst
   - JPBasic/JPProgressHUD
-  - JPBasic/JPTool
   - JPImageresizerView (from `../`)
   - JPLiquidLayout
   - Masonry
@@ -35,7 +29,6 @@ SPEC REPOS:
     - Masonry
     - pop
     - SVProgressHUD
-    - YYText
 
 EXTERNAL SOURCES:
   JPImageresizerView:
@@ -43,13 +36,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   JPBasic: 0e9c125855ec33ad4d0787bfd19725d36d967115
-  JPImageresizerView: 5daf90517ca963ece4d6c4a2cb22d06f8d502623
+  JPImageresizerView: 5706dce91cc4b23c8f9afc1b578f52d80b77d1c7
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 3d96f9f4a09c0df1000dcfbc27a998a43a554611
+PODFILE CHECKSUM: dae6857ccc8a2a481885a2aba453daad5b234cd4
 
 COCOAPODS: 1.9.1

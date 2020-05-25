@@ -24,12 +24,6 @@
 #import "JPConstant.h"
 #import "JPMacro.h"
 #import "JPProgressHUD.h"
-#import "JPAlertControllerTool.h"
-#import "JPDeviceTool.h"
-#import "JPFileTool.h"
-#import "JPInteractiveTransition.h"
-#import "JPSolveTool.h"
-#import "JPTextLayoutTool.h"
 
 FOUNDATION_EXPORT double JPBasicVersionNumber;
 FOUNDATION_EXPORT const unsigned char JPBasicVersionString[];

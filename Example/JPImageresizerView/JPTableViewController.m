@@ -9,7 +9,6 @@
 #import "JPTableViewController.h"
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
-#import "JPImageresizerViewController.h"
 
 @interface JPTableViewController ()
 @property (nonatomic, copy) NSArray *configures;
@@ -179,9 +178,6 @@
         [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
         
         [self.navigationController pushViewController:vc animated:NO];
-        
-//        JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
-//        [self.navigationController pushViewController:vc animated:YES];
     } else {
         __weak typeof(self) wSelf = self;
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
