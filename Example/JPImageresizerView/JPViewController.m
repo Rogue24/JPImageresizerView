@@ -22,7 +22,7 @@
 @property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, assign) BOOL isToBeArbitrarily;
 
-@property (nonatomic, assign) UIDeviceOrientation orientation;
+@property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
 
 @property (weak, nonatomic) IBOutlet UIButton *keepScaleBtn;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnLeftConstraint;
@@ -86,8 +86,8 @@
     self.backBtnLeftConstraint.constant = JPMargin;
     self.backBtnTopConstraint.constant = JPStatusBarH;
     
-    self.orientation = [UIDevice currentDevice].orientation;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange) name:UIDeviceOrientationDidChangeNotification object:nil];
+    self.statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeStatusBarOrientation) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
 }
 
 - (void)__setupImageresizerView {
@@ -141,25 +141,18 @@
 
 #pragma mark - 监听屏幕旋转
 
-- (void)orientationDidChange {
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-    if (orientation == UIDeviceOrientationUnknown ||
-        orientation == UIDeviceOrientationFaceUp ||
-        orientation == UIDeviceOrientationFaceDown ||
-        orientation == UIDeviceOrientationPortraitUpsideDown) {
-        return;
-    }
-    NSTimeInterval duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
-    [self setOrientation:orientation duration:duration];
+- (void)didChangeStatusBarOrientation {
+    [self setStatusBarOrientation:[UIApplication sharedApplication].statusBarOrientation
+                         duration:[UIApplication sharedApplication].statusBarOrientationAnimationDuration];
 }
 
-- (void)setOrientation:(UIDeviceOrientation)orientation {
-    [self setOrientation:orientation duration:0];
+- (void)setStatusBarOrientation:(UIInterfaceOrientation)statusBarOrientation {
+    [self setStatusBarOrientation:statusBarOrientation duration:0];
 }
 
-- (void)setOrientation:(UIDeviceOrientation)orientation duration:(NSTimeInterval)duration {
-    if (_orientation == orientation) return;
-    _orientation = orientation;
+- (void)setStatusBarOrientation:(UIInterfaceOrientation)statusBarOrientation duration:(NSTimeInterval)duration {
+    if (_statusBarOrientation == statusBarOrientation) return;
+    _statusBarOrientation = statusBarOrientation;
     
     float portraitPriority;
     float landscapePriority;
@@ -169,12 +162,13 @@
     
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
     
-    if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight) {
+    if (statusBarOrientation == UIInterfaceOrientationLandscapeLeft ||
+        statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
         portraitPriority = 1;
         landscapePriority = 999;
         backBtnTop = JPMargin;
         
-        if (orientation == UIDeviceOrientationLandscapeLeft) {
+        if (statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
             backBtnLeft = JPStatusBarH;
             resizeBtnRight = JPDiffTabBarH;
         } else {
@@ -191,7 +185,8 @@
         landscapePriority = 1;
         backBtnLeft = JPMargin;
         resizeBtnRight = JPMargin;
-        if (orientation == UIDeviceOrientationPortrait) {
+        
+        if (statusBarOrientation == UIInterfaceOrientationPortrait) {
             backBtnTop = JPStatusBarH;
         } else {
             backBtnTop = JPDiffTabBarH;

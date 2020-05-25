@@ -101,17 +101,11 @@
                           @"statusBarStyle": @(UIStatusBarStyleLightContent)}];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-    
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-}
-
-- (void)dealloc {
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
 #pragma mark - Table view data source
