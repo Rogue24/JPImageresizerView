@@ -10,7 +10,9 @@
 
 ## Brief introduction (Current version: 1.3.9)
 
-Imitation WeChat picture clipping function of a small tool.
+Imitation WeChat picture clipping function of a small tool, meet the needs of most pictures cutting.
+
+![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
     Current functions:
         1. Zooming of area that can be tailored adaptively;
@@ -31,8 +33,6 @@ Imitation WeChat picture clipping function of a small tool.
         4. To achieve the effect of free dragging rotation direction.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
-
-![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
 ## How to use
 

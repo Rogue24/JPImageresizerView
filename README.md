@@ -10,7 +10,9 @@
 
 ## 简介（当前版本：1.3.9）
 
-仿微信裁剪图片的一个裁剪小工具。
+仿微信图片裁剪功能的小工具，高自由度的参数设定，支持旋转和镜像翻转，多种样式选择，满足绝大部分图片裁剪的需求。
+
+![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
     目前功能：
         1.能自适应裁剪区域的缩放；
@@ -31,8 +33,6 @@
         4.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
         
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
-
-![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
 ## 如何使用
 
