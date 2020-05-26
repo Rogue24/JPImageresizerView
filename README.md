@@ -4,13 +4,13 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
-[简书](https://www.jianshu.com/p/dec3e33bbce1)
+[掘金](https://juejin.im/post/5e67cf33f265da5749475935)
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
 ## 简介（当前版本：1.3.9）
 
-仿微信图片裁剪功能的小工具，高自由度的参数设定，支持旋转和镜像翻转，多种样式选择，满足绝大部分图片裁剪的需求。
+一个专门裁剪图片的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片裁剪的需求。
 
 ![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -26,11 +26,12 @@
         9.自定义边框图片；
         10.可动态修改视图区域和裁剪区域间距，支持横竖屏切换。
 
-    努力着的更新内容：
+    正在努力着去实现的内容：
         1.Swift版本；
-        2.更多新的边框和遮罩样式；
-        3.更多的参数设定；
-        4.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
+        2.裁剪视频画面；
+        3.更多新的边框和遮罩样式；
+        4.更多的参数设定；
+        5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
         
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
 
@@ -64,7 +65,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 }];
 
 // 2.创建JPImageresizerView对象
-JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
     // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
     // 具体操作可参照Demo
@@ -309,7 +310,8 @@ pod 'JPImageresizerView'
 ## 反馈地址
 
     扣扣：184669029
-    博客：https://www.jianshu.com/u/2edfbadd451c
+    E-mail: zhoujianping24@hotmail.com
+    博客：https://juejin.im/user/5e55f27bf265da575c16c187
 
 ## License
 

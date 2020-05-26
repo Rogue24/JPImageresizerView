@@ -609,7 +609,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 - (CAShapeLayer *)__createShapeLayer:(CGFloat)lineWidth {
     CAShapeLayer *shapeLayer = [CAShapeLayer layer];
-    shapeLayer.frame = self.bounds;
     shapeLayer.lineWidth = lineWidth;
     [self.layer addSublayer:shapeLayer];
     return shapeLayer;
@@ -893,7 +892,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
-    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius]];
+    [maskPath appendPath:framePath];
     
     if (_borderImage) {
         CGRect borderImageViewFrame = self.borderImageViewFrame;

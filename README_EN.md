@@ -4,13 +4,13 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 
-[Jianshu](https://www.jianshu.com/p/5600da5c9bf6)
+[Juejin](https://juejin.im/post/5ecd0cddf265da7711699e0d)
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
 ## Brief introduction (Current version: 1.3.9)
 
-Imitation WeChat picture clipping function of a small tool, meet the needs of most pictures cutting.
+A special wheel for cutting pictures is simple and easy to use, with rich functions (parameter setting of high freedom, support for rotation and mirror turning, multiple style selection...), which can meet the needs of most pictures cutting.
 
 ![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -28,9 +28,10 @@ Imitation WeChat picture clipping function of a small tool, meet the needs of mo
 
     Trying to update the content:
         1. Swift version;
-        2. More new border and mask styles;
-        3. More parameter setting;
-        4. To achieve the effect of free dragging rotation direction.
+        2. Clip video;
+        3. More new border and mask styles;
+        4. More parameter setting;
+        5. To achieve the effect of free dragging rotation direction.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
 
@@ -64,7 +65,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 }];
 
 // 2. Create JPImageresizerView instance object
-JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // You can listen here to see if you can reset it.
     // If you don't need to reset (isCanRecovery is NO), you can do the corresponding processing here, such as setting the reset button to be non-point or hidden
     // Specific operation can refer to Demo
@@ -279,4 +280,4 @@ pod 'JPImageresizerView'
 ## Feedback address
 
     E-mail: zhoujianping24@hotmail.com
-    Blog: https://www.jianshu.com/u/2edfbadd451c
+    Blog: https://juejin.im/user/5e55f27bf265da575c16c187
