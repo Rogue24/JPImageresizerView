@@ -10,31 +10,38 @@
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
 
-@interface JPTableViewController ()
-@property (nonatomic, copy) NSArray *configures;
+@interface JPConfigureModel : NSObject
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
+@property (nonatomic, strong) JPImageresizerConfigure *configure;
++ (NSArray<JPConfigureModel *> *)testModels;
 @end
 
-@implementation JPTableViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.title = @"Example";
+@implementation JPConfigureModel
++ (NSArray<JPConfigureModel *> *)testModels {
+    JPConfigureModel *model1 = [self new];
+    model1.title = @"默认样式";
+    model1.statusBarStyle = UIStatusBarStyleLightContent;
+    model1.configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:nil];
     
-    NSString *title1 = @"默认样式";
-    JPImageresizerConfigure *configure1 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:nil];
-    
-    NSString *title2 = @"深色毛玻璃遮罩";
-    JPImageresizerConfigure *configure2 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+    JPConfigureModel *model2 = [self new];
+    model2.title = @"深色毛玻璃遮罩";
+    model2.statusBarStyle = UIStatusBarStyleLightContent;
+    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure.jp_strokeColor([UIColor orangeColor]);
     }];
     
-    NSString *title3 = @"浅色毛玻璃遮罩";
-    JPImageresizerConfigure *configure3 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+    JPConfigureModel *model3 = [self new];
+    model3.title = @"浅色毛玻璃遮罩";
+    model3.statusBarStyle = UIStatusBarStyleDefault;
+    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure.jp_strokeColor([UIColor yellowColor]);
     }];
     
-    NSString *title4 = @"其他样式";
-    JPImageresizerConfigure *configure4 = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+    JPConfigureModel *model4 = [self new];
+    model4.title = @"其他样式";
+    model4.statusBarStyle = UIStatusBarStyleDefault;
+    model4.configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_maskAlpha(0.5)
         .jp_strokeColor(JPRandomColor)
@@ -44,7 +51,9 @@
         .jp_animationCurve(JPAnimationCurveEaseOut);
     }];
     
-    NSString *title5 = @"自定义边框图片（拉伸模式）";
+    JPConfigureModel *model5 = [self new];
+    model5.title = @"自定义边框图片（拉伸模式）";
+    model5.statusBarStyle = UIStatusBarStyleDefault;
     
     UIImage *stretchBorderImage = [UIImage imageNamed:@"real_line"];
     // 裁剪掉上下多余的空白部分
@@ -56,50 +65,42 @@
     // 设定拉伸区域
     stretchBorderImage = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
     
-    JPImageresizerConfigure *configure5 = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+    model5.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage(stretchBorderImage)
         .jp_borderImageRectInset(CGPointMake(-2, -2));
     }];
     
-    NSString *title6 = @"自定义边框图片（平铺模式）";
+    JPConfigureModel *model6 = [self new];
+    model6.title = @"自定义边框图片（平铺模式）";
+    model6.statusBarStyle = UIStatusBarStyleLightContent;
     
     UIImage *tileBorderImage = [UIImage imageNamed:@"dotted_line"];
     // 设定平铺区域
     tileBorderImage = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
     
-    JPImageresizerConfigure *configure6 = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage(tileBorderImage)
         .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
     }];
     
-    self.configures = @[@{@"title": title1,
-                          @"configure": configure1,
-                          @"statusBarStyle": @(UIStatusBarStyleLightContent)},
-                        
-                        @{@"title": title2,
-                          @"configure": configure2,
-                          @"statusBarStyle": @(UIStatusBarStyleLightContent)},
-                        
-                        @{@"title": title3,
-                          @"configure": configure3,
-                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        
-                        @{@"title": title4,
-                          @"configure": configure4,
-                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        
-                        @{@"title": title5,
-                          @"configure": configure5,
-                          @"statusBarStyle": @(UIStatusBarStyleDefault)},
-                        
-                        @{@"title": title6,
-                          @"configure": configure6,
-                          @"statusBarStyle": @(UIStatusBarStyleLightContent)}];
-    
+    return @[model1, model2, model3, model4, model5, model6];
+}
+@end
+
+@interface JPTableViewController ()
+@property (nonatomic, copy) NSArray<JPConfigureModel *> *models;
+@end
+
+@implementation JPTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Example";
+    self.models = [JPConfigureModel testModels];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
 
@@ -116,7 +117,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return self.configures.count;
+        return self.models.count;
     }
     return 1;
 }
@@ -124,8 +125,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     if (indexPath.section == 0) {
-        NSDictionary *dic = self.configures[indexPath.row];
-        cell.textLabel.text = dic[@"title"];
+        JPConfigureModel *model = self.models[indexPath.row];
+        cell.textLabel.text = model.title;
     } else {
         cell.textLabel.text = @"用户相册";
     }
@@ -137,32 +138,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
-        JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
-        NSDictionary *dic = self.configures[indexPath.row];
-        vc.statusBarStyle = [dic[@"statusBarStyle"] integerValue];
-        vc.configure = dic[@"configure"];
+        JPConfigureModel *model = self.models[indexPath.row];
+        model.configure.resizeImage = self.randomResizeImage;
         
-        NSString *imageName;
-        NSInteger index = 1 + arc4random() % 9;
-        if (index > 5) {
-            switch (index) {
-                case 6:
-                    imageName = @"Kobe.jpg";
-                    break;
-                case 7:
-                    imageName = @"Woman.jpg";
-                    break;
-                case 8:
-                    imageName = @"Beauty.jpg";
-                    break;
-                default:
-                    imageName = @"Train.jpg";
-                    break;
-            }
-        } else {
-            imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
-        }
-        vc.configure.resizeImage = [UIImage imageNamed:imageName];
+        JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
+        vc.statusBarStyle = model.statusBarStyle;
+        vc.configure = model.configure;
         
         CATransition *cubeAnim = [CATransition animation];
         cubeAnim.duration = 0.5;
@@ -181,6 +162,32 @@
             [sSelf.navigationController pushViewController:vc animated:YES];
         } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
     }
+}
+
+#pragma mark - 随机图片
+
+- (UIImage *)randomResizeImage {
+    NSString *imageName;
+    NSInteger index = 1 + arc4random() % 9;
+    if (index > 5) {
+        switch (index) {
+            case 6:
+                imageName = @"Kobe.jpg";
+                break;
+            case 7:
+                imageName = @"Woman.jpg";
+                break;
+            case 8:
+                imageName = @"Beauty.jpg";
+                break;
+            default:
+                imageName = @"Train.jpg";
+                break;
+        }
+    } else {
+        imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
+    }
+    return [UIImage imageNamed:imageName];
 }
 
 @end
