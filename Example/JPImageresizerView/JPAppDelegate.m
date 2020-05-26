@@ -11,6 +11,8 @@
 @implementation JPAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [JPProgressHUD setMaxSupportedWindowLevel:UIWindowLevelAlert];
+    [JPProgressHUD setMinimumDismissTimeInterval:1.3];
     return YES;
 }
 
