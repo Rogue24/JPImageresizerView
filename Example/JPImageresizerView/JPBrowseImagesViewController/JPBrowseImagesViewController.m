@@ -242,11 +242,6 @@ static NSInteger const JPViewMargin = 10;
     [self setupNavigationBar];
 }
 
-- (void)dealloc {
-//    [[JPWebImageManager sharedInstance] clearMemory];
-    NSLog(@"图片浏览页面挂了，记得清除缓存");
-}
-
 #pragma mark - 页面布局
 
 - (void)setupBase {
