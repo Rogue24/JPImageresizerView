@@ -1007,7 +1007,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
-    [maskPath appendPath:[UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius]];
+    [maskPath appendPath:framePath];
     
     if (_borderImage) {
         CGRect borderImageViewFrame = self.borderImageViewFrame;
@@ -1584,13 +1584,12 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     }
     CGFloat imgViewX = (viewWH - imgViewW) * 0.5;
     CGFloat imgViewY = (viewWH - imgViewH) * 0.5;
-    CGRect imageViewFrame = CGRectMake(imgViewX, imgViewY, imgViewW, imgViewH);
     CGRect imageViewBounds = CGRectMake(0, 0, imgViewW, imgViewH);
     
     _baseContentMaxSize = CGSizeMake(contentWidth, contentHeight);
     _baseImageW = imgViewW;
     _baseImageH = imgViewH;
-    self.originImageFrame = imageViewFrame;
+    self.originImageFrame = CGRectMake(imgViewX, imgViewY, imgViewW, imgViewH);
     [self updateMaxResizeFrameWithDirection:self.rotationDirection];
     contentWidth = self.maxResizeW;
     contentHeight = self.maxResizeH;
@@ -1633,6 +1632,7 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGFloat minimumZoomScale = [self scrollViewMinZoomScaleWithResizeSize:imageresizerFrame.size];
     
     CGSize svContentSize = CGSizeMake(imgViewW * zoomScale, imgViewH * zoomScale);
+    CGRect imageViewFrame = (CGRect){CGPointZero, svContentSize};
     
     UIEdgeInsets svContentInset = UIEdgeInsetsMake(imageresizerY, imageresizerX, imageresizerY, imageresizerX);
     
@@ -1640,37 +1640,38 @@ typedef NS_ENUM(NSUInteger, JPInsideLinePosition) {
     CGFloat offsetY = -imageresizerY + svContentSize.height * (originZoomFrame.origin.y / originImgViewH);
     CGPoint svContentOffset = CGPointMake(offsetX, offsetY);
     
-    void (^animations)(void) = ^{
-        self.superview.bounds = superViewBounds;
-        self.superview.frame = superViewFrame;
-        self.scrollView.frame = viewFrame;
-        self.frame = viewFrame;
-        self.blurView.frame = viewBounds;
-        self.maskLayer.frame = viewBounds;
-        
-        self.imageView.bounds = imageViewBounds;
-        
+    void (^updateBlock)(void) = ^{
         self.scrollView.minimumZoomScale = minimumZoomScale;
         self.scrollView.zoomScale = zoomScale;
-        
-        self.imageView.frame = (CGRect){CGPointZero, svContentSize};
-        self.scrollView.contentSize = svContentSize;
         self.scrollView.contentInset = svContentInset;
+        self.imageView.bounds = imageViewBounds;
+        self.imageView.frame = imageViewFrame;
+        self.scrollView.contentSize = svContentSize;
         self.scrollView.contentOffset = svContentOffset;
     };
     
-    void (^completion)(BOOL finished) = ^(BOOL finished) {
-        [self.blurView setIsBlur:YES duration:self->_blurDuration];
-        self.superview.userInteractionEnabled = YES;
-    };
+    self.superview.bounds = superViewBounds;
+    self.superview.frame = superViewFrame;
+    self.scrollView.frame = self.frame = viewFrame;
     
-    self.superview.userInteractionEnabled = NO;
     [self updateImageresizerFrame:imageresizerFrame animateDuration:duration];
+    
     if (duration > 0) {
-        [UIView animateWithDuration:duration delay:0 options:_animationOption animations:animations completion:completion];
+        self.superview.userInteractionEnabled = NO;
+        // 屏幕旋转时会自动包裹一层系统的旋转动画中，此时使用系统动画API不能自定义动画时长和动画曲线，需要在此忽略这层嵌套关系。
+        [UIView animateWithDuration:duration delay:0 options:(UIViewAnimationOptionOverrideInheritedDuration | UIViewAnimationOptionOverrideInheritedCurve | UIViewAnimationOptionOverrideInheritedOptions | _animationOption) animations:^{
+            self.blurView.frame = self.maskLayer.frame = viewBounds;
+            self.scrollView.contentInset = svContentInset;
+            self.imageView.frame = imageViewFrame;
+            self.scrollView.contentOffset = svContentOffset;
+        } completion:^(BOOL finished) {
+            updateBlock();
+            [self.blurView setIsBlur:YES duration:self->_blurDuration];
+            self.superview.userInteractionEnabled = YES;
+        }];
     } else {
-        animations();
-        completion(YES);
+        self.blurView.frame = self.maskLayer.frame = viewBounds;
+        updateBlock();
     }
 }
 

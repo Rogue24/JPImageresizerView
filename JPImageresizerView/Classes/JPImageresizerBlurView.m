@@ -48,6 +48,11 @@
     return self;
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    _visualEffectView.frame = _fillView.frame = (CGRect){CGPointZero, frame.size};
+}
+
 - (BOOL)isBlur {
     return _isBlur;
 }

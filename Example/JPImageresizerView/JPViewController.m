@@ -234,7 +234,8 @@
         [self.view layoutIfNeeded];
     }
     
-    [self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
+    // 横竖屏切换
+    [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:contentInsets duration:duration];
 }
 
 #pragma mark - 按钮点击事件
@@ -344,6 +345,7 @@
     self.isToBeArbitrarily = sender.selected;
     [self.imageresizerView setResizeWHScale:self.imageresizerView.resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
 }
+
 - (IBAction)changeResizeWHScale:(id)sender {
     [UIAlertController changeResizeWHScale:^(CGFloat resizeWHScale) {
         if (resizeWHScale < 0) {
