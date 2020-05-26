@@ -26,7 +26,7 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
         9. Custom border image;
         10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching.
 
-    Trying to update the content:
+    What I'm trying to achieve:
         1. Swift version;
         2. Clip video;
         3. More new border and mask styles;
