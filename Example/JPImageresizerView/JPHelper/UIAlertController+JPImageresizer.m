@@ -8,6 +8,37 @@
 
 #import "UIAlertController+JPImageresizer.h"
 
+@interface JPObject : NSObject <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@property (nonatomic, copy) void (^replaceImageHandler)(UIImage *image);
+@end
+
+static JPObject *obj_;
+
+@implementation JPObject
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
+    if (!image) {
+        if (@available(iOS 13.0, *)) {
+            NSURL *url = info[UIImagePickerControllerImageURL];
+            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        }
+    }
+    
+    [picker dismissViewControllerAnimated:YES completion:^{
+        if (image && self.replaceImageHandler) self.replaceImageHandler(image);
+        obj_ = nil;
+    }];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [picker dismissViewControllerAnimated:YES completion:^{
+        obj_ = nil;
+    }];
+}
+
+@end
+
 @implementation UIAlertController (JPImageresizer)
 
 + (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler fromVC:(UIViewController *)fromVC {
@@ -116,7 +147,7 @@
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)replaceRandomImage:(void(^)(UIImage *image))handler fromVC:(UIViewController *)fromVC {
++ (void)replaceImage:(void(^)(UIImage *image))handler fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -135,6 +166,15 @@
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Train" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIImage imageNamed:@"Train.jpg"]);
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        obj_ = [JPObject new];
+        obj_.replaceImageHandler = handler;
+        
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = obj_;
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [fromVC presentViewController:alertCtr animated:YES completion:nil];

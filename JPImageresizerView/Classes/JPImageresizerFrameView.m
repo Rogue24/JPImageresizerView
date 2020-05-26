@@ -11,6 +11,25 @@
 #import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 
+@interface JPImageresizerProxy : NSProxy
++ (instancetype)proxyWithTarget:(id)target;
+@property (nonatomic, weak) id target;
+@end
+
+@implementation JPImageresizerProxy
++ (instancetype)proxyWithTarget:(id)target {
+    JPImageresizerProxy *proxy = [self alloc];
+    proxy.target = target;
+    return proxy;
+}
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
+    return [self.target methodSignatureForSelector:sel];
+}
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    [invocation invokeWithTarget:self.target];
+}
+@end
+
 #define JPGridCount 3
 
 typedef NS_ENUM(NSUInteger, JPDotRegion) {
@@ -2078,18 +2097,4 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return YES;
 }
 
-@end
-
-@implementation JPImageresizerProxy
-+ (instancetype)proxyWithTarget:(id)target {
-    JPImageresizerProxy *proxy = [self alloc];
-    proxy.target = target;
-    return proxy;
-}
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
-    return [self.target methodSignatureForSelector:sel];
-}
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    [invocation invokeWithTarget:self.target];
-}
 @end

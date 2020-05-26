@@ -11,5 +11,5 @@
 @interface UIAlertController (JPImageresizer)
 + (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler fromVC:(UIViewController *)fromVC;
 + (void)changeBlurEffect:(void(^)(UIBlurEffect *blurEffect))handler fromVC:(UIViewController *)fromVC;
-+ (void)replaceRandomImage:(void(^)(UIImage *image))handler fromVC:(UIViewController *)fromVC;
++ (void)replaceImage:(void(^)(UIImage *image))handler fromVC:(UIViewController *)fromVC;
 @end

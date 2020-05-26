@@ -6,7 +6,7 @@ PODS:
   - JPBasic/JPConst (0.1.2)
   - JPBasic/JPProgressHUD (0.1.2):
     - SVProgressHUD
-  - JPImageresizerView (1.3.8)
+  - JPImageresizerView (1.3.9)
   - JPLiquidLayout (0.1.1)
   - LookinServer (1.0.0)
   - Masonry (1.1.0)
@@ -39,7 +39,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   JPBasic: 0e9c125855ec33ad4d0787bfd19725d36d967115
-  JPImageresizerView: 5706dce91cc4b23c8f9afc1b578f52d80b77d1c7
+  JPImageresizerView: ae9fa9be2d2eed9f426b02a910376a0202afe25b
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201

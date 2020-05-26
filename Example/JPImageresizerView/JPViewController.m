@@ -393,7 +393,7 @@
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {
-    [UIAlertController replaceRandomImage:^(UIImage *image) {
+    [UIAlertController replaceImage:^(UIImage *image) {
         self.imageresizerView.resizeImage = image;
     } fromVC:self];
 }

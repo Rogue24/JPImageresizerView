@@ -8,7 +8,7 @@
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
-## Brief introduction (Current version: 1.3.8)
+## Brief introduction (Current version: 1.3.9)
 
 Imitation WeChat picture clipping function of a small tool.
 

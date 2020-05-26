@@ -8,7 +8,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.3.8）
+## 简介（当前版本：1.3.9）
 
 仿微信裁剪图片的一个裁剪小工具。
 
@@ -275,7 +275,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.3.8  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化逻辑，减少裁剪误差。  
+1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  
 1.2.1~1.3.6 | 1. 新增圆切样式；<br>2. 中间的点/块可隐藏；<br>3. 可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；<br>4. 毛玻璃效果可设置系统现有的所有效果；<br>5. 适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；<br>6. 优化逻辑。  
 1.2.0 | 1. 固定比例的裁剪宽高比，裁剪边框也均可拖拽8个方向；<br>2. 优化了显示/隐藏毛玻璃效果。  
 1.1.2~1.1.5 | 1. 优化计算逻辑；<br>2. 初始化时可自定义最大缩放比例（maximumZoomScale）。

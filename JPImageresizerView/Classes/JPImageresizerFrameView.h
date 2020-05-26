@@ -105,8 +105,3 @@
 
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 @end
-
-@interface JPImageresizerProxy : NSProxy
-+ (instancetype)proxyWithTarget:(id)target;
-@property (nonatomic, weak) id target;
-@end
