@@ -390,6 +390,9 @@
         bgColor = JPRandomColor;
     }
     [self.imageresizerView setupStrokeColor:strokeColor blurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:maskAlpha animated:YES];
+    
+    // 随机网格数
+    self.imageresizerView.gridCount = JPRandomNumber(2, 20);
 }
 
 - (IBAction)replaceImage:(UIButton *)sender {

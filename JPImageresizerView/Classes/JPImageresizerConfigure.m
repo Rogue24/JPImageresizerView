@@ -27,7 +27,10 @@
     .jp_borderImageRectInset(CGPointZero)
     .jp_maximumZoomScale(10.0)
     .jp_isRoundResize(NO)
-    .jp_isShowMidDots(YES);
+    .jp_isShowMidDots(YES)
+    .jp_isBlurWhenDragging(NO)
+    .jp_isShowGridlinesWhenDragging(NO)
+    .jp_gridCount(3);
     !make ? : make(configure);
     return configure;
 }
@@ -163,6 +166,27 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_isShowMidDots {
     return ^(BOOL isShowMidDots) {
         self.isShowMidDots = isShowMidDots;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isBlurWhenDragging {
+    return ^(BOOL isBlurWhenDragging) {
+        self.isBlurWhenDragging = isBlurWhenDragging;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isShowGridlinesWhenDragging {
+    return ^(BOOL isShowGridlinesWhenDragging) {
+        self.isShowGridlinesWhenDragging = isShowGridlinesWhenDragging;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(NSUInteger))jp_gridCount {
+    return ^(NSUInteger gridCount) {
+        self.gridCount = gridCount;
         return self;
     };
 }

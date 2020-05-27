@@ -26,6 +26,9 @@
          borderImageRectInset:(CGPoint)borderImageRectInset
                 isRoundResize:(BOOL)isRoundResize
                 isShowMidDots:(BOOL)isShowMidDots
+           isBlurWhenDragging:(BOOL)isBlurWhenDragging
+  isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
+                    gridCount:(NSUInteger)gridCount
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -78,6 +81,9 @@
 @property (nonatomic, assign) CGPoint borderImageRectInset;
 
 @property (nonatomic, assign) BOOL isShowMidDots;
+@property (nonatomic, assign) BOOL isBlurWhenDragging;
+@property (nonatomic, assign) BOOL isShowGridlinesWhenDragging;
+@property (nonatomic, assign) NSUInteger gridCount;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);

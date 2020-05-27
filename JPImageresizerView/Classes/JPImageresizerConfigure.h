@@ -26,6 +26,9 @@
     - maximumZoomScale = 10.0;
     - isRoundResize = NO;
     - isShowMidDots = YES;
+    - isBlurWhenDragging = NO;
+    - isShowGridlinesWhenDragging = NO;
+    - gridCount = 3;
  */
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
 
@@ -96,21 +99,33 @@
 /** 是否显示中间的4个点（上、下、左、右的中点） */
 @property (nonatomic, assign) BOOL isShowMidDots;
 
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_blurEffect)(UIBlurEffect *blurEffect);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_maximumZoomScale)(CGFloat maximumZoomScale);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
-@property (nonatomic, readonly) JPImageresizerConfigure *(^jp_isShowMidDots)(BOOL isShowMidDots);
+/** 拖拽时是否遮罩裁剪区域以外的区域 */
+@property (nonatomic) BOOL isBlurWhenDragging;
+
+/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+@property (nonatomic) BOOL isShowGridlinesWhenDragging;
+
+/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+@property (nonatomic, assign) NSUInteger gridCount;
+
+@property (readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
+@property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
+@property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
+@property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
+@property (readonly) JPImageresizerConfigure *(^jp_blurEffect)(UIBlurEffect *blurEffect);
+@property (readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
+@property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
+@property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
+@property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
+@property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
+@property (readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
+@property (readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
+@property (readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
+@property (readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
+@property (readonly) JPImageresizerConfigure *(^jp_maximumZoomScale)(CGFloat maximumZoomScale);
+@property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
+@property (readonly) JPImageresizerConfigure *(^jp_isShowMidDots)(BOOL isShowMidDots);
+@property (readonly) JPImageresizerConfigure *(^jp_isBlurWhenDragging)(BOOL isBlurWhenDragging);
+@property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
+@property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @end

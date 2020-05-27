@@ -52,6 +52,9 @@
  @param maximumZoomScale --- 最大缩放比例
  @param isRoundResize --- 是否初始化圆切（若为YES则resizeWHScale为1）
  @param isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
+ @param isBlurWhenDragging --- 拖拽时是否遮罩裁剪区域以外的区域
+ @param isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）
+ @param gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
@@ -71,6 +74,9 @@
                    maximumZoomScale:(CGFloat)maximumZoomScale
                       isRoundResize:(BOOL)isRoundResize
                       isShowMidDots:(BOOL)isShowMidDots
+                 isBlurWhenDragging:(BOOL)isBlurWhenDragging
+        isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
+                          gridCount:(NSUInteger)gridCount
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -163,6 +169,15 @@
 
 /** 是否显示中间的4个点（上、下、左、右的中点） */
 @property (nonatomic) BOOL isShowMidDots;
+
+/** 拖拽时是否遮罩裁剪区域以外的区域 */
+@property (nonatomic) BOOL isBlurWhenDragging;
+
+/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+@property (nonatomic) BOOL isShowGridlinesWhenDragging;
+
+/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+@property (nonatomic, assign) NSUInteger gridCount;
 
 /*!
  @method

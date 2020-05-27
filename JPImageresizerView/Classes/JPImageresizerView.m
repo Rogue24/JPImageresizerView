@@ -133,6 +133,18 @@
     self.frameView.isShowMidDots = isShowMidDots;
 }
 
+- (void)setIsBlurWhenDragging:(BOOL)isBlurWhenDragging {
+    self.frameView.isBlurWhenDragging = isBlurWhenDragging;
+}
+
+- (void)setIsShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging {
+    self.frameView.isShowGridlinesWhenDragging = isShowGridlinesWhenDragging;
+}
+
+- (void)setGridCount:(NSUInteger)gridCount {
+    self.frameView.gridCount = gridCount;
+}
+
 #pragma mark - getter
 
 - (JPImageresizerFrameType)frameType {
@@ -200,6 +212,18 @@
     return _frameView.isShowMidDots;
 }
 
+- (BOOL)isBlurWhenDragging {
+    return _frameView.isBlurWhenDragging;
+}
+
+- (BOOL)isShowGridlinesWhenDragging {
+    return _frameView.isShowGridlinesWhenDragging;
+}
+
+- (NSUInteger)gridCount {
+    return _frameView.gridCount;
+}
+
 #pragma mark - init
 
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
@@ -219,6 +243,9 @@
                             maximumZoomScale:configure.maximumZoomScale
                                isRoundResize:configure.isRoundResize
                                isShowMidDots:configure.isShowMidDots
+                          isBlurWhenDragging:configure.isBlurWhenDragging
+                 isShowGridlinesWhenDragging:configure.isShowGridlinesWhenDragging
+                                   gridCount:configure.gridCount
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
     imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
@@ -240,6 +267,9 @@
                    maximumZoomScale:(CGFloat)maximumZoomScale
                       isRoundResize:(BOOL)isRoundResize
                       isShowMidDots:(BOOL)isShowMidDots
+                 isBlurWhenDragging:(BOOL)isBlurWhenDragging
+        isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
+                          gridCount:(NSUInteger)gridCount
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
@@ -282,6 +312,9 @@
                                   borderImageRectInset:borderImageRectInset
                                          isRoundResize:isRoundResize
                                          isShowMidDots:isShowMidDots
+                                    isBlurWhenDragging:isBlurWhenDragging
+                           isShowGridlinesWhenDragging:isShowGridlinesWhenDragging
+                                             gridCount:gridCount
                              imageresizerIsCanRecovery:imageresizerIsCanRecovery
                           imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
         

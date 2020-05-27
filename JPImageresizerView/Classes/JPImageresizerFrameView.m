@@ -30,8 +30,6 @@
 }
 @end
 
-#define JPGridCount 3
-
 typedef NS_ENUM(NSUInteger, JPDotRegion) {
     JPDR_Center,
     JPDR_LeftTop,
@@ -370,6 +368,15 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
+- (void)setGridCount:(NSUInteger)gridCount {
+    if (_gridCount == gridCount) return;
+    _gridCount = gridCount;
+    if (_borderImage || _isPreview || _frameType != JPClassicFrameType) return;
+    if (!CGRectIsEmpty(_imageresizerFrame)) {
+        [self __updateImageresizerFrame:_imageresizerFrame animateDuration:0];
+    }
+}
+
 #pragma mark - getter
 
 - (NSTimeInterval)defaultDuration {
@@ -493,6 +500,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
          borderImageRectInset:(CGPoint)borderImageRectInset
                 isRoundResize:(BOOL)isRoundResize
                 isShowMidDots:(BOOL)isShowMidDots
+           isBlurWhenDragging:(BOOL)isBlurWhenDragging
+  isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
+                    gridCount:(NSUInteger)gridCount
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
@@ -516,6 +526,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _imageresizerIsPrepareToScale = [imageresizerIsPrepareToScale copy];
         _strokeColor = strokeColor;
         _isShowMidDots = isShowMidDots;
+        _isBlurWhenDragging = isBlurWhenDragging;
+        _isShowGridlinesWhenDragging = isShowGridlinesWhenDragging;
+        _gridCount = gridCount;
         
         JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
         blurView.userInteractionEnabled = NO;
@@ -744,8 +757,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return path;
 }
 
-- (UIBezierPath *)__gridlineWithGridCount:(NSUInteger)gridCount frame:(CGRect)frame {
-    if (gridCount <= 1) {
+- (UIBezierPath *)__gridlineWithFrame:(CGRect)frame {
+    if (self.gridCount <= 1) {
         return nil;
     }
     
@@ -753,11 +766,11 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGFloat y = frame.origin.y;
     CGFloat w = frame.size.width;
     CGFloat h = frame.size.height;
-    CGFloat horSpace = w / (1.0 * gridCount);
-    CGFloat verSpace = h / (1.0 * gridCount);
+    CGFloat horSpace = w / (1.0 * self.gridCount);
+    CGFloat verSpace = h / (1.0 * self.gridCount);
     
     UIBezierPath *path = [UIBezierPath bezierPath];
-    for (NSInteger i = 1; i < gridCount; i++) {
+    for (NSInteger i = 1; i < self.gridCount; i++) {
         CGFloat px = x;
         CGFloat py = y + verSpace * i;
         [path moveToPoint:CGPointMake(px, py)];
@@ -925,7 +938,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     BOOL isClassicFrameType = _frameType == JPClassicFrameType;
     if (isClassicFrameType) {
         dotsPath = [self __classicDotsPathWithFrame:imageresizerFrame];
-        gridlinesPath = [self __gridlineWithGridCount:JPGridCount frame:imageresizerFrame];
+        gridlinesPath = [self __gridlineWithFrame:imageresizerFrame];
     } else {
         dotsPath = [self __conciseDotsPathWithFrame:imageresizerFrame];
     }
@@ -1171,8 +1184,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (void)startImageresizer {
     self.isPrepareToScale = YES;
     [self __removeTimer];
-    [self.blurView setIsBlur:NO duration:_blurDuration];
-    [self __hideOrShowGridLines:YES animateDuration:_blurDuration];
+    if (!self.isBlurWhenDragging) [self.blurView setIsBlur:NO duration:_blurDuration];
+    if (!self.isShowGridlinesWhenDragging) [self __hideOrShowGridLines:YES animateDuration:_blurDuration];
 }
 
 - (void)endedImageresizer {
