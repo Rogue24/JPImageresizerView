@@ -8,11 +8,11 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.3.9）
+## 简介（当前版本：1.4.0）
 
 一个专门裁剪图片的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片裁剪的需求。
 
-![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
+![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
     目前功能：
         1.能自适应裁剪区域的缩放；
@@ -41,15 +41,15 @@
 ```objc
 // 1.配置初始参数（更多可查看JPImageresizerConfigure的头文件）
 /**
- * 部分配置参数：
- * 1.resizeImage：裁剪的图片
- * 2.blurEffect：毛玻璃样式
- * 3.borderImage：边框图片
- * 4.frameType & strokeColor：边框样式&颜色
- * 5.bgColor：背景色
- * 6.maskAlpha：遮罩透明度
- * 7.resizeWHScale：裁剪的宽高比
- * 8.contentInsets：裁剪区域与视图的间距
+ * 部分可配置参数注释：
+    - resizeImage：裁剪的图片
+    - blurEffect：毛玻璃样式
+    - borderImage：边框图片
+    - frameType & strokeColor：边框样式&颜色
+    - bgColor：背景色
+    - maskAlpha：遮罩透明度
+    - resizeWHScale：裁剪的宽高比
+    - contentInsets：裁剪区域与视图的间距
  */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
@@ -107,8 +107,8 @@ if (@available(iOS 11.0, *)) {
 ```
 
 #### 更改边框样式
-![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
-![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
+![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
+![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
 ```objc
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
@@ -116,8 +116,8 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 #### 自定义边框图片
-![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
-![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
+![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
+![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
 ```objc
 // 使用自定义边框图片（例：平铺模式）
 UIImage *tileBorderImage = [[UIImage imageNamed:@"dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -130,7 +130,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 #### 切换裁剪宽高比
-![switch resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
+![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
 ```objc
 // 1.自定义参数切换
 /**
@@ -178,7 +178,7 @@ self.imageresizerView.maskAlpha = 0.5; // blurEffect = nil 才生效
 ```
 
 #### 镜像翻转
-![mirror.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
+![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
 ```objc
 // 1.垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
@@ -276,6 +276,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  
 1.2.1~1.3.6 | 1. 新增圆切样式；<br>2. 中间的点/块可隐藏；<br>3. 可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；<br>4. 毛玻璃效果可设置系统现有的所有效果；<br>5. 适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；<br>6. 优化逻辑。  
 1.2.0 | 1. 固定比例的裁剪宽高比，裁剪边框也均可拖拽8个方向；<br>2. 优化了显示/隐藏毛玻璃效果。  

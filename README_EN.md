@@ -8,11 +8,11 @@
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
-## Brief introduction (Current version: 1.3.9)
+## Brief introduction (Current version: 1.4.0)
 
 A special wheel for cutting pictures is simple and easy to use, with rich functions (parameter setting of high freedom, support for rotation and mirror turning, multiple style selection...), which can meet the needs of most pictures cutting.
 
-![effect.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
+![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
     Current functions:
         1. Zooming of area that can be tailored adaptively;
@@ -41,15 +41,15 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
 ```objc
 // 1. Configure initial parameters (see JPImageresizerConfigure.h for more details)
 /**
- * Some configuration parameters:
- * 1.resizeImage: clipping picture
- * 2.blurEffect: gaussian blur style
- * 3.borderImage: custom border image
- * 4.frameType & strokeColor: border style & color
- * 5.bgColor: background color
- * 6.maskAlpha: mask opacity
- * 7.resizeWHScale: width-height ratio of the clipping
- * 8.contentInsets: the inner margin between the crop region and the main view
+ * Notes to some configurable parameters:
+    - resizeImage: clipping picture
+    - blurEffect: gaussian blur style
+    - borderImage: custom border image
+    - frameType & strokeColor: border style & color
+    - bgColor: background color
+    - maskAlpha: mask opacity
+    - resizeWHScale: width-height ratio of the clipping
+    - contentInsets: the inner margin between the crop region and the main view
  */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // Now that you have the default parameter values, you can set the parameters you want here (using chain programming)
@@ -107,8 +107,8 @@ if (@available(iOS 11.0, *)) {
 ```
 
 #### Change border style
-![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPConciseFrameTypeCover.jpeg)
-![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPClassicFrameTypeCover.jpeg)
+![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
+![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
 ```objc
 // Only two border styles are available, concise style(JPConciseFrameType) and classic style(JPClassicFrameTypeCurrently).
 // You can modify the border style by initializing or directly setting frameType properties
@@ -116,8 +116,8 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 #### Custom Border Image
-![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage1.jpg)
-![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/JPCustomBorderImage2.jpg)
+![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
+![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
 ```objc
 // Use custom border pictures (example: tile mode)
 UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -130,7 +130,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 #### Switching resizeWHScale
-![switch resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ivpFV94K5W.gif)
+![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
 ```objc
 // 1.Custom parameter switching
 /**
@@ -178,7 +178,7 @@ self.imageresizerView.maskAlpha = 0.5; // Only blurEffect = nil will take effect
 ```
 
 #### Mirror reversal
-![mirror.gif](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/ggseHhuRnt.gif)
+![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
 ```objc
 // Vertical Mirror, YES -> Rotates 180 degrees along Y axis, NO -> Reduction
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
