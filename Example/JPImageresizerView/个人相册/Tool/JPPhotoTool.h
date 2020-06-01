@@ -12,7 +12,7 @@
 #define JPPhotoToolSI [JPPhotoTool sharedInstance]
 
 typedef void(^JPAssetCollectionFastEnumeration)(PHAssetCollection *collection, NSInteger index, NSInteger totalCount);
-typedef void(^JPAssetFastEnumeration)(PHAsset *asset, NSInteger index, NSInteger totalCount);
+typedef void(^JPAssetFastEnumeration)(PHAsset *asset, NSUInteger index, NSUInteger totalCount);
 
 typedef void(^JPGetAssetsCompletion)(NSArray *assets);
 typedef void(^JPAssetsCachingHandle)(NSArray *indexPaths, JPGetAssetsCompletion getAssetsCompletion);
@@ -185,6 +185,22 @@ JPSingtonInterface
 - (void)savePhotoToAppAlbumWithImage:(UIImage *)image
                        successHandle:(void (^)(NSString *assetID))successHandle
                           failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle;
+
+/**
+ @method
+ @brief 保存视频到【相机胶卷】
+ */
+- (void)saveVideoWithFileURL:(NSURL *)fileURL
+               successHandle:(void (^)(NSString *assetID))successHandle
+                  failHandle:(void (^)(void))failHandle;
+
+/**
+ @method
+ @brief 保存视频到【App相册】
+ */
+- (void)saveVideoToAppAlbumWithFileURL:(NSURL *)fileURL
+                         successHandle:(void (^)(NSString *assetID))successHandle
+                            failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle;
 
 /**
  @method

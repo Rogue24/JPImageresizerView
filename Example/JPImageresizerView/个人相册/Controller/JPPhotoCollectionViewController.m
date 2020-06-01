@@ -234,7 +234,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         noDataView.alpha = 1;
     } completion:^(BOOL finished) {
         __weak typeof(self) wSelf = self;
-        [JPPhotoToolSI getAssetsInAssetCollection:self.albumVM.assetCollection fastEnumeration:^(PHAsset *asset, NSInteger index, NSInteger totalCount) {
+        [JPPhotoToolSI getAssetsInAssetCollection:self.albumVM.assetCollection fastEnumeration:^(PHAsset *asset, NSUInteger index, NSUInteger totalCount) {
             __strong typeof(wSelf) sSelf = wSelf;
             if (!sSelf) return;
             JPPhotoViewModel *photoVM = [[JPPhotoViewModel alloc] initWithAsset:asset];

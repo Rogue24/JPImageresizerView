@@ -313,6 +313,7 @@ JPSingtonImplement(JPPhotoTool)
 #pragma mark 获取所有相册
 - (void)getAllAssetCollectionWithFastEnumeration:(JPAssetCollectionFastEnumeration)fastEnumeration
                                       completion:(void(^)(void))completion {
+    
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self getAllAssetCollectionWithFastEnumeration:fastEnumeration completion:completion];
@@ -320,9 +321,7 @@ JPSingtonImplement(JPPhotoTool)
         return;
     }
     
-    __block NSInteger index = 0;
-    __block NSInteger maxIdx = 0;
-    void (^getAllUserCreateAssetCollection)(void) = ^{
+    void (^getAllUserCreateAssetCollection)(NSUInteger startIndex) = ^(NSUInteger startIndex) {
         PHFetchResult *userAlbumsFR = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary options:nil];
         NSInteger userAlbumsCount = userAlbumsFR.count;
         if (userAlbumsCount == 0) {
@@ -330,11 +329,10 @@ JPSingtonImplement(JPPhotoTool)
                 !completion ? : completion();
             });
         } else {
-            maxIdx = userAlbumsCount - 1;
+            NSUInteger maxIdx = userAlbumsCount - 1;
             [userAlbumsFR enumerateObjectsUsingBlock:^(PHAssetCollection * _Nonnull collection, NSUInteger idx, BOOL * _Nonnull stop) {
                 PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
-                !fastEnumeration ? : fastEnumeration(collection, index, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
-                index += 1;
+                !fastEnumeration ? : fastEnumeration(collection, (startIndex + idx), [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
                 if (idx == maxIdx) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         !completion ? : completion();
@@ -345,36 +343,63 @@ JPSingtonImplement(JPPhotoTool)
     };
     
     PHFetchResult *allPhotoAlbumsFR = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:self.baseFetchOptions];
-    !fastEnumeration ? : fastEnumeration(nil, index, allPhotoAlbumsFR.count);
-    index += 1;
+    !fastEnumeration ? : fastEnumeration(nil, 0, allPhotoAlbumsFR.count);
+    
+    __block NSUInteger currentIndex = 1;
     
     PHFetchResult *systemAlbumsFR = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumSyncedAlbum options:nil];
     NSInteger systemAlbumsCount = systemAlbumsFR.count;
+    
     if (systemAlbumsCount == 0) {
-        getAllUserCreateAssetCollection();
-    } else {
-        maxIdx = systemAlbumsCount - 1;
-        [systemAlbumsFR enumerateObjectsUsingBlock:^(PHAssetCollection * _Nonnull collection, NSUInteger idx, BOOL * _Nonnull stop) {
-            PHAssetCollectionSubtype subtype = collection.assetCollectionSubtype;
-            if (subtype == PHAssetCollectionSubtypeSmartAlbumPanoramas ||
-                subtype == PHAssetCollectionSubtypeSmartAlbumFavorites ||
-                subtype == PHAssetCollectionSubtypeSmartAlbumRecentlyAdded ||
-                subtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary) {
-                PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
-                !fastEnumeration ? : fastEnumeration(collection, index, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
-                index += 1;
-            } else if (@available(iOS 9.0, *)) {
-                if (subtype == PHAssetCollectionSubtypeSmartAlbumSelfPortraits) {
-                    PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
-                    !fastEnumeration ? : fastEnumeration(collection, index, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
-                    index += 1;
-                }
-            }
-            if (idx == maxIdx) {
-                getAllUserCreateAssetCollection();
-            }
-        }];
+        getAllUserCreateAssetCollection(currentIndex);
+        return;
     }
+    
+    NSUInteger maxIdx = systemAlbumsCount - 1;
+    [systemAlbumsFR enumerateObjectsUsingBlock:^(PHAssetCollection * _Nonnull collection, NSUInteger idx, BOOL * _Nonnull stop) {
+        PHAssetCollectionSubtype subtype = collection.assetCollectionSubtype;
+        if (subtype == PHAssetCollectionSubtypeSmartAlbumPanoramas ||
+            subtype == PHAssetCollectionSubtypeSmartAlbumFavorites ||
+            subtype == PHAssetCollectionSubtypeSmartAlbumRecentlyAdded ||
+            subtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary) {
+            PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
+            !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+            currentIndex += 1;
+        } else if (@available(iOS 9.0, *)) {
+            if (subtype == PHAssetCollectionSubtypeSmartAlbumSelfPortraits ||
+                subtype == PHAssetCollectionSubtypeSmartAlbumScreenshots) {
+                PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
+                !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+                currentIndex += 1;
+            }
+//                if (@available(iOS 10.2, *)) {
+//                    if (subtype == PHAssetCollectionSubtypeSmartAlbumDepthEffect ||
+//                        subtype == PHAssetCollectionSubtypeSmartAlbumLivePhotos) {
+//                        PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
+//                        currentIndex += 1;
+//                        !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+//                    }
+//                    if (@available(iOS 11, *)) {
+//                        if (subtype == PHAssetCollectionSubtypeSmartAlbumAnimated ||
+//                            subtype == PHAssetCollectionSubtypeSmartAlbumLongExposures) {
+//                            PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
+//                            currentIndex += 1;
+//                            !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+//                        }
+//                        if (@available(iOS 13, *)) {
+//                            if (subtype == PHAssetCollectionSubtypeSmartAlbumUnableToUpload) {
+//                                PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
+//                                currentIndex += 1;
+//                                !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+//                            }
+//                        }
+//                    }
+//                }
+        }
+        if (idx == maxIdx) {
+            getAllUserCreateAssetCollection(currentIndex);
+        }
+    }];
 }
 
 #pragma mark 获取所有系统的相册
@@ -389,34 +414,30 @@ JPSingtonImplement(JPPhotoTool)
     
     PHFetchResult *systemAlbumsFR = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumSyncedAlbum options:nil];
     NSInteger systemAlbumsCount = systemAlbumsFR.count;
+    
     if (systemAlbumsCount == 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
             !completion ? : completion();
         });
         return;
     }
-    NSInteger maxIdx = systemAlbumsCount - 1;
-    __block NSInteger index = 0;
+    
+    __block NSUInteger currentIndex = 0;
+    NSUInteger maxIdx = systemAlbumsCount - 1;
     [systemAlbumsFR enumerateObjectsUsingBlock:^(PHAssetCollection * _Nonnull collection, NSUInteger idx, BOOL * _Nonnull stop) {
         PHAssetCollectionSubtype subtype = collection.assetCollectionSubtype;
-        // PHAssetCollectionSubtypeSmartAlbumPanoramas  = 201,
-        // PHAssetCollectionSubtypeSmartAlbumFavorites  = 203,
-        // PHAssetCollectionSubtypeSmartAlbumRecentlyAdded = 206,
-        // PHAssetCollectionSubtypeSmartAlbumUserLibrary = 209,
-        // PHAssetCollectionSubtypeSmartAlbumSelfPortraits = 210
-        
         if (subtype == PHAssetCollectionSubtypeSmartAlbumPanoramas ||
             subtype == PHAssetCollectionSubtypeSmartAlbumFavorites ||
             subtype == PHAssetCollectionSubtypeSmartAlbumRecentlyAdded ||
             subtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary) {
             PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
-            !fastEnumeration ? : fastEnumeration(collection, index, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
-            index += 1;
+            !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+            currentIndex += 1;
         } else if (@available(iOS 9.0, *)) {
             if (subtype == PHAssetCollectionSubtypeSmartAlbumSelfPortraits) {
                 PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
-                !fastEnumeration ? : fastEnumeration(collection, index, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
-                index += 1;
+                !fastEnumeration ? : fastEnumeration(collection, currentIndex, [albumsFR countOfAssetsWithMediaType:PHAssetMediaTypeImage]);
+                currentIndex += 1;
             }
         }
         if (idx == maxIdx) {
@@ -440,12 +461,14 @@ JPSingtonImplement(JPPhotoTool)
     //获取所有用户创建的相册
     PHFetchResult *userAlbumsFR = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary options:nil];
     NSInteger userAlbumsCount = userAlbumsFR.count;
+    
     if (userAlbumsCount == 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
             !completion ? : completion();
         });
         return;
     }
+    
     NSInteger maxIdx = userAlbumsCount - 1;
     [userAlbumsFR enumerateObjectsUsingBlock:^(PHAssetCollection * _Nonnull collection, NSUInteger idx, BOOL * _Nonnull stop) {
         PHFetchResult *albumsFR = [PHAsset fetchAssetsInAssetCollection:collection options:self.baseFetchOptions];
@@ -505,12 +528,16 @@ JPSingtonImplement(JPPhotoTool)
     }
     
     PHFetchResult *fetchResult;
-    NSInteger count = 0;
+    NSUInteger count = 0;
+    // 以后加上指定类型的处理：这里是查所有类型。
     if (assetCollection) {
-        fetchResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:self.baseFetchOptions];
-        count = [fetchResult countOfAssetsWithMediaType:PHAssetMediaTypeImage];
+        // 查找指定相册的
+        fetchResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:self.baseFetchOptions]; // 目前只能拿到所有类型的，暂时不知道怎么查找相册里的指定类型
+        count = fetchResult.count;
     } else {
-        fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:self.baseFetchOptions];
+        // 查找所有
+//        fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:self.baseFetchOptions]; // 指定只查找照片类型
+        fetchResult = [PHAsset fetchAssetsWithOptions:self.baseFetchOptions];
         count = fetchResult.count;
     }
     
@@ -524,24 +551,17 @@ JPSingtonImplement(JPPhotoTool)
         return;
     }
     
-    NSInteger maxIdx = fetchResult.count - 1;
-    __block NSInteger index = 0;
+    NSInteger maxIdx = count - 1;
+    NSInteger photoCount = [fetchResult countOfAssetsWithMediaType:PHAssetMediaTypeImage];
+    __block NSInteger photoIndex = 0;
+    
     [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL * _Nonnull stop) {
+        // 以后加上指定类型的处理：可以在这里进行筛选，这里暂时只处理照片的情况。
         if (asset.mediaType == PHAssetMediaTypeImage) {
-            !fastEnumeration ? : fastEnumeration(asset, index, count);
-            index += 1;
-            // 倒序排列方法1：总是插到第1个
-            //                [photoObjects insertObject:photoObj atIndex:0];
-            //                if (count < 10) {
-            //                    JPLog(@"~~~~~~~~~~~~~~~%zd~~~~~~~~~~~~~~~~", count)
-            //                    JPLog(@"%@", asset);
-            //                    JPLog(@"==============================");
-            //                }
+            !fastEnumeration ? : fastEnumeration(asset, photoIndex, photoCount);
+            photoIndex += 1;
         }
-        
         if (idx == maxIdx) {
-            // 倒序排列方法2：网上方法
-            //                NSArray *daoxuArray = [[photoObjects reverseObjectEnumerator] allObjects];
             !completion ? : completion();
         }
     }];
@@ -730,6 +750,63 @@ JPSingtonImplement(JPPhotoTool)
     [self __appAssetCollectionInsertAsset:assetID successHandle:successHandle failHandle:failHandle];
 }
 
+#pragma mark 保存视频到相机胶卷
+- (void)saveVideoWithFileURL:(NSURL *)fileURL
+               successHandle:(void (^)(NSString *assetID))successHandle
+                  failHandle:(void (^)(void))failHandle {
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self saveVideoWithFileURL:fileURL successHandle:successHandle failHandle:failHandle];
+        });
+        return;
+    }
+    
+    __block PHObjectPlaceholder *placeholder = nil;
+    NSError *error;
+    [[PHPhotoLibrary sharedPhotoLibrary] performChangesAndWait:^{
+        placeholder = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:fileURL].placeholderForCreatedAsset;
+    } error:&error];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (error) {
+            // 保存失败
+            !failHandle ? : failHandle();
+        } else {
+            // 保存成功
+            !successHandle ? : successHandle(placeholder.localIdentifier);
+        }
+    });
+}
+
+#pragma mark 保存视频到App相册
+- (void)saveVideoToAppAlbumWithFileURL:(NSURL *)fileURL
+                         successHandle:(void (^)(NSString *assetID))successHandle
+                            failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle {
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self saveVideoToAppAlbumWithFileURL:fileURL successHandle:successHandle failHandle:failHandle];
+        });
+        return;
+    }
+    
+    NSError *error = nil;
+    __block NSString *assetID = nil;
+    
+    // 保存图片到【相机胶卷】
+    [[PHPhotoLibrary sharedPhotoLibrary] performChangesAndWait:^{
+        assetID = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:fileURL].placeholderForCreatedAsset.localIdentifier;
+    } error:&error];
+    
+    if (error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            !failHandle ? : failHandle(assetID, NO, YES);
+        });
+        return;
+    }
+    
+    [self __appAssetCollectionInsertAsset:assetID successHandle:successHandle failHandle:failHandle];
+}
+
 #pragma mark 保存文件到相机胶卷
 - (void)saveFileWithFileURL:(NSURL *)fileURL
               successHandle:(void (^)(NSString *assetID))successHandle
@@ -769,7 +846,6 @@ JPSingtonImplement(JPPhotoTool)
         return;
     }
     
-    
     NSError *error = nil;
     __block NSString *assetID = nil;
     
@@ -788,7 +864,7 @@ JPSingtonImplement(JPPhotoTool)
     [self __appAssetCollectionInsertAsset:assetID successHandle:successHandle failHandle:failHandle];
 }
 
-#pragma mark 将照片/文件转移到App相册
+#pragma mark 将照片/视频/文件转移到App相册
 - (void)__appAssetCollectionInsertAsset:(NSString *)assetID
                           successHandle:(void (^)(NSString *assetID))successHandle
                              failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle {
@@ -978,7 +1054,6 @@ JPSingtonImplement(JPPhotoTool)
 #pragma mark - 图片处理
 
 - (UIImage *)__imageFixOrientation:(UIImage *)image {
-    
     // No-op if the orientation is already correct
     if (image.imageOrientation == UIImageOrientationUp)
         return image;
@@ -1055,19 +1130,13 @@ JPSingtonImplement(JPPhotoTool)
 }
 
 - (UIImage *)__resizeImage:(UIImage *)image size:(CGSize)size {
-    
     @autoreleasepool {
         UIGraphicsBeginImageContext(size);
-        
         [image drawInRect:CGRectMake(0, 0, size.width + 1, size.height + 1)];
-        
         UIImage *resizeImage = UIGraphicsGetImageFromCurrentImageContext();
-        
         UIGraphicsEndImageContext();
-        
         return resizeImage;
     }
-    
 }
 
 @end
