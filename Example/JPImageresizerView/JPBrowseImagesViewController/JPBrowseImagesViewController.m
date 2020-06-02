@@ -25,7 +25,7 @@
 @property (nonatomic, assign) BOOL isTapToHideNav; // 是否单击隐藏，如果是，说明是用户点击隐藏的，下拉缩小恢复后就继续隐藏
 @property (nonatomic, assign) NSInteger scrollIndex; // 滚动中的下标，四舍五入
 
-@property (nonatomic, weak) UIImageView *originImgView;
+@property (nonatomic, weak) UIView *originImgView;
 @property (nonatomic, weak) UIImageView *transitionImgView;
 @end
 
@@ -51,10 +51,10 @@ static NSInteger const JPViewMargin = 10;
         if (self.originImgView) {
             CGRect originPicFrame = [self.originImgView convertRect:self.originImgView.bounds toView:[UIApplication sharedApplication].keyWindow];
             transitionImgView = [[UIImageView alloc] initWithFrame:originPicFrame];
-            transitionImgView.image = self.originImgView.image;
             transitionImgView.backgroundColor = self.originImgView.backgroundColor;
             transitionImgView.contentMode = self.originImgView.contentMode;
             transitionImgView.layer.masksToBounds = self.originImgView.layer.masksToBounds;
+            if ([self.originImgView respondsToSelector:@selector(image)]) transitionImgView.image = [self.originImgView performSelector:@selector(image)];
             if (currModel.isCornerRadiusTransition) transitionImgView.layer.cornerRadius = self.originImgView.layer.cornerRadius;
             if (currModel.isAlphaTransition) transitionImgView.alpha = 0;
         }
@@ -177,7 +177,6 @@ static NSInteger const JPViewMargin = 10;
     CGFloat w = browseVC.contentFrame.size.width;
     CGFloat x = 0;
     
-    BOOL canGetOriginImageView = [delegate respondsToSelector:@selector(getOriginImageView:)];
     BOOL isSetCornerRadiusTransition = [delegate respondsToSelector:@selector(isCornerRadiusTransition:)];
     BOOL isSetAlphaTransition = [delegate respondsToSelector:@selector(isAlphaTransition:)];
     BOOL canGetImageHWScale = [delegate respondsToSelector:@selector(getImageHWScale:)];
@@ -189,16 +188,9 @@ static NSInteger const JPViewMargin = 10;
         if (isSetAlphaTransition) model.isAlphaTransition = [delegate isAlphaTransition:i];
         
         CGFloat h = w;
-        if (canGetOriginImageView) {
-            UIImageView *originImgView = [delegate getOriginImageView:i];
-            if (originImgView.image) {
-                model.placeHolderImage = originImgView.image;
-                h *= (model.placeHolderImage.size.height / model.placeHolderImage.size.width);
-            }
-        }
-        if (h == w && canGetImageHWScale) {
+        if (canGetImageHWScale) {
             CGFloat hwScale = [delegate getImageHWScale:i];
-            if (hwScale > 0) h *= hwScale;
+            if (hwScale > 0) h /= hwScale;
         }
         
         CGFloat y = browseVC.contentFrame.origin.y + (browseVC.contentFrame.size.height - h) * 0.5;

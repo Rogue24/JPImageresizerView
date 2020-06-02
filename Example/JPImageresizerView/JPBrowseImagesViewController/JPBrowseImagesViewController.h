@@ -17,7 +17,7 @@
  @param currIndex --- 当前位置
  @discussion 一般用于打开的那个imageView
  */
-- (UIImageView *)getOriginImageView:(NSInteger)currIndex;
+- (UIView *)getOriginImageView:(NSInteger)currIndex;
 
 /*!
  @method
