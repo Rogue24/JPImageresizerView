@@ -388,7 +388,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 
 - (CGFloat)getImageHWScale:(NSInteger)currIndex {
     JPPhotoViewModel *photoVM = self.photoVMs[currIndex];
-    return photoVM.jp_whScale;
+    return photoVM.jp_whScale > 0.0 ? (1.0 / photoVM.jp_whScale) : 0;
 }
 
 - (BOOL)isCornerRadiusTransition:(NSInteger)currIndex {

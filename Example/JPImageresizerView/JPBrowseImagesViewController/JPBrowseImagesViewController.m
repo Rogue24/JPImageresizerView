@@ -190,7 +190,7 @@ static NSInteger const JPViewMargin = 10;
         CGFloat h = w;
         if (canGetImageHWScale) {
             CGFloat hwScale = [delegate getImageHWScale:i];
-            if (hwScale > 0) h /= hwScale;
+            if (hwScale > 0) h = w * hwScale;
         }
         
         CGFloat y = browseVC.contentFrame.origin.y + (browseVC.contentFrame.size.height - h) * 0.5;
