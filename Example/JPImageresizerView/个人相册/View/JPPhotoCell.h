@@ -14,6 +14,7 @@
 @property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) UIView *stateView;
 
+@property (nonatomic, assign) NSInteger index;
 @property (nonatomic, strong) JPPhotoViewModel *photoVM;
 @property (nonatomic, copy) void (^longPressBlock)(JPPhotoCell *pCell);
 @property (nonatomic, copy) BOOL (^tapBlock)(JPPhotoCell *pCell);

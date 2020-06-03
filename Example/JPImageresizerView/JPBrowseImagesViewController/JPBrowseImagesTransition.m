@@ -32,7 +32,7 @@
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return 0.47; // 0.45
+    return 0.5; // 0.45
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -44,14 +44,14 @@
 }
 
 /**
- *  实现present动画
+ * present动画
  */
 - (void)presentAnimation:(id<UIViewControllerContextTransitioning>)transitionContext {
     JPBrowseImagesViewController *toVC = (JPBrowseImagesViewController *)[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView *containerView = [transitionContext containerView];
     [containerView addSubview:toVC.view];
     [toVC willTransitionAnimateion:self.isPresent];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.95 initialSpringVelocity:0.1 options:0 animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.85 initialSpringVelocity:0 options:0 animations:^{
         [toVC transitionAnimateion:self.isPresent];
     } completion:^(BOOL finished) {
         [toVC transitionDoneAnimateion:self.isPresent complete:^{
@@ -61,12 +61,12 @@
 }
 
 /**
- *  实现dimiss动画
+ * dimiss动画
  */
 - (void)dismissAnimation:(id<UIViewControllerContextTransitioning>)transitionContext {
     JPBrowseImagesViewController *fromVC = (JPBrowseImagesViewController *)[transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     [fromVC willTransitionAnimateion:self.isPresent];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.95 initialSpringVelocity:0.1 options:0 animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.85 initialSpringVelocity:0 options:kNilOptions animations:^{
         [fromVC transitionAnimateion:self.isPresent];
     } completion:^(BOOL finished) {
         [fromVC transitionDoneAnimateion:self.isPresent complete:^{

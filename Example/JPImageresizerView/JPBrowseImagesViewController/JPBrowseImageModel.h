@@ -7,20 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-@class JPPictureInfoModel;
 
 @interface JPBrowseImageModel : NSObject
 @property (nonatomic, assign) UIViewContentMode contentMode;
-@property (nonatomic, strong) UIImage *placeHolderImage;
-@property (nonatomic, assign) CGRect pictureFrame;
-@property (nonatomic, assign) CGFloat maximumScale;
+
+@property (nonatomic, assign) CGSize imageSize;
+@property (nonatomic, assign, readonly) CGFloat imageWhScale;
+@property (nonatomic, assign, readonly) CGSize contentSize;
+@property (nonatomic, assign, readonly) UIEdgeInsets contentInset;
+@property (nonatomic, assign, readonly) CGFloat maximumScale;
+
 @property (nonatomic, assign) BOOL isCornerRadiusTransition;
 @property (nonatomic, assign) BOOL isAlphaTransition;
 
-@property (nonatomic, strong) JPPictureInfoModel *infoModel;
-@end
-
-@interface JPPictureInfoModel : NSObject
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, copy) NSString *synopsis;
 @end

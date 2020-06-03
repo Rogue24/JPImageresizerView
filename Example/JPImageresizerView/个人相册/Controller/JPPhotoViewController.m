@@ -165,15 +165,7 @@
 #pragma mark - 裁剪图片
 
 - (void)imageresizerWithImage:(UIImage *)image {
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 10, (40 + 30 + 30 + 10), 10);
-    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
-    if (isX) {
-        contentInsets.top += 24;
-        contentInsets.bottom += 34;
-    }
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *kConfigure) {
-        kConfigure.jp_contentInsets(contentInsets);
-    }];
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:nil];
     JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
     vc.configure = configure;

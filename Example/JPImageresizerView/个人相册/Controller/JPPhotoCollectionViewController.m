@@ -13,6 +13,7 @@
 #import "JPPhotoCollectionViewFlowLayout.h"
 #import "JPBrowseImagesViewController.h"
 #import "JPViewController.h"
+#import "UIViewController+JPExtension.h"
 
 @interface JPPhotoCollectionViewController () <JPBrowseImagesDelegate>
 
@@ -27,9 +28,9 @@
     CGFloat _photoMaxWhScale;
     CGFloat _photoMaxW;
     CGFloat _photoBaseH;
+    CGFloat _extraWidth;
     
     BOOL _isRequested;
-    CGFloat _extraWidth;
 }
 
 #pragma mark - const
@@ -66,11 +67,8 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
                                           maxWHSclae:(CGFloat)maxWHSclae
                                               maxCol:(NSInteger)maxCol
                                         pcVCDelegate:(id<JPPhotoCollectionViewControllerDelegate>)pcVCDelegate {
-    
-    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
-    
     JPPhotoCollectionViewFlowLayout *flowLayout = [[JPPhotoCollectionViewFlowLayout alloc] init];
-    flowLayout.sectionInset = UIEdgeInsetsMake(sideMargin, sideMargin, sideMargin + (isX ? 34 : 0), sideMargin);
+    flowLayout.sectionInset = UIEdgeInsetsMake(sideMargin, sideMargin, sideMargin + JPDiffTabBarH, sideMargin);
     flowLayout.minimumLineSpacing = cellSpace;
     flowLayout.minimumInteritemSpacing = cellSpace;
     
@@ -78,11 +76,11 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     pcVC.pcVCDelegate = pcVCDelegate;
     pcVC.albumVM = albumVM;
     
-    __weak typeof(pcVC) wPcVC = pcVC;
+    @jp_weakify(pcVC);
     flowLayout.getLayoutAttributeFrame = ^CGRect(NSIndexPath * _Nonnull indexPath) {
-        __strong typeof(wPcVC) sPcVC = wPcVC;
-        if (!sPcVC) return CGRectZero;
-        JPPhotoViewModel *photoVM = sPcVC.photoVMs[indexPath.item];
+        @jp_strongify(pcVC);
+        if (!pcVC) return CGRectZero;
+        JPPhotoViewModel *photoVM = pcVC.photoVMs[indexPath.item];
         return photoVM.jp_itemFrame;
     };
     
@@ -99,10 +97,10 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         _photoCellSpace = photoCellSpace;
         _photoMaxWhScale = photoMaxWhScale;
         _photoMaxCol = photoMaxCol;
-        _photoMaxW = [UIScreen mainScreen].bounds.size.width - photoSideMargin * 2;
+        _photoMaxW = JPPortraitScreenWidth - photoSideMargin * 2;
         _photoBaseH = _photoMaxW * 0.5;
+        _extraWidth = JPScaleValue(80);
         _showScale = 1;
-        _extraWidth = 80.0 * ([UIScreen mainScreen].bounds.size.width / 375.0);
     }
     return self;
 }
@@ -122,17 +120,14 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 #pragma mark - setup subviews
 
 - (void)setupCollectionView {
-    if (@available(iOS 11.0, *)) {
-        self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+    [self jp_contentInsetAdjustmentNever:self.collectionView];
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.alwaysBounceVertical = YES;
+    self.collectionView.showsVerticalScrollIndicator = YES;
     [self.collectionView registerClass:JPPhotoCell.class forCellWithReuseIdentifier:JPPhotoCellID];
 }
 
-#pragma mark - private method
+#pragma mark - notification method
 
 - (void)pageViewScrollDidEndHandle {
     if (self.hideScale != 0) {
@@ -208,18 +203,16 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 - (void)willBeginScorllHandle {
     [self.collectionView setContentOffset:self.collectionView.contentOffset animated:YES];
     if (self.collectionView.visibleCells.count) {
-        CGFloat collectionViewW = self.collectionView.frame.size.width;
+        CGFloat collectionViewW = self.collectionView.jp_width;
         for (UICollectionViewCell<JPPictureChooseCellProtocol> *cell in self.collectionView.visibleCells) {
-            cell.startScale = (cell.frame.origin.x - _photoSideMargin) / collectionViewW;
+            cell.startScale = (cell.jp_x - _photoSideMargin) / collectionViewW;
             if (cell.startScale < 0) cell.startScale = 0;
-            cell.endScale = (CGRectGetMaxX(cell.frame) + _extraWidth) / collectionViewW;
+            cell.endScale = (cell.jp_maxX + _extraWidth) / collectionViewW;
             if (cell.endScale > 1) cell.endScale = 1;
             cell.totalScale = cell.endScale - cell.startScale;
         }
     }
 }
-
-
 
 - (void)requestPhotosWithComplete:(void (^)(NSInteger))complete {
     if (_isRequested) return;
@@ -308,28 +301,18 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     JPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:JPPhotoCellID forIndexPath:indexPath];
-    
+    cell.index = indexPath.item;
     cell.photoVM = self.photoVMs[indexPath.item];
     
-    __weak typeof(self) wSelf = self;
-    
-//    cell.longPressBlock = ^(JPPhotoCell *pCell) {
-//        __strong typeof(wSelf) sSelf = wSelf;
-//        if (!sSelf) return;
-//        [sSelf browsePhotoWithIndexPath:indexPath];
-//    };
-    
-    cell.tapBlock = ^(JPPhotoCell *pCell) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return NO;
-        [sSelf browsePhotoWithIndexPath:indexPath];
-        return NO;
-//        if ([sSelf.pcVCDelegate respondsToSelector:@selector(pcVC:photoDidSelected:)]) {
-//            return [sSelf.pcVCDelegate pcVC:sSelf photoDidSelected:pCell.photoVM];
-//        } else {
-//            return NO;
-//        }
-    };
+    if (!cell.tapBlock) {
+        @jp_weakify(self);
+        cell.tapBlock = ^(JPPhotoCell *pCell) {
+            @jp_strongify(self);
+            if (!self) return NO;
+            [self browsePhotoWithIndex:pCell.index];
+            return NO;
+        };
+    }
     
     return cell;
 }
@@ -341,41 +324,10 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     return photoVM.jp_itemFrame.size;
 }
 
-#pragma mark - <UICollectionViewDelegate>
-
-#pragma mark - <UIScrollViewDelegate>
-
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-//    __weak typeof(self) wSelf = self;
-//    [JPPhotoToolSI updateCachedAssetsWithStartCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
-//        __strong typeof(wSelf) sSelf = wSelf;
-//        if (!sSelf) return;
-//        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
-//        getAssetsCompletion(assets);
-//    } stopCachingBlock:^(NSArray *indexPaths, GetAssetsCompletion getAssetsCompletion) {
-//        __strong typeof(wSelf) sSelf = wSelf;
-//        if (!sSelf) return;
-//        NSArray *assets = [sSelf assetsAtIndexPaths:indexPaths];
-//        getAssetsCompletion(assets);
-//    }];
-//}
-
-#pragma mark - Asset Caching
-
-- (NSArray *)assetsAtIndexPaths:(NSArray *)indexPaths {
-    if (indexPaths.count == 0) { return nil; }
-    NSMutableArray *assets = [NSMutableArray arrayWithCapacity:indexPaths.count];
-    for (NSIndexPath *indexPath in indexPaths) {
-        JPPhotoViewModel *photoVM = self.photoVMs[indexPath.item];
-        if (photoVM.asset) [assets addObject:photoVM.asset];
-    }
-    return assets;
-}
-
 #pragma mark - JPPhotoCellDelegate（浏览大图）
 
-- (void)browsePhotoWithIndexPath:(NSIndexPath *)indexPath {
-    JPBrowseImagesViewController *browseVC = [JPBrowseImagesViewController browseImagesViewControllerWithDelegate:self totalCount:self.photoVMs.count currIndex:indexPath.item isShowProgress:YES isShowNavigationBar:YES];
+- (void)browsePhotoWithIndex:(NSInteger)index {
+    JPBrowseImagesViewController *browseVC = [JPBrowseImagesViewController browseImagesViewControllerWithDelegate:self totalCount:self.photoVMs.count currIndex:index isShowProgress:NO isShowNavigationBar:YES];
     [self presentViewController:browseVC animated:YES completion:nil];
 }
 
@@ -389,6 +341,17 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 - (CGFloat)getImageHWScale:(NSInteger)currIndex {
     JPPhotoViewModel *photoVM = self.photoVMs[currIndex];
     return photoVM.jp_whScale > 0.0 ? (1.0 / photoVM.jp_whScale) : 0;
+}
+
+- (NSString *)getImageSynopsis:(NSInteger)currIndex {
+    static NSDateFormatter *dateFormatter_ = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter_ = [[NSDateFormatter alloc] init];
+        [dateFormatter_ setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
+    });
+    JPPhotoViewModel *photoVM = self.photoVMs[currIndex];
+    return [NSString stringWithFormat:@"创建于 %@", [dateFormatter_ stringFromDate:photoVM.asset.creationDate]];
 }
 
 - (BOOL)isCornerRadiusTransition:(NSInteger)currIndex {
@@ -454,15 +417,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 #pragma mark - 裁剪照片
 
 - (void)imageresizerWithImage:(UIImage *)image fromVC:(UIViewController *)fromVC {
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(50, 0, (40 + 30 + 30 + 10), 0);
-    BOOL isX = [UIScreen mainScreen].bounds.size.height > 736.0;
-    if (isX) {
-        contentInsets.top += 24;
-        contentInsets.bottom += 34;
-    }
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *kConfigure) {
-        kConfigure.jp_contentInsets(contentInsets);
-    }];
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:nil];
     JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
     vc.configure = configure;

@@ -13,27 +13,33 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.contentMode = UIViewContentModeScaleAspectFill;
-        self.maximumScale = 1.0;
+        self.imageSize = CGSizeZero;
     }
     return self;
 }
 
-- (void)setPictureFrame:(CGRect)pictureFrame {
-    _pictureFrame = pictureFrame;
-    if (pictureFrame.size.width <= 0 || pictureFrame.size.height <= 0) {
-        self.maximumScale = 2;
+- (void)setImageSize:(CGSize)imageSize {
+    _imageSize = imageSize;
+    
+    if (CGSizeEqualToSize(imageSize, CGSizeZero)) {
+        _imageWhScale = 1;
+        _contentSize = CGSizeMake(JPPortraitScreenWidth, JPPortraitScreenWidth);
+        CGFloat verInset = JPHalfOfDiff(JPPortraitScreenHeight, JPPortraitScreenWidth);
+        _contentInset = UIEdgeInsetsMake(verInset, 0, verInset, 0);
+        _maximumScale = 1;
     } else {
-        if (pictureFrame.size.width > pictureFrame.size.height) {
-            self.maximumScale = [UIScreen mainScreen].bounds.size.height / pictureFrame.size.height;
-        } else {
-            self.maximumScale = [UIScreen mainScreen].bounds.size.width / pictureFrame.size.width;
-        }
-        if (self.maximumScale < 2) self.maximumScale = 2;
+        _imageWhScale = imageSize.width / imageSize.height;
+        _contentSize = CGSizeMake(JPPortraitScreenWidth, JPPortraitScreenWidth / _imageWhScale);
+        
+        CGFloat topInset = JPHalfOfDiff(JPPortraitScreenHeight, _contentSize.height);
+        CGFloat bottomInset = topInset;
+        if (topInset < JPStatusBarH) topInset = JPStatusBarH;
+        if (bottomInset < JPDiffTabBarH) bottomInset = JPDiffTabBarH;
+        _contentInset = UIEdgeInsetsMake(topInset, 0, bottomInset, 0);
+        
+        _maximumScale = (JPPortraitScreenHeight - JPStatusBarH - JPDiffTabBarH) / _contentSize.height;
+        if (_maximumScale < 2) _maximumScale = 2;
     }
 }
-
-@end
-
-@implementation JPPictureInfoModel
 
 @end
