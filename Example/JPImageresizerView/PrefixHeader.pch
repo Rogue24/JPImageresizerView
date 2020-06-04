@@ -15,8 +15,9 @@
 #define ButtonHeight 30.0
 
 #import "JPImageresizerView.h"
-#import "JPSolveTool.h"
+#import "JPInline.h"
 #import "JPMacro.h"
+#import "JPSolveTool.h"
 #import "UIView+JPExtension.h"
 #import "UIView+JPPOP.h"
 #import "UIColor+JPExtension.h"

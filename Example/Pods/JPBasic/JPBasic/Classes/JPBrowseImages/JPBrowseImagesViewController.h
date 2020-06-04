@@ -94,17 +94,17 @@
 
 /*!
  @method
- @brief 获取导航栏退出按钮的图标
+ @brief 获取导航栏退出按钮
  @discussion isShowNavigationBar设置为YES才会触发
  */
-- (NSString *)getNavigationDismissIcon;
+- (UIButton *)getNavigationDismissButton;
 
 /*!
  @method
- @brief 获取导航栏右侧按钮的图标
+ @brief 获取导航栏右侧按钮
  @discussion isShowNavigationBar设置为YES才会触发
  */
-- (NSString *)getNavigationOtherIcon;
+- (UIButton *)getNavigationOtherButton;
 
 /*!
  @method

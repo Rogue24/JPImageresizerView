@@ -10,7 +10,6 @@
 @class JPBrowseImagesViewController;
 @class JPBrowseImageProgressLayer;
 #import "JPBrowseImageModel.h"
-#import "UIViewController+JPExtension.h"
 
 @interface JPBrowseImageCell : UICollectionViewCell
 @property (nonatomic, weak, readonly) UIScrollView *scrollView;

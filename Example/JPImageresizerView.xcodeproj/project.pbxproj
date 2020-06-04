@@ -40,12 +40,6 @@
 		1ABFEFE723D7E5E7003429B0 /* Girl2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE323D7E5E7003429B0 /* Girl2.jpg */; };
 		1ABFEFE823D7E5E7003429B0 /* Girl5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE423D7E5E7003429B0 /* Girl5.jpg */; };
 		1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */; };
-		1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */; };
-		1AF66D4222FA536E006AE5F1 /* JPBrowseImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */; };
-		1AF66D4322FA536E006AE5F1 /* JPBrowseImagesBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3A22FA536E006AE5F1 /* JPBrowseImagesBottomView.m */; };
-		1AF66D4422FA536E006AE5F1 /* JPBrowseImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3C22FA536E006AE5F1 /* JPBrowseImagesViewController.m */; };
-		1AF66D4522FA536E006AE5F1 /* JPBrowseImageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3E22FA536E006AE5F1 /* JPBrowseImageModel.m */; };
-		1AF66D4622FA536E006AE5F1 /* JPBrowseImagesTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF66D3F22FA536E006AE5F1 /* JPBrowseImagesTopView.m */; };
 		21BDBEA482917FC9EB2A4274 /* Pods_JPImageresizerView_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE78341388E24FD10242AEE /* Pods_JPImageresizerView_Example.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -144,18 +138,6 @@
 		1ABFEFE423D7E5E7003429B0 /* Girl5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl5.jpg; sourceTree = "<group>"; };
 		1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+JPImageresizer.h"; sourceTree = "<group>"; };
 		1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+JPImageresizer.m"; sourceTree = "<group>"; };
-		1AF66D3522FA536E006AE5F1 /* JPBrowseImagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesViewController.h; sourceTree = "<group>"; };
-		1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesTransition.m; sourceTree = "<group>"; };
-		1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImageCell.m; sourceTree = "<group>"; };
-		1AF66D3822FA536E006AE5F1 /* JPBrowseImagesTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesTopView.h; sourceTree = "<group>"; };
-		1AF66D3922FA536E006AE5F1 /* JPBrowseImageModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImageModel.h; sourceTree = "<group>"; };
-		1AF66D3A22FA536E006AE5F1 /* JPBrowseImagesBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesBottomView.m; sourceTree = "<group>"; };
-		1AF66D3B22FA536E006AE5F1 /* JPBrowseImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImageCell.h; sourceTree = "<group>"; };
-		1AF66D3C22FA536E006AE5F1 /* JPBrowseImagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesViewController.m; sourceTree = "<group>"; };
-		1AF66D3D22FA536E006AE5F1 /* JPBrowseImagesTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesTransition.h; sourceTree = "<group>"; };
-		1AF66D3E22FA536E006AE5F1 /* JPBrowseImageModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImageModel.m; sourceTree = "<group>"; };
-		1AF66D3F22FA536E006AE5F1 /* JPBrowseImagesTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBrowseImagesTopView.m; sourceTree = "<group>"; };
-		1AF66D4022FA536E006AE5F1 /* JPBrowseImagesBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBrowseImagesBottomView.h; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* JPImageresizerView_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JPImageresizerView_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -332,25 +314,6 @@
 			path = JPHelper;
 			sourceTree = "<group>";
 		};
-		1AF66D3422FA536E006AE5F1 /* JPBrowseImagesViewController */ = {
-			isa = PBXGroup;
-			children = (
-				1AF66D3522FA536E006AE5F1 /* JPBrowseImagesViewController.h */,
-				1AF66D3C22FA536E006AE5F1 /* JPBrowseImagesViewController.m */,
-				1AF66D3D22FA536E006AE5F1 /* JPBrowseImagesTransition.h */,
-				1AF66D3622FA536E006AE5F1 /* JPBrowseImagesTransition.m */,
-				1AF66D3B22FA536E006AE5F1 /* JPBrowseImageCell.h */,
-				1AF66D3722FA536E006AE5F1 /* JPBrowseImageCell.m */,
-				1AF66D3922FA536E006AE5F1 /* JPBrowseImageModel.h */,
-				1AF66D3E22FA536E006AE5F1 /* JPBrowseImageModel.m */,
-				1AF66D3822FA536E006AE5F1 /* JPBrowseImagesTopView.h */,
-				1AF66D3F22FA536E006AE5F1 /* JPBrowseImagesTopView.m */,
-				1AF66D4022FA536E006AE5F1 /* JPBrowseImagesBottomView.h */,
-				1AF66D3A22FA536E006AE5F1 /* JPBrowseImagesBottomView.m */,
-			);
-			path = JPBrowseImagesViewController;
-			sourceTree = "<group>";
-		};
 		53D013BDB4E96A6364E8D87C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -403,7 +366,6 @@
 				1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */,
 				1A0AB2DC22B22B0F00B6B6AB /* 个人相册 */,
-				1AF66D3422FA536E006AE5F1 /* JPBrowseImagesViewController */,
 				1A10433623A495AD00D1B2DF /* JPHelper */,
 				1A0AB36522B2854A00B6B6AB /* Resource */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -635,26 +597,20 @@
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
-				1AF66D4422FA536E006AE5F1 /* JPBrowseImagesViewController.m in Sources */,
 				6003F5A7195388D20070C39A /* JPViewController.m in Sources */,
-				1AF66D4622FA536E006AE5F1 /* JPBrowseImagesTopView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
-				1AF66D4222FA536E006AE5F1 /* JPBrowseImageCell.m in Sources */,
 				1A0AB30322B22B0F00B6B6AB /* UICollectionView+Convenience.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
-				1AF66D4522FA536E006AE5F1 /* JPBrowseImageModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */,
-				1AF66D4122FA536E006AE5F1 /* JPBrowseImagesTransition.m in Sources */,
 				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,
-				1AF66D4322FA536E006AE5F1 /* JPBrowseImagesBottomView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

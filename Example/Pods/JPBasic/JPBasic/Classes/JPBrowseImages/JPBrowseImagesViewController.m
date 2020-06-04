@@ -8,9 +8,10 @@
 
 #import "JPBrowseImagesViewController.h"
 #import "JPBrowseImagesTransition.h"
-#import "JPBrowseImageCell.h"
 #import "JPBrowseImagesTopView.h"
 #import "JPBrowseImagesBottomView.h"
+#import "JPConstant.h"
+#import "JPMacro.h"
 
 @interface JPBrowseImagesViewController () <UIViewControllerTransitioningDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, assign) BOOL isPresentDone;
@@ -235,10 +236,10 @@ static NSInteger const JPViewMargin = 10;
 #pragma mark - 页面布局
 
 - (void)setupBase {
-    self.view.backgroundColor = [UIColor clearColor];
+    self.view.backgroundColor = UIColor.clearColor;
     
     UIView *bgView = [[UIView alloc] initWithFrame:JPPortraitScreenBounds];
-    bgView.backgroundColor = [UIColor blackColor];
+    bgView.backgroundColor = UIColor.blackColor;
     bgView.alpha = 0;
     [self.view addSubview:bgView];
     _bgView = bgView;
@@ -255,7 +256,11 @@ static NSInteger const JPViewMargin = 10;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(-JPViewMargin * 0.5, 0, JPPortraitScreenWidth + JPViewMargin, JPPortraitScreenHeight) collectionViewLayout:layout];
-    [self jp_contentInsetAdjustmentNever:collectionView];
+    if (@available(iOS 11.0, *)) {
+        collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     collectionView.backgroundColor = UIColor.clearColor;
     collectionView.delegate = self;
     collectionView.dataSource = self;
@@ -275,10 +280,10 @@ static NSInteger const JPViewMargin = 10;
     
     JPBrowseImageModel *model = self.dataSource[self.currIndex];
     
-    NSString *dismissIcon = [self.delegate respondsToSelector:@selector(getNavigationDismissIcon)] ? [self.delegate getNavigationDismissIcon] : nil;
-    NSString *otherIcon = [self.delegate respondsToSelector:@selector(getNavigationOtherIcon)] ? [self.delegate getNavigationOtherIcon] : nil;
+    UIButton *dismissBtn = [self.delegate respondsToSelector:@selector(getNavigationDismissButton)] ? [self.delegate getNavigationDismissButton] : nil;
+    UIButton *otherBtn = [self.delegate respondsToSelector:@selector(getNavigationOtherButton)] ? [self.delegate getNavigationOtherButton] : nil;
     
-    JPBrowseImagesTopView *topView = [JPBrowseImagesTopView browseImagesTopViewWithPictureTotal:self.dataSource.count index:model.index dismissIcon:dismissIcon otherIcon:otherIcon target:self dismissAction:@selector(dismiss) otherAction:@selector(otherHandle)];
+    JPBrowseImagesTopView *topView = [JPBrowseImagesTopView browseImagesTopViewWithPictureTotal:self.dataSource.count index:model.index dismissBtn:dismissBtn otherBtn:otherBtn target:self dismissAction:@selector(dismiss) otherAction:@selector(otherHandle)];
     topView.layer.opacity = 0;
     [self.view addSubview:topView];
     self.topView = topView;

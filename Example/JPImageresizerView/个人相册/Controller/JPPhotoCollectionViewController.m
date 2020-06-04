@@ -393,12 +393,14 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
 }
 
-- (NSString *)getNavigationDismissIcon {
-    return @"back";
-}
-
-- (NSString *)getNavigationOtherIcon {
-    return @"clipper";
+- (UIButton *)getNavigationOtherButton {
+    UIButton *otherBtn = ({
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+        [btn setImage:[[UIImage imageNamed:@"clipper"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+        btn;
+    });
+    return otherBtn;
 }
 
 - (void)browseImagesVC:(JPBrowseImagesViewController *)browseImagesVC navigationOtherHandleWithModel:(JPBrowseImageModel *)model index:(NSInteger)index {

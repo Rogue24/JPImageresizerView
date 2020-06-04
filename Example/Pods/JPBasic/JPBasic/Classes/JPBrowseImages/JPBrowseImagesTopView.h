@@ -8,13 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^JPBrowseDismissBtnDidClick)(void);
-
 @interface JPBrowseImagesTopView : UIView
 + (instancetype)browseImagesTopViewWithPictureTotal:(NSInteger)total
                                               index:(NSInteger)index
-                                        dismissIcon:(NSString *)dismissIcon
-                                          otherIcon:(NSString *)otherIcon
+                                         dismissBtn:(UIButton *)dismissBtn
+                                           otherBtn:(UIButton *)otherBtn
                                              target:(id)target
                                       dismissAction:(SEL)dismissAction
                                         otherAction:(SEL)otherAction;
