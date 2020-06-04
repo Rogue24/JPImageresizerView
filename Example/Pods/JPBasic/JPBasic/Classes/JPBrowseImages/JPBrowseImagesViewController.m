@@ -267,6 +267,7 @@ static NSInteger const JPViewMargin = 10;
     collectionView.pagingEnabled = YES;
     collectionView.alwaysBounceHorizontal = YES;
     collectionView.showsHorizontalScrollIndicator = NO;
+    collectionView.scrollsToTop = NO;
     [collectionView registerClass:JPBrowseImageCell.class forCellWithReuseIdentifier:JPBrowseImageCellID];
     [self.view addSubview:collectionView];
     _collectionView = collectionView;

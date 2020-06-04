@@ -348,7 +348,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dateFormatter_ = [[NSDateFormatter alloc] init];
-        [dateFormatter_ setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
+        [dateFormatter_ setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     });
     JPPhotoViewModel *photoVM = self.photoVMs[currIndex];
     return [NSString stringWithFormat:@"创建于 %@", [dateFormatter_ stringFromDate:photoVM.asset.creationDate]];
@@ -370,8 +370,9 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 }
 
 - (void)dismissComplete:(NSInteger)currIndex {
-    UICollectionViewCell *currCell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:currIndex inSection:0]];
-    currCell.hidden = NO;
+    for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
+        cell.hidden = NO;
+    }
 }
 
 - (void)cellRequestImage:(JPBrowseImageCell *)cell

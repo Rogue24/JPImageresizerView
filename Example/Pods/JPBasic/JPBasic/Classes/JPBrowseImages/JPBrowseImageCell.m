@@ -54,6 +54,7 @@
     scrollView.minimumZoomScale = 1.0;
     scrollView.showsVerticalScrollIndicator = NO;
     scrollView.showsHorizontalScrollIndicator = NO;
+    scrollView.scrollsToTop = NO;
     [self addSubview:scrollView];
     _scrollView = scrollView;
     _screenCenterY = scrollView.bounds.size.height * 0.5;
