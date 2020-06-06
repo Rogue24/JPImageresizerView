@@ -30,7 +30,7 @@
         self.backgroundColor = [UIColor whiteColor];
         
         UIImageView *imageView = [UIImageView new];
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.contentMode = UIViewContentModeScaleToFill;
         imageView.clipsToBounds = YES;
         [self addSubview:imageView];
         [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
