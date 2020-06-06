@@ -354,11 +354,11 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     return [NSString stringWithFormat:@"创建于 %@", [dateFormatter_ stringFromDate:photoVM.asset.creationDate]];
 }
 
-- (BOOL)isCornerRadiusTransition:(NSInteger)currIndex {
+- (BOOL)isCornerRadiusTransition:(BOOL)isPresent {
     return NO;
 }
 
-- (BOOL)isAlphaTransition:(NSInteger)currIndex {
+- (BOOL)isAlphaTransition:(BOOL)isPresent {
     return NO;
 }
 

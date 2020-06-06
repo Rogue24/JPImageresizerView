@@ -39,18 +39,18 @@
 /*!
  @method
  @brief 打开/退出时是否切割圆角
- @param currIndex --- 当前位置
+ @param isPresent --- 打开或退出
  @discussion 打开的imageView有圆角的话，退出时过程还原圆角
  */
-- (BOOL)isCornerRadiusTransition:(NSInteger)currIndex;
+- (BOOL)isCornerRadiusTransition:(BOOL)isPresent;
 
 /*!
  @method
  @brief 是否以变透明的方式退出
- @param currIndex --- 当前位置
+ @param isPresent --- 打开或退出
  @discussion 渐变形式
  */
-- (BOOL)isAlphaTransition:(NSInteger)currIndex;
+- (BOOL)isAlphaTransition:(BOOL)isPresent;
 
 /*!
  @method
@@ -140,8 +140,8 @@
 - (void)transitionDoneAnimateion:(BOOL)isPresent complete:(void(^)(void))complete;
 - (void)dismiss;
 
-@property (nonatomic, assign) BOOL isShowProgress;
-@property (nonatomic, assign) BOOL isShowNavigationBar;
+@property (nonatomic, assign, readonly) BOOL isShowProgress;
+@property (nonatomic, assign, readonly) BOOL isShowNavigationBar;
 
 @property (nonatomic, weak, readonly) UIView *bgView;
 @property (nonatomic, weak, readonly) UICollectionView *collectionView;

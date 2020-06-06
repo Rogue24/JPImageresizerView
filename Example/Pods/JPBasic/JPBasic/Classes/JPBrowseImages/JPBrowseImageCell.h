@@ -28,8 +28,6 @@
 @property (nonatomic, copy) void (^singleClickBlock)(void);
 
 - (void)setModel:(JPBrowseImageModel *)model index:(NSInteger)index;
-- (void)hideImageView;
-- (void)showImageView;
 @property (nonatomic, assign) BOOL isDisplaying;
 @property (nonatomic, assign) BOOL isDismiss;
 @end

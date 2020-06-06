@@ -13,7 +13,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.contentMode = UIViewContentModeScaleAspectFill;
         self.imageSize = CGSizeZero;
     }
     return self;

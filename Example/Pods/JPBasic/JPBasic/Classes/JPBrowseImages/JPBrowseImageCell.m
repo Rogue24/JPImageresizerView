@@ -62,7 +62,7 @@
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, JPHalfOfDiff(JPPortraitScreenHeight, JPPortraitScreenWidth), JPPortraitScreenWidth, JPPortraitScreenWidth)];
     imageView.userInteractionEnabled = YES;
     imageView.backgroundColor = UIColor.lightGrayColor;
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.contentMode = UIViewContentModeScaleToFill;
     imageView.layer.masksToBounds = YES;
     [scrollView addSubview:imageView];
     _imageView = imageView;
@@ -91,16 +91,6 @@
 }
 
 #pragma mark - API
-
-- (void)hideImageView {
-    self.imageView.hidden = YES;
-}
-
-- (void)showImageView {
-    self.progressLayer.hidden = _isHideProgress;
-    self.imageView.hidden = NO;
-    self.isDisplaying = YES;
-}
 
 - (void)setPanGRDelegate:(id<UIGestureRecognizerDelegate>)panGRDelegate {
     // 让控制器成为代理，能同时执行collectionView和pan手势不冲突
@@ -177,7 +167,6 @@
     scrollView.zoomScale = scrollView.minimumZoomScale;
     
     imageView.backgroundColor = imageView.image ? UIColor.blackColor : UIColor.lightGrayColor;
-    imageView.contentMode = model.contentMode;
     imageView.frame = (CGRect){CGPointZero, model.contentSize};
     
     scrollView.contentSize = model.contentSize;

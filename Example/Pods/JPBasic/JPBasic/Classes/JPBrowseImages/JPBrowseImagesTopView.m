@@ -15,16 +15,12 @@
 
 @implementation JPBrowseImagesTopView
 
-+ (instancetype)browseImagesTopViewWithPictureTotal:(NSInteger)total
-                                              index:(NSInteger)index
-                                         dismissBtn:(UIButton *)dismissBtn
-                                           otherBtn:(UIButton *)otherBtn
-                                             target:(id)target
-                                      dismissAction:(SEL)dismissAction
-                                        otherAction:(SEL)otherAction {
-    JPBrowseImagesTopView *topView = [[self alloc] initWithFrame:CGRectMake(0, 0, JPPortraitScreenWidth, JPNavTopMargin)
-                                                           total:total
-                                                           index:index
++ (instancetype)browseImagesTopViewWithDismissBtn:(UIButton *)dismissBtn
+                                         otherBtn:(UIButton *)otherBtn
+                                           target:(id)target
+                                    dismissAction:(SEL)dismissAction
+                                      otherAction:(SEL)otherAction {
+    JPBrowseImagesTopView *topView = [[self alloc] initWithFrame:CGRectMake(0, -JPNavTopMargin, JPPortraitScreenWidth, JPNavTopMargin)
                                                       dismissBtn:dismissBtn
                                                         otherBtn:otherBtn
                                                           target:target
@@ -34,17 +30,12 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
-                        total:(NSInteger)total
-                        index:(NSInteger)index
                    dismissBtn:(UIButton *)dismissBtn
                      otherBtn:(UIButton *)otherBtn
                        target:(id)target
                 dismissAction:(SEL)dismissAction
                   otherAction:(SEL)otherAction {
     if (self = [super initWithFrame:frame]) {
-        _total = total;
-        _index = index;
-        
         UILabel *indexLabel = ({
             UILabel *aLabel = [[UILabel alloc] init];
             aLabel.textAlignment = NSTextAlignmentCenter;
@@ -86,8 +77,6 @@
             [otherBtn addTarget:target action:otherAction forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:otherBtn];
         }
-        
-        [self updateIndex];
     }
     return self;
 }
@@ -102,8 +91,14 @@
     [self updateIndex];
 }
 
+- (void)resetTotal:(NSInteger)total withIndex:(NSInteger)index {
+    _total = total;
+    _index = index;
+    [self updateIndex];
+}
+
 - (void)updateIndex {
-    self.indexLabel.text = [NSString stringWithFormat:@"%zd / %zd", _index + 1, _total];
+    self.indexLabel.text = (_total > 0) ? [NSString stringWithFormat:@"%zd / %zd", _index + 1, _total] : nil;
 }
 
 @end

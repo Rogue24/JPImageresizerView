@@ -16,30 +16,23 @@
 
 @implementation JPBrowseImagesBottomView
 
-+ (instancetype)browseImagesBottomViewWithSynopsis:(NSString *)synopsis {
-    
-    JPBrowseImagesBottomView *bottomView = [[self alloc] initWithSynopsis:synopsis];
-    
-    return bottomView;
++ (instancetype)browseImagesBottomView {
+    return [[self alloc] init];
 }
 
-- (instancetype)initWithSynopsis:(NSString *)synopsis {
-    if (self = [super init]) {
-        
-        self.maxSize = CGSizeMake([UIScreen mainScreen].bounds.size.width - 30, 9999);
-        
+- (instancetype)init {
+    if (self = [super initWithFrame:CGRectMake(0, JPPortraitScreenHeight, JPPortraitScreenWidth, 30)]) {
+        self.maxSize = CGSizeMake(JPPortraitScreenWidth - 30, 999);
         UILabel *synopsisLabel = ({
             UILabel *aLabel = [[UILabel alloc] init];
             aLabel.font = [UIFont systemFontOfSize:13];
             aLabel.textColor = UIColor.whiteColor;
             aLabel.numberOfLines = 0;
-            aLabel.frame = CGRectMake(15, 15, self.maxSize.width, 1);
+            aLabel.frame = CGRectMake(15, 15, self.maxSize.width, 0);
             aLabel;
         });
         [self addSubview:synopsisLabel];
         self.synopsisLabel = synopsisLabel;
-        
-        self.synopsis = synopsis;
     }
     return self;
 }
@@ -49,17 +42,14 @@
     _synopsis = [synopsis copy];
     
     self.synopsisLabel.text = synopsis;
-    [self.synopsisLabel sizeToFit];
-    CGRect synopsisLabelF = self.synopsisLabel.frame;
-    synopsisLabelF.size.width = self.maxSize.width;
-    self.synopsisLabel.frame = synopsisLabelF;
+    self.synopsisLabel.frame = (CGRect){CGPointMake(15, 15), [self.synopsisLabel sizeThatFits:self.maxSize]};
     
-    CGFloat x = 0;
-    CGFloat w = JPPortraitScreenWidth;
-    CGFloat h = self.synopsisLabel.frame.size.height + 30;
-    CGFloat y = JPPortraitScreenHeight;
-    if (self.frame.origin.y < y) y -= (h + JPDiffTabBarH);
-    self.frame = CGRectMake(x, y, w, h);
+    CGRect frame = self.frame;
+    frame.size.height = self.synopsisLabel.frame.size.height + 30;
+    if (frame.origin.y < JPPortraitScreenHeight) {
+        frame.origin.y = JPPortraitScreenHeight - (frame.size.height + JPDiffTabBarH);
+    }
+    self.frame = frame;
 }
 
 @end

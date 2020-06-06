@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface JPBrowseImagesBottomView : UIView
-
-+ (instancetype)browseImagesBottomViewWithSynopsis:(NSString *)synopsis;
++ (instancetype)browseImagesBottomView;
 @property (nonatomic, copy) NSString *synopsis;
-
 @end

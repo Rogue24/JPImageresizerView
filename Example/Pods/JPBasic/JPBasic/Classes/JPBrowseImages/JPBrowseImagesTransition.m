@@ -51,7 +51,7 @@
     UIView *containerView = [transitionContext containerView];
     [containerView addSubview:toVC.view];
     [toVC willTransitionAnimateion:self.isPresent];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.85 initialSpringVelocity:0 options:0 animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:0.5 options:kNilOptions animations:^{
         [toVC transitionAnimateion:self.isPresent];
     } completion:^(BOOL finished) {
         [toVC transitionDoneAnimateion:self.isPresent complete:^{

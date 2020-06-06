@@ -9,13 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface JPBrowseImagesTopView : UIView
-+ (instancetype)browseImagesTopViewWithPictureTotal:(NSInteger)total
-                                              index:(NSInteger)index
-                                         dismissBtn:(UIButton *)dismissBtn
-                                           otherBtn:(UIButton *)otherBtn
-                                             target:(id)target
-                                      dismissAction:(SEL)dismissAction
-                                        otherAction:(SEL)otherAction;
++ (instancetype)browseImagesTopViewWithDismissBtn:(UIButton *)dismissBtn
+                                         otherBtn:(UIButton *)otherBtn
+                                           target:(id)target
+                                    dismissAction:(SEL)dismissAction
+                                      otherAction:(SEL)otherAction;
 @property (nonatomic, assign) NSInteger total;
 @property (nonatomic, assign) NSInteger index;
+- (void)resetTotal:(NSInteger)total withIndex:(NSInteger)index;
 @end
