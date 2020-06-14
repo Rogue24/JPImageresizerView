@@ -4,7 +4,7 @@
 //
 //  Created by 周健平 on 2018/4/22.
 //
-//  JPImageresizerTypedef：公共类型定义
+//  公共类型定义
 
 #pragma mark - 枚举
 

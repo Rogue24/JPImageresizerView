@@ -259,7 +259,7 @@
 }
 
 - (IBAction)recovery:(id)sender {
-    if (self.maskImage) {
+    if (self.imageresizerView.maskImage) {
         [self.imageresizerView recoveryByCurrentMaskImage];
 //        [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]];
     } else if ([self.imageresizerView isRoundResizing]) {
@@ -283,22 +283,22 @@
     __weak typeof(self) wSelf = self;
     
     // 1.自定义压缩比例进行裁剪
-    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-        // 裁剪完成，resizeImage为裁剪后的图片
-        // 注意循环引用
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf __imageresizerDone:resizeImage];
-    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
-    
-    // 2.以原图尺寸进行裁剪
-//    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
 //        // 裁剪完成，resizeImage为裁剪后的图片
 //        // 注意循环引用
 //        __strong typeof(wSelf) sSelf = wSelf;
 //        if (!sSelf) return;
 //        [sSelf __imageresizerDone:resizeImage];
-//    }];
+//    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
+    
+    // 2.以原图尺寸进行裁剪
+    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+        // 裁剪完成，resizeImage为裁剪后的图片
+        // 注意循环引用
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf __imageresizerDone:resizeImage];
+    }];
 }
 
 - (IBAction)pop:(id)sender {
@@ -394,6 +394,9 @@
     BOOL isArbitrarilyMask = self.imageresizerView.isArbitrarilyMask;
     [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:(isArbitrarilyMask ? @"固定比例" : @"任意比例")] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.isArbitrarilyMask = !isArbitrarilyMask;
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"DanielWuFace" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.maskImage = [UIImage imageNamed:@"DanielWuFace.png"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"love" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];

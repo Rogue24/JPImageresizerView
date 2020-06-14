@@ -16,7 +16,7 @@
     UIGraphicsBeginImageContextWithOptions(self.size, NO, 0);
     [UIColor.blackColor setFill];
     UIRectFill(rect);
-    [self drawInRect:rect blendMode:kCGBlendModeDestinationOut alpha:1.0f];
+    [self drawInRect:rect blendMode:kCGBlendModeDestinationOut alpha:1.0];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
@@ -97,7 +97,6 @@
 
 #pragma mark - 修正方向
 
-/** 修正图片的方向 */
 - (UIImage *)jpir_fixOrientation {
     
     UIImageOrientation orientation = self.imageOrientation;
@@ -181,7 +180,7 @@
     return img;
 }
 
-#pragma mark - 旋转方向并切圆
+#pragma mark - 旋转并切圆
 
 CG_INLINE CGRect
 JPRectSwapWH(CGRect rect) {
@@ -297,21 +296,6 @@ JPRectSwapWH(CGRect rect) {
 }
 
 #pragma mark - 压缩并蒙版
-
-/** 按比例换算为逻辑宽度进行压缩 */
-- (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale {
-    if (scale <= 0 || scale >= 1) return self;
-    
-    CGFloat logicWidth = self.size.width * scale;
-    CGFloat w = logicWidth;
-    CGFloat h = w * (self.size.height / self.size.width);
-    
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, self.scale);
-    [self drawInRect:CGRectMake(0, 0, w, h)];
-    UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return resizedImage;
-}
 
 - (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale maskImage:(UIImage *)maskImage {
     if (scale <= 0 || scale > 1) scale = 1;

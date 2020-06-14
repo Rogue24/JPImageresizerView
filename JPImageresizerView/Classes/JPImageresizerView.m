@@ -653,7 +653,7 @@
     NSTimeInterval delay;
     BOOL isUpdateMaskImage = NO;
     if (maskImage == nil) {
-        delay = [self.frameView willRecoveryToResizeWHScale:0 isToBeArbitrarily:NO animated:YES];
+        delay = [self.frameView willRecoveryToResizeWHScale:0 isToBeArbitrarily:YES animated:YES];
     } else {
         isUpdateMaskImage = self.maskImage != maskImage;
         delay = [self.frameView willRecoveryToMaskImage:maskImage animated:YES];
@@ -670,13 +670,7 @@
         JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
         return;
     }
-    CGFloat resizeWHScale;
-    if (self.maskImage != nil) {
-        resizeWHScale = self.maskImage.size.width / self.maskImage.size.height;
-    } else {
-        resizeWHScale = self.resizeWHScale;
-    }
-    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
+    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:self.resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
     [self __recovery:delay isUpdateMaskImage:NO];
 }
 
@@ -685,13 +679,7 @@
         JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
         return;
     }
-    CGFloat resizeWHScale;
-    if (self.maskImage != nil) {
-        resizeWHScale = self.maskImage.size.width / self.maskImage.size.height;
-    } else {
-        resizeWHScale = self.initialResizeWHScale;
-    }
-    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
+    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
     [self __recovery:delay isUpdateMaskImage:NO];
 }
 

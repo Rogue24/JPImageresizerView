@@ -607,7 +607,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             }
         }
         
-        self.initialResizeWHScale = resizeWHScale;
+        self.initialResizeWHScale = maskImage != nil ? 0.0 : resizeWHScale;
         
         UIPanGestureRecognizer *panGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__panHandle:)];
         [self addGestureRecognizer:panGR];

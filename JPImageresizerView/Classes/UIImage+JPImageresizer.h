@@ -10,6 +10,8 @@
 
 @interface UIImage (JPImageresizer)
 
+- (UIImage *)jpir_destinationOutImage;
+
 + (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
                              cropFrame:(CGRect)cropFrame
                           relativeSize:(CGSize)relativeSize
@@ -19,7 +21,5 @@
                            isRoundClip:(BOOL)isRoundClip
                          compressScale:(CGFloat)scale
                              maskImage:(UIImage *)maskImage;
-
-- (UIImage *)jpir_destinationOutImage;
 
 @end
