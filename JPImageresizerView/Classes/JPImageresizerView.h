@@ -20,9 +20,9 @@
         - frameView（绘制裁剪边框的view）
  * scrollView与frameView的frame一致
  */
-@property (nonatomic, weak, readonly) UIScrollView *scrollView;
-@property (nonatomic, weak, readonly) UIImageView *imageView;
-@property (nonatomic, weak, readonly) JPImageresizerFrameView *frameView;
+@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) JPImageresizerFrameView *frameView;
 
 /*!
  @method
@@ -46,15 +46,19 @@
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param strokeColor ---裁剪线颜色
  @param resizeWHScale --- 裁剪宽高比
+ @param isArbitrarilyInitial --- 初始化后裁剪宽高比是否可以任意改变（resizeWHScale 为 0 则为任意比例，该值则为 YES）
  @param contentInsets --- 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
+ @param isClockwiseRotation --- 是否顺时针旋转
  @param borderImage --- 边框图片（若为nil则使用frameType的边框）
  @param borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
  @param maximumZoomScale --- 最大缩放比例
  @param isRoundResize --- 是否初始化圆切（若为YES则resizeWHScale为1）
  @param isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
  @param isBlurWhenDragging --- 拖拽时是否遮罩裁剪区域以外的区域
- @param isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）
- @param gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）
+ @param isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
+ @param gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
+ @param maskImage --- 蒙版图片
+ @param isArbitrarilyMask --- 蒙版图片是否可以以任意比例进行拖拽形变
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 自行配置参数
@@ -68,7 +72,9 @@
                           maskAlpha:(CGFloat)maskAlpha
                         strokeColor:(UIColor *)strokeColor
                       resizeWHScale:(CGFloat)resizeWHScale
+               isArbitrarilyInitial:(BOOL)isArbitrarilyInitial
                       contentInsets:(UIEdgeInsets)contentInsets
+                isClockwiseRotation:(BOOL)isClockwiseRotation
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
                    maximumZoomScale:(CGFloat)maximumZoomScale
@@ -77,6 +83,8 @@
                  isBlurWhenDragging:(BOOL)isBlurWhenDragging
         isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
                           gridCount:(NSUInteger)gridCount
+                          maskImage:(UIImage *)maskImage
+                  isArbitrarilyMask:(BOOL)isArbitrarilyMask
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
@@ -173,11 +181,17 @@
 /** 拖拽时是否遮罩裁剪区域以外的区域 */
 @property (nonatomic) BOOL isBlurWhenDragging;
 
-/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic) BOOL isShowGridlinesWhenDragging;
 
-/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic, assign) NSUInteger gridCount;
+
+/** 蒙版图片 */
+@property (nonatomic) UIImage *maskImage;
+
+/** 蒙版图片是否可以拖拽形变 */
+@property (nonatomic) BOOL isArbitrarilyMask;
 
 /*!
  @method
@@ -273,6 +287,27 @@
 
 /*!
  @method
+ @brief 重置回圆切状态
+ @discussion 以圆切状态回到最初状态
+ */
+- (void)recoveryToRoundResize;
+
+/*!
+ @method
+ @brief 按当前蒙版图片重置
+ @discussion 以当前蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ */
+- (void)recoveryByCurrentMaskImage;
+
+/*!
+ @method
+ @brief 按指定蒙版图片重置
+ @discussion 重置指定蒙版图片，并以蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ */
+- (void)recoveryToMaskImage:(UIImage *)maskImage;
+
+/*!
+ @method
  @brief 按当前裁剪宽高比（resizeWHScale）进行重置
  @discussion 回到最初状态，resizeWHScale 不会被重置
  */
@@ -280,10 +315,11 @@
 
 /*!
  @method
- @brief 重置回圆切状态
- @discussion 以圆切状态回到最初状态
+ @brief 按当前裁剪宽高比（resizeWHScale）进行重置
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，若 isToBeArbitrarily 为 YES，则重置之后 resizeWHScale =  0
  */
-- (void)recoveryToRoundResize;
+- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
 
 /*!
  @method
@@ -300,7 +336,7 @@
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale
  */
-- (void)recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 /*!
  @method

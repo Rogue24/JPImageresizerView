@@ -229,7 +229,7 @@ BOOL isToBeArbitrarily = self.isToBeArbitrarily;
  * 若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = targetResizeWHScale
  */
 CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // 获取当前裁剪框的宽高比
-[self.imageresizerView recoveryByTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+[self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
 ```
 
 #### 预览

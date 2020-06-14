@@ -225,7 +225,7 @@ BOOL isToBeArbitrarily = self.isToBeArbitrarily;
  * If isToBeArbitrarily is NO, resizeWHScale = targetResizeWHScale after reset.
  */
 CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // Gets the aspect ratio of the current clipping box
-[self.imageresizerView recoveryByTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+[self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
 ```
 
 #### Preview

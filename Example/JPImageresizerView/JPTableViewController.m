@@ -9,6 +9,7 @@
 #import "JPTableViewController.h"
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
+#import "DanielWuViewController.h"
 
 @interface JPConfigureModel : NSObject
 @property (nonatomic, copy) NSString *title;
@@ -87,7 +88,25 @@
         .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
     }];
     
-    return @[model1, model2, model3, model4, model5, model6];
+    
+    JPConfigureModel *model7 = [self new];
+    model7.title = @"自定义蒙版图片（固定比例）";
+    model7.statusBarStyle = UIStatusBarStyleLightContent;
+    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+        configure.jp_maskImage([UIImage imageNamed:@"run.png"]);
+    }];
+    
+    JPConfigureModel *model8 = [self new];
+    model8.title = @"自定义蒙版图片（任意比例）";
+    model8.statusBarStyle = UIStatusBarStyleLightContent;
+    model8.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_frameType(JPClassicFrameType)
+        .jp_maskImage([UIImage imageNamed:@"love.png"])
+        .jp_isArbitrarilyMask(YES);
+    }];
+    
+    return @[model1, model2, model3, model4, model5, model6, model7, model8];
 }
 @end
 
@@ -113,7 +132,7 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -129,7 +148,11 @@
         JPConfigureModel *model = self.models[indexPath.row];
         cell.textLabel.text = model.title;
     } else {
-        cell.textLabel.text = @"用户相册";
+        if (indexPath.section == 1) {
+            cell.textLabel.text = @"用户相册";
+        } else {
+            cell.textLabel.text = @"成为吴彦祖";
+        }
     }
     return cell;
 }
@@ -154,7 +177,7 @@
         [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
         
         [self.navigationController pushViewController:vc animated:NO];
-    } else {
+    } else if (indexPath.section == 1) {
         __weak typeof(self) wSelf = self;
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
             __strong typeof(wSelf) sSelf = wSelf;
@@ -162,6 +185,9 @@
             JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
             [sSelf.navigationController pushViewController:vc animated:YES];
         } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
+    } else {
+        DanielWuViewController *vc = [[DanielWuViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
     }
 }
 

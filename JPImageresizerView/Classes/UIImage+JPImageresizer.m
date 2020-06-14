@@ -10,6 +10,18 @@
 
 @implementation UIImage (JPImageresizer)
 
+- (UIImage *)jpir_destinationOutImage {
+    if (!self) return nil;
+    CGRect rect = (CGRect){CGPointZero, self.size};
+    UIGraphicsBeginImageContextWithOptions(self.size, NO, 0);
+    [UIColor.blackColor setFill];
+    UIRectFill(rect);
+    [self drawInRect:rect blendMode:kCGBlendModeDestinationOut alpha:1.0f];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 + (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
                              cropFrame:(CGRect)cropFrame
                           relativeSize:(CGSize)relativeSize
@@ -17,7 +29,8 @@
                            isHorMirror:(BOOL)isHorMirror
                      rotateOrientation:(UIImageOrientation)orientation
                            isRoundClip:(BOOL)isRoundClip
-                         compressScale:(CGFloat)compressScale {
+                         compressScale:(CGFloat)compressScale
+                             maskImage:(UIImage *)maskImage {
     @autoreleasepool {
         // 修正图片方向
         UIImage *resultImage = [originImage jpir_fixOrientation];
@@ -75,8 +88,8 @@
         // 旋转并切圆
         finalImage = [finalImage jpir_rotate:orientation isRoundClip:isRoundClip];
         
-        // 压缩图片
-        finalImage = [finalImage jpir_resizeImageWithScale:compressScale];
+        // 压缩并蒙版
+        finalImage = [finalImage jpir_resizeImageWithScale:compressScale maskImage:maskImage];
         
         return finalImage;
     }
@@ -283,7 +296,7 @@ JPRectSwapWH(CGRect rect) {
     return newImage;
 }
 
-#pragma makr - 压缩
+#pragma mark - 压缩并蒙版
 
 /** 按比例换算为逻辑宽度进行压缩 */
 - (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale {
@@ -298,6 +311,50 @@ JPRectSwapWH(CGRect rect) {
     UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return resizedImage;
+}
+
+- (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale maskImage:(UIImage *)maskImage {
+    if (scale <= 0 || scale > 1) scale = 1;
+    if (scale == 1 && maskImage == nil) return self;
+    
+    CGImageRef imageRef = self.CGImage;
+    
+    CGFloat pixelWidth = CGImageGetWidth(imageRef) * scale;
+    CGFloat pixelHeight = CGImageGetHeight(imageRef) * scale;
+    CGRect rect = CGRectMake(0, 0, pixelWidth, pixelHeight);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+    if (maskImage) {
+        bitmapInfo |= kCGImageAlphaPremultipliedLast;
+    } else {
+        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+        BOOL hasAlpha = NO;
+        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+            alphaInfo == kCGImageAlphaPremultipliedFirst ||
+            alphaInfo == kCGImageAlphaLast ||
+            alphaInfo == kCGImageAlphaFirst) {
+            hasAlpha = YES;
+        }
+        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+    }
+    CGContextRef context = CGBitmapContextCreate(NULL, pixelWidth, pixelHeight, 8, 0, colorSpace, bitmapInfo);
+    
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    if (maskImage != nil) {
+        CGImageRef maskImageRef = maskImage.CGImage;
+        CGContextClipToMask(context, rect, maskImageRef);
+    }
+    CGContextDrawImage(context, rect, imageRef);
+    
+    CGImageRef newImageRef = CGBitmapContextCreateImage(context);
+    UIImage *newImage = [UIImage imageWithCGImage:newImageRef];
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    CGImageRelease(newImageRef);
+    
+    return newImage;
 }
 
 @end

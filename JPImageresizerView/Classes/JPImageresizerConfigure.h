@@ -4,7 +4,7 @@
 //
 //  Created by 周健平 on 2018/4/22.
 //
-//  JPImageresizerConfigure：用于配置初始化参数
+//  用于配置初始化参数
 
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
@@ -20,6 +20,7 @@
     - maskAlpha = 0.75;
     - strokeColor = [UIColor whiteColor];
     - resizeWHScale = 0.0;
+    - isArbitrarilyInitial = YES;
     - contentInsets = UIEdgeInsetsZero;
     - borderImage = nil;
     - borderImageRectInset = CGPointZero;
@@ -29,6 +30,8 @@
     - isBlurWhenDragging = NO;
     - isShowGridlinesWhenDragging = NO;
     - gridCount = 3;
+    - maskImage = nil;
+    - isArbitrarilyMask = NO;
  */
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
 
@@ -75,6 +78,9 @@
 /** 裁剪宽高比（0则为任意比例） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
+/** 初始化后裁剪宽高比是否可以任意改变（resizeWHScale 为 0 则为任意比例，该值则为 YES） */
+@property (nonatomic, assign) BOOL isArbitrarilyInitial;
+
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
 
@@ -102,11 +108,17 @@
 /** 拖拽时是否遮罩裁剪区域以外的区域 */
 @property (nonatomic) BOOL isBlurWhenDragging;
 
-/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+/** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic) BOOL isShowGridlinesWhenDragging;
 
-/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格） */
+/** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic, assign) NSUInteger gridCount;
+
+/** 蒙版图片 */
+@property (nonatomic, strong) UIImage *maskImage;
+
+/** 蒙版图片是否可以拖拽形变 */
+@property (nonatomic, assign) BOOL isArbitrarilyMask;
 
 @property (readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
@@ -117,6 +129,7 @@
 @property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
 @property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
+@property (readonly) JPImageresizerConfigure *(^jp_isArbitrarilyInitial)(BOOL isArbitrarilyInitial);
 @property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
 @property (readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
 @property (readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
@@ -128,4 +141,6 @@
 @property (readonly) JPImageresizerConfigure *(^jp_isBlurWhenDragging)(BOOL isBlurWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
+@property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);
+@property (readonly) JPImageresizerConfigure *(^jp_isArbitrarilyMask)(BOOL isArbitrarilyMask);
 @end

@@ -145,6 +145,14 @@
     self.frameView.gridCount = gridCount;
 }
 
+- (void)setMaskImage:(UIImage *)maskImage {
+    [self.frameView setMaskImage:maskImage animated:YES];
+}
+
+- (void)setIsArbitrarilyMask:(BOOL)isArbitrarilyMask {
+    [self.frameView setIsArbitrarilyMask:isArbitrarilyMask animated:YES];
+}
+
 #pragma mark - getter
 
 - (JPImageresizerFrameType)frameType {
@@ -224,6 +232,14 @@
     return _frameView.gridCount;
 }
 
+- (UIImage *)maskImage {
+    return _frameView.maskImage;
+}
+
+- (BOOL)isArbitrarilyMask {
+    return _frameView.isArbitrarilyMask;
+}
+
 #pragma mark - init
 
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
@@ -237,7 +253,9 @@
                                    maskAlpha:configure.maskAlpha
                                  strokeColor:configure.strokeColor
                                resizeWHScale:configure.resizeWHScale
+                        isArbitrarilyInitial:configure.isArbitrarilyInitial
                                contentInsets:configure.contentInsets
+                         isClockwiseRotation:configure.isClockwiseRotation
                                  borderImage:configure.borderImage
                         borderImageRectInset:configure.borderImageRectInset
                             maximumZoomScale:configure.maximumZoomScale
@@ -246,6 +264,8 @@
                           isBlurWhenDragging:configure.isBlurWhenDragging
                  isShowGridlinesWhenDragging:configure.isShowGridlinesWhenDragging
                                    gridCount:configure.gridCount
+                                   maskImage:configure.maskImage
+                           isArbitrarilyMask:configure.isArbitrarilyMask
                    imageresizerIsCanRecovery:imageresizerIsCanRecovery
                 imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
     imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
@@ -261,7 +281,9 @@
                           maskAlpha:(CGFloat)maskAlpha
                         strokeColor:(UIColor *)strokeColor
                       resizeWHScale:(CGFloat)resizeWHScale
+               isArbitrarilyInitial:(BOOL)isArbitrarilyInitial
                       contentInsets:(UIEdgeInsets)contentInsets
+                isClockwiseRotation:(BOOL)isClockwiseRotation
                         borderImage:(UIImage *)borderImage
                borderImageRectInset:(CGPoint)borderImageRectInset
                    maximumZoomScale:(CGFloat)maximumZoomScale
@@ -270,6 +292,8 @@
                  isBlurWhenDragging:(BOOL)isBlurWhenDragging
         isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
                           gridCount:(NSUInteger)gridCount
+                          maskImage:(UIImage *)maskImage
+                  isArbitrarilyMask:(BOOL)isArbitrarilyMask
           imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
        imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
@@ -290,6 +314,7 @@
                                 @(JPImageresizerHorizontalLeftDirection),
                                 @(JPImageresizerVerticalDownDirection),
                                 @(JPImageresizerHorizontalRightDirection)] mutableCopy];
+        self.isClockwiseRotation = isClockwiseRotation;
         
         self.animationCurve = animationCurve;
         
@@ -306,6 +331,7 @@
                                              maskAlpha:maskAlpha
                                            strokeColor:strokeColor
                                          resizeWHScale:resizeWHScale
+                                  isArbitrarilyInitial:isArbitrarilyInitial
                                             scrollView:self.scrollView
                                              imageView:self.imageView
                                            borderImage:borderImage
@@ -315,6 +341,8 @@
                                     isBlurWhenDragging:isBlurWhenDragging
                            isShowGridlinesWhenDragging:isShowGridlinesWhenDragging
                                              gridCount:gridCount
+                                             maskImage:maskImage
+                                     isArbitrarilyMask:isArbitrarilyMask
                              imageresizerIsCanRecovery:imageresizerIsCanRecovery
                           imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
         
@@ -413,66 +441,52 @@
 
 - (void)__changeMirror:(BOOL)isHorizontalMirror animated:(BOOL)isAnimated {
     CATransform3D transform = self.layer.transform;
-    BOOL mirror;
+    CGFloat diffValue;
     if (isHorizontalMirror) {
-        transform = CATransform3DRotate(transform, M_PI, 1, 0, 0);
-        mirror = _horizontalMirror;
+        transform = CATransform3DRotate(transform, (_horizontalMirror ? -M_PI : M_PI), 1, 0, 0);
+        diffValue = _horizontalMirror ? _contentInsets.bottom : _contentInsets.top;
     } else {
-        transform = CATransform3DRotate(transform, M_PI, 0, 1, 0);
-        mirror = _verticalityMirror;
+        transform = CATransform3DRotate(transform, (_verticalityMirror ? -M_PI : M_PI), 0, 1, 0);
+        diffValue = _verticalityMirror ? _contentInsets.right : _contentInsets.left;
     }
+    if (isAnimated) transform.m34 = 1.0 / 1200.0;
     
-    [self.frameView willMirror:isAnimated];
+    CGRect afterFrame;
+    NSTimeInterval delay = [self.frameView willMirror:isHorizontalMirror diffValue:diffValue afterFrame:&afterFrame animated:isAnimated];
     
     __weak typeof(self) wSelf = self;
-    void (^animateBlock)(CATransform3D aTransform) = ^(CATransform3D aTransform){
+    void (^animateBlock)(void) = ^{
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        sSelf.layer.transform = aTransform;
-        if (isHorizontalMirror) {
-            [sSelf.frameView horizontalMirrorWithDiffY:(mirror ? sSelf->_contentInsets.bottom : sSelf->_contentInsets.top)];
-        } else {
-            [sSelf.frameView verticalityMirrorWithDiffX:(mirror ? sSelf->_contentInsets.right : sSelf->_contentInsets.left)];
-        }
+        sSelf.layer.transform = transform;
+        sSelf.scrollView.frame = sSelf.frameView.frame = afterFrame;
     };
     
     if (isAnimated) {
         // 做3d旋转时会遮盖住上层的控件，设置为-500即可
         self.layer.zPosition = -500;
-        transform.m34 = 1.0 / 1500.0;
-        if (isHorizontalMirror) {
-            transform.m34 *= -1.0;
-        }
-        if (mirror) {
-            transform.m34 *= -1.0;
-        }
-        [UIView animateWithDuration:0.45 delay:0 options:_animationOption animations:^{
-            animateBlock(transform);
-        } completion:^(BOOL finished) {
-            self.layer.zPosition = 0;
-            [self.frameView mirrorDone];
-        }];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [UIView animateWithDuration:0.45 delay:0 options:self->_animationOption animations:animateBlock completion:^(BOOL finished) {
+                [CATransaction begin];
+                [CATransaction setDisableActions:YES];
+                self.layer.zPosition = 0;
+                CATransform3D transform = self.layer.transform;
+                transform.m34 = 0;
+                self.layer.transform = transform;
+                [CATransaction commit];
+                [self.frameView mirrorDone];
+            }];
+        });
     } else {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        animateBlock(transform);
+        animateBlock();
         [CATransaction commit];
         [self.frameView mirrorDone];
     }
 }
 
-- (void)__recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily isToRoundResize:(BOOL)isToRoundResize {
-    if (!self.frameView.isCanRecovery) {
-        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
-        return;
-    }
-    
-    if (isToRoundResize) {
-        [self.frameView willRecoveryToRoundResize];
-    } else {
-        [self.frameView willRecoveryByResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily];
-    }
-    
+- (void)__recovery:(NSTimeInterval)delay isUpdateMaskImage:(BOOL)isUpdateMaskImage {
     self.directionIndex = 0;
     
     _horizontalMirror = NO;
@@ -487,21 +501,24 @@
     // 做3d旋转时会遮盖住上层的控件，设置为-500即可
     self.layer.zPosition = -500;
     NSTimeInterval duration = 0.45;
-    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-        
-        self.layer.transform = CATransform3DIdentity;
-        self.scrollView.layer.transform = CATransform3DIdentity;
-        self.frameView.layer.transform = CATransform3DIdentity;
-        
-        self.scrollView.frame = frame;
-        self.frameView.frame = frame;
-        
-        [self.frameView recoveryWithDuration:duration];
-        
-    } completion:^(BOOL finished) {
-        [self.frameView recoveryDone];
-        self.layer.zPosition = 0;
-    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:duration delay:0 options:self->_animationOption animations:^{
+            
+            self.layer.transform = CATransform3DIdentity;
+            self.scrollView.layer.transform = CATransform3DIdentity;
+            self.frameView.layer.transform = CATransform3DIdentity;
+            
+            self.scrollView.frame = frame;
+            self.frameView.frame = frame;
+            
+            [self.frameView recoveryWithDuration:duration];
+            
+        } completion:^(BOOL finished) {
+            [self.frameView recoveryDone:isUpdateMaskImage];
+            self.layer.zPosition = 0;
+        }];
+    });
+    
 }
 
 #pragma mark - puild method
@@ -604,28 +621,87 @@
     self.directionIndex += (isNormal ? 1 : -1);
     JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
-    NSTimeInterval duration = 0.25;
-    [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-        self.scrollView.layer.transform = svTransform;
-        self.frameView.layer.transform = fvTransform;
-        [self.frameView rotationWithDirection:direction rotationDuration:duration];
-    } completion:nil];
+    NSTimeInterval delay = [self.frameView willRotationWithDirection:direction];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSTimeInterval duration = 0.3;
+        [UIView animateWithDuration:duration delay:0 options:self->_animationOption animations:^{
+            self.scrollView.layer.transform = svTransform;
+            self.frameView.layer.transform = fvTransform;
+            [self.frameView rotating:angle duration:duration];
+        } completion:^(BOOL finished) {
+            [self.frameView rotationDone];
+        }];
+    });
+    
 }
 
 - (void)recoveryToRoundResize {
-    [self __recoveryByTargetResizeWHScale:1 isToBeArbitrarily:NO isToRoundResize:YES];
+    if (!self.frameView.isCanRecovery) {
+        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
+        return;
+    }
+    NSTimeInterval delay = [self.frameView willRecoveryToRoundResize:YES];
+    [self __recovery:delay isUpdateMaskImage:NO];
+}
+
+- (void)recoveryByCurrentMaskImage {
+    [self recoveryToMaskImage:self.maskImage];
+}
+
+- (void)recoveryToMaskImage:(UIImage *)maskImage {
+    NSTimeInterval delay;
+    BOOL isUpdateMaskImage = NO;
+    if (maskImage == nil) {
+        delay = [self.frameView willRecoveryToResizeWHScale:0 isToBeArbitrarily:NO animated:YES];
+    } else {
+        isUpdateMaskImage = self.maskImage != maskImage;
+        delay = [self.frameView willRecoveryToMaskImage:maskImage animated:YES];
+    }
+    [self __recovery:delay isUpdateMaskImage:isUpdateMaskImage];
 }
 
 - (void)recoveryByCurrentResizeWHScale {
-    [self __recoveryByTargetResizeWHScale:self.resizeWHScale isToBeArbitrarily:NO isToRoundResize:NO];
+    [self recoveryByCurrentResizeWHScale:NO];
+}
+
+- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily {
+    if (!self.frameView.isCanRecovery) {
+        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
+        return;
+    }
+    CGFloat resizeWHScale;
+    if (self.maskImage != nil) {
+        resizeWHScale = self.maskImage.size.width / self.maskImage.size.height;
+    } else {
+        resizeWHScale = self.resizeWHScale;
+    }
+    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
+    [self __recovery:delay isUpdateMaskImage:NO];
 }
 
 - (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily {
-    [self __recoveryByTargetResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:isToBeArbitrarily isToRoundResize:NO];
+    if (!self.frameView.isCanRecovery) {
+        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
+        return;
+    }
+    CGFloat resizeWHScale;
+    if (self.maskImage != nil) {
+        resizeWHScale = self.maskImage.size.width / self.maskImage.size.height;
+    } else {
+        resizeWHScale = self.initialResizeWHScale;
+    }
+    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
+    [self __recovery:delay isUpdateMaskImage:NO];
 }
 
-- (void)recoveryByTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily {
-    [self __recoveryByTargetResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily isToRoundResize:NO];
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+    if (!self.frameView.isCanRecovery) {
+        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
+        return;
+    }
+    NSTimeInterval delay = [self.frameView willRecoveryToResizeWHScale:targetResizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:YES];
+    [self __recovery:delay isUpdateMaskImage:NO];
 }
 
 - (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {

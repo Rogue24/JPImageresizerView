@@ -17,6 +17,9 @@
                            isHorMirror:(BOOL)isHorMirror
                      rotateOrientation:(UIImageOrientation)orientation
                            isRoundClip:(BOOL)isRoundClip
-                         compressScale:(CGFloat)scale;
+                         compressScale:(CGFloat)scale
+                             maskImage:(UIImage *)maskImage;
+
+- (UIImage *)jpir_destinationOutImage;
 
 @end
