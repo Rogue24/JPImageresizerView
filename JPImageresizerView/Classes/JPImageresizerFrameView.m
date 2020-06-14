@@ -584,10 +584,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             self.frameType = frameType;
         }
         
-        CGFloat initialResizeWHScale;
+        CGFloat initialResizeWHScale = resizeWHScale;
         if (isRoundResize) {
             [self roundResize:NO];
-            initialResizeWHScale = _resizeWHScale;
         } else {
             _dotWH = 12.0;
             _halfDotWH = _dotWH * 0.5;
@@ -595,7 +594,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             _arrLength = 20.0;
             _midArrLength = _arrLength * 0.85;
             
-            initialResizeWHScale = resizeWHScale;
             if (maskImage != nil) resizeWHScale = (CGFloat)maskImage.size.width / (CGFloat)maskImage.size.height;
             if (resizeWHScale == _resizeWHScale) _resizeWHScale = resizeWHScale + 1.0;
             self.resizeWHScale = resizeWHScale;
@@ -609,7 +607,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
                 _isArbitrarily = resizeWHScale > 0 ? isArbitrarilyInitial : YES;
             }
         }
-        
         self.initialResizeWHScale = initialResizeWHScale;
         
         UIPanGestureRecognizer *panGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__panHandle:)];
