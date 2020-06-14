@@ -653,7 +653,7 @@
     NSTimeInterval delay;
     BOOL isUpdateMaskImage = NO;
     if (maskImage == nil) {
-        delay = [self.frameView willRecoveryToResizeWHScale:0 isToBeArbitrarily:YES animated:YES];
+        delay = [self.frameView willRecoveryToResizeWHScale:self.initialResizeWHScale isToBeArbitrarily:NO animated:YES];
     } else {
         isUpdateMaskImage = self.maskImage != maskImage;
         delay = [self.frameView willRecoveryToMaskImage:maskImage animated:YES];
