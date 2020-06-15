@@ -95,7 +95,7 @@
 }
 
 - (UIImage *)jp_convertToImage {
-    UIGraphicsBeginImageContextWithOptions(self.jp_size, NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(floor(self.frame.size.width), floor(self.frame.size.height)), NO, [UIScreen mainScreen].scale);
     [self.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -328,7 +328,7 @@
 }
 
 - (UIImage *)jp_convertToImage {
-    UIGraphicsBeginImageContextWithOptions(self.jp_size, NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(floor(self.frame.size.width), floor(self.frame.size.height)), NO, [UIScreen mainScreen].scale);
     [self renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

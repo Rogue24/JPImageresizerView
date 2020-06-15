@@ -125,7 +125,7 @@
         if (requestAsset == self.photoVM.asset) {
             self.imageView.image = resultImage;
         } else {
-            JPLog(@"不一样？");
+//            JPLog(@"不一样？");
         }
     }];
 }

@@ -8,7 +8,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.4.0）
+## 简介（当前版本：1.5.0）
 
 一个专门裁剪图片的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片裁剪的需求。
 
@@ -24,7 +24,8 @@
         7.支持圆框裁剪；
         8.自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
         9.自定义边框图片；
-        10.可动态修改视图区域和裁剪区域间距，支持横竖屏切换。
+        10.可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
+        11.可自定义蒙版图片裁剪。
 
     正在努力着去实现的内容：
         1.Swift版本；
@@ -39,7 +40,7 @@
 
 #### 初始化
 ```objc
-// 1.配置初始参数（更多可查看JPImageresizerConfigure的头文件）
+// 1.配置初始参数（更多可查看JPImageresizerView的头文件）
 /**
  * 部分可配置参数注释：
     - resizeImage：裁剪的图片
@@ -50,6 +51,7 @@
     - maskAlpha：遮罩透明度
     - resizeWHScale：裁剪的宽高比
     - contentInsets：裁剪区域与视图的间距
+    - maskImage：蒙版图片
  */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
@@ -81,7 +83,7 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
-// 创建后也可以动态修改以上大部分参数（除了maskType和contentInsets）
+// 创建后均可动态修改configure的参数
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"]; // 更换裁剪图片（默认带动画效果）
 self.imageresizerView.resizeWHScale = 16.0 / 9.0; // 修改裁剪宽高比
 self.imageresizerView.initialResizeWHScale = 0.0; // 默认为初始化时的resizeWHScale，调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
@@ -94,6 +96,21 @@ if (@available(iOS 11.0, *)) {
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
 ```
+
+#### 自定义蒙版图片
+![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
+```objc
+// 设置蒙版图片（目前仅支持png图片）
+self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
+
+// 移除蒙版图片
+self.imageresizerView.maskImage = nil;
+
+// 可以设置蒙版图片是否可以任意比例拖拽
+self.imageresizerView.isArbitrarilyMask = YES;
+```
+![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
+PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
 
 #### 横竖屏切换
 ![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
@@ -230,6 +247,21 @@ BOOL isToBeArbitrarily = self.isToBeArbitrarily;
  */
 CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // 获取当前裁剪框的宽高比
 [self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+
+// 4.重置回圆切状态
+/**
+ * 使用该方法进行重置，以圆切状态回到最初状态
+ * 重置之后 resizeWHScale = 1
+ */
+[self.imageresizerView recoveryToRoundResize];
+
+// 5.以蒙版图片重置
+/**
+ * 使用该方法进行重置，以蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ * 重置之后 resizeWHScale = maskImage.size.width / maskImage.size.height
+ */
+[self.imageresizerView recoveryByCurrentMaskImage]; // 使用当前蒙版图片
+[self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // 指定蒙版图片
 ```
 
 #### 预览
@@ -276,6 +308,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.5.0 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  
 1.2.1~1.3.6 | 1. 新增圆切样式；<br>2. 中间的点/块可隐藏；<br>3. 可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；<br>4. 毛玻璃效果可设置系统现有的所有效果；<br>5. 适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；<br>6. 优化逻辑。  

@@ -8,7 +8,7 @@
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
-## Brief introduction (Current version: 1.4.0)
+## Brief introduction (Current version: 1.5.0)
 
 A special wheel for cutting pictures is simple and easy to use, with rich functions (parameter setting of high freedom, support for rotation and mirror turning, multiple style selection...), which can meet the needs of most pictures cutting.
 
@@ -24,7 +24,8 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
         7. Supports circular clipping;
         8. Custom gaussian blur style, border color, background color, mask opacity;
         9. Custom border image;
-        10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching.
+        10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
+        11. Can customize the mask image clipping.
 
     What I'm trying to achieve:
         1. Swift version;
@@ -39,7 +40,7 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
 
 #### Initialization
 ```objc
-// 1. Configure initial parameters (see JPImageresizerConfigure.h for more details)
+// 1. Configure initial parameters (see JPImageresizerView.h for more details)
 /**
  * Notes to some configurable parameters:
     - resizeImage: clipping picture
@@ -50,6 +51,7 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
     - maskAlpha: mask opacity
     - resizeWHScale: width-height ratio of the clipping
     - contentInsets: the inner margin between the crop region and the main view
+    - maskImage: customize the mask image
  */
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
     // Now that you have the default parameter values, you can set the parameters you want here (using chain programming)
@@ -81,7 +83,7 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
-// Most of the above parameters can also be modified dynamically after creation (except for maskType and contentinsets)
+// After creation, you can dynamically modify the parameters of configure
 self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"]; // Change picture (animated by default)
 self.imageresizerView.resizeWHScale = 16.0 / 9.0; // Change crop aspect ratio
 self.imageresizerView.initialResizeWHScale = 0.0; // The default value is resizeWHScale at initialization. If you call the - recoveryByInitialResizeWHScale method to reset, the value of this property will be reset
@@ -94,6 +96,21 @@ if (@available(iOS 11.0, *)) {
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
 ```
+
+#### Customize the mask image clipping
+![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
+```objc
+// Set mask picture (currently only PNG picture is supported)
+self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
+
+// Remove mask image
+self.imageresizerView.maskImage = nil;
+
+// You can set whether the mask image can be dragged at any scale
+self.imageresizerView.isArbitrarilyMask = YES;
+```
+![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
+PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
 
 #### Horizontal and vertical screen switching
 ![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
@@ -226,6 +243,21 @@ BOOL isToBeArbitrarily = self.isToBeArbitrarily;
  */
 CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // Gets the aspect ratio of the current clipping box
 [self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+
+// 4.Reset rounding status
+/**
+ * Use this method to reset and return to the original state in circular cutting state
+ * After reset: resizeWHScale = 1
+ */
+[self.imageresizerView recoveryToRoundResize];
+
+// 5.Reset with mask image
+/**
+ * Use this method to reset and take the aspect ratio of the mask image as the clipping aspect ratio to return to the original state
+ * After reset: resizeWHScale = maskImage.size.width / maskImage.size.height
+ */
+[self.imageresizerView recoveryByCurrentMaskImage]; // Use the current mask image
+[self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // Specify mask image
 ```
 
 #### Preview

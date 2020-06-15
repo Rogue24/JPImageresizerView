@@ -12,7 +12,6 @@
 #import "JPPhotoCollectionViewController.h"
 #import "JPCategoryTitleView.h"
 #import <pop/POP.h>
-#import "JPViewController.h"
 
 @interface JPPhotoViewController () <UINavigationControllerDelegate, WMPageControllerDataSource, WMPageControllerDelegate, JPPhotoCollectionViewControllerDelegate>
 @property (nonatomic, weak) WMPageController *pageCtr;
@@ -162,16 +161,6 @@
     }];
 }
 
-#pragma mark - 裁剪图片
-
-- (void)imageresizerWithImage:(UIImage *)image {
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:nil];
-    JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
-    vc.statusBarStyle = UIStatusBarStyleLightContent;
-    vc.configure = configure;
-    [self.navigationController pushViewController:vc animated:YES];
-}
-
 #pragma mark - 请求照片
 
 - (void)pcVC:(JPPhotoCollectionViewController *)pcVC requestPhotosWithIndex:(NSInteger)index {
@@ -198,6 +187,7 @@
 - (UIViewController *)pageController:(WMPageController *)pageController viewControllerAtIndex:(NSInteger)index {
     JPAlbumViewModel *albumVM = (JPAlbumViewModel *)self.titleView.titleVMs[index];
     JPPhotoCollectionViewController *pcVC = [JPPhotoCollectionViewController pcVCWithAlbumVM:albumVM sideMargin:5 cellSpace:1 maxWHSclae:(16.0 / 9.0) maxCol:3 pcVCDelegate:self];
+    pcVC.isBecomeDanielWu = self.isBecomeDanielWu;
     self.photoCollectionVCs[@(index)] = pcVC;
     return pcVC;
 }

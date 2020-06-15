@@ -9,7 +9,6 @@
 #import "JPTableViewController.h"
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
-#import "DanielWuViewController.h"
 
 @interface JPConfigureModel : NSObject
 @property (nonatomic, copy) NSString *title;
@@ -177,17 +176,16 @@
         [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
         
         [self.navigationController pushViewController:vc animated:NO];
-    } else if (indexPath.section == 1) {
+    } else {
+        BOOL isBecomeDanielWu = indexPath.section == 2;
         __weak typeof(self) wSelf = self;
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
             __strong typeof(wSelf) sSelf = wSelf;
             if (!sSelf) return;
             JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
+            vc.isBecomeDanielWu = isBecomeDanielWu;
             [sSelf.navigationController pushViewController:vc animated:YES];
         } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
-    } else {
-        DanielWuViewController *vc = [[DanielWuViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
     }
 }
 

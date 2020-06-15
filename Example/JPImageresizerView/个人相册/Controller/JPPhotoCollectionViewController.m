@@ -414,28 +414,100 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
         return;
     }
-    [self imageresizerWithImage:cell.imageView.image fromVC:browseImagesVC];
+    [self imageresizerWithImageView:cell.imageView fromVC:browseImagesVC];
 }
 
 #pragma mark - 裁剪照片
 
-- (void)imageresizerWithImage:(UIImage *)image fromVC:(UIViewController *)fromVC {
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:nil];
+- (void)imageresizerWithImageView:(UIImageView *)imageView fromVC:(UIViewController *)fromVC {
+    UIImage *image = imageView.image;
+    
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:image make:nil];
+    if (self.isBecomeDanielWu) {
+        configure.jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"]).jp_isArbitrarilyMask(NO);
+    }
+    
     JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
+    vc.isBecomeDanielWu = self.isBecomeDanielWu;
     vc.configure = configure;
     
+    vc.view.frame = JPPortraitScreenBounds;
+    vc.view.layer.backgroundColor = UIColor.clearColor.CGColor;
+    vc.topView.alpha = 0;
+    vc.bottomView.alpha = 0;
+    vc.imageresizerView.hidden = YES;
+    vc.imageresizerView.frameView.alpha = 0;
+    
     UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:vc];
-    navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
+    navCtr.modalPresentationStyle = UIModalPresentationCustom;
+    navCtr.view.backgroundColor = UIColor.clearColor;
+    navCtr.view.frame = JPPortraitScreenBounds;
     
-    CATransition *cubeAnim = [CATransition animation];
-    cubeAnim.duration = 0.5;
-    cubeAnim.type = @"cube";
-    cubeAnim.subtype = kCATransitionFromRight;
-    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
+    CGRect startFrame = [imageView.superview convertRect:imageView.frame toView:JPKeyWindow];
     
-    [fromVC presentViewController:navCtr animated:NO completion:nil];
+    UIImageView *tmpView = ({
+        UIImageView *aImgView = [[UIImageView alloc] initWithFrame:startFrame];
+        aImgView.image = image;
+        aImgView;
+    });
+    [navCtr.view addSubview:tmpView];
+    
+    [fromVC presentViewController:navCtr animated:NO completion:^{
+        JPKeyWindow.userInteractionEnabled = NO;
+        imageView.hidden = YES;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            vc.topView.alpha = 1;
+            vc.bottomView.alpha = 1;
+            vc.view.layer.backgroundColor = configure.bgColor.CGColor;
+        }];
+        [UIView animateWithDuration:0.55 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:kNilOptions animations:^{
+            tmpView.frame = [vc.imageresizerView.imageView.superview convertRect:vc.imageresizerView.imageView.frame toView:JPKeyWindow];
+        } completion:^(BOOL finished) {
+            vc.imageresizerView.hidden = NO;
+            tmpView.frame = vc.imageresizerView.imageView.bounds;
+            [vc.imageresizerView.imageView addSubview:tmpView];
+            
+            [UIView animateWithDuration:0.25 delay:0 options:kNilOptions animations:^{
+                vc.imageresizerView.frameView.alpha = 1;
+            } completion:^(BOOL finished) {
+                [tmpView removeFromSuperview];
+                JPKeyWindow.userInteractionEnabled = YES;
+                imageView.hidden = NO;
+            }];
+        }];
+    }];
+    
+    vc.backBlock = ^(JPViewController *kVC) {
+        JPKeyWindow.userInteractionEnabled = NO;
+        imageView.hidden = YES;
+        
+        UIView *tmpView = [kVC.imageresizerView.imageView snapshotViewAfterScreenUpdates:NO];
+        tmpView.frame = [kVC.imageresizerView.imageView.superview convertRect:kVC.imageresizerView.imageView.frame toView:JPKeyWindow];
+        kVC.view.backgroundColor = kVC.imageresizerView.backgroundColor;
+        [kVC.view insertSubview:tmpView belowSubview:kVC.imageresizerView];
+        
+        [UIView animateWithDuration:0.2 delay:0 options:kNilOptions animations:^{
+            kVC.imageresizerView.alpha = 0;
+            kVC.topView.alpha = 0;
+            kVC.bottomView.alpha = 0;
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.55 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:kNilOptions animations:^{
+                tmpView.frame = startFrame;
+                kVC.view.layer.backgroundColor = UIColor.clearColor.CGColor;
+            } completion:^(BOOL finished) {
+                imageView.hidden = NO;
+                [kVC dismissViewControllerAnimated:NO completion:nil];
+                [UIView animateWithDuration:0.15 delay:0 options:kNilOptions animations:^{
+                    tmpView.alpha = 0;
+                } completion:^(BOOL finished) {
+                    [tmpView removeFromSuperview];
+                    JPKeyWindow.userInteractionEnabled = YES;
+                }];
+            }];
+        }];
+    };
 }
 
 @end

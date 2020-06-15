@@ -359,12 +359,14 @@
                         <outlet property="backBtnTopConstraint" destination="N8D-Uq-HI9" id="2tw-2D-7Di"/>
                         <outlet property="bottomBtnPortraitBottomConstraints" destination="Hsg-df-T8p" id="Dd6-Zv-LMs"/>
                         <outlet property="bottomBtnWidthConstraint" destination="yOA-WF-CwK" id="kWd-BA-GSj"/>
+                        <outlet property="bottomView" destination="LCW-oZ-8f9" id="deE-nG-h12"/>
                         <outlet property="horMirrorBtn" destination="0oe-Do-HA2" id="S1z-Me-zon"/>
                         <outlet property="recoveryBtn" destination="3Q2-Zj-NPf" id="ggM-oQ-YKY"/>
                         <outlet property="replaceMaskImgBtn" destination="XaN-bE-0my" id="vh6-Uj-aJO"/>
                         <outlet property="resizeBtn" destination="gfg-EW-TwQ" id="byh-NM-clX"/>
                         <outlet property="resizeBtnRightConstraint" destination="6ep-sg-kxq" id="uqI-e1-Ob4"/>
                         <outlet property="rotateBtn" destination="23z-V1-CXO" id="GTg-AX-9J0"/>
+                        <outlet property="topView" destination="d0j-lu-XGP" id="xQi-fc-vWL"/>
                         <outlet property="verMirrorBtn" destination="oXP-jn-vnR" id="j0v-DQ-ffa"/>
                         <outletCollection property="portraitConstraints" destination="BC1-5e-oI6" id="RVT-XR-Syd"/>
                         <outletCollection property="portraitConstraints" destination="ZAc-ti-xDu" id="z0R-48-jO9"/>

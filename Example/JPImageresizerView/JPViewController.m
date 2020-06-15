@@ -7,12 +7,13 @@
 //
 
 #import "JPViewController.h"
-#import "JPImageViewController.h"
 #import "UIAlertController+JPImageresizer.h"
+#import "JPImageViewController.h"
 #import "DanielWuViewController.h"
 
 @interface JPViewController ()
 @property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
+
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
@@ -21,7 +22,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
 
-@property (nonatomic, weak) JPImageresizerView *imageresizerView;
 @property (nonatomic, assign) JPImageresizerFrameType frameType;
 @property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, strong) UIImage *maskImage;
@@ -302,6 +302,11 @@
 }
 
 - (IBAction)pop:(id)sender {
+    if (self.backBlock) {
+        self.backBlock(self);
+        return;
+    }
+    
     CATransition *cubeAnim = [CATransition animation];
     cubeAnim.duration = 0.5;
     cubeAnim.type = @"cube";
@@ -395,7 +400,7 @@
     [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:(isArbitrarilyMask ? @"固定比例" : @"任意比例")] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.isArbitrarilyMask = !isArbitrarilyMask;
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"DanielWuFace" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"DanielWu-Face" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = [UIImage imageNamed:@"DanielWuFace.png"];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"love" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -421,13 +426,15 @@
 
     [JPProgressHUD dismiss];
 
-    JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
-    vc.image = resizeImage;
-    [self.navigationController pushViewController:vc animated:YES];
-    
-//    DanielWuViewController *vc = [[DanielWuViewController alloc] init];
-//    vc.image = resizeImage;
-//    [self.navigationController pushViewController:vc animated:YES];
+    if (self.isBecomeDanielWu) {
+        DanielWuViewController *vc = [[DanielWuViewController alloc] init];
+        vc.image = resizeImage;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else {
+        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        vc.image = resizeImage;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 @end
