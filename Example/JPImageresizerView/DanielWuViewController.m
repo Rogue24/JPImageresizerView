@@ -77,7 +77,7 @@
     [JPProgressHUD show];
     
     UIImage *DanielWuImage = self.DanielWuView.image;
-    CGRect rect = (CGRect){CGPointZero, self.DanielWuView.frame.size};
+    CGRect rect = CGRectMake(0, 0, floorl(self.DanielWuView.frame.size.width), floorl(self.DanielWuView.frame.size.height));
     
     UIImage *faceImage = self.faceView.faceImage;
     CGRect faceBounds = self.faceView.faceBounds;
