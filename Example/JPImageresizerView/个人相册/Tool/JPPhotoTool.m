@@ -1129,14 +1129,4 @@ JPSingtonImplement(JPPhotoTool)
     return img;
 }
 
-- (UIImage *)__resizeImage:(UIImage *)image size:(CGSize)size {
-    @autoreleasepool {
-        UIGraphicsBeginImageContext(size);
-        [image drawInRect:CGRectMake(0, 0, size.width + 1, size.height + 1)];
-        UIImage *resizeImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return resizeImage;
-    }
-}
-
 @end
