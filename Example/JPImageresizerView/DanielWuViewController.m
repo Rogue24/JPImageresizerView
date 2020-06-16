@@ -92,7 +92,7 @@
         CGImageRef faceImageRef = [self __imageDownMirrored:faceImage].CGImage;
         
         CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextTranslateCTM(context, faceOrigin.x, faceOrigin.y);
+        CGContextTranslateCTM(context, faceOrigin.x, faceOrigin.y); // 要先进行位移，确定好位置后再进行其他的形变操作，否则位置错乱。
         CGContextScaleCTM(context, faceScale, faceScale);
         CGContextRotateCTM(context, faceRadian);
         CGContextDrawImage(context, faceBounds, faceImageRef);
