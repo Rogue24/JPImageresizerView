@@ -110,8 +110,7 @@
 }
 
 - (void)dealloc {
-    [self removeTimer];
-    JPLog(@"%s 死囚了", __func__);
+    [self __removeTimer];
 }
 
 #pragma mark - 监听手势
@@ -272,6 +271,7 @@
     if (self.superview) {
         [self.operations removeAllObjects];
         [self __saveLayout];
+        [self __showOther:YES];
     }
 }
 
@@ -342,9 +342,9 @@
 }
 
 - (void)__showOther:(BOOL)isAutoHide {
-    [self removeTimer];
+    [self __removeTimer];
     if (_isShowingOther) {
-        if (isAutoHide) [self addTimer];
+        if (isAutoHide) [self __addTimer];
         return;
     }
     _isShowingOther = YES;
@@ -353,12 +353,12 @@
         self.withdrawBtn.alpha = 1;
         self.scaleBtn.alpha = 1;
     } completion:^(BOOL finished) {
-        if (finished && isAutoHide) [self addTimer];
+        if (finished && isAutoHide) [self __addTimer];
     }];
 }
 
 - (void)__hideOther {
-    [self removeTimer];
+    [self __removeTimer];
     if (!_isShowingOther) return;
     _isShowingOther = NO;
     [UIView animateWithDuration:0.2 animations:^{
@@ -370,13 +370,13 @@
 
 #pragma mark - timer
 
-- (void)addTimer {
-    [self removeTimer];
+- (void)__addTimer {
+    [self __removeTimer];
     self.timer = [NSTimer timerWithTimeInterval:5.0 target:self selector:@selector(__hideOther) userInfo:nil repeats:NO];
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
 }
 
-- (void)removeTimer {
+- (void)__removeTimer {
     if (self.timer) {
         [self.timer invalidate];
         self.timer = nil;

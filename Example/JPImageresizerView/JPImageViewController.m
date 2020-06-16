@@ -29,7 +29,7 @@
 }
 
 - (void)setupNavigationBar {
-    self.title = @"裁剪后";
+    self.title = @"Finish";
     UIButton *camceraBtn = ({
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
         btn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
