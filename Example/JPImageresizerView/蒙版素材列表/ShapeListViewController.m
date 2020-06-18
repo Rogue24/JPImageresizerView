@@ -142,8 +142,9 @@ static NSArray<NSString *> *shapes_;
                     [JPProgressHUD dismiss];
                     @jp_strongify(self);
                     if (!self || !self.getShapeImageBlock) return;
-                    self.getShapeImageBlock(newImage);
-                    [self __back];
+                    [self dismissViewControllerAnimated:YES completion:^{
+                        self.getShapeImageBlock(newImage);
+                    }];
                 });
             });
         };
