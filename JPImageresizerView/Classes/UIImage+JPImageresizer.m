@@ -42,45 +42,27 @@
         UIImage *finalImage = resultImage;
         
         if (!CGSizeEqualToSize(cropFrame.size, relativeSize)) {
-            cropFrame.size.width = floorf(cropFrame.size.width);
-            cropFrame.size.height = floorf(cropFrame.size.height);
-            CGFloat cropWHScale = cropFrame.size.width / cropFrame.size.height;
-            if (cropFrame.origin.x < 0) {
-                cropFrame.origin.x = 0;
-            }
-            if (CGRectGetMaxX(cropFrame) > relativeSize.width) {
-                cropFrame.origin.x = relativeSize.width - cropFrame.size.width;
-                if (cropFrame.origin.x < 0) {
-                    cropFrame.size.width += cropFrame.origin.x;
-                    cropFrame.size.height = cropFrame.size.width / cropWHScale;
-                    cropFrame.origin.x = 0;
-                }
-            }
-            if (cropFrame.origin.y < 0) {
-                cropFrame.origin.y = 0;
-            }
-            if (CGRectGetMaxY(cropFrame) > relativeSize.height) {
-                cropFrame.origin.y = relativeSize.height - cropFrame.size.height;
-                if (cropFrame.origin.y < 0) {
-                    cropFrame.size.height += cropFrame.origin.y;
-                    cropFrame.size.width = cropFrame.size.height * cropWHScale;
-                    cropFrame.origin.y = 0;
-                }
-            }
-            
             // 获取裁剪区域
             CGFloat imageScale = resultImage.scale;
             CGFloat imageWidth = resultImage.size.width;
             CGFloat imageHeight = resultImage.size.height;
-            CGFloat cropX = imageWidth * (cropFrame.origin.x / relativeSize.width);
-            CGFloat cropY = imageHeight * (cropFrame.origin.y / relativeSize.height);
-            CGFloat cropW = imageWidth * (cropFrame.size.width / relativeSize.width);
-            CGFloat cropH = imageHeight * (cropFrame.size.height / relativeSize.height);
-            if (isVerMirror) cropX = imageWidth - (cropX + cropW);
-            if (isHorMirror) cropY = imageHeight - (cropY + cropH);
+            CGFloat relativeScale = imageWidth / relativeSize.width;
+            if (cropFrame.origin.x < 0) cropFrame.origin.x = 0;
+            if (cropFrame.origin.y < 0) cropFrame.origin.y = 0;
+            cropFrame.origin.x *= relativeScale;
+            cropFrame.origin.y *= relativeScale;
+            cropFrame.size.width *= relativeScale;
+            cropFrame.size.height *= relativeScale;
+            if (cropFrame.size.width > imageWidth) cropFrame.size.width = imageWidth;
+            if (cropFrame.size.height > imageHeight) cropFrame.size.height = imageHeight;
+            if (CGRectGetMaxX(cropFrame) > imageWidth) cropFrame.origin.x = imageWidth - cropFrame.size.width;
+            if (CGRectGetMaxY(cropFrame) > imageHeight) cropFrame.origin.y = imageHeight - cropFrame.size.height;
+            if (isVerMirror) cropFrame.origin.x = imageWidth - CGRectGetMaxX(cropFrame);
+            if (isHorMirror) cropFrame.origin.y = imageHeight - CGRectGetMaxY(cropFrame);
+            
             // 裁剪
-            UIGraphicsBeginImageContextWithOptions(CGSizeMake(cropW, cropH), NO, imageScale);
-            [resultImage drawInRect:CGRectMake(-cropX, -cropY, imageWidth, imageHeight)];
+            UIGraphicsBeginImageContextWithOptions(cropFrame.size, NO, imageScale);
+            [resultImage drawInRect:CGRectMake(-cropFrame.origin.x, -cropFrame.origin.y, imageWidth, imageHeight)];
             finalImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
         }

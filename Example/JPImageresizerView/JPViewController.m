@@ -10,10 +10,10 @@
 #import "UIAlertController+JPImageresizer.h"
 #import "JPImageViewController.h"
 #import "DanielWuViewController.h"
+#import "ShapeListViewController.h"
 
 @interface JPViewController ()
 @property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
-
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
@@ -396,23 +396,41 @@
 
 - (IBAction)replaceMaskImage:(UIButton *)sender {    
     UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    BOOL isArbitrarilyMask = self.imageresizerView.isArbitrarilyMask;
-    [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:(isArbitrarilyMask ? @"固定比例" : @"任意比例")] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.isArbitrarilyMask = !isArbitrarilyMask;
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"蒙版列表" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        @jp_weakify(self);
+        UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:[ShapeListViewController shapeListViewController:^(UIImage *shapeImage) {
+            @jp_strongify(self);
+            if (!self) return;
+            self.imageresizerView.maskImage = shapeImage;
+        }]];
+        if (@available(iOS 13.0, *)) {
+            navCtr.modalPresentationStyle = UIModalPresentationPageSheet;
+        } else {
+            navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
+        [self presentViewController:navCtr animated:YES completion:nil];
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"DanielWu-Face" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.maskImage = [UIImage imageNamed:@"DanielWuFace.png"];
-    }]];
+    
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"love" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
     }]];
+    
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"run" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = [UIImage imageNamed:@"run.png"];
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除蒙版" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    
+    BOOL isArbitrarilyMask = self.imageresizerView.isArbitrarilyMask;
+    [alertCtr addAction:[UIAlertAction actionWithTitle:(isArbitrarilyMask ? @"蒙版使用固定比例" : @"蒙版使用任意比例") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.isArbitrarilyMask = !isArbitrarilyMask;
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除蒙版" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = nil;
     }]];
+    
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    
     [self presentViewController:alertCtr animated:YES completion:nil];
 }
 

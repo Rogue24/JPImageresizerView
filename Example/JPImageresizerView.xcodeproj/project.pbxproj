@@ -8,14 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1A096D17248B960E00F3E0F2 /* DanielWu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A096D15248B960E00F3E0F2 /* DanielWu.jpg */; };
-		1A096D40248DD94E00F3E0F2 /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A096D3F248DD94E00F3E0F2 /* DanielWuViewController.m */; };
 		1A096D42248E45AE00F3E0F2 /* DanielWuFace.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A096D41248E45AE00F3E0F2 /* DanielWuFace.png */; };
 		1A096D44248F30CB00F3E0F2 /* love.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A096D43248F30CB00F3E0F2 /* love.png */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
-		1A0AB30122B22B0F00B6B6AB /* NSIndexSet+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E322B22B0F00B6B6AB /* NSIndexSet+Convenience.m */; };
-		1A0AB30222B22B0F00B6B6AB /* NSIndexSet+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E422B22B0F00B6B6AB /* NSIndexSet+Extension.m */; };
-		1A0AB30322B22B0F00B6B6AB /* UICollectionView+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E522B22B0F00B6B6AB /* UICollectionView+Convenience.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
 		1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EC22B22B0F00B6B6AB /* UIViewController+WMPageController.m */; };
 		1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EE22B22B0F00B6B6AB /* WMScrollView.m */; };
@@ -41,8 +37,12 @@
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
 		1A60C768241E3BA0000E1692 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A60C767241E3BA0000E1692 /* README.md */; };
 		1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */; };
+		1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C3249A0CFE0081452F /* DanielWuViewController.m */; };
+		1AA468C7249A0CFE0081452F /* FaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C4249A0CFE0081452F /* FaceView.m */; };
+		1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468CB249A0D9B0081452F /* ShapeMergeCell.m */; };
+		1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468D0249A0DC60081452F /* JPAttachmentFlowLayout.m */; };
+		1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468D5249A0E240081452F /* ShapeListViewController.m */; };
 		1AA6F3EF23A8F216008EFA8B /* Train.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1AA6F3EE23A8F216008EFA8B /* Train.jpg */; };
-		1ABAF0DF24975C5100530E7A /* FaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ABAF0DE24975C5100530E7A /* FaceView.m */; };
 		1ABFEFE523D7E5E7003429B0 /* Girl4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE123D7E5E7003429B0 /* Girl4.jpg */; };
 		1ABFEFE723D7E5E7003429B0 /* Girl2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE323D7E5E7003429B0 /* Girl2.jpg */; };
 		1ABFEFE823D7E5E7003429B0 /* Girl5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ABFEFE423D7E5E7003429B0 /* Girl5.jpg */; };
@@ -91,20 +91,12 @@
 
 /* Begin PBXFileReference section */
 		1A096D15248B960E00F3E0F2 /* DanielWu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DanielWu.jpg; sourceTree = "<group>"; };
-		1A096D3E248DD94E00F3E0F2 /* DanielWuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DanielWuViewController.h; sourceTree = "<group>"; };
-		1A096D3F248DD94E00F3E0F2 /* DanielWuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DanielWuViewController.m; sourceTree = "<group>"; };
 		1A096D41248E45AE00F3E0F2 /* DanielWuFace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DanielWuFace.png; sourceTree = "<group>"; };
 		1A096D43248F30CB00F3E0F2 /* love.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = love.png; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
 		1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPAlbumViewModel.m; sourceTree = "<group>"; };
-		1A0AB2E322B22B0F00B6B6AB /* NSIndexSet+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+Convenience.m"; sourceTree = "<group>"; };
-		1A0AB2E422B22B0F00B6B6AB /* NSIndexSet+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+Extension.m"; sourceTree = "<group>"; };
-		1A0AB2E522B22B0F00B6B6AB /* UICollectionView+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionView+Convenience.m"; sourceTree = "<group>"; };
-		1A0AB2E622B22B0F00B6B6AB /* NSIndexSet+Convenience.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+Convenience.h"; sourceTree = "<group>"; };
-		1A0AB2E722B22B0F00B6B6AB /* UICollectionView+Convenience.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionView+Convenience.h"; sourceTree = "<group>"; };
-		1A0AB2E822B22B0F00B6B6AB /* NSIndexSet+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+Extension.h"; sourceTree = "<group>"; };
 		1A0AB2EA22B22B0F00B6B6AB /* WMScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMScrollView.h; sourceTree = "<group>"; };
 		1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPageController.m; sourceTree = "<group>"; };
 		1A0AB2EC22B22B0F00B6B6AB /* UIViewController+WMPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+WMPageController.m"; sourceTree = "<group>"; };
@@ -146,10 +138,18 @@
 		1A60C767241E3BA0000E1692 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1A87AF97247B8C5900123EC6 /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPSolveTool.h; path = JPImageresizerView/JPHelper/JPSolveTool.h; sourceTree = SOURCE_ROOT; };
 		1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPSolveTool.m; path = JPImageresizerView/JPHelper/JPSolveTool.m; sourceTree = SOURCE_ROOT; };
+		1AA468C2249A0CFE0081452F /* FaceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceView.h; sourceTree = "<group>"; };
+		1AA468C3249A0CFE0081452F /* DanielWuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DanielWuViewController.m; sourceTree = "<group>"; };
+		1AA468C4249A0CFE0081452F /* FaceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceView.m; sourceTree = "<group>"; };
+		1AA468C5249A0CFE0081452F /* DanielWuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DanielWuViewController.h; sourceTree = "<group>"; };
+		1AA468C9249A0D9B0081452F /* ShapeMergeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeMergeCell.h; sourceTree = "<group>"; };
+		1AA468CB249A0D9B0081452F /* ShapeMergeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShapeMergeCell.m; sourceTree = "<group>"; };
+		1AA468CF249A0DC50081452F /* JPAttachmentFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAttachmentFlowLayout.h; sourceTree = "<group>"; };
+		1AA468D0249A0DC60081452F /* JPAttachmentFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPAttachmentFlowLayout.m; sourceTree = "<group>"; };
+		1AA468D4249A0E240081452F /* ShapeListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeListViewController.h; sourceTree = "<group>"; };
+		1AA468D5249A0E240081452F /* ShapeListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShapeListViewController.m; sourceTree = "<group>"; };
 		1AA6F3EE23A8F216008EFA8B /* Train.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Train.jpg; sourceTree = "<group>"; };
 		1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		1ABAF0DD24975C5100530E7A /* FaceView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FaceView.h; sourceTree = "<group>"; };
-		1ABAF0DE24975C5100530E7A /* FaceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FaceView.m; sourceTree = "<group>"; };
 		1ABFEFE123D7E5E7003429B0 /* Girl4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl4.jpg; sourceTree = "<group>"; };
 		1ABFEFE323D7E5E7003429B0 /* Girl2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl2.jpg; sourceTree = "<group>"; };
 		1ABFEFE423D7E5E7003429B0 /* Girl5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl5.jpg; sourceTree = "<group>"; };
@@ -214,7 +214,6 @@
 				1A0AB2F622B22B0F00B6B6AB /* View */,
 				1A0AB2DD22B22B0F00B6B6AB /* ViewModel */,
 				1A0AB2FC22B22B0F00B6B6AB /* Tool */,
-				1A0AB2E222B22B0F00B6B6AB /* Category */,
 				1A0AB2E922B22B0F00B6B6AB /* WMPageController */,
 			);
 			path = "个人相册";
@@ -229,19 +228,6 @@
 				1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		1A0AB2E222B22B0F00B6B6AB /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				1A0AB2E622B22B0F00B6B6AB /* NSIndexSet+Convenience.h */,
-				1A0AB2E322B22B0F00B6B6AB /* NSIndexSet+Convenience.m */,
-				1A0AB2E822B22B0F00B6B6AB /* NSIndexSet+Extension.h */,
-				1A0AB2E422B22B0F00B6B6AB /* NSIndexSet+Extension.m */,
-				1A0AB2E722B22B0F00B6B6AB /* UICollectionView+Convenience.h */,
-				1A0AB2E522B22B0F00B6B6AB /* UICollectionView+Convenience.m */,
-			);
-			path = Category;
 			sourceTree = "<group>";
 		};
 		1A0AB2E922B22B0F00B6B6AB /* WMPageController */ = {
@@ -338,6 +324,30 @@
 			path = JPHelper;
 			sourceTree = "<group>";
 		};
+		1AA468C0249A0CFE0081452F /* 蒙版素材列表 */ = {
+			isa = PBXGroup;
+			children = (
+				1AA468D4249A0E240081452F /* ShapeListViewController.h */,
+				1AA468D5249A0E240081452F /* ShapeListViewController.m */,
+				1AA468C9249A0D9B0081452F /* ShapeMergeCell.h */,
+				1AA468CB249A0D9B0081452F /* ShapeMergeCell.m */,
+				1AA468CF249A0DC50081452F /* JPAttachmentFlowLayout.h */,
+				1AA468D0249A0DC60081452F /* JPAttachmentFlowLayout.m */,
+			);
+			path = "蒙版素材列表";
+			sourceTree = "<group>";
+		};
+		1AA468C1249A0CFE0081452F /* 成为吴彦祖 */ = {
+			isa = PBXGroup;
+			children = (
+				1AA468C5249A0CFE0081452F /* DanielWuViewController.h */,
+				1AA468C3249A0CFE0081452F /* DanielWuViewController.m */,
+				1AA468C2249A0CFE0081452F /* FaceView.h */,
+				1AA468C4249A0CFE0081452F /* FaceView.m */,
+			);
+			path = "成为吴彦祖";
+			sourceTree = "<group>";
+		};
 		53D013BDB4E96A6364E8D87C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -389,10 +399,8 @@
 				6003F5A6195388D20070C39A /* JPViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */,
-				1A096D3E248DD94E00F3E0F2 /* DanielWuViewController.h */,
-				1A096D3F248DD94E00F3E0F2 /* DanielWuViewController.m */,
-				1ABAF0DD24975C5100530E7A /* FaceView.h */,
-				1ABAF0DE24975C5100530E7A /* FaceView.m */,
+				1AA468C1249A0CFE0081452F /* 成为吴彦祖 */,
+				1AA468C0249A0CFE0081452F /* 蒙版素材列表 */,
 				1A0AB2DC22B22B0F00B6B6AB /* 个人相册 */,
 				1A10433623A495AD00D1B2DF /* JPHelper */,
 				1A0AB36522B2854A00B6B6AB /* Resource */,
@@ -623,26 +631,26 @@
 			files = (
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */,
-				1A0AB30222B22B0F00B6B6AB /* NSIndexSet+Extension.m in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
-				1A0AB30122B22B0F00B6B6AB /* NSIndexSet+Convenience.m in Sources */,
+				1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */,
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
+				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
+				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
-				1A096D40248DD94E00F3E0F2 /* DanielWuViewController.m in Sources */,
 				6003F5A7195388D20070C39A /* JPViewController.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
+				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
-				1A0AB30322B22B0F00B6B6AB /* UICollectionView+Convenience.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
-				1ABAF0DF24975C5100530E7A /* FaceView.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
+				1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */,
 				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,

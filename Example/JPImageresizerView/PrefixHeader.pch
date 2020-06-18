@@ -14,8 +14,6 @@
 #define PortraitHorBtnSpace 20.0
 #define ButtonHeight 30.0
 
-#define JPShapeFont(size) [UIFont fontWithName:@"shape" size:size]
-
 #import "JPImageresizerView.h"
 #import "JPInline.h"
 #import "JPMacro.h"
@@ -24,5 +22,9 @@
 #import "UIView+JPPOP.h"
 #import "UIColor+JPExtension.h"
 #import "JPProgressHUD.h"
+
+CG_INLINE UIFont * JPShapeFont(CGFloat fontSize)  {
+    return [UIFont fontWithName:@"shape" size:JPScaleValue(fontSize)];
+}
 
 #endif /* PrefixHeader_pch */

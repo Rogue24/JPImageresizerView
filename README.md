@@ -8,7 +8,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.5.0）
+## 简介（当前版本：1.5.1）
 
 一个专门裁剪图片的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片裁剪的需求。
 

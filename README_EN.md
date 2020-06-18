@@ -8,7 +8,7 @@
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
 
-## Brief introduction (Current version: 1.5.0)
+## Brief introduction (Current version: 1.5.1)
 
 A special wheel for cutting pictures is simple and easy to use, with rich functions (parameter setting of high freedom, support for rotation and mirror turning, multiple style selection...), which can meet the needs of most pictures cutting.
 

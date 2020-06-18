@@ -7,8 +7,6 @@
 //
 
 #import "JPPhotoTool.h"
-#import "UICollectionView+Convenience.h"
-#import "NSIndexSet+Convenience.h"
 
 @interface JPPhotoTool () <PHPhotoLibraryChangeObserver>
 @property (nonatomic, strong) PHFetchOptions *baseFetchOptions;
@@ -282,7 +280,6 @@ JPSingtonImplement(JPPhotoTool)
     self.changeResult = nil;
     self.currCollection = nil;
     self.photoLibraryDidChangeHandler = nil;
-    [self resetCachedAssets];
 }
 
 #pragma mark 相册监听回调 PHPhotoLibraryChangeObserver
@@ -303,8 +300,6 @@ JPSingtonImplement(JPPhotoTool)
         } else {
             self.changeResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:self.baseFetchOptions];
         }
-        
-        [self resetCachedAssets];
     }
 }
 
@@ -967,88 +962,6 @@ JPSingtonImplement(JPPhotoTool)
     PHFetchResult *result = [PHAssetCollection fetchAssetCollectionsWithLocalIdentifiers:@[localIdentifier] options:nil];
     
     return result.firstObject;
-}
-
-#pragma mark - 缓存处理
-
-- (void)resetCachedAssets {
-    [_cacheImgManager stopCachingImagesForAllAssets];
-    _previousPreheatRect = CGRectZero;
-}
-
-- (void)updateCachedAssetsWithColloectionView:(UICollectionView *)collectionView
-                            startCachingBlock:(JPAssetsCachingHandle)startCachingBlock
-                             stopCachingBlock:(JPAssetsCachingHandle)stopCachingBlock {
-    if (!collectionView) return;
-    
-    BOOL isViewVisible = collectionView && collectionView.window != nil;
-    if (!isViewVisible) { return; }
-    
-    // The preheat window is twice the height of the visible rect
-    CGRect preheatRect = collectionView.bounds;
-    preheatRect = CGRectInset(preheatRect, 0.0f, -0.5f * CGRectGetHeight(preheatRect));
-    
-    // If scrolled by a "reasonable" amount...
-    CGFloat delta = ABS(CGRectGetMidY(preheatRect) - CGRectGetMidY(_previousPreheatRect));
-    
-    if (delta <= CGRectGetHeight(collectionView.bounds) / 3.0f) return;
-    
-    // Compute the assets to start caching and to stop caching.
-    NSMutableArray *addedIndexPaths = [NSMutableArray array];
-    NSMutableArray *removedIndexPaths = [NSMutableArray array];
-    
-    [self __computeDifferenceBetweenRect:_previousPreheatRect andRect:preheatRect removedHandler:^(CGRect removedRect) {
-        NSArray *indexPaths = [collectionView aapl_indexPathsForElementsInRect:removedRect];
-        [removedIndexPaths addObjectsFromArray:indexPaths];
-    } addedHandler:^(CGRect addedRect) {
-        NSArray *indexPaths = [collectionView aapl_indexPathsForElementsInRect:addedRect];
-        [addedIndexPaths addObjectsFromArray:indexPaths];
-    }];
-    
-    //        NSArray *assetsToStartCaching = [self assetsAtIndexPaths:addedIndexPaths];
-    //        NSArray *assetsToStopCaching = [self assetsAtIndexPaths:removedIndexPaths];
-    
-    JPGetAssetsCompletion startCaching = ^(NSArray *assets) {
-        [self.cacheImgManager startCachingImagesForAssets:assets targetSize:thumbnailPhotoSize_ contentMode:PHImageContentModeAspectFill options:nil];
-    };
-    
-    JPGetAssetsCompletion stopCaching = ^(NSArray *assets) {
-        [self.cacheImgManager stopCachingImagesForAssets:assets targetSize:thumbnailPhotoSize_ contentMode:PHImageContentModeAspectFill options:nil];
-    };
-    
-    startCachingBlock(addedIndexPaths, startCaching);
-    stopCachingBlock(removedIndexPaths, stopCaching);
-    
-    _previousPreheatRect = preheatRect;
-}
-
-- (void)__computeDifferenceBetweenRect:(CGRect)oldRect andRect:(CGRect)newRect removedHandler:(void (^)(CGRect removedRect))removedHandler addedHandler:(void (^)(CGRect addedRect))addedHandler {
-    
-    if (CGRectIntersectsRect(newRect, oldRect)) {
-        CGFloat oldMaxY = CGRectGetMaxY(oldRect);
-        CGFloat oldMinY = CGRectGetMinY(oldRect);
-        CGFloat newMaxY = CGRectGetMaxY(newRect);
-        CGFloat newMinY = CGRectGetMinY(newRect);
-        if (newMaxY > oldMaxY) {
-            CGRect rectToAdd = CGRectMake(newRect.origin.x, oldMaxY, newRect.size.width, (newMaxY - oldMaxY));
-            addedHandler(rectToAdd);
-        }
-        if (oldMinY > newMinY) {
-            CGRect rectToAdd = CGRectMake(newRect.origin.x, newMinY, newRect.size.width, (oldMinY - newMinY));
-            addedHandler(rectToAdd);
-        }
-        if (newMaxY < oldMaxY) {
-            CGRect rectToRemove = CGRectMake(newRect.origin.x, newMaxY, newRect.size.width, (oldMaxY - newMaxY));
-            removedHandler(rectToRemove);
-        }
-        if (oldMinY < newMinY) {
-            CGRect rectToRemove = CGRectMake(newRect.origin.x, oldMinY, newRect.size.width, (newMinY - oldMinY));
-            removedHandler(rectToRemove);
-        }
-    } else {
-        addedHandler(newRect);
-        removedHandler(oldRect);
-    }
 }
 
 #pragma mark - 图片处理

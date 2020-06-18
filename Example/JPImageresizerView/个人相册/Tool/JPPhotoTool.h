@@ -218,10 +218,4 @@ JPSingtonInterface
                         successHandle:(void (^)(NSString *assetID))successHandle
                            failHandle:(void (^)(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail))failHandle;
 
-#pragma mark - 缓存处理
-
-- (void)resetCachedAssets;
-- (void)updateCachedAssetsWithColloectionView:(UICollectionView *)collectionView
-                            startCachingBlock:(JPAssetsCachingHandle)startCachingBlock
-                             stopCachingBlock:(JPAssetsCachingHandle)stopCachingBlock;
 @end

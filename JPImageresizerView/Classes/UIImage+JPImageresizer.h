@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface UIImage (JPImageresizer)
-
 - (UIImage *)jpir_destinationOutImage;
-
 + (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
                              cropFrame:(CGRect)cropFrame
                           relativeSize:(CGSize)relativeSize
@@ -19,7 +17,6 @@
                            isHorMirror:(BOOL)isHorMirror
                      rotateOrientation:(UIImageOrientation)orientation
                            isRoundClip:(BOOL)isRoundClip
-                         compressScale:(CGFloat)scale
+                         compressScale:(CGFloat)compressScale
                              maskImage:(UIImage *)maskImage;
-
 @end
