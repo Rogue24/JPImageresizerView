@@ -548,6 +548,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _scopeWH = 50.0;
         _halfScopeWH = _scopeWH * 0.5;
         _minImageWH = 70.0;
+        _startResizeW = -1;
         
         _edgeLineIsEnabled = YES;
         _rotationDirection = JPImageresizerVerticalUpDirection;
@@ -1328,6 +1329,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 }
 
 - (void)endedImageresizer {
+    _startResizeW = -1;
     UIEdgeInsets contentInset = [self __scrollViewContentInsetWithAdjustResizeFrame:self.imageresizerFrame];
     self.scrollView.contentInset = contentInset;
     [self __addTimer];
@@ -2318,9 +2320,12 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 #pragma mark - override method
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    if (_startResizeW >= 0) return YES;
+        
     _currDR = JPDR_Center;
     
     if (!_panGR.enabled) {
+        _startResizeW = -1;
         return NO;
     }
     
@@ -2331,6 +2336,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (_edgeLineIsEnabled &&
         (!CGRectContainsPoint(CGRectInset(frame, -halfScopeWH, -halfScopeWH), point) ||
          CGRectContainsPoint(CGRectInset(frame, halfScopeWH, halfScopeWH), point))) {
+        _startResizeW = -1;
         return NO;
     }
     
@@ -2395,6 +2401,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             _currDR = JPDR_BottomMid;
             _diagonal = CGPointMake(midX, y);
         } else {
+            _startResizeW = -1;
             return NO;
         }
     }
