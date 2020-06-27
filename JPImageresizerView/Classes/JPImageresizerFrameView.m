@@ -2320,6 +2320,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 #pragma mark - override method
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    if (![super pointInside:point withEvent:event]) return NO;
+    
     if (_startResizeW >= 0) return YES;
         
     _currDR = JPDR_Center;

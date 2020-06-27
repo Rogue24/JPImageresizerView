@@ -445,8 +445,7 @@
     [JPProgressHUD dismiss];
 
     if (self.isBecomeDanielWu) {
-        DanielWuViewController *vc = [[DanielWuViewController alloc] init];
-        vc.image = resizeImage;
+        DanielWuViewController *vc = [DanielWuViewController DanielWuVC:resizeImage];
         [self.navigationController pushViewController:vc animated:YES];
     } else {
         JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];

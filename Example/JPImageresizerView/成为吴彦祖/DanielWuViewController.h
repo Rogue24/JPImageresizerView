@@ -6,8 +6,8 @@
 //  Copyright © 2020 ZhouJianPing. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ReplaceFaceViewController.h"
 
-@interface DanielWuViewController : UIViewController
-@property (nonatomic, strong) UIImage *image;
+@interface DanielWuViewController : ReplaceFaceViewController
++ (instancetype)DanielWuVC:(UIImage *)faceImage;
 @end
