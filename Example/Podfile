@@ -6,10 +6,6 @@ target 'JPImageresizerView_Example' do
   pod 'JPImageresizerView', :path => '../'
 
   pod 'JPLiquidLayout'
-  pod 'Masonry'
-  pod 'pop'
-  pod 'SVProgressHUD'
-  
   pod 'JPBasic/JPConst'
   pod 'JPBasic/JPCategory'
   pod 'JPBasic/JPProgressHUD'

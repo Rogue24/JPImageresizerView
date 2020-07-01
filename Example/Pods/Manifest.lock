@@ -21,9 +21,6 @@ DEPENDENCIES:
   - JPBasic/JPProgressHUD
   - JPImageresizerView (from `../`)
   - JPLiquidLayout
-  - Masonry
-  - pop
-  - SVProgressHUD
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -45,6 +42,6 @@ SPEC CHECKSUMS:
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 50a62084a6ae9136541445618a73b5a84e65d608
+PODFILE CHECKSUM: e303423b084972b527e326c31d47295e26d6c9da
 
 COCOAPODS: 1.9.3
