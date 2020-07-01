@@ -10,6 +10,7 @@ PODS:
     - SVProgressHUD
   - JPImageresizerView (1.5.2)
   - JPLiquidLayout (0.1.1)
+  - LookinServer (1.0.0)
   - Masonry (1.1.0)
   - pop (1.0.12)
   - SVProgressHUD (2.2.5)
@@ -21,6 +22,7 @@ DEPENDENCIES:
   - JPBasic/JPProgressHUD
   - JPImageresizerView (from `../`)
   - JPLiquidLayout
+  - LookinServer
   - Masonry
   - pop
   - SVProgressHUD
@@ -29,6 +31,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - JPBasic
     - JPLiquidLayout
+    - LookinServer
     - Masonry
     - pop
     - SVProgressHUD
@@ -41,10 +44,11 @@ SPEC CHECKSUMS:
   JPBasic: ca0efddba629796165a98334f1977216d9b1837f
   JPImageresizerView: 88e17a1a70af73d96d9dadc31686358f0ae31ebf
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
+  LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 50a62084a6ae9136541445618a73b5a84e65d608
+PODFILE CHECKSUM: 022ef830db67c342214f2178d74a9833c5de4a62
 
 COCOAPODS: 1.9.3

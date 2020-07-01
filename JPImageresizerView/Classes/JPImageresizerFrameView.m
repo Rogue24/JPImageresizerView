@@ -1590,8 +1590,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     } else {
         viewWH = superViewW * 2;
     }
-    CGFloat viewX = (contentWidth - viewWH) * 0.5 + contentInsets.left;
-    CGFloat viewY = (contentHeight - viewWH) * 0.5 + contentInsets.top;
+    BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
+    BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
+    CGFloat viewX = (contentWidth - viewWH) * 0.5 + (isVerMirror ? contentInsets.right : contentInsets.left);
+    CGFloat viewY = (contentHeight - viewWH) * 0.5 + (isHorMirror ? contentInsets.bottom : contentInsets.top);
     CGRect viewFrame = CGRectMake(viewX, viewY, viewWH, viewWH);
     CGRect viewBounds = CGRectMake(0, 0, viewWH, viewWH);
     

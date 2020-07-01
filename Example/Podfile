@@ -14,4 +14,6 @@ target 'JPImageresizerView_Example' do
   pod 'JPBasic/JPCategory'
   pod 'JPBasic/JPProgressHUD'
   pod 'JPBasic/JPBrowseImages'
+  
+  pod 'LookinServer', :configurations => ['Debug']
 end

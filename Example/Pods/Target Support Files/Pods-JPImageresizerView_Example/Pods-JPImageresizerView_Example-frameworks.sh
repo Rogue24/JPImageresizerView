@@ -200,6 +200,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/JPBasic/JPBasic.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/JPImageresizerView/JPImageresizerView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/JPLiquidLayout/JPLiquidLayout.framework"
+  install_framework "${PODS_ROOT}/LookinServer/LookinServer.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/pop/pop.framework"

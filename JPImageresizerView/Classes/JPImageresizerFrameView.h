@@ -78,8 +78,6 @@
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;
 
-@property (nonatomic, assign, readonly) CGFloat scrollViewMinZoomScale;
-
 @property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, assign) CGPoint borderImageRectInset;
 
