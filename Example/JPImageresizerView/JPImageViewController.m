@@ -18,8 +18,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setupNavigationBar];
+    self.title = @"Finish";
     self.imageView.image = self.image;
+    [self __setupNavigationBar];
+    [self __changBgColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -28,24 +30,31 @@
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
-- (void)setupNavigationBar {
-    self.title = @"Finish";
-    UIButton *camceraBtn = ({
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-        [btn setTitle:@"保存" forState:UIControlStateNormal];
-        [btn addTarget:self action:@selector(savePhotoToAppAlbum) forControlEvents:UIControlEventTouchUpInside];
-        btn;
-    });
+- (void)__setupNavigationBar {
+    UIButton *camceraBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    camceraBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    [camceraBtn setTitle:@"保存" forState:UIControlStateNormal];
+    [camceraBtn addTarget:self action:@selector(__savePhotoToAppAlbum) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:camceraBtn];
 }
 
-- (void)savePhotoToAppAlbum {
+- (void)__savePhotoToAppAlbum {
     [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.image successHandle:^(NSString *assetID) {
         [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
     } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
         [JPProgressHUD showSuccessWithStatus:@"保存失败" userInteractionEnabled:YES];
     }];
+}
+
+- (void)__changBgColor {
+    @jp_weakify(self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.view jp_addPOPBasicAnimationWithPropertyNamed:kPOPViewBackgroundColor toValue:JPRandomColor duration:2.0 completionBlock:^(POPAnimation *anim, BOOL finished) {
+            @jp_strongify(self);
+            if (!self) return;
+            [self __changBgColor];
+        }];
+    });
 }
 
 - (void)dealloc {
