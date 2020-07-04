@@ -416,7 +416,7 @@
         self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
     }]];
     
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"run" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"supreme" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.maskImage = [UIImage imageNamed:@"supreme.png"];
     }]];
     
