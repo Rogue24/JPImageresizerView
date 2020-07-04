@@ -92,7 +92,7 @@
     model7.title = @"自定义蒙版图片（固定比例）";
     model7.statusBarStyle = UIStatusBarStyleLightContent;
     model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure.jp_maskImage([UIImage imageNamed:@"run.png"]);
+        configure.jp_maskImage([UIImage imageNamed:@"supreme.png"]);
     }];
     
     JPConfigureModel *model8 = [self new];

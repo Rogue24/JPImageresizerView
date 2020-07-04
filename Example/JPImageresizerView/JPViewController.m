@@ -417,7 +417,7 @@
     }]];
     
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"run" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.maskImage = [UIImage imageNamed:@"run.png"];
+        self.imageresizerView.maskImage = [UIImage imageNamed:@"supreme.png"];
     }]];
     
     BOOL isArbitrarilyMask = self.imageresizerView.isArbitrarilyMask;
