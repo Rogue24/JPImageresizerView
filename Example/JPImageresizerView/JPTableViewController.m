@@ -206,7 +206,7 @@
                 imageName = @"Beauty.jpg";
                 break;
             default:
-                imageName = @"Train.jpg";
+                imageName = @"Flowers.jpg";
                 break;
         }
     } else {

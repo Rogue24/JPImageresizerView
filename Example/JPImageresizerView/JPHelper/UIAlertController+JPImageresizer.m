@@ -165,7 +165,7 @@ static JPObject *obj_;
         handler([UIImage imageNamed:@"Beauty.jpg"]);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Train" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Train.jpg"]);
+        handler([UIImage imageNamed:@"Flowers.jpg"]);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         obj_ = [JPObject new];
