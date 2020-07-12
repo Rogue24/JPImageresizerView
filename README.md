@@ -141,57 +141,44 @@ if (isCropPicture) {
 // presetName：系统导出视频的质量，为 AVAssetExportPresetLowQuality、AVAssetExportPresetMediumQuality、AVAssetExportPresetHighestQuality等
 [self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
         
-        // 错误回调
-        //【注意：该回调是在子线程下执行】
-        // 注意循环引用
+    // 错误回调
+    //【注意：该回调是在子线程下执行】
+    // 注意循环引用
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // reason：错误原因
+        switch (reason) {
+            case JPCVFReason_NotAssets:
+                // 视频资源为空
+                break;
+            case JPCVFReason_VideoAlreadyDamage:
+                // 视频文件已损坏
+                break;
+            case JPCVFReason_CachePathAlreadyExists:
+                // 缓存路径已存在其他文件，返回 YES 则会自动删除该路径的文件并继续后面的裁剪操作。
+                break;
+            case JPCVFReason_ExportFailed:
+                // 视频导出失败
+                break;
+            case JPCVFReason_ExportCancelled:
+                // 视频裁剪取消
+                break;
+        }
+    });
+    
+    return reason == JPCVFReason_CachePathAlreadyExists;
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+} progressBlock:^(float progress) {
         
-            // reason：错误原因
-            switch (reason) {
-            
-                case JPCVFReason_NotAssets:
-                
-                    // 视频资源为空
-                    break;
-                    
-                case JPCVFReason_VideoAlreadyDamage:
-                
-                    // 视频文件已损坏
-                    break;
-                    
-                case JPCVFReason_CachePathAlreadyExists:
-                
-                    // 缓存路径已存在其他文件，返回 YES 则会自动删除该路径的文件并继续后面的裁剪操作。
-                    break;
-                    
-                case JPCVFReason_ExportFailed:
-                
-                    // 视频导出失败
-                    break;
-                    
-                case JPCVFReason_ExportCancelled:
-                
-                    // 视频裁剪取消
-                    break;
-            }
-        });
+    // 监听进度（该回调是在主线程下）
+    // progress：0~1
+    // 注意循环引用
         
-        return reason == JPCVFReason_CachePathAlreadyExists;
+} completeBlock:^(NSURL *cacheURL) {
         
-    } progressBlock:^(float progress) {
-        
-        // 监听进度（该回调是在主线程下）
-        // progress：0~1
-        // 注意循环引用
-        
-    } completeBlock:^(NSURL *cacheURL) {
-        
-        // 裁剪完成（该回调是在主线程下），cacheURL为缓存URL
-        // 注意循环引用
-        
-    }];
-}
+    // 裁剪完成（该回调是在主线程下），cacheURL为缓存URL
+    // 注意循环引用
+    
+}];
 ```
 **PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
 
