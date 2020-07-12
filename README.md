@@ -39,7 +39,7 @@
 
 ## 如何使用
 
-#### 初始化
+### 初始化
 ```objc
 // 1.配置初始参数（更多可查看JPImageresizerView的头文件）
 /**
@@ -102,7 +102,7 @@ if (@available(iOS 11.0, *)) {
 }
 ```
 
-#### 裁剪本地视频
+### 裁剪本地视频
 ![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cropvideo.gif)
 ```objc
 // 1.初始化时只需要在configure配置好videoURL（视频的URL）即可
@@ -116,7 +116,7 @@ if (isCropPicture) {
 }
 ```
 **PS：目前只针对本地视频，远程视频暂未适配。**
-##### 裁剪视频当前/指定帧的画面
+#### 裁剪视频当前/指定帧的画面
 ```objc
 // 1.原图尺寸裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
 [self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
@@ -134,7 +134,7 @@ if (isCropPicture) {
 - (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
 ```
 
-##### 裁剪整段视频
+#### 裁剪整段视频
 ```objc
 // 裁剪整段视频画面（裁剪过程在子线程，进度回调和完成回调会切回到主线程）
 // cachePath：缓存路径，如果为 nil，则默认路径为 Caches 文件夹下，视频名为当前时间戳，格式为mp4（.../Library/Caches/1594556710.mp4）
@@ -197,7 +197,7 @@ if (isCropPicture) {
 
 **PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了16的除余修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
 
-#### 自定义蒙版图片
+### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
 ```objc
 // 设置蒙版图片（目前仅支持png图片）
@@ -212,7 +212,7 @@ self.imageresizerView.isArbitrarilyMask = YES;
 ![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
 PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
 
-#### 横竖屏切换
+### 横竖屏切换
 ![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
 ```objc
 // 需要用户去监听横竖屏的切换，或自己手动切换时，调用该方法刷新
@@ -223,7 +223,7 @@ PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因
 [self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
 ```
 
-#### 更改边框样式
+### 更改边框样式
 ![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
 ![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
 ```objc
@@ -232,7 +232,7 @@ PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因
 self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
-#### 自定义边框图片
+### 自定义边框图片
 ![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
 ![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
 ```objc
@@ -246,7 +246,7 @@ self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
 self.imageresizerView.borderImage = tileBorderImage;
 ```
 
-#### 切换裁剪宽高比
+### 切换裁剪宽高比
 ![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
 ```objc
 // 1.自定义参数切换
@@ -263,7 +263,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
 ```
 
-#### 圆切
+### 圆切
 ![round_resize](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
 ```objc
 // 设置圆切
@@ -275,7 +275,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 self.imageresizerView.resizeWHScale = 0.0;
 ```
 
-#### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
+### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
 ```objc
 // 设置毛玻璃样式（默认带动画效果）
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -294,7 +294,7 @@ self.imageresizerView.maskAlpha = 0.5; // blurEffect = nil 才生效
 [self.imageresizerView setupStrokeColor:strokeColor blurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark] bgColor:UIColor.blackColor maskAlpha: 0.5 animated:YES];
 ```
 
-#### 镜像翻转
+### 镜像翻转
 ![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
 ```objc
 // 1.垂直镜像，YES->沿着Y轴旋转180°，NO->还原
@@ -310,7 +310,7 @@ self.imageresizerView.horizontalMirror = isHorizontalMirror;
 [self.imageresizerView setHorizontalMirror:isHorizontalMirror animated:YES];
 ```
 
-#### 旋转
+### 旋转
 ```objc
 // 默认逆时针旋转，旋转角度为90°
 [self.imageresizerView rotation];
@@ -319,7 +319,7 @@ self.imageresizerView.horizontalMirror = isHorizontalMirror;
 self.imageresizerView.isClockwiseRotation = YES;
 ```
 
-#### 重置
+### 重置
 ```objc
 // 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
 
@@ -364,7 +364,7 @@ CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // 获取
 [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // 指定蒙版图片
 ```
 
-#### 预览
+### 预览
 ```objc
 // 预览模式：隐藏边框，停止拖拽操作，用于预览裁剪后的区域
 
@@ -374,7 +374,7 @@ self.imageresizerView.isPreview = YES;
 [self.imageresizerView setIsPreview:YES animated:YES];
 ```
 
-#### 裁剪
+### 裁剪
 ```objc
 // 裁剪过程是在子线程中执行，回调则切回主线程执行
 // 如果是高清图片，调用前可添加HUD提示...
@@ -394,7 +394,7 @@ self.imageresizerView.isPreview = YES;
 }];
 ```
 
-#### 其他
+### 其他
 ```objc
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
 self.imageresizerView.isLockResizeFrame = YES;
