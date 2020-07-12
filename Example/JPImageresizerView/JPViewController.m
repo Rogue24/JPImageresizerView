@@ -23,7 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
 
 @property (nonatomic, assign) JPImageresizerFrameType frameType;
-@property (nonatomic, strong) UIImage *borderImage;
 @property (nonatomic, strong) UIImage *maskImage;
 @property (nonatomic, assign) BOOL isToBeArbitrarily;
 
@@ -41,6 +40,38 @@
 @end
 
 @implementation JPViewController
+
++ (UIImage *)stretchBorderImage {
+    static UIImage *stretchBorderImage_;
+    if (!stretchBorderImage_) {
+        UIImage *stretchBorderImage = [UIImage imageNamed:@"real_line"];
+        // 裁剪掉上下多余的空白部分
+        CGFloat inset = 1.5 * stretchBorderImage.scale;
+        CGImageRef sbImageRef = stretchBorderImage.CGImage;
+        sbImageRef = CGImageCreateWithImageInRect(sbImageRef, CGRectMake(0, inset, CGImageGetWidth(sbImageRef), CGImageGetHeight(sbImageRef) - 2 * inset));
+        stretchBorderImage = [UIImage imageWithCGImage:sbImageRef scale:stretchBorderImage.scale orientation:stretchBorderImage.imageOrientation];
+        CGImageRelease(sbImageRef);
+        // 设定拉伸区域
+        stretchBorderImage_ = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
+    }
+    return stretchBorderImage_;
+}
++ (CGPoint)stretchBorderImageRectInset {
+    return CGPointMake(-2, -2);
+}
+
++ (UIImage *)tileBorderImage {
+    static UIImage *tileBorderImage_;
+    if (!tileBorderImage_) {
+        UIImage *tileBorderImage = [UIImage imageNamed:@"dotted_line"];
+        // 设定平铺区域
+        tileBorderImage_ = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
+    }
+    return tileBorderImage_;
+}
++ (CGPoint)tileBorderImageRectInset {
+    return CGPointMake(-1.75, -1.75);
+}
 
 #pragma mark - 生命周期
 
@@ -63,7 +94,7 @@
 
 - (void)dealloc {
     NSLog(@"viewController is dead");
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    JPRemoveNotification(self);
 }
 
 #pragma mark - 初始化
@@ -71,7 +102,6 @@
 - (void)__setupBase {
     self.view.backgroundColor = self.configure.bgColor;
     self.frameType = self.configure.frameType;
-    self.borderImage = self.configure.borderImage;
     self.maskImage = self.configure.maskImage;
     self.recoveryBtn.enabled = NO;
     
@@ -91,7 +121,7 @@
     self.backBtnTopConstraint.constant = JPStatusBarH;
     
     self.statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeStatusBarOrientation) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+    JPObserveNotification(self, @selector(didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
 }
 
 - (void)__setupImageresizerView {
@@ -244,63 +274,8 @@
 
 #pragma mark - 按钮点击事件
 
-- (IBAction)changeFrameType:(UIButton *)sender {
-    sender.selected = !sender.selected;
-    if (self.borderImage) {
-        self.imageresizerView.borderImage = sender.selected ? nil : self.borderImage;
-        return;
-    } else {
-        self.imageresizerView.frameType = sender.selected ? (self.frameType == JPClassicFrameType ? JPConciseFrameType : JPClassicFrameType) : self.frameType;
-    }
-}
-
-- (IBAction)rotate:(id)sender {
-    [self.imageresizerView rotation];
-}
-
-- (IBAction)recovery:(id)sender {
-    if (self.imageresizerView.maskImage) {
-        [self.imageresizerView recoveryByCurrentMaskImage];
-//        [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]];
-    } else if ([self.imageresizerView isRoundResizing]) {
-        [self.imageresizerView recoveryToRoundResize];
-    } else {
-        // 1.按当前【resizeWHScale】进行重置
-//        [self.imageresizerView recoveryByCurrentResizeWHScale];
-//        [self.imageresizerView recoveryByCurrentResizeWHScale:YES];
-        
-        // 2.按【initialResizeWHScale】进行重置
-        [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
-        
-        // 3.按【目标裁剪宽高比】进行重置
-//        [self.imageresizerView recoveryToTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
-    }
-}
-
-- (IBAction)resize:(id)sender {
-    [JPProgressHUD show];
-    
-    __weak typeof(self) wSelf = self;
-    
-    // 1.自定义压缩比例进行裁剪
-//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-//        // 裁剪完成，resizeImage为裁剪后的图片
-//        // 注意循环引用
-//        __strong typeof(wSelf) sSelf = wSelf;
-//        if (!sSelf) return;
-//        [sSelf __imageresizerDone:resizeImage];
-//    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
-    
-    // 2.以原图尺寸进行裁剪
-    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
-        // 裁剪完成，resizeImage为裁剪后的图片
-        // 注意循环引用
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf __imageresizerDone:resizeImage];
-    }];
-}
-
+#pragma mark 返回
+static UIViewController *tmpVC_;
 - (IBAction)pop:(id)sender {
     if (self.backBlock) {
         self.backBlock(self);
@@ -312,89 +287,21 @@
     cubeAnim.type = @"cube";
     cubeAnim.subtype = kCATransitionFromLeft;
     cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
+    [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
     
+    tmpVC_ = self; // 晚一些再死，不然视频画面会立即消失
     if (self.navigationController.viewControllers.count <= 1) {
         [self dismissViewControllerAnimated:NO completion:nil];
     } else {
         [self.navigationController popViewControllerAnimated:NO];
     }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        tmpVC_ = nil;
+    });
 }
 
-- (IBAction)lockFrame:(UIButton *)sender {
-    sender.selected = !sender.selected;
-    self.imageresizerView.isLockResizeFrame = sender.selected;
-}
-
-- (IBAction)verMirror:(id)sender {
-    self.imageresizerView.verticalityMirror = !self.imageresizerView.verticalityMirror;
-}
-
-- (IBAction)horMirror:(id)sender {
-    self.imageresizerView.horizontalMirror = !self.imageresizerView.horizontalMirror;
-}
-
-- (IBAction)previewAction:(UIButton *)sender {
-    sender.selected = !sender.selected;
-    self.imageresizerView.isPreview = sender.selected;
-}
-
-- (IBAction)changeResizeWHScale:(id)sender {
-    [UIAlertController changeResizeWHScale:^(CGFloat resizeWHScale) {
-        if (resizeWHScale < 0) {
-            [self.imageresizerView roundResize:YES];
-        } else {
-            [self.imageresizerView setResizeWHScale:resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
-        }
-    } fromVC:self];
-}
-
-- (IBAction)changeBlurEffect:(id)sender {
-    [UIAlertController changeBlurEffect:^(UIBlurEffect *blurEffect) {
-        self.imageresizerView.blurEffect = blurEffect;
-    } fromVC:self];
-}
-
-- (IBAction)changeRandomColor:(id)sender {
-    CGFloat maskAlpha = (CGFloat)JPRandomNumber(0, 10) / 10.0;
-    UIColor *strokeColor;
-    UIColor *bgColor;
-    if (@available(iOS 13, *)) {
-        UIColor *strokeColor1 = JPRandomColor;
-        UIColor *strokeColor2 = JPRandomColor;
-        strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return strokeColor1;
-            } else {
-                return strokeColor2;
-            }
-        }];
-        UIColor *bgColor1 = JPRandomColor;
-        UIColor *bgColor2 = JPRandomColor;
-        bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return bgColor1;
-            } else {
-                return bgColor2;
-            }
-        }];
-    } else {
-        strokeColor = JPRandomColor;
-        bgColor = JPRandomColor;
-    }
-    [self.imageresizerView setupStrokeColor:strokeColor blurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:maskAlpha animated:YES];
-    
-    // 随机网格数
-    self.imageresizerView.gridCount = JPRandomNumber(2, 20);
-}
-
-- (IBAction)replaceImage:(UIButton *)sender {
-    [UIAlertController replaceImage:^(UIImage *image) {
-        self.imageresizerView.resizeImage = image;
-    } fromVC:self];
-}
-
-- (IBAction)replaceMaskImage:(UIButton *)sender {    
+#pragma mark 设置蒙版图片
+- (IBAction)replaceMaskImage:(UIButton *)sender {
     UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"蒙版列表" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -434,16 +341,190 @@
     [self presentViewController:alertCtr animated:YES completion:nil];
 }
 
-#pragma mark - 裁剪完成
+#pragma mark 预览
+- (IBAction)previewAction:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    self.imageresizerView.isPreview = sender.selected;
+}
+
+#pragma mark 按垂直线镜像
+- (IBAction)verMirror:(id)sender {
+    self.imageresizerView.verticalityMirror = !self.imageresizerView.verticalityMirror;
+}
+
+#pragma mark 按水平线镜像
+- (IBAction)horMirror:(id)sender {
+    self.imageresizerView.horizontalMirror = !self.imageresizerView.horizontalMirror;
+}
+
+#pragma mark 锁定裁剪框（不能拖拽）
+- (IBAction)lockFrame:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    self.imageresizerView.isLockResizeFrame = sender.selected;
+}
+
+#pragma mark 更换边框样式
+- (IBAction)changeFrameType:(UIButton *)sender {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"简洁样式" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.borderImage = nil;
+        self.imageresizerView.frameType = JPConciseFrameType;
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"经典样式" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.borderImage = nil;
+        self.imageresizerView.frameType = JPClassicFrameType;
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"拉伸的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.borderImageRectInset = [self.class stretchBorderImageRectInset];
+        self.imageresizerView.borderImage = [self.class stretchBorderImage];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"平铺的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.imageresizerView.borderImageRectInset = [self.class tileBorderImageRectInset];
+        self.imageresizerView.borderImage = [self.class tileBorderImage];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
+}
+
+#pragma mark 旋转
+- (IBAction)rotate:(id)sender {
+    [self.imageresizerView rotation];
+}
+
+#pragma mark 重置
+- (IBAction)recovery:(id)sender {
+    if (self.imageresizerView.maskImage) {
+        [self.imageresizerView recoveryByCurrentMaskImage];
+//        [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]];
+    } else if ([self.imageresizerView isRoundResizing]) {
+        [self.imageresizerView recoveryToRoundResize];
+    } else {
+        // 1.按当前【resizeWHScale】进行重置
+//        [self.imageresizerView recoveryByCurrentResizeWHScale];
+//        [self.imageresizerView recoveryByCurrentResizeWHScale:YES];
+        
+        // 2.按【initialResizeWHScale】进行重置
+        [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
+        
+        // 3.按【目标裁剪宽高比】进行重置
+//        [self.imageresizerView recoveryToTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
+    }
+}
+
+#pragma mark 设置宽高比
+- (IBAction)changeResizeWHScale:(id)sender {
+    [UIAlertController changeResizeWHScale:^(CGFloat resizeWHScale) {
+        if (resizeWHScale < 0) {
+            [self.imageresizerView roundResize:YES];
+        } else {
+            [self.imageresizerView setResizeWHScale:resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+        }
+    } fromVC:self];
+}
+
+#pragma mark 设置毛玻璃
+- (IBAction)changeBlurEffect:(id)sender {
+    [UIAlertController changeBlurEffect:^(UIBlurEffect *blurEffect) {
+        self.imageresizerView.blurEffect = blurEffect;
+    } fromVC:self];
+}
+
+#pragma mark 随机颜色（边框、背景、遮罩透明度）
+- (IBAction)changeRandomColor:(id)sender {
+    CGFloat maskAlpha = (CGFloat)JPRandomNumber(0, 10) / 10.0;
+    UIColor *strokeColor;
+    UIColor *bgColor;
+    if (@available(iOS 13, *)) {
+        UIColor *strokeColor1 = JPRandomColor;
+        UIColor *strokeColor2 = JPRandomColor;
+        strokeColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return strokeColor1;
+            } else {
+                return strokeColor2;
+            }
+        }];
+        UIColor *bgColor1 = JPRandomColor;
+        UIColor *bgColor2 = JPRandomColor;
+        bgColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return bgColor1;
+            } else {
+                return bgColor2;
+            }
+        }];
+    } else {
+        strokeColor = JPRandomColor;
+        bgColor = JPRandomColor;
+    }
+    [self.imageresizerView setupStrokeColor:strokeColor blurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:maskAlpha animated:YES];
+    
+    // 随机网格数
+    self.imageresizerView.gridCount = JPRandomNumber(2, 20);
+}
+
+#pragma mark 更换素材
+- (IBAction)replace:(UIButton *)sender {
+    [UIAlertController replace:^(UIImage *image, NSURL *videoURL) {
+        if (image) {
+            self.imageresizerView.resizeImage = image;
+        } else {
+            self.imageresizerView.videoURL = videoURL;
+        }
+    } fromVC:self];
+}
+
+#pragma mark 裁剪
+- (IBAction)resize:(id)sender {
+    if (self.imageresizerView.videoURL) {
+        UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [JPProgressHUD show];
+            __weak typeof(self) wSelf = self;
+            [self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
+                __strong typeof(wSelf) sSelf = wSelf;
+                if (!sSelf) return;
+                [sSelf __imageresizerDone:resizeImage];
+            }];
+        }]];
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self __cropVideo];
+        }]];
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alertCtr animated:YES completion:nil];
+        return;
+    }
+    
+    [JPProgressHUD show];
+    __weak typeof(self) wSelf = self;
+    
+    // 1.自定义压缩比例进行裁剪
+//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
+//        // 裁剪完成，resizeImage为裁剪后的图片
+//        // 注意循环引用
+//        __strong typeof(wSelf) sSelf = wSelf;
+//        if (!sSelf) return;
+//        [sSelf __imageresizerDone:resizeImage];
+//    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
+    
+    // 2.以原图尺寸进行裁剪
+    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
+        // 裁剪完成，resizeImage为裁剪后的图片
+        // 注意循环引用
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf __imageresizerDone:resizeImage];
+    }];
+}
+
+#pragma mark - 图片裁剪完成
 
 - (void)__imageresizerDone:(UIImage *)resizeImage {
     if (!resizeImage) {
-        [JPProgressHUD showErrorWithStatus:@"没有裁剪图片" userInteractionEnabled:YES];
+        [JPProgressHUD showErrorWithStatus:@"没有裁剪图片，裁剪失败" userInteractionEnabled:YES];
         return;
     }
-
     [JPProgressHUD dismiss];
-
     if (self.isBecomeDanielWu) {
         DanielWuViewController *vc = [DanielWuViewController DanielWuVC:resizeImage];
         [self.navigationController pushViewController:vc animated:YES];
@@ -452,6 +533,61 @@
         vc.image = resizeImage;
         [self.navigationController pushViewController:vc animated:YES];
     }
+}
+
+#pragma mark - 裁剪视频
+
+- (void)__cropVideo {
+    [JPProgressHUD show];
+    __weak typeof(self) wSelf = self;
+    
+    // 自定义缓存路径
+    NSString *fileName = [NSString stringWithFormat:@"%.0lf.mov", [[NSDate date] timeIntervalSince1970]];
+    NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:fileName];
+    
+    [self.imageresizerView cropVideoWithCachePath:cachePath errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+        
+        // 失败回调
+        dispatch_async(dispatch_get_main_queue(), ^{
+            switch (reason) {
+                case JPCVFReason_NotAssets:
+                    [JPProgressHUD showErrorWithStatus:@"视频资源为空" userInteractionEnabled:YES];
+                    break;
+                case JPCVFReason_VideoAlreadyDamage:
+                    [JPProgressHUD showErrorWithStatus:@"视频文件已损坏" userInteractionEnabled:YES];
+                    break;
+                case JPCVFReason_CachePathAlreadyExists:
+                    [JPProgressHUD showInfoWithStatus:@"缓存路径已存在其他文件，可以手动删除后返回YES继续裁剪（方法内部也会自动删除），返回NO则不再继续裁剪。 %@" userInteractionEnabled:YES];
+                    break;
+                case JPCVFReason_ExportFailed:
+                    [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
+                    break;
+                case JPCVFReason_ExportCancelled:
+                    [JPProgressHUD showErrorWithStatus:@"视频导出取消" userInteractionEnabled:YES];
+                    break;
+            }
+        });
+        
+        // 只有 reason 为 JPCVFReason_CachePathAlreadyExists 返回 YES 才会继续裁剪（方法内部会自动删除目标路径的文件）
+        return reason == JPCVFReason_CachePathAlreadyExists;
+        
+    } progressBlock:^(float progress) {
+        
+        // 监听进度
+        [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100]];
+        
+    } completeBlock:^(NSURL *cacheURL) {
+        
+        // 裁剪完成
+        [JPProgressHUD dismiss];
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        
+        JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        vc.videoURL = cacheURL;
+        [sSelf.navigationController pushViewController:vc animated:YES];
+        
+    }];
 }
 
 @end

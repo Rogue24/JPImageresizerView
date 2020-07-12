@@ -10,6 +10,8 @@
 
 @implementation UIImage (JPImageresizer)
 
+#pragma mark - 获取图像的黑色轮廓
+
 - (UIImage *)jpir_destinationOutImage {
     if (!self) return nil;
     CGRect rect = (CGRect){CGPointZero, self.size};
@@ -20,61 +22,6 @@
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
-}
-
-+ (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
-                             cropFrame:(CGRect)cropFrame
-                          relativeSize:(CGSize)relativeSize
-                           isVerMirror:(BOOL)isVerMirror
-                           isHorMirror:(BOOL)isHorMirror
-                     rotateOrientation:(UIImageOrientation)orientation
-                           isRoundClip:(BOOL)isRoundClip
-                         compressScale:(CGFloat)compressScale
-                             maskImage:(UIImage *)maskImage {
-    @autoreleasepool {
-        // 修正图片方向
-        UIImage *resultImage = [originImage jpir_fixOrientation];
-
-        // 镜像处理
-        if (isVerMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationUpMirrored isRoundClip:NO];
-        if (isHorMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationDownMirrored isRoundClip:NO];
-
-        UIImage *finalImage = resultImage;
-        
-        if (!CGSizeEqualToSize(cropFrame.size, relativeSize)) {
-            // 获取裁剪区域
-            CGFloat imageScale = resultImage.scale;
-            CGFloat imageWidth = resultImage.size.width;
-            CGFloat imageHeight = resultImage.size.height;
-            CGFloat relativeScale = imageWidth / relativeSize.width;
-            if (cropFrame.origin.x < 0) cropFrame.origin.x = 0;
-            if (cropFrame.origin.y < 0) cropFrame.origin.y = 0;
-            cropFrame.origin.x *= relativeScale;
-            cropFrame.origin.y *= relativeScale;
-            cropFrame.size.width *= relativeScale;
-            cropFrame.size.height *= relativeScale;
-            if (cropFrame.size.width > imageWidth) cropFrame.size.width = imageWidth;
-            if (cropFrame.size.height > imageHeight) cropFrame.size.height = imageHeight;
-            if (CGRectGetMaxX(cropFrame) > imageWidth) cropFrame.origin.x = imageWidth - cropFrame.size.width;
-            if (CGRectGetMaxY(cropFrame) > imageHeight) cropFrame.origin.y = imageHeight - cropFrame.size.height;
-            if (isVerMirror) cropFrame.origin.x = imageWidth - CGRectGetMaxX(cropFrame);
-            if (isHorMirror) cropFrame.origin.y = imageHeight - CGRectGetMaxY(cropFrame);
-            
-            // 裁剪
-            UIGraphicsBeginImageContextWithOptions(cropFrame.size, NO, imageScale);
-            [resultImage drawInRect:CGRectMake(-cropFrame.origin.x, -cropFrame.origin.y, imageWidth, imageHeight)];
-            finalImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-        }
-        
-        // 旋转并切圆
-        finalImage = [finalImage jpir_rotate:orientation isRoundClip:isRoundClip];
-        
-        // 压缩并蒙版
-        finalImage = [finalImage jpir_resizeImageWithScale:compressScale maskImage:maskImage];
-        
-        return finalImage;
-    }
 }
 
 #pragma mark - 修正方向
@@ -166,9 +113,9 @@
 
 CG_INLINE CGRect
 JPRectSwapWH(CGRect rect) {
-    CGFloat width = rect.size.width;
+    CGFloat tmp = rect.size.width;
     rect.size.width = rect.size.height;
-    rect.size.height = width;
+    rect.size.height = tmp;
     return rect;
 }
 

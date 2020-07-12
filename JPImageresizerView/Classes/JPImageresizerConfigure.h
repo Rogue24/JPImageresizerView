@@ -28,12 +28,14 @@
     - isRoundResize = NO;
     - isShowMidDots = YES;
     - isBlurWhenDragging = NO;
-    - isShowGridlinesWhenDragging = NO;
+    - isShowGridlinesWhenIdle = NO;
+    - isShowGridlinesWhenDragging = YES;
     - gridCount = 3;
     - maskImage = nil;
     - isArbitrarilyMask = NO;
  */
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL make:(void(^)(JPImageresizerConfigure *configure))make;
 
 /**
  * 默认参数的基础上：
@@ -42,6 +44,7 @@
     - maskAlpha = 0.3;
  */
 + (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *configure))make;
 
 /**
  * 默认参数的基础上：
@@ -50,9 +53,13 @@
     - maskAlpha = 0.3;
  */
 + (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *configure))make;
 
 /** 裁剪图片 */
 @property (nonatomic, strong) UIImage *resizeImage;
+
+/** 裁剪的视频URL */
+@property (nonatomic, strong) NSURL *videoURL;
 
 /** 视图区域 */
 @property (nonatomic, assign) CGRect viewFrame;
@@ -108,6 +115,9 @@
 /** 拖拽时是否遮罩裁剪区域以外的区域 */
 @property (nonatomic) BOOL isBlurWhenDragging;
 
+/** 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
+@property (nonatomic) BOOL isShowGridlinesWhenIdle;
+
 /** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic) BOOL isShowGridlinesWhenDragging;
 
@@ -120,7 +130,6 @@
 /** 蒙版图片是否可以拖拽形变 */
 @property (nonatomic, assign) BOOL isArbitrarilyMask;
 
-@property (readonly) JPImageresizerConfigure *(^jp_resizeImage)(UIImage *resizeImage);
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
 @property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
@@ -139,6 +148,7 @@
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowMidDots)(BOOL isShowMidDots);
 @property (readonly) JPImageresizerConfigure *(^jp_isBlurWhenDragging)(BOOL isBlurWhenDragging);
+@property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenIdle)(BOOL isShowGridlinesWhenIdle);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);

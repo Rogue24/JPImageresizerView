@@ -27,16 +27,12 @@
     JPConfigureModel *model2 = [self new];
     model2.title = @"深色毛玻璃遮罩";
     model2.statusBarStyle = UIStatusBarStyleLightContent;
-    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure.jp_strokeColor([UIColor orangeColor]);
-    }];
+    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:nil];
     
     JPConfigureModel *model3 = [self new];
     model3.title = @"浅色毛玻璃遮罩";
     model3.statusBarStyle = UIStatusBarStyleDefault;
-    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure.jp_strokeColor([UIColor yellowColor]);
-    }];
+    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:nil];
     
     JPConfigureModel *model4 = [self new];
     model4.title = @"其他样式";
@@ -54,37 +50,21 @@
     JPConfigureModel *model5 = [self new];
     model5.title = @"自定义边框图片（拉伸模式）";
     model5.statusBarStyle = UIStatusBarStyleDefault;
-    
-    UIImage *stretchBorderImage = [UIImage imageNamed:@"real_line"];
-    // 裁剪掉上下多余的空白部分
-    CGFloat inset = 1.5 * stretchBorderImage.scale;
-    CGImageRef sbImageRef = stretchBorderImage.CGImage;
-    sbImageRef = CGImageCreateWithImageInRect(sbImageRef, CGRectMake(0, inset, CGImageGetWidth(sbImageRef), CGImageGetHeight(sbImageRef) - 2 * inset));
-    stretchBorderImage = [UIImage imageWithCGImage:sbImageRef scale:stretchBorderImage.scale orientation:stretchBorderImage.imageOrientation];
-    CGImageRelease(sbImageRef);
-    // 设定拉伸区域
-    stretchBorderImage = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
-    
     model5.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
-        .jp_borderImage(stretchBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-2, -2));
+        .jp_borderImage([JPViewController stretchBorderImage])
+        .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
     }];
     
     JPConfigureModel *model6 = [self new];
     model6.title = @"自定义边框图片（平铺模式）";
     model6.statusBarStyle = UIStatusBarStyleLightContent;
-    
-    UIImage *tileBorderImage = [UIImage imageNamed:@"dotted_line"];
-    // 设定平铺区域
-    tileBorderImage = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
-    
     model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_frameType(JPClassicFrameType)
-        .jp_borderImage(tileBorderImage)
-        .jp_borderImageRectInset(CGPointMake(-1.75, -1.75));
+        .jp_borderImage([JPViewController tileBorderImage])
+        .jp_borderImageRectInset([JPViewController tileBorderImageRectInset]);
     }];
     
     
@@ -105,7 +85,18 @@
         .jp_isArbitrarilyMask(YES);
     }];
     
-    return @[model1, model2, model3, model4, model5, model6, model7, model8];
+    NSString *path = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
+    NSURL *videoURL = [NSURL fileURLWithPath:path];
+    JPConfigureModel *model9 = [self new];
+    model9.title = @"裁剪本地视频";
+    model9.statusBarStyle = UIStatusBarStyleDefault;
+    model9.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_borderImage([JPViewController stretchBorderImage])
+        .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
+    }];
+    
+    return @[model1, model2, model3, model4, model5, model6, model7, model8, model9];
 }
 @end
 
@@ -162,7 +153,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
         JPConfigureModel *model = self.models[indexPath.row];
-        model.configure.resizeImage = self.randomResizeImage;
+        if (!model.configure.resizeImage && !model.configure.videoURL) model.configure.resizeImage = self.randomResizeImage;
         
         JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
         vc.statusBarStyle = model.statusBarStyle;
@@ -173,7 +164,7 @@
         cubeAnim.type = @"cube";
         cubeAnim.subtype = kCATransitionFromRight;
         cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        [self.view.window.layer addAnimation:cubeAnim forKey:@"cube"];
+        [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
         
         [self.navigationController pushViewController:vc animated:NO];
     } else {

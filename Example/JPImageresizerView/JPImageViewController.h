@@ -10,4 +10,5 @@
 
 @interface JPImageViewController : UIViewController
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSURL *videoURL;
 @end

@@ -7,9 +7,10 @@
 //
 
 #import "UIAlertController+JPImageresizer.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @interface JPObject : NSObject <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property (nonatomic, copy) void (^replaceImageHandler)(UIImage *image);
+@property (nonatomic, copy) void (^replaceHandler)(UIImage *image, NSURL *videoURL);
 @end
 
 static JPObject *obj_;
@@ -17,16 +18,19 @@ static JPObject *obj_;
 @implementation JPObject
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    UIImage *image = info[UIImagePickerControllerOriginalImage];
-    if (!image) {
-        if (@available(iOS 13.0, *)) {
-            NSURL *url = info[UIImagePickerControllerImageURL];
-            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+    UIImage *image;
+    NSURL *mediaURL = (NSURL *)info[UIImagePickerControllerMediaURL];
+    if (!mediaURL) {
+        image = info[UIImagePickerControllerOriginalImage];
+        if (!image) {
+            if (@available(iOS 13.0, *)) {
+                NSURL *url = info[UIImagePickerControllerImageURL];
+                image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+            }
         }
     }
-    
     [picker dismissViewControllerAnimated:YES completion:^{
-        if (image && self.replaceImageHandler) self.replaceImageHandler(image);
+        if ((image || mediaURL) && self.replaceHandler) self.replaceHandler(image, mediaURL);
         obj_ = nil;
     }];
 }
@@ -147,33 +151,39 @@ static JPObject *obj_;
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)replaceImage:(void(^)(UIImage *image))handler fromVC:(UIViewController *)fromVC {
++ (void)replace:(void(^)(UIImage *image, NSURL *videoURL))handler fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSInteger index = 1 + arc4random() % 5;
         NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
-        handler([UIImage imageNamed:girlImageName]);
+        handler([UIImage imageNamed:girlImageName], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Kobe.jpg"]);
+        handler([UIImage imageNamed:@"Kobe.jpg"], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Woman" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Woman.jpg"]);
+        handler([UIImage imageNamed:@"Woman.jpg"], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Beauty" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Beauty.jpg"]);
+        handler([UIImage imageNamed:@"Beauty.jpg"], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Flowers" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Flowers.jpg"]);
+        handler([UIImage imageNamed:@"Flowers.jpg"], nil);
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"咬人猫舞蹈节选" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSString *path = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
+        NSURL *videoURL = [NSURL fileURLWithPath:path];
+        handler(nil, videoURL);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         obj_ = [JPObject new];
-        obj_.replaceImageHandler = handler;
+        obj_.replaceHandler = handler;
         
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = obj_;
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        picker.mediaTypes = @[(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage];
+        picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
         [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];

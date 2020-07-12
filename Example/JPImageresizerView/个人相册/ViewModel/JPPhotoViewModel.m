@@ -25,6 +25,8 @@
     _bigPhotoSize = CGSizeMake(bigWidth, bigWidth / _jp_whScale);
     
     _originPhotoSize = CGSizeMake(asset.pixelWidth, asset.pixelHeight);
+    
+//    asset.duration;
 }
 
 - (void)setJp_itemFrame:(CGRect)jp_itemFrame {

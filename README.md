@@ -8,9 +8,9 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.5.3）
+## 简介（当前版本：1.6.0）
 
-一个专门裁剪图片的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片裁剪的需求。
+一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
 
 ![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -25,11 +25,12 @@
         8.自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
         9.自定义边框图片；
         10.可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
-        11.可自定义蒙版图片裁剪。
+        11.可自定义蒙版图片裁剪；
+        12.可裁剪本地视频整段画面或某一帧画面。
 
     正在努力着去实现的内容：
         1.Swift版本；
-        2.裁剪视频画面；
+        2.裁剪网络视频画面；
         3.更多新的边框和遮罩样式；
         4.更多的参数设定；
         5.实现苹果自带的裁剪功能中的自由拖拽旋转方向的效果。
@@ -44,6 +45,7 @@
 /**
  * 部分可配置参数注释：
     - resizeImage：裁剪的图片
+    - videoURL：裁剪的视频URL（本地）
     - blurEffect：毛玻璃样式
     - borderImage：边框图片
     - frameType & strokeColor：边框样式&颜色
@@ -65,6 +67,9 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_isClockwiseRotation(YES)
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
+
+// 如果裁剪的是视频，需要使用这个方法来传入视频路径：[JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
+// 裁剪视频或图片同时只能选择一个。
 
 // 2.创建JPImageresizerView对象
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
@@ -96,6 +101,100 @@ if (@available(iOS 11.0, *)) {
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
 ```
+
+#### 裁剪本地视频
+![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cropvideo.gif)
+```objc
+// 1.初始化时只需要在configure配置好videoURL（视频的URL）即可
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
+
+// 2.可动态切换图片或视频
+if (isCropPicture) {
+    self.imageresizerView.resizeImage = image; // 裁剪图片
+} else {
+    self.imageresizerView.videoURL = videoURL; // 裁剪视频
+}
+```
+PS：目前只针对本地视频，远程视频暂未适配。
+##### 裁剪视频当前/指定帧的画面
+```objc
+// 1.原图尺寸裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
+[self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
+    // 裁剪完成，resizeImage为裁剪后的图片
+    // 注意循环引用
+}];
+
+// 2.【自定义压缩比例】裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
+// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+
+// 3.【自定义压缩比例]裁剪视频[指定帧]画面（裁剪过程在子线程，回调会切回到主线程）
+// second：裁剪第几秒的画面
+// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+- (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+```
+
+##### 裁剪整段视频
+```objc
+// 裁剪整段视频画面（裁剪过程在子线程，进度回调和完成回调会切回到主线程）
+// cachePath：缓存路径，如果为 nil，则默认路径为 Caches 文件夹下，视频名为当前时间戳，格式为mp4（.../Library/Caches/1594556710.mp4）
+// presetName：系统导出视频的质量，为 AVAssetExportPresetLowQuality、AVAssetExportPresetMediumQuality、AVAssetExportPresetHighestQuality等
+[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+        
+        // 错误回调
+        //【注意：该回调是在子线程下执行】
+        // 注意循环引用
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+        
+            // reason：错误原因
+            switch (reason) {
+            
+                case JPCVFReason_NotAssets:
+                
+                    // 视频资源为空
+                    break;
+                    
+                case JPCVFReason_VideoAlreadyDamage:
+                
+                    // 视频文件已损坏
+                    break;
+                    
+                case JPCVFReason_CachePathAlreadyExists:
+                
+                    // 缓存路径已存在其他文件，返回 YES 则会自动删除该路径的文件并继续后面的裁剪操作。
+                    break;
+                    
+                case JPCVFReason_ExportFailed:
+                
+                    // 视频导出失败
+                    break;
+                    
+                case JPCVFReason_ExportCancelled:
+                
+                    // 视频裁剪取消
+                    break;
+            }
+        });
+        
+        return reason == JPCVFReason_CachePathAlreadyExists;
+        
+    } progressBlock:^(float progress) {
+        
+        // 监听进度（该回调是在主线程下）
+        // progress：0~1
+        // 注意循环引用
+        
+    } completeBlock:^(NSURL *cacheURL) {
+        
+        // 裁剪完成（该回调是在主线程下），cacheURL为缓存URL
+        // 注意循环引用
+        
+    }];
+}
+```
+PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。
+PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了16的除余修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
 
 #### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
@@ -308,7 +407,8 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.5.0 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
+1.6.0 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性可以跟isShowGridlinesWhenDragging属性自定义显示时机。
+1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  
 1.2.1~1.3.6 | 1. 新增圆切样式；<br>2. 中间的点/块可隐藏；<br>3. 可动态切换图片、设置边框颜色和背景颜色，可设置是否带有动画效果；<br>4. 毛玻璃效果可设置系统现有的所有效果；<br>5. 适配深色/浅色模式的切换（前提是颜色使用的是系统的动态颜色）；<br>6. 优化逻辑。  

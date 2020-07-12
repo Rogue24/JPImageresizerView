@@ -95,7 +95,7 @@
     CGFloat faceScale = self.faceView.faceScale;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIGraphicsBeginImageContextWithOptions(rect.size, NO, [UIScreen mainScreen].scale);
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, JPScreenScale);
         [personImage drawInRect:rect];
         
         CGImageRef faceImageRef = [self __imageDownMirrored:faceImage].CGImage;

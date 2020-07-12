@@ -11,8 +11,61 @@
 
 + (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [[self alloc] init];
-    configure
-    .jp_resizeImage(resizeImage)
+    configure.resizeImage = resizeImage;
+    [configure __defaultSetup];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [[self alloc] init];
+    configure.videoURL = videoURL;
+    [configure __defaultSetup];
+    !make ? : make(configure);
+    return configure;
+}
+
++ (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
+        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
+        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
+        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
+        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
+
++ (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
+        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
+        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
+
+- (void)__defaultSetup {
+    self
     .jp_viewFrame([UIScreen mainScreen].bounds)
     .jp_blurEffect(nil)
     .jp_frameType(JPConciseFrameType)
@@ -30,35 +83,21 @@
     .jp_isRoundResize(NO)
     .jp_isShowMidDots(YES)
     .jp_isBlurWhenDragging(NO)
-    .jp_isShowGridlinesWhenDragging(NO)
+    .jp_isShowGridlinesWhenIdle(NO)
+    .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
     .jp_maskImage(nil)
     .jp_isArbitrarilyMask(NO);
-    !make ? : make(configure);
-    return configure;
 }
 
-+ (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
-        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]).jp_bgColor([UIColor whiteColor]).jp_maskAlpha(0.25);
-    }];
-    !make ? : make(configure);
-    return configure;
+- (void)setResizeImage:(UIImage *)resizeImage {
+    _resizeImage = resizeImage;
+    if (resizeImage) _videoURL = nil;
 }
 
-+ (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
-        configure.jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]).jp_bgColor([UIColor blackColor]).jp_maskAlpha(0.25);
-    }];
-    !make ? : make(configure);
-    return configure;
-}
-
-- (JPImageresizerConfigure *(^)(UIImage *))jp_resizeImage {
-    return ^(UIImage *resizeImage) {
-        self.resizeImage = resizeImage;
-        return self;
-    };
+- (void)setVideoURL:(NSURL *)videoURL {
+    _videoURL = videoURL;
+    if (videoURL) _resizeImage = nil;
 }
 
 - (JPImageresizerConfigure *(^)(CGRect))jp_viewFrame {
@@ -183,6 +222,13 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_isBlurWhenDragging {
     return ^(BOOL isBlurWhenDragging) {
         self.isBlurWhenDragging = isBlurWhenDragging;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isShowGridlinesWhenIdle {
+    return ^(BOOL isShowGridlinesWhenIdle) {
+        self.isShowGridlinesWhenIdle = isShowGridlinesWhenIdle;
         return self;
     };
 }

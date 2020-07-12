@@ -15,11 +15,15 @@
 /**
  * 层级结构
     - JPImageresizerView（self）
-        - scrollView
-            - imageView（裁剪的imageView）
-        - frameView（绘制裁剪边框的view）
+        - containerView（容器view）
+            - scrollView
+                - imageView（裁剪的imageView）
+                    - playerView（裁剪的视频画面）
+            - frameView（绘制裁剪边框的view）
+        - slider（视频进度条）
  * scrollView与frameView的frame一致
  */
+@property (nonatomic, strong, readonly) UIView *containerView;
 @property (nonatomic, strong, readonly) UIScrollView *scrollView;
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) JPImageresizerFrameView *frameView;
@@ -38,6 +42,7 @@
  @method
  @brief 工厂方法
  @param resizeImage --- 裁剪图片
+ @param videoURL --- 裁剪的视频URL
  @param frame --- 相对父视图的区域
  @param frameType --- 边框样式
  @param animationCurve --- 动画曲线
@@ -55,6 +60,7 @@
  @param isRoundResize --- 是否初始化圆切（若为YES则resizeWHScale为1）
  @param isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
  @param isBlurWhenDragging --- 拖拽时是否遮罩裁剪区域以外的区域
+ @param isShowGridlinesWhenIdle --- 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
  @param isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
  @param gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
  @param maskImage --- 蒙版图片
@@ -64,6 +70,7 @@
  @discussion 自行配置参数
  */
 - (instancetype)initWithResizeImage:(UIImage *)resizeImage
+                           videoURL:(NSURL *)videoURL
                               frame:(CGRect)frame
                           frameType:(JPImageresizerFrameType)frameType
                      animationCurve:(JPAnimationCurve)animationCurve
@@ -81,6 +88,7 @@
                       isRoundResize:(BOOL)isRoundResize
                       isShowMidDots:(BOOL)isShowMidDots
                  isBlurWhenDragging:(BOOL)isBlurWhenDragging
+            isShowGridlinesWhenIdle:(BOOL)isShowGridlinesWhenIdle
         isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
                           gridCount:(NSUInteger)gridCount
                           maskImage:(UIImage *)maskImage
@@ -102,6 +110,12 @@
  * 设置该值会调用 -setResizeImage: animated: transition: 方法（isAnimated = YES，transition = UIViewAnimationTransitionCurlUp）
  */
 @property (nonatomic) UIImage *resizeImage;
+
+/**
+ * 裁剪的视频URL
+ * 设置该值会调用 -setVideoURL: animated: transition: 方法（isAnimated = YES，transition = UIViewAnimationTransitionNone，淡入淡出的效果）
+ */
+@property (nonatomic) NSURL *videoURL;
 
 /**
  * 模糊效果
@@ -181,6 +195,9 @@
 /** 拖拽时是否遮罩裁剪区域以外的区域 */
 @property (nonatomic) BOOL isBlurWhenDragging;
 
+/** 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
+@property (nonatomic) BOOL isShowGridlinesWhenIdle;
+
 /** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic) BOOL isShowGridlinesWhenDragging;
 
@@ -202,6 +219,16 @@
  @discussion 更换裁剪的图片，裁剪宽高比会重置
  */
 - (void)setResizeImage:(UIImage *)resizeImage animated:(BOOL)isAnimated transition:(UIViewAnimationTransition)transition;
+
+/*!
+ @method
+ @brief 更换裁剪的视频模型
+ @param videoURL --- 裁剪的视频URL
+ @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationTransitionNone则由淡入淡出效果代替）
+ @param isAnimated --- 是否带动画效果
+ @discussion 更换裁剪的视频，裁剪宽高比会重置
+ */
+- (void)setVideoURL:(NSURL *)videoURL animated:(BOOL)isAnimated transition:(UIViewAnimationTransition)transition;
 
 /*!
  @method
@@ -340,23 +367,6 @@
 
 /*!
  @method
- @brief 原图尺寸裁剪
- @param complete --- 裁剪完成的回调
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
- */
-- (void)originImageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
-
-/*!
- @method
- @brief 压缩尺寸裁剪
- @param complete --- 裁剪完成的回调
- @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
- */
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
-
-/*!
- @method
  @brief 修改视图整体Frame
  @param frame --- 刷新的Frame（例如横竖屏切换，传入self.view.bounds即可）
  @param contentInsets --- 裁剪区域与主视图的内边距
@@ -365,4 +375,80 @@
  */
 - (void)updateFrame:(CGRect)frame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
+/*!
+ @method
+ @brief 原图尺寸裁剪图片
+ @param complete --- 裁剪完成的回调
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)originImageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
+
+/*!
+ @method
+ @brief 自定义压缩比例裁剪图片
+ @param complete --- 裁剪完成的回调
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+
+/*!
+ @method
+ @brief 原图尺寸裁剪视频当前帧画面
+ @param complete --- 裁剪完成的回调
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete;
+
+/*!
+ @method
+ @brief 自定义压缩比例裁剪视频当前帧画面
+ @param complete --- 裁剪完成的回调
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete
+                            compressScale:(CGFloat)compressScale;
+
+/*!
+ @method
+ @brief 自定义压缩比例裁剪视频指定帧画面
+ @param second --- 第几秒画面
+ @param complete --- 裁剪完成的回调
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoOneFrameWithSecond:(float)second
+                           complete:(void(^)(UIImage *resizeImage))complete
+                      compressScale:(CGFloat)compressScale;
+
+/*!
+ @method
+ @brief 裁剪整段视频
+ @param cachePath --- 缓存路径，如果为nil则默认为Caches文件夹下，视频名为当前时间戳，格式为mp4
+ @param errorBlock --- 错误回调，注意：该回调是在子线程下执行
+ @param progressBlock --- 进度回调
+ @param completeBlock --- 裁剪完成的回调
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
+ */
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
+                 progressBlock:(void(^)(float progress))progressBlock
+                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
+
+/*!
+ @method
+ @brief 裁剪整段视频
+ @param cachePath --- 缓存路径，如果为nil则默认为Caches文件夹下，视频名为当前时间戳，格式为mp4
+ @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+ @param errorBlock --- 错误回调，注意：该回调是在子线程下执行
+ @param progressBlock --- 进度回调
+ @param completeBlock --- 裁剪完成的回调
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                    presetName:(NSString *)presetName
+                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
+                 progressBlock:(void(^)(float progress))progressBlock
+                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
 @end

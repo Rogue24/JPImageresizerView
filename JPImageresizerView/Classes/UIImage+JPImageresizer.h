@@ -10,13 +10,7 @@
 
 @interface UIImage (JPImageresizer)
 - (UIImage *)jpir_destinationOutImage;
-+ (UIImage *)jpir_resultImageWithImage:(UIImage *)originImage
-                             cropFrame:(CGRect)cropFrame
-                          relativeSize:(CGSize)relativeSize
-                           isVerMirror:(BOOL)isVerMirror
-                           isHorMirror:(BOOL)isHorMirror
-                     rotateOrientation:(UIImageOrientation)orientation
-                           isRoundClip:(BOOL)isRoundClip
-                         compressScale:(CGFloat)compressScale
-                             maskImage:(UIImage *)maskImage;
+- (UIImage *)jpir_fixOrientation;
+- (UIImage *)jpir_rotate:(UIImageOrientation)orientation isRoundClip:(BOOL)isRoundClip;
+- (UIImage *)jpir_resizeImageWithScale:(CGFloat)scale maskImage:(UIImage *)maskImage;
 @end

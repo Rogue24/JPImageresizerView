@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import "JPImageresizerTypedef.h"
+@class JPImageresizerSlider;
 
 @interface JPImageresizerFrameView : UIView
 
@@ -28,6 +30,7 @@
                 isRoundResize:(BOOL)isRoundResize
                 isShowMidDots:(BOOL)isShowMidDots
            isBlurWhenDragging:(BOOL)isBlurWhenDragging
+      isShowGridlinesWhenIdle:(BOOL)isShowGridlinesWhenIdle
   isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
                     gridCount:(NSUInteger)gridCount
                     maskImage:(UIImage *)maskImage
@@ -83,9 +86,11 @@
 
 @property (nonatomic, assign) BOOL isShowMidDots;
 @property (nonatomic, assign) BOOL isBlurWhenDragging;
+@property (nonatomic, assign) BOOL isShowGridlinesWhenIdle;
 @property (nonatomic, assign) BOOL isShowGridlinesWhenDragging;
 @property (nonatomic, assign) NSUInteger gridCount;
 
+@property (nonatomic, copy) CGFloat (^contentWhScale)(void);
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
 
@@ -109,8 +114,6 @@
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone:(BOOL)isUpdateMaskImage;
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
-
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
 @property (nonatomic, strong) UIImage *maskImage;
@@ -119,4 +122,21 @@
 @property (nonatomic, assign) BOOL isArbitrarilyMask;
 - (void)setIsArbitrarilyMask:(BOOL)isArbitrarilyMask animated:(BOOL)isAnimated;
 
+- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+
+@property (nonatomic, weak) UIView *playerView;
+@property (nonatomic, weak) JPImageresizerSlider *slider;
+- (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
+                              size:(CGSize)size
+                              time:(CMTime)time
+                          complete:(void(^)(UIImage *resizeImage))complete
+                     compressScale:(CGFloat)compressScale;
+- (void)cropVideoWithAsset:(AVURLAsset *)asset
+                 timeRange:(CMTimeRange)timeRange
+             frameDuration:(CMTime)frameDuration
+                 cachePath:(NSString *)cachePath
+                presetName:(NSString *)presetName
+                errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
+             progressBlock:(void(^)(float progress))progressBlock
+             completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
 @end

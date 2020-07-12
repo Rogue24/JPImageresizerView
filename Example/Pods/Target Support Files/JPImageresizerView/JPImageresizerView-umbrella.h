@@ -14,7 +14,9 @@
 #import "JPImageresizerBlurView.h"
 #import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
+#import "JPImageresizerSlider.h"
 #import "JPImageresizerTypedef.h"
+#import "JPImageresizerVideoObject.h"
 #import "JPImageresizerView.h"
 #import "UIImage+JPImageresizer.h"
 

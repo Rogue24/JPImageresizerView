@@ -10,6 +10,11 @@
 #import "JPImageresizerView.h"
 
 @interface JPViewController : UIViewController
++ (UIImage *)stretchBorderImage;
++ (CGPoint)stretchBorderImageRectInset;
++ (UIImage *)tileBorderImage;
++ (CGPoint)tileBorderImageRectInset;
+
 @property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, strong) JPImageresizerConfigure *configure;
 @property (nonatomic, assign) BOOL isBecomeDanielWu;
