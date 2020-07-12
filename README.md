@@ -8,7 +8,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.6.0）
+## 简介（当前版本：1.6.1）
 
 一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
 
@@ -68,7 +68,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
-// 如果裁剪的是视频，需要使用这个方法来传入视频路径：[JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
+// 如果裁剪的是视频，需要使用这个方法来传入视频路径：[JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... }];
 // 裁剪视频或图片同时只能选择一个。
 
 // 2.创建JPImageresizerView对象
@@ -116,6 +116,7 @@ if (isCropPicture) {
 }
 ```
 **PS：目前只针对本地视频，远程视频暂未适配。**
+
 #### 裁剪视频当前/指定帧的画面
 ```objc
 // 1.原图尺寸裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
@@ -160,7 +161,7 @@ if (isCropPicture) {
                 // 视频导出失败
                 break;
             case JPCVFReason_ExportCancelled:
-                // 视频裁剪取消
+                // 视频导出取消
                 break;
         }
     });
@@ -182,7 +183,7 @@ if (isCropPicture) {
 ```
 **PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
 
-**PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了16的除余修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
+**PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
 
 ### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
@@ -395,7 +396,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.6.0 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性可以跟isShowGridlinesWhenDragging属性自定义显示时机。
+1.6.0 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复若干bug。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  

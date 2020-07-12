@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
  * JPCVFReason_VideoAlreadyDamage：视频文件已损坏
  * JPCVFReason_CachePathAlreadyExists：缓存路径已存在其他文件
  * JPCVFReason_ExportFailed：视频导出失败
- * JPCVFReason_ExportCancelled：视频裁剪取消
+ * JPCVFReason_ExportCancelled：视频导出取消
  */
 typedef NS_ENUM(NSUInteger, JPCropVideoFailureReason) {
     JPCVFReason_NotAssets,

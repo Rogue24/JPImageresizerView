@@ -7,10 +7,11 @@
 [Juejin](https://juejin.im/post/5ecd0cddf265da7711699e0d)
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
+*本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.5.3)
+## Brief introduction (Current version: 1.6.1)
 
-A special wheel for cutting pictures is simple and easy to use, with rich functions (parameter setting of high freedom, support for rotation and mirror turning, multiple style selection...), which can meet the needs of most pictures cutting.
+A wheel specially designed for cutting pictures and videos is easy to use and has rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, multiple style selection, etc.), which can meet the needs of most pictures and videos cutting.
 
 ![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
@@ -25,11 +26,12 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
         8. Custom gaussian blur style, border color, background color, mask opacity;
         9. Custom border image;
         10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
-        11. Can customize the mask image clipping.
+        11. Can customize the mask image clipping;
+        12. It can cut the whole picture or a frame of local video.
 
     What I'm trying to achieve:
         1. Swift version;
-        2. Clip video;
+        2. Crop remote video;
         3. More new border and mask styles;
         4. More parameter setting;
         5. To achieve the effect of free dragging rotation direction.
@@ -38,12 +40,13 @@ A special wheel for cutting pictures is simple and easy to use, with rich functi
 
 ## How to use
 
-#### Initialization
+### Initialization
 ```objc
 // 1. Configure initial parameters (see JPImageresizerView.h for more details)
 /**
  * Notes to some configurable parameters:
     - resizeImage: clipping picture
+    - videoURL: Cropped video URL (local)
     - blurEffect: gaussian blur style
     - borderImage: custom border image
     - frameType & strokeColor: border style & color
@@ -65,6 +68,9 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_isClockwiseRotation(YES)
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
+
+// If you are clipping a video, you need to use this method to pass in the video path: [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... }];
+// Only one clip video or picture can be selected at the same time.
 
 // 2. Create JPImageresizerView instance object
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
@@ -97,7 +103,90 @@ if (@available(iOS 11.0, *)) {
 }
 ```
 
-#### Customize the mask image clipping
+### Crop local video
+![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cropvideo.gif)
+```objc
+// 1.During initialization, you only need to configure the video URL (video URL) in configure
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
+
+// 2.Dynamic switching of pictures or videos (only one video or picture can be selected at the same time)
+if (isCropPicture) {
+    self.imageresizerView.resizeImage = image; // Crop image
+} else {
+    self.imageresizerView.videoURL = videoURL; // Crop video
+}
+```
+**PS: currently only for local video, remote video is not suitable.**
+
+#### Crop the current / specified frame of the video
+```objc
+// 1.The size of the original image cuts the current frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
+[self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
+    // After cropping, the resizeimage is the cropped image
+    // Pay attention to circular references
+}];
+
+// 2.Customize the compressScale to crop the current frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
+// compressScale: If it is greater than or equal to 1, it will be trimmed according to the size of the original image; if it is less than or equal to 0, nil will be returned (for example: compressScale = 0.5, 1000 x 500 -- > 500 x 250)
+- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+
+// 3.Customize the compressScale to crop the specified frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
+// second: What second is the cropping
+// compressScale: If it is greater than or equal to 1, it will be trimmed according to the size of the original image; if it is less than or equal to 0, nil will be returned (for example: compressScale = 0.5, 1000 x 500 -- > 500 x 250)
+- (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+```
+
+#### Crop the entire video
+```objc
+// Crop the entire video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
+// cachePath: If it is nil, the default path is under the caches folder, the video name is the current timestamp, and the format is MP4 (... / library / caches / 1594556710. Mp4)
+// presetName：The quality of exported video is AVAssetExportPresetLowQuality, AVAssetExportPresetMediumQuality, AVAssetExportPresetHighestQuality, etc
+[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+        
+    // Error callback
+    // Note: the callback is executed under the child thread
+    // Pay attention to circular references
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // reason: Cause of error
+        switch (reason) {
+            case JPCVFReason_NotAssets:
+                // Video resource is empty
+                break;
+            case JPCVFReason_VideoAlreadyDamage:
+                // The video file is corrupted
+                break;
+            case JPCVFReason_CachePathAlreadyExists:
+                // There are other files in the cache path. If yes is returned, the files in this path will be automatically deleted and the subsequent cropping operation will continue.
+                break;
+            case JPCVFReason_ExportFailed:
+                // Video export failed
+                break;
+            case JPCVFReason_ExportCancelled:
+                // Video export cancelled
+                break;
+        }
+    });
+    
+    return reason == JPCVFReason_CachePathAlreadyExists;
+        
+} progressBlock:^(float progress) {
+        
+    // Monitor progress (the callback is under the main thread)
+    // progress: 0~1
+    // Pay attention to circular references
+        
+} completeBlock:^(NSURL *cacheURL) {
+        
+    // After cropping (the callback is under the main thread), the cacheURL is the cache URL
+    // Pay attention to circular references
+    
+}];
+```
+**PS1: the function of cropping the whole video picture, circular cutting and masking can't be used. Cutting a frame of picture is OK. At present, it is only effective for a single picture.**
+
+**PS2: since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method, so the width to height ratio of the exported video may be slightly different from the specified width height ratio.**
+
+### Customize the mask image clipping
 ![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
 ```objc
 // Set mask picture (currently only PNG picture is supported)
@@ -112,7 +201,7 @@ self.imageresizerView.isArbitrarilyMask = YES;
 ![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
 PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
 
-#### Horizontal and vertical screen switching
+### Horizontal and vertical screen switching
 ![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
 ```objc
 // This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
@@ -123,7 +212,7 @@ PS: If the mask image is used, the PNG image is finally cropped out, so the crop
 [self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
 ```
 
-#### Change border style
+### Change border style
 ![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
 ![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
 ```objc
@@ -132,7 +221,7 @@ PS: If the mask image is used, the PNG image is finally cropped out, so the crop
 self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
-#### Custom Border Image
+### Custom Border Image
 ![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
 ![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
 ```objc
@@ -146,7 +235,7 @@ self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
 self.imageresizerView.borderImage = tileBorderImage;
 ```
 
-#### Switching resizeWHScale
+### Switching resizeWHScale
 ![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
 ```objc
 // 1.Custom parameter switching
@@ -163,7 +252,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 [self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
 ```
 
-#### Round Resize
+### Round Resize
 ![round_resize](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
 ```objc
 // Set circle cut
@@ -175,7 +264,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 self.imageresizerView.resizeWHScale = 0.0;
 ```
 
-#### Custom gaussian blur style, border color, background color, mask opacity
+### Custom gaussian blur style, border color, background color, mask opacity
 ```objc
 // Set gaussian blur style (default animated is YES)
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -194,7 +283,7 @@ self.imageresizerView.maskAlpha = 0.5; // Only blurEffect = nil will take effect
 [self.imageresizerView setupStrokeColor:strokeColor blurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark] bgColor:UIColor.blackColor maskAlpha: 0.5 animated:YES];
 ```
 
-#### Mirror reversal
+### Mirror reversal
 ![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
 ```objc
 // Vertical Mirror, YES -> Rotates 180 degrees along Y axis, NO -> Reduction
@@ -206,7 +295,7 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 [self.imageresizerView setHorizontalMirror:isHorizontalMirror animated:YES];
 ```
 
-#### Rotate
+### Rotate
 ```objc
 // Default counterclockwise rotation, rotation angle is 90 degrees
 [self.imageresizerView rotation];
@@ -215,7 +304,7 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 self.imageresizerView.isClockwiseRotation = YES;
 ```
 
-#### Reset
+### Reset
 ```objc
 // Reset to the initial state, vertical direction, can be reset to different resizeWHScale
 
@@ -260,7 +349,7 @@ CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // Gets t
 [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // Specify mask image
 ```
 
-#### Preview
+### Preview
 ```objc
 // Preview mode: Hide borders, close drag-and-drop operations, for previewing clipped areas
 
@@ -271,7 +360,7 @@ self.imageresizerView.isPreview = YES;
 [self.imageresizerView setIsPreview:YES animated:NO]
 ```
 
-#### Tailoring
+### Tailoring
 ```objc
 // The clipping process is executed in the sub-thread, and the callback is cut back to the main thread for execution.
 // If it is a HD image, HUD prompt can be added before calling.
@@ -291,7 +380,7 @@ self.imageresizerView.isPreview = YES;
 }];
 ```
 
-#### Other
+### Other
 ```objc
 // Lock the clipping area. After locking, the clipping area cannot be dragged. NO unlocks the clipping area.
 self.imageresizerView.isLockResizeFrame = YES;

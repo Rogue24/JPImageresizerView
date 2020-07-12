@@ -737,8 +737,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGPoint originPoint = frame.origin;
     CGPoint midPoint = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     CGPoint maxPoint = CGPointMake(CGRectGetMaxX(frame), CGRectGetMaxY(frame));
-    CGFloat arrLength = _arrLength;
     CGFloat halfArrLineW = _halfArrLineW;
+    CGFloat arrLength = _arrLength;
+    CGFloat minLength = MIN(midPoint.x - originPoint.x, midPoint.y - originPoint.y);
+    if (arrLength > minLength) arrLength = minLength;
     CGPoint point;
     CGPoint startPoint;
     CGPoint endPoint;
@@ -790,6 +792,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     if (_isShowMidDots) {
         arrLength = _midArrLength;
+        if (arrLength > minLength) arrLength = minLength;
         
         point = CGPointMake(originPoint.x - halfArrLineW, midPoint.y);
         startPoint = CGPointMake(point.x, point.y - arrLength);
