@@ -414,7 +414,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑。
+1.6.0~1.6.2 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  
