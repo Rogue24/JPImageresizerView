@@ -363,7 +363,8 @@
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
  @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale
  */
-- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale
+                    isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 /*!
  @method
@@ -373,82 +374,87 @@
  @param duration --- 刷新时长（大于0即带有动画效果）
  @discussion 可用在【横竖屏的切换】
  */
-- (void)updateFrame:(CGRect)frame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
+- (void)updateFrame:(CGRect)frame
+      contentInsets:(UIEdgeInsets)contentInsets
+           duration:(NSTimeInterval)duration;
 
 /*!
  @method
  @brief 原图尺寸裁剪图片
- @param complete --- 裁剪完成的回调
+ @param completeBlock --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)originImageresizerWithComplete:(void(^)(UIImage *resizeImage))complete;
+- (void)cropPictureWithCompleteBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 自定义压缩比例裁剪图片
- @param complete --- 裁剪完成的回调
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @param completeBlock --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropPictureWithCompressScale:(CGFloat)compressScale
+                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 原图尺寸裁剪视频当前帧画面
- @param complete --- 裁剪完成的回调
+ @param completeBlock --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete;
+- (void)cropVideoCurrentFrameWithCompleteBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 自定义压缩比例裁剪视频当前帧画面
- @param complete --- 裁剪完成的回调
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @param completeBlock --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete
-                            compressScale:(CGFloat)compressScale;
+- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
+                                 completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 自定义压缩比例裁剪视频指定帧画面
  @param second --- 第几秒画面
- @param complete --- 裁剪完成的回调
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @param completeBlock --- 裁剪完成的回调
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoOneFrameWithSecond:(float)second
-                           complete:(void(^)(UIImage *resizeImage))complete
-                      compressScale:(CGFloat)compressScale;
+                      compressScale:(CGFloat)compressScale
+                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 裁剪整段视频
  @param cachePath --- 缓存路径，如果为nil则默认为Caches文件夹下，视频名为当前时间戳，格式为mp4
- @param errorBlock --- 错误回调，注意：该回调是在子线程下执行
  @param progressBlock --- 进度回调
+ @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调
+ @return 取消视频导出的block，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
  */
-- (void)cropVideoWithCachePath:(NSString *)cachePath
-                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-                 progressBlock:(void(^)(float progress))progressBlock
-                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
+- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
+                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 
 /*!
  @method
  @brief 裁剪整段视频
  @param cachePath --- 缓存路径，如果为nil则默认为Caches文件夹下，视频名为当前时间戳，格式为mp4
  @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
- @param errorBlock --- 错误回调，注意：该回调是在子线程下执行
  @param progressBlock --- 进度回调
+ @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调
+ @return 取消视频导出的block，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropVideoWithCachePath:(NSString *)cachePath
-                    presetName:(NSString *)presetName
-                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-                 progressBlock:(void(^)(float progress))progressBlock
-                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
+- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
+                                        presetName:(NSString *)presetName
+                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 @end

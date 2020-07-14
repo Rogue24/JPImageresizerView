@@ -890,41 +890,41 @@
     [self.frameView superViewUpdateFrame:frame contentInsets:contentInsets duration:duration];
 }
 
-- (void)originImageresizerWithComplete:(void (^)(UIImage *))complete {
-    [self imageresizerWithComplete:complete compressScale:1.0];
+- (void)cropPictureWithCompleteBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self cropPictureWithCompressScale:1.0 completeBlock:completeBlock];
 }
 
-- (void)imageresizerWithComplete:(void (^)(UIImage *))complete compressScale:(CGFloat)compressScale {
+- (void)cropPictureWithCompressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !complete ? : complete(nil);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !complete ? : complete(nil);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
-    [self.frameView imageresizerWithComplete:complete compressScale:compressScale];
+    [self.frameView cropPictureWithCompressScale:compressScale completeBlock:completeBlock];
 }
 
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete {
-    [self cropVideoCurrentFrameWithComplete:complete compressScale:1.0];
+- (void)cropVideoCurrentFrameWithCompleteBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self cropVideoCurrentFrameWithCompressScale:1.0 completeBlock:completeBlock];
 }
 
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale {
-    [self cropVideoOneFrameWithSecond:self.slider.second complete:complete compressScale:compressScale];
+- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self cropVideoOneFrameWithSecond:self.slider.second compressScale:compressScale completeBlock:completeBlock];
 }
 
-- (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale {
+- (void)cropVideoOneFrameWithSecond:(float)second compressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !complete ? : complete(nil);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !complete ? : complete(nil);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (second < 0) {
@@ -933,35 +933,43 @@
         second = self.slider.seconds;
     }
     JPImageresizerVideoObject *videoObj = _videoObj;
-    [self.frameView cropVideoOneFrameWithAsset:videoObj.asset size:videoObj.videoSize time:CMTimeMakeWithSeconds(second, videoObj.timescale) complete:complete compressScale:compressScale];
+    [self.frameView cropVideoOneFrameWithAsset:videoObj.asset
+                                          time:CMTimeMakeWithSeconds(second, videoObj.timescale)
+                                   maximumSize:videoObj.videoSize
+                                 compressScale:compressScale
+                                 completeBlock:completeBlock];
 }
 
-- (void)cropVideoWithCachePath:(NSString *)cachePath
-                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-                 progressBlock:(void(^)(float progress))progressBlock
-                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock {
-    [self cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:errorBlock progressBlock:progressBlock completeBlock:completeBlock];
+- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
+                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+    return [self cropVideoWithCachePath:cachePath
+                             presetName:AVAssetExportPresetHighestQuality
+                          progressBlock:progressBlock
+                             errorBlock:errorBlock
+                          completeBlock:completeBlock];
 }
 
-- (void)cropVideoWithCachePath:(NSString *)cachePath
-                    presetName:(NSString *)presetName
-                    errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-                 progressBlock:(void(^)(float progress))progressBlock
-                 completeBlock:(void(^)(NSURL *cacheURL))completeBlock {
+- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
+                                        presetName:(NSString *)presetName
+                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !completeBlock ? : completeBlock(nil);
-        return;
+        return nil;
     }
     JPImageresizerVideoObject *videoObj = _videoObj;
-    [self.frameView cropVideoWithAsset:videoObj.asset
-                             timeRange:videoObj.timeRange
-                         frameDuration:videoObj.frameDuration
-                             cachePath:cachePath
-                            presetName:presetName
-                            errorBlock:errorBlock
-                         progressBlock:progressBlock
-                         completeBlock:completeBlock];
+    return [self.frameView cropVideoWithAsset:videoObj.asset
+                                    timeRange:videoObj.timeRange
+                                frameDuration:videoObj.frameDuration
+                                    cachePath:cachePath
+                                   presetName:presetName
+                                progressBlock:progressBlock
+                                   errorBlock:errorBlock
+                                completeBlock:completeBlock];
 }
 
 #pragma mark - <UIScrollViewDelegate>

@@ -122,21 +122,22 @@
 @property (nonatomic, assign) BOOL isArbitrarilyMask;
 - (void)setIsArbitrarilyMask:(BOOL)isArbitrarilyMask animated:(BOOL)isAnimated;
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropPictureWithCompressScale:(CGFloat)compressScale
+                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;
 - (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
-                              size:(CGSize)size
                               time:(CMTime)time
-                          complete:(void(^)(UIImage *resizeImage))complete
-                     compressScale:(CGFloat)compressScale;
-- (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
-                 cachePath:(NSString *)cachePath
-                presetName:(NSString *)presetName
-                errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-             progressBlock:(void(^)(float progress))progressBlock
-             completeBlock:(void(^)(NSURL *cacheURL))completeBlock;
+                       maximumSize:(CGSize)maximumSize
+                     compressScale:(CGFloat)compressScale
+                     completeBlock:(JPCropPictureDoneBlock)completeBlock;
+- (JPVideoExportCancelBlock)cropVideoWithAsset:(AVURLAsset *)asset
+                                     timeRange:(CMTimeRange)timeRange
+                                 frameDuration:(CMTime)frameDuration
+                                     cachePath:(NSString *)cachePath
+                                    presetName:(NSString *)presetName
+                                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 @end

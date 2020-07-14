@@ -15,10 +15,10 @@
 #import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
 #import "JPImageresizerSlider.h"
+#import "JPImageresizerTool.h"
 #import "JPImageresizerTypedef.h"
 #import "JPImageresizerVideoObject.h"
 #import "JPImageresizerView.h"
-#import "UIImage+JPImageresizer.h"
 
 FOUNDATION_EXPORT double JPImageresizerViewVersionNumber;
 FOUNDATION_EXPORT const unsigned char JPImageresizerViewVersionString[];

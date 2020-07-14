@@ -37,6 +37,9 @@
 
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *portraitConstraints;
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
+
+@property (weak, nonatomic) IBOutlet UIView *exportCancelView;
+@property (nonatomic, copy) JPVideoExportCancelBlock exportCancelBlock;
 @end
 
 @implementation JPViewController
@@ -93,7 +96,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"viewController is dead");
+    JPLog(@"viewController is dead");
     JPRemoveNotification(self);
 }
 
@@ -283,7 +286,7 @@ static UIViewController *tmpVC_;
     }
     
     CATransition *cubeAnim = [CATransition animation];
-    cubeAnim.duration = 0.5;
+    cubeAnim.duration = 0.45;
     cubeAnim.type = @"cube";
     cubeAnim.subtype = kCATransitionFromLeft;
     cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -295,7 +298,7 @@ static UIViewController *tmpVC_;
     } else {
         [self.navigationController popViewControllerAnimated:NO];
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.45 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         tmpVC_ = nil;
     });
 }
@@ -479,12 +482,12 @@ static UIViewController *tmpVC_;
     if (self.imageresizerView.videoURL) {
         UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [JPProgressHUD show];
             __weak typeof(self) wSelf = self;
-            [self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
+            [JPProgressHUD show];
+            [self.imageresizerView cropVideoCurrentFrameWithCompleteBlock:^(UIImage *finalImage) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 if (!sSelf) return;
-                [sSelf __imageresizerDone:resizeImage];
+                [sSelf __imageresizerDone:finalImage];
             }];
         }]];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -498,39 +501,44 @@ static UIViewController *tmpVC_;
     [JPProgressHUD show];
     __weak typeof(self) wSelf = self;
     
-    // 1.自定义压缩比例进行裁剪
-//    [self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-//        // 裁剪完成，resizeImage为裁剪后的图片
+    // 1.自定义压缩比例进行裁剪，这里以原图尺寸50%的压缩比例
+//    [self.imageresizerView cropPictureWithCompressScale:0.5 completeBlock:^(UIImage *finalImage) {
+//        // 裁剪完成，finalImage为裁剪后的图片
 //        // 注意循环引用
 //        __strong typeof(wSelf) sSelf = wSelf;
 //        if (!sSelf) return;
-//        [sSelf __imageresizerDone:resizeImage];
-//    } compressScale:0.5]; // 这里压缩为原图尺寸的50%
+//        [sSelf __imageresizerDone:finalImage];
+//    }];
     
-    // 2.以原图尺寸进行裁剪
-    [self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
-        // 裁剪完成，resizeImage为裁剪后的图片
+    // 2.直接以原图尺寸进行裁剪
+    [self.imageresizerView cropPictureWithCompleteBlock:^(UIImage *finalImage) {
+        // 裁剪完成，finalImage为裁剪后的图片
         // 注意循环引用
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
-        [sSelf __imageresizerDone:resizeImage];
+        [sSelf __imageresizerDone:finalImage];
     }];
+}
+
+#pragma mark 取消导出（视频裁剪）
+- (IBAction)exportCancel {
+    !self.exportCancelBlock ? : self.exportCancelBlock();
 }
 
 #pragma mark - 图片裁剪完成
 
-- (void)__imageresizerDone:(UIImage *)resizeImage {
-    if (!resizeImage) {
+- (void)__imageresizerDone:(UIImage *)finalImage {
+    if (!finalImage) {
         [JPProgressHUD showErrorWithStatus:@"没有裁剪图片，裁剪失败" userInteractionEnabled:YES];
         return;
     }
     [JPProgressHUD dismiss];
     if (self.isBecomeDanielWu) {
-        DanielWuViewController *vc = [DanielWuViewController DanielWuVC:resizeImage];
+        DanielWuViewController *vc = [DanielWuViewController DanielWuVC:finalImage];
         [self.navigationController pushViewController:vc animated:YES];
     } else {
         JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
-        vc.image = resizeImage;
+        vc.image = finalImage;
         [self.navigationController pushViewController:vc animated:YES];
     }
 }
@@ -539,55 +547,67 @@ static UIViewController *tmpVC_;
 
 - (void)__cropVideo {
     [JPProgressHUD show];
-    __weak typeof(self) wSelf = self;
     
     // 自定义缓存路径
     NSString *fileName = [NSString stringWithFormat:@"%.0lf.mov", [[NSDate date] timeIntervalSince1970]];
     NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:fileName];
     
-    [self.imageresizerView cropVideoWithCachePath:cachePath errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
-        
-        // 失败回调
-        dispatch_async(dispatch_get_main_queue(), ^{
-            switch (reason) {
-                case JPCVFReason_NotAssets:
-                    [JPProgressHUD showErrorWithStatus:@"视频资源为空" userInteractionEnabled:YES];
-                    break;
-                case JPCVFReason_VideoAlreadyDamage:
-                    [JPProgressHUD showErrorWithStatus:@"视频文件已损坏" userInteractionEnabled:YES];
-                    break;
-                case JPCVFReason_CachePathAlreadyExists:
-                    [JPProgressHUD showInfoWithStatus:@"缓存路径已存在其他文件，可以手动删除后返回YES继续裁剪（方法内部也会自动删除），返回NO则不再继续裁剪。 %@" userInteractionEnabled:YES];
-                    break;
-                case JPCVFReason_ExportFailed:
-                    [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
-                    break;
-                case JPCVFReason_ExportCancelled:
-                    [JPProgressHUD showErrorWithStatus:@"视频导出取消" userInteractionEnabled:YES];
-                    break;
-            }
-        });
-        
-        // 只有 reason 为 JPCVFReason_CachePathAlreadyExists 返回 YES 才会继续裁剪（方法内部会自动删除目标路径的文件）
-        return reason == JPCVFReason_CachePathAlreadyExists;
-        
-    } progressBlock:^(float progress) {
+    __weak typeof(self) wSelf = self;
+    self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath progressBlock:^(float progress) {
         
         // 监听进度
-        [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100]];
+        [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100] userInteractionEnabled:YES];
+        
+    } errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
+        
+        BOOL isContinue = NO;
+        
+        switch (reason) {
+            case JPCVEReason_NotAssets:
+                [JPProgressHUD showErrorWithStatus:@"视频资源为空" userInteractionEnabled:YES];
+                break;
+            case JPCVEReason_VideoAlreadyDamage:
+                [JPProgressHUD showErrorWithStatus:@"视频文件已损坏" userInteractionEnabled:YES];
+                break;
+            case JPCVEReason_CachePathAlreadyExists:
+                JPLog(@"缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。")
+                isContinue = YES;
+                break;
+            case JPCVEReason_ExportFailed:
+                [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
+                break;
+            case JPCVEReason_ExportCancelled:
+                [JPProgressHUD showInfoWithStatus:@"视频导出取消" userInteractionEnabled:YES];
+                break;
+        }
+        
+        if (!isContinue && wSelf) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            sSelf.exportCancelBlock = nil;
+        }
+        
+        return isContinue;
         
     } completeBlock:^(NSURL *cacheURL) {
-        
         // 裁剪完成
         [JPProgressHUD dismiss];
+        
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
+        
+        sSelf.exportCancelBlock = nil;
         
         JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.videoURL = cacheURL;
         [sSelf.navigationController pushViewController:vc animated:YES];
-        
     }];
+}
+
+- (void)setExportCancelBlock:(JPVideoExportCancelBlock)exportCancelBlock {
+    _exportCancelBlock = [exportCancelBlock copy];
+    [UIView transitionWithView:self.exportCancelView duration:0.25 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        self.exportCancelView.hidden = exportCancelBlock == nil;
+    } completion:nil];
 }
 
 @end

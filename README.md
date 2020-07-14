@@ -3,12 +3,13 @@
 [![Version](https://img.shields.io/cocoapods/v/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
+[![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
 
 [掘金](https://juejin.im/post/5e67cf33f265da5749475935)
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.6.1）
+## 简介（当前版本：1.6.2）
 
 一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
 
@@ -119,67 +120,83 @@ if (isCropPicture) {
 
 #### 裁剪视频当前/指定帧的画面
 ```objc
+// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+
 // 1.原图尺寸裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
-[self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
-    // 裁剪完成，resizeImage为裁剪后的图片
+[self.imageresizerView cropVideoCurrentFrameWithCompleteBlock:^(UIImage *finalImage) {
+    // 裁剪完成，finalImage为裁剪后的图片
     // 注意循环引用
 }];
 
 // 2.【自定义压缩比例】裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
-// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 // 3.【自定义压缩比例]裁剪视频[指定帧]画面（裁剪过程在子线程，回调会切回到主线程）
 // second：裁剪第几秒的画面
-// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-- (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropVideoOneFrameWithSecond:(float)second compressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
 
 #### 裁剪整段视频
 ```objc
-// 裁剪整段视频画面（裁剪过程在子线程，进度回调和完成回调会切回到主线程）
+// 裁剪整段视频画面（裁剪过程在子线程，回调会切回到主线程）
 // cachePath：缓存路径，如果为 nil，则默认路径为 Caches 文件夹下，视频名为当前时间戳，格式为mp4（.../Library/Caches/1594556710.mp4）
 // presetName：系统导出视频的质量，为 AVAssetExportPresetLowQuality、AVAssetExportPresetMediumQuality、AVAssetExportPresetHighestQuality等
-[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+// 返回一个JPVideoExportCancelBlock类型的block，是取消视频导出的block，可用个强指针持有，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
+
+__weak typeof(self) wSelf = self;
+// 用个强指针持有取消视频导出的block
+self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
         
-    // 错误回调
-    //【注意：该回调是在子线程下执行】
-    // 注意循环引用
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // reason：错误原因
-        switch (reason) {
-            case JPCVFReason_NotAssets:
-                // 视频资源为空
-                break;
-            case JPCVFReason_VideoAlreadyDamage:
-                // 视频文件已损坏
-                break;
-            case JPCVFReason_CachePathAlreadyExists:
-                // 缓存路径已存在其他文件，返回 YES 则会自动删除该路径的文件并继续后面的裁剪操作。
-                break;
-            case JPCVFReason_ExportFailed:
-                // 视频导出失败
-                break;
-            case JPCVFReason_ExportCancelled:
-                // 视频导出取消
-                break;
-        }
-    });
-    
-    return reason == JPCVFReason_CachePathAlreadyExists;
-        
-} progressBlock:^(float progress) {
-        
-    // 监听进度（该回调是在主线程下）
+    // 进度监听的回调
     // progress：0~1
     // 注意循环引用
         
-} completeBlock:^(NSURL *cacheURL) {
+} errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
         
-    // 裁剪完成（该回调是在主线程下），cacheURL为缓存URL
+    // 错误的回调
+    // reason：错误原因
     // 注意循环引用
     
+    BOOL isContinue = NO;
+    switch (reason) {
+        case JPCVEReason_NotAssets:
+            // 视频资源为空
+            break;
+        case JPCVEReason_VideoAlreadyDamage:
+            // 视频文件已损坏
+            break;
+        case JPCVEReason_CachePathAlreadyExists:
+            // 缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
+            isContinue = YES;
+            break;
+        case JPCVEReason_ExportFailed:
+            // 视频导出失败
+            break;
+        case JPCVEReason_ExportCancelled:
+            // 视频导出取消
+            break;
+    }
+    
+    if (!isContinue && wSelf) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        sSelf.exportCancelBlock = nil; // 释放取消导出的block
+    }
+    
+    return isContinue;
+        
+} completeBlock:^(NSURL *cacheURL) {
+        
+    // 裁剪完成，cacheURL为缓存URL
+    // 注意循环引用
+    
+    __strong typeof(wSelf) sSelf = wSelf;
+    if (!sSelf) return;
+    sSelf.exportCancelBlock = nil; // 释放取消导出的block
+    
 }];
+
+// 当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
+!self.exportCancelBlock ? : self.exportCancelBlock();
 ```
 **PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
 
@@ -370,14 +387,15 @@ self.imageresizerView.isPreview = YES;
 // 例：compressScale = 0.5，1000 x 500 --> 500 x 250
 
 // 1.自定义压缩比例进行裁剪
-[self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-    // 裁剪完成，resizeImage为裁剪后的图片
+// 例：压缩为原图尺寸的50%
+[self.imageresizerView cropPictureWithCompressScale:0.5 completeBlock:^(UIImage *finalImage) {
+    // 裁剪完成，finalImage为裁剪后的图片
     // 注意循环引用
-} compressScale:0.7]; // 例：压缩为原图尺寸的70%
+}]; 
 
 // 2.以原图尺寸进行裁剪
-[self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
-    // 裁剪完成，resizeImage为裁剪后的图片
+[self.imageresizerView cropPictureWithCompleteBlock:^(UIImage *finalImage) {
+    // 裁剪完成，finalImage为裁剪后的图片
     // 注意循环引用
 }];
 ```
@@ -396,7 +414,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.6.0 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复若干bug。
+1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  

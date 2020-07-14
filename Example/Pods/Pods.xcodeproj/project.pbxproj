@@ -13,6 +13,7 @@
 		0420F6A194B0827BA57484AB06459217 /* SVRadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CCDEDA3F631C514E247A72FF745F1C /* SVRadialGradientLayer.m */; };
 		05AFB5258F0335B25D69241CC6093551 /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCAA5F0DB0C748E99E7832F996376C8 /* MASConstraintMaker.m */; };
 		05E24774E2DCF3E411C01B45BF1BB2CC /* Masonry-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3210A4AB72CC4CC55403A4F02C9F9D7E /* Masonry-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		069BE69F395516E7FB2B8864CEB35D6C /* JPImageresizerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FC5F327797524CE8AEC681889EF937 /* JPImageresizerView.m */; };
 		06A92727CE422A94BF6CD63DE1808FA9 /* JPBrowseImagesBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = D473AF23CDEABF6887BB07848AC90524 /* JPBrowseImagesBottomView.m */; };
 		06D89A4F301412843AD11CD283A646F3 /* JPLiquidLayoutTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A3A29DBC505F480648024532DBC9D46 /* JPLiquidLayoutTool.m */; };
 		0876A43E36682291189D9FCC694F77F3 /* JPConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA4AD3448E33D13B818A701BBBB76DB /* JPConstant.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -25,39 +26,43 @@
 		0F76B41D5C996935FFE8E5DCE69277F5 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 817918EA5FB736239DFEE02D920B4E84 /* TransformationMatrix.cpp */; };
 		116E757A5EAD93021AD079647A5021F6 /* ViewController+MASAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0636D0E8013F1E29CE87EC6B7C003698 /* ViewController+MASAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		14682AA5AAB979F37713CF0C365A53A7 /* POPAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7FA06E2D517BF92AD3CE3E8DF9904F62 /* POPAnimator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		14B401CA6ED8FFF3788ABD960E514FB4 /* JPImageresizerBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EE19CB1F55045AA9D8F1BAE4E56C31 /* JPImageresizerBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1520E27D7465FE02B39F545CBDA31E18 /* POPLayerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9AA55AE41DBE908B99B7A5858A80BA25 /* POPLayerExtras.mm */; };
 		161A48103C861F4C165C42139E2E933A /* Masonry.h in Headers */ = {isa = PBXBuildFile; fileRef = D74EC9988C1B2E389B400E045475D748 /* Masonry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16BB5A5A064D21A0D4768739EB821668 /* JPImageresizerBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = D048D7428D77184547DC50EB7BCDDDB3 /* JPImageresizerBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B98BF87D5DB6B0F0105E8AA22AFF30 /* POP.h in Headers */ = {isa = PBXBuildFile; fileRef = 03B7D9AD9B56242AB951048D138F1AB0 /* POP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A2C5AE4DD4CE4E3BBCD774AA04A8078 /* UIScrollView+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 54A422729FF2386518F307DCB3BE53C4 /* UIScrollView+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B754D69A7A7543E55BAC09810C81821 /* JPImageresizerVideoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 691D359D2517EE63EB84DF1985692903 /* JPImageresizerVideoObject.m */; };
+		1BC2B8C200B7B76009BFF157B54EBE97 /* JPImageresizerBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0447517B1D3CBC78AACC4A5A58A19236 /* JPImageresizerBlurView.m */; };
 		1BD33B44584E6B4598E1E3FE23AEB5D3 /* JPConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DEE8E199969B23D0530DFFC7A43E013 /* JPConstant.m */; };
 		1C56F9F755A50A2E3E522D6881703A86 /* MASCompositeConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2E8DD1CCBAA84534140A0C310014C1 /* MASCompositeConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EFB057C5A55F35544C6A8A7C0EAA633 /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = 66683B8CDC5C4DFF9CBB8D0A980A0D90 /* UnitBezier.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		1F9B6A4228D93BFDF1B062E6AC698581 /* POPAnimationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF69020838CD598FAFA3C4CB2E94AB0 /* POPAnimationExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21498051B9EC509F4857B325F9B19D86 /* POPAnimationRuntime.mm in Sources */ = {isa = PBXBuildFile; fileRef = A26DFFD20EEFE64F95AB4477D6526F52 /* POPAnimationRuntime.mm */; };
-		21DC6A6E8B7F7AE8C7B5965F0994F5F4 /* CALayer+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = A86B8E977AE9F844836255AA26995EA5 /* CALayer+JPImageresizer.m */; };
 		22807518626A1957F89CB70529F4A4EF /* JPBrowseImagesBottomView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0983E1B7FBBCA3164051ADFBA6EF6BFE /* JPBrowseImagesBottomView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		22B12FB5E590CD32D462FAC4F157E799 /* JPImageresizerVideoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E62C4E127E210319FD43287BEA5CAC /* JPImageresizerVideoObject.m */; };
 		241D450ECBFF779804ACC9F1AEDA6E42 /* NSLayoutConstraint+MASDebugAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B5C15C36297A2BAE45D487750D20D81 /* NSLayoutConstraint+MASDebugAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		24620163B549A2181A9AD8CE16F2C17A /* JPProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE95EC2718187DC8171235F74A70711 /* JPProgressHUD.m */; };
 		25DFCC666FCA384269D9201502EB83A7 /* JPBrowseImagesTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = C23F6587D7B4D3A2CF1906BA9C0A0155 /* JPBrowseImagesTransition.m */; };
-		2D5F3DD50D20A623BF28E3C7806CD3A0 /* CALayer+JPImageresizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EAF2FEED0D003D17FE9942906D623B /* CALayer+JPImageresizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2EA1D721A1BE7D18276AE235E618FA0A /* JPImageresizerBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5205A97B959EB238BD1363A3599C0B6E /* JPImageresizerBlurView.m */; };
+		28ACC8703D5468F68209843F4DB4BBD9 /* JPImageresizerConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CA8A1F461EEB1FBCE9EF7777AD97CA /* JPImageresizerConfigure.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2CA350057474F1BEC844467406B10FCC /* JPImageresizerFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDA207253608EDBBA87AF00A5465B55 /* JPImageresizerFrameView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2ED171908DC4DD5580C2BB11106DB249 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 361F97A4458C3AFC68C4ECF04D1E69B9 /* FloatConversion.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2F3FA73B0889F1839BB2E8716894BEFB /* jp_back_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 888ADCD654D36C2C5DF8FF84AD033699 /* jp_back_icon@3x.png */; };
-		335C6A330920CAA57C80792750F1EE36 /* UIImage+JPImageresizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0CE08FB64F5AD6675EF8F8FB45BD5048 /* UIImage+JPImageresizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		315B3077ACC0DC9DE75FBC0EE75820F0 /* JPImageresizerConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 62D1C578E8E178B68B75030AA5034EC5 /* JPImageresizerConfigure.m */; };
+		32CFB98905DBA8C64FD4DEEC7C621AAE /* JPImageresizerTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F69CB152B1A0E488CAF34767E7D116B /* JPImageresizerTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		349C04F9105C0816E030D1E6E81D1635 /* JPImageresizerTool.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD9F6EF8D79981362FDF037BE60A60A /* JPImageresizerTool.m */; };
 		34B2A86F366BF1F925ED828995CDC0B0 /* NSString+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F2244919D2E68C7E111F0FF446DDBD /* NSString+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		34DC180D20D8E0B42AA308B10975128A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */; };
 		3558DB58915503C97AA082544855CF95 /* POPAnimatorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD46CA7F4FCDA55040C818CC9E24F06 /* POPAnimatorPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		381AF89DE0ABA9FF6B26D50EDE1EB42D /* POPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 587EA6F9CFEAE406B5CBE9A646CECACD /* POPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		389F54DFE561F486FA341F35B314EE23 /* MASConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 796F4C5173166C7B7F117B983680BB5C /* MASConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		38C9CFA8AC9DFB0D94E29263D89BD8AE /* POPAnimationTracerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CA5E05DD41A48E93F6E9CD66A4876188 /* POPAnimationTracerInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		3BFC4A433FB7BD1FAD0BE8A0A2A329F2 /* JPImageresizerVideoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B36C1B945B8E82E8D66CDD2B7E38F9 /* JPImageresizerVideoObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3EABDD1189EB028545DDD344483792B0 /* JPImageresizerConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC528B52FD8B041DE48B811B9DB2E3A /* JPImageresizerConfigure.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3EE90942344DF2507124A2BF6FC14A1C /* JPImageresizerTypedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F3E286E26DB1C5F0FB22ACC1A9B0DFD /* JPImageresizerTypedef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		416DBB0C8221112AFA0ADFCE76494481 /* POPAnimationTracer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5ABECC0F82D0238DC565FE3B8E526722 /* POPAnimationTracer.mm */; };
+		4222ECDF6D1B26D2021AFEFE360B253F /* JPImageresizerVideoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 85447A8E48866134BD63945FA11A318D /* JPImageresizerVideoObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		423F5D5FCE11F1AE02E4C4C0A838380A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */; };
+		4291731B25B5F3E345D14B56A1761DEE /* JPImageresizerSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F726A2C6E888916BFAD438CF088C10 /* JPImageresizerSlider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42B59A4ECAE50ADEEBE3B6AA9BCB07DB /* POPPropertyAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C6A00A00D23D2E973144C09D1E34AA71 /* POPPropertyAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		42CAAAA685AF89EE8D7221C211C61755 /* SVProgressHUD-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C1BCF16FB7A56C3E3E318051A4056D5 /* SVProgressHUD-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		433D29267221898C2A807502F3904563 /* CALayer+JPImageresizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 89A7E1AE55767C93E2364172969F9BAB /* CALayer+JPImageresizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		458C52DA8300B15DA4C6ECAA32CBA0CA /* MASUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E65EA2F2CE953E78240F546FF3C71A2 /* MASUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46BEB4DD54BD06296EBC7C75A57606DC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */; };
 		46E8D4823F6D4ECB912C36168D1FEEAD /* MASConstraintMaker.h in Headers */ = {isa = PBXBuildFile; fileRef = D71EADA8EC1BF1DABAA29E90D6AFC7F5 /* MASConstraintMaker.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,25 +70,22 @@
 		483C0D146B8516F4B1185A380D48A749 /* JPBrowseImagesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AA7D88AA895FD21912C32A80FD55DFD /* JPBrowseImagesViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48AC2B9A3BB4FB1CBF6929BF6F1EABF4 /* JPBrowseImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE41E0C59014EA4824140DC21670564C /* JPBrowseImagesViewController.m */; };
 		492EEB4029A5FC95991458611426DA2B /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5963B38C675E9BF6A078015195561437 /* MASConstraint.m */; };
+		4B1490250DD11603D74CD4C9AA09B72E /* JPImageresizerFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948BB92BA3047A6533849A68A852F774 /* JPImageresizerFrameView.m */; };
 		4C6499C0EB79A9D97A1EA6CCD5CCDC4E /* POPVector.mm in Sources */ = {isa = PBXBuildFile; fileRef = C4C05A78D06BBB082723B4F0A5E21D8D /* POPVector.mm */; };
+		4CF60BAD5828B104BC2696794E9A01DC /* JPImageresizerView-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2D98D3A1E7F7996E4E62244C8F723C /* JPImageresizerView-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D6B6133A11A418A724134EB8B60A4AB /* POPCGUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C690C60A42147EDF09935A2E42CE5C5 /* POPCGUtils.mm */; };
-		4DB1C5E7C382C3CCC5C721556F02095C /* JPImageresizerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 11007BA358FBDD4272D95151412F71CF /* JPImageresizerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4E46E647B3C5D89DC305EC2EF7B31C9B /* JPImageresizerFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = C6658DCAB12C884F797D8EFA34EBF7D1 /* JPImageresizerFrameView.m */; };
 		50470566C9711B220176C908888B5805 /* jp_back_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9CD88A4674AE9DF85E69C52DF96CCB4E /* jp_back_icon@2x.png */; };
-		50A4BC6072C5485A60D1CE1AD8B7BCE3 /* JPImageresizerSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C944DA2B337F0A1FD72349F543257F /* JPImageresizerSlider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50EC4E9319CB4A919657A25DB658F19D /* JPBrowseImages.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C5040125AC86D8A49AC0F85682087071 /* JPBrowseImages.bundle */; };
 		52DBFF3038CAA1B15C421046E06B0206 /* JPBrowseImageModel.h in Headers */ = {isa = PBXBuildFile; fileRef = F965FFE79606C6B6729387607A8F9DB3 /* JPBrowseImageModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530E9D5FAB859D0480ADEA63D5DC3190 /* JPLiquidLayout-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FBECC60E2775C93878AF0D2A720DC0F4 /* JPLiquidLayout-dummy.m */; };
-		54C82C940A85844ADB88EE4DF198B10F /* JPImageresizerView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF45A86F33CF7D7CA1E4D8EC3965646 /* JPImageresizerView-dummy.m */; };
 		57165CDEB0AA79EE8F739810DDC70F5A /* UIColor+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5044211A2F914A0B19EF5539546BD34C /* UIColor+JPExtension.m */; };
 		588EB55166E2133578F3FA76A4DAEFB9 /* JPLiquidLayoutTool.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC0468134C0DA400613305F7E96AC70 /* JPLiquidLayoutTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5934337A5F6783AB57A35F12783866E3 /* JPImageresizerTypedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 46127692A1EE8C6442D6FA22C6D9B960 /* JPImageresizerTypedef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5E9E38C5D0FA3C59A7375A7CACCC5DF7 /* POPAnimationTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A2E4444C20D87C622999D01F01D3221 /* POPAnimationTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C3609712D1437FF292EC0CD7DC5635 /* SVIndefiniteAnimatedView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9756D0A7452B164AC74B644374BC3E19 /* SVIndefiniteAnimatedView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		627F0035022845E338E9D8154C569296 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85AD2D6BBF3B93B8FEE026A0043794D2 /* UIKit.framework */; };
 		6502ADA8982B4CD09D78C191065CBD27 /* UINavigationBar+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 110A1378D8F0DF11A7A04E9C0DBFA1F1 /* UINavigationBar+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		669908A624F05179DC35F3D3232F9C5E /* UIImage+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5103237C342EAF1860E5684460CD03 /* UIImage+JPImageresizer.m */; };
 		6712277605DF12283DD1E09CE3C8C6D3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */; };
+		68549CF2E4D0D094210F64EC83469A84 /* CALayer+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 146E4E91A0F036FC5D42FD339F7ED2CF /* CALayer+JPImageresizer.m */; };
 		6B351D0C34EB1749232F3390A2612373 /* POPCustomAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = AB8D65F274287BCD7F2B3E9A779B009F /* POPCustomAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6C48AA470E4C3045E889796D3D6F4352 /* POPAnimator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9467719ACC9AC0067E6789C5F8EC74 /* POPAnimator.mm */; };
 		6DB6ECC4552BA51E5B133F6E046ABC6F /* JPBasic-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7707C4943E71D2ECD14A4499D9CFCE77 /* JPBasic-dummy.m */; };
@@ -92,6 +94,7 @@
 		6F72E2AEC570567E3A37A751EAFAA171 /* POPBasicAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = C4B9CF2B00B2AAEEA68ECD471245B0BC /* POPBasicAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70BCA81659513A580DD108C8D96137AC /* POPAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F969EB9CA5A2234558F51C00881BF43B /* POPAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7496B038D4C5F7946A0CA9E358E6ED0D /* SVProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F404F09D10D58E5BBAC993799ED4365 /* SVProgressHUD.framework */; };
+		75CE7F8C84E7641B85DB41165E294706 /* JPImageresizerSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 926B76461E0040F126DC984B7A81E414 /* JPImageresizerSlider.m */; };
 		769DC4B5695426C1D7D1B540F70604E6 /* POPPropertyAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = A16F0B5D399E4064CDA31ECC8254AE08 /* POPPropertyAnimation.mm */; };
 		7771918EFBCF421F189C2A30CF722593 /* MASLayoutConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F3F1CECE3B86AB4EEA13D73A9A16C0E /* MASLayoutConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79618C275BE1ABFCB81BAAAD11E880EC /* NSDate+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCA099B856B46CD2CAA4CF5DB95B2D1 /* NSDate+JPExtension.m */; };
@@ -107,14 +110,12 @@
 		82DA7A4E862301C67A2FB113148177BF /* JPLiquidLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AA226A5970407FE9458B6DFD36076DD /* JPLiquidLayout.m */; };
 		832A2734C2A8D6D3E1DAB82EC1A40484 /* POPAnimationRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 10A6E793B5CEDEFC64547ACAF30C39EA /* POPAnimationRuntime.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8390C943A370E6D5B849C2448E446B36 /* JPBrowseImageCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 57A01AC8D9558559EA251B2DE8BA88BC /* JPBrowseImageCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83C4BD13E2EFCE3EB67F4A7939B56E26 /* JPImageresizerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F12DAEC1EA753AEA18A05DA25461905 /* JPImageresizerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DA790D3D4B4203864609C81AE17D48 /* JPBrowseImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F5AA5CC194BD832648B1DF62C1BC77 /* JPBrowseImageCell.m */; };
 		8728BCED508E46369B3CA2999439D9F3 /* UIViewController+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = B38EE55ED6884C48E26CBB39C0054F73 /* UIViewController+JPExtension.m */; };
-		89EB103512BA186E91EBEF68C1064F14 /* JPImageresizerSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 25CA61EB9CC85D34EAD4D33716535885 /* JPImageresizerSlider.m */; };
 		8D20AC2E4401FA517EC72EFD1F642D84 /* POPAnimationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 608326E2C8CBC8D7E2C43B6B38F4B6B0 /* POPAnimationPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8F5A6E03287E7762CD40F86FF8630A09 /* SVRadialGradientLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D33F777394A85BA5324216A8D386EE8 /* SVRadialGradientLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9675DA2BE72A6CDE3C1AD62FEBB1392A /* POPDecayAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 04577EB30CCF7011B4862E416DBF556A /* POPDecayAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		991AF3DE20BF332F2824F01A604A9B0B /* JPImageresizerFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A5CD5492427C816C5705A2E421BFFC /* JPImageresizerFrameView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9A41284232890E9B933F6702EDA93840 /* JPImageresizerConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 157F8D5DE3A52D64CB8B4687EB13B704 /* JPImageresizerConfigure.m */; };
 		9AD90BB7800CC36BF39013519A2431C8 /* NSObject+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 900B7D1FCC47ACFC7A3CF5EB9D47F176 /* NSObject+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9C797B8C7BE34347E593380CCA2415ED /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B90A456275839DC4BC3C254FC7567AB4 /* View+MASAdditions.m */; };
 		9CABAD03AA5E9E652515C7F21358B342 /* POPSpringAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0A740358F7373821D5CC5563D66687 /* POPSpringAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -129,7 +130,6 @@
 		A580184A217AB9397C31ED9C8BF63846 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 86917612DCF0361B97A7D9A384C83C15 /* MASCompositeConstraint.m */; };
 		A6287753513A2E7A4176BC0D8901BE24 /* UIWindow+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 16B6490991ADFF77774B38CC7274EA4F /* UIWindow+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A291784F35E38ADC18CE603C221F3B /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBCACDD46CC39570FA6436628B2CC7C /* NSLayoutConstraint+MASDebugAdditions.m */; };
-		A8254FA48DCEBDC4C4FB8875CAC908EE /* JPImageresizerView-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC1E617B638935E562E03E4A4CBAB5E /* JPImageresizerView-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AE0687F740DFBE2F811DD9CB97564017 /* View+MASShorthandAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCF456810634E535E85F0FC954C162E /* View+MASShorthandAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AEDECDC954E3BCCBC6EE7CA8F34E21D9 /* POPAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6DD61B242323A6AE13FCD34D34D975 /* POPAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AF78DEF204D1CAC105D3C5AA297C2800 /* UINavigationBar+JPExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E4F94F604887EEDE3AC9E1E883ED3A /* UINavigationBar+JPExtension.m */; };
@@ -149,6 +149,7 @@
 		BF31237A10D2821805E590EDFFDE0367 /* View+MASAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = EED0D22B5D15A1BCE8B5123365D2220F /* View+MASAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C2F5E045127903B6A746F3A4259889B4 /* POPVector.h in Headers */ = {isa = PBXBuildFile; fileRef = EDD7CAF153E6B5F054102F0442A7C7B5 /* POPVector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3A56AF35B53353173088A2C1F78E95C /* POPCGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A3A576187F2582E802856A0E5AA75E7 /* POPCGUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C4F7B25B7E390584C74E6D4C8D019694 /* JPImageresizerView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBBCC02927726068F9A6A307F6726EF /* JPImageresizerView-dummy.m */; };
 		C5BE3153BC1E062041F45274B78A95D8 /* Pods-JPImageresizerView_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EDA62B51FB0A7A7BB7DF2B7EF997B /* Pods-JPImageresizerView_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C6576FA44750956C38FFE472FBCD7F91 /* POPCustomAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD762EC146E7483D295909DCBC463E4D /* POPCustomAnimation.mm */; };
 		C70356674E8A2D33767F82D3AC199E10 /* UIImage+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DE48BBC6A7FF0B3F83210095BEA45AA /* UIImage+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -179,7 +180,6 @@
 		EF8F83C75E6CE3C2CF501A2B732E3155 /* POPBasicAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = FBDDEC734E5729B21C3FFC3F82E1D773 /* POPBasicAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F0CB0A4D1836A181C9B31CBDF3DB10C8 /* POPAnimationEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = FA2AEB02A956960EB1384955911DD9D0 /* POPAnimationEventInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F3B238130212052C22CE7B62369E8C95 /* POPMath.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A21D0A30D45F44F0E4E556AA2FDB15 /* POPMath.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		F44921B9B91057AAC2C9705E003E7C9C /* JPImageresizerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE8A52D75EC55CDF81664E62ABCBB4D /* JPImageresizerView.m */; };
 		F4ABAD81EC1C8B07CB18561186EE9E35 /* UIViewController+JPExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A25EB0BF6441A2044983702CA764288 /* UIViewController+JPExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F7B5F9357227C6977CB252249E1C1745 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */; };
 		F8BBEB00EF7586A341782266560E76DF /* POPLayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 887859EA8071D4FA94BA91572D5FD493 /* POPLayerExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -261,33 +261,32 @@
 
 /* Begin PBXFileReference section */
 		0069134C9F5B29F46B9A79B8E385AB83 /* JPLiquidLayout-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPLiquidLayout-prefix.pch"; sourceTree = "<group>"; };
-		00B36C1B945B8E82E8D66CDD2B7E38F9 /* JPImageresizerVideoObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerVideoObject.h; path = JPImageresizerView/Classes/JPImageresizerVideoObject.h; sourceTree = "<group>"; };
 		03B7D9AD9B56242AB951048D138F1AB0 /* POP.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POP.h; path = pop/POP.h; sourceTree = "<group>"; };
 		03D35EF5336E086F813DC432B1756351 /* MASLayoutConstraint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASLayoutConstraint.m; path = Masonry/MASLayoutConstraint.m; sourceTree = "<group>"; };
-		043603325906D4B306BA7B3C0B4E2A81 /* JPImageresizerView-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JPImageresizerView-Info.plist"; sourceTree = "<group>"; };
+		0447517B1D3CBC78AACC4A5A58A19236 /* JPImageresizerBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerBlurView.m; path = JPImageresizerView/Classes/JPImageresizerBlurView.m; sourceTree = "<group>"; };
 		04577EB30CCF7011B4862E416DBF556A /* POPDecayAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPDecayAnimation.h; path = pop/POPDecayAnimation.h; sourceTree = "<group>"; };
 		0636D0E8013F1E29CE87EC6B7C003698 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ViewController+MASAdditions.h"; path = "Masonry/ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		06A5157B1B3FC9D3B619CB9CB7CDADD4 /* NSObject+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+JPExtension.m"; path = "JPBasic/Classes/JPCategory/Foundation/NSObject+JPExtension.m"; sourceTree = "<group>"; };
 		06B07B1A577002F47D4C302732524EB8 /* Pods-JPImageresizerView_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-JPImageresizerView_Example-dummy.m"; sourceTree = "<group>"; };
+		07AC88F2B67FE7FE4D7650D4EE100E50 /* JPImageresizerView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPImageresizerView-prefix.pch"; sourceTree = "<group>"; };
 		083695609AAE9E0004CC285C65FEFCE9 /* POPGeometry.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPGeometry.mm; path = pop/POPGeometry.mm; sourceTree = "<group>"; };
 		0983E1B7FBBCA3164051ADFBA6EF6BFE /* JPBrowseImagesBottomView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBrowseImagesBottomView.h; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesBottomView.h; sourceTree = "<group>"; };
 		0A3A576187F2582E802856A0E5AA75E7 /* POPCGUtils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPCGUtils.h; path = pop/POPCGUtils.h; sourceTree = "<group>"; };
 		0A9466CB9BA62AE53FE1A52438778FB2 /* MASConstraint+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "MASConstraint+Private.h"; path = "Masonry/MASConstraint+Private.h"; sourceTree = "<group>"; };
 		0C403FE2B8756DD56A0E751C09BAA05A /* NSArray+MASShorthandAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSArray+MASShorthandAdditions.h"; path = "Masonry/NSArray+MASShorthandAdditions.h"; sourceTree = "<group>"; };
-		0CE08FB64F5AD6675EF8F8FB45BD5048 /* UIImage+JPImageresizer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+JPImageresizer.h"; path = "JPImageresizerView/Classes/UIImage+JPImageresizer.h"; sourceTree = "<group>"; };
 		0DA6BF6533A33403947F872CBC6771D5 /* Masonry.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Masonry.release.xcconfig; sourceTree = "<group>"; };
+		0DBBCC02927726068F9A6A307F6726EF /* JPImageresizerView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JPImageresizerView-dummy.m"; sourceTree = "<group>"; };
 		109E89E8295DED108D5019409A05C8A5 /* Masonry.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Masonry.modulemap; sourceTree = "<group>"; };
 		10A6E793B5CEDEFC64547ACAF30C39EA /* POPAnimationRuntime.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimationRuntime.h; path = pop/POPAnimationRuntime.h; sourceTree = "<group>"; };
-		11007BA358FBDD4272D95151412F71CF /* JPImageresizerView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerView.h; path = JPImageresizerView/Classes/JPImageresizerView.h; sourceTree = "<group>"; };
 		110A1378D8F0DF11A7A04E9C0DBFA1F1 /* UINavigationBar+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UINavigationBar+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UINavigationBar+JPExtension.h"; sourceTree = "<group>"; };
-		157F8D5DE3A52D64CB8B4687EB13B704 /* JPImageresizerConfigure.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerConfigure.m; path = JPImageresizerView/Classes/JPImageresizerConfigure.m; sourceTree = "<group>"; };
+		146E4E91A0F036FC5D42FD339F7ED2CF /* CALayer+JPImageresizer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "CALayer+JPImageresizer.m"; path = "JPImageresizerView/Classes/CALayer+JPImageresizer.m"; sourceTree = "<group>"; };
 		16B6490991ADFF77774B38CC7274EA4F /* UIWindow+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIWindow+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIWindow+JPExtension.h"; sourceTree = "<group>"; };
 		1C8EABCCB40FF2827C259C2ED602ECB1 /* pop.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = pop.modulemap; sourceTree = "<group>"; };
 		1CECB36D8B65D96CEC5B1AC106DF228F /* Pods_JPImageresizerView_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_JPImageresizerView_Example.framework; path = "Pods-JPImageresizerView_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D6749290821E1D9606F276644C6A278 /* JPLiquidLayout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = JPLiquidLayout.framework; path = JPLiquidLayout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DC2ACE4FF5B663F5CA3E80EAB1A574F /* JPInline.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPInline.h; path = JPBasic/Classes/JPConst/JPInline.h; sourceTree = "<group>"; };
-		1DF45A86F33CF7D7CA1E4D8EC3965646 /* JPImageresizerView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JPImageresizerView-dummy.m"; sourceTree = "<group>"; };
 		1E65EA2F2CE953E78240F546FF3C71A2 /* MASUtilities.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MASUtilities.h; path = Masonry/MASUtilities.h; sourceTree = "<group>"; };
+		1F12DAEC1EA753AEA18A05DA25461905 /* JPImageresizerView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerView.h; path = JPImageresizerView/Classes/JPImageresizerView.h; sourceTree = "<group>"; };
 		1FFED36A657123030ABB700256D73F15 /* Masonry.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Masonry.framework; path = Masonry.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		21562B27498252C4932621C54185EC3C /* NSArray+MASAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSArray+MASAdditions.h"; path = "Masonry/NSArray+MASAdditions.h"; sourceTree = "<group>"; };
 		21BD48B7AF8F64527B2F8882FF3D40FB /* SVProgressHUD-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SVProgressHUD-prefix.pch"; sourceTree = "<group>"; };
@@ -296,19 +295,17 @@
 		24F2244919D2E68C7E111F0FF446DDBD /* NSString+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSString+JPExtension.h"; path = "JPBasic/Classes/JPCategory/Foundation/NSString+JPExtension.h"; sourceTree = "<group>"; };
 		252BE405FD74CEC361F78054EEB0A86A /* SVProgressHUD.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SVProgressHUD.m; path = SVProgressHUD/SVProgressHUD.m; sourceTree = "<group>"; };
 		25857FFC78E7CC42329495A19AA14BAC /* POPSpringAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPSpringAnimation.mm; path = pop/POPSpringAnimation.mm; sourceTree = "<group>"; };
-		25CA61EB9CC85D34EAD4D33716535885 /* JPImageresizerSlider.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerSlider.m; path = JPImageresizerView/Classes/JPImageresizerSlider.m; sourceTree = "<group>"; };
 		268854A0CEEEEE768661A342F16360A8 /* POPAnimatableProperty.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimatableProperty.h; path = pop/POPAnimatableProperty.h; sourceTree = "<group>"; };
-		26A92E9BF5AB84F41A4D0E99815EF07B /* JPImageresizerView.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = JPImageresizerView.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		2A3A29DBC505F480648024532DBC9D46 /* JPLiquidLayoutTool.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPLiquidLayoutTool.m; path = JPLiquidLayout/Classes/JPLiquidLayoutTool.m; sourceTree = "<group>"; };
 		2B2E8DD1CCBAA84534140A0C310014C1 /* MASCompositeConstraint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MASCompositeConstraint.h; path = Masonry/MASCompositeConstraint.h; sourceTree = "<group>"; };
 		2C7CE5020EF42AD5BD70748D59C5CCF3 /* Masonry.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Masonry.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CCA099B856B46CD2CAA4CF5DB95B2D1 /* NSDate+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSDate+JPExtension.m"; path = "JPBasic/Classes/JPCategory/Foundation/NSDate+JPExtension.m"; sourceTree = "<group>"; };
 		2D76B0F032CB981F47CD313CAE98E7EF /* Masonry.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Masonry.debug.xcconfig; sourceTree = "<group>"; };
-		2DC528B52FD8B041DE48B811B9DB2E3A /* JPImageresizerConfigure.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerConfigure.h; path = JPImageresizerView/Classes/JPImageresizerConfigure.h; sourceTree = "<group>"; };
 		2F404F09D10D58E5BBAC993799ED4365 /* SVProgressHUD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SVProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FBDEF82FB5243B612A53BF32369ABE5 /* MASViewConstraint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASViewConstraint.m; path = Masonry/MASViewConstraint.m; sourceTree = "<group>"; };
 		3210A4AB72CC4CC55403A4F02C9F9D7E /* Masonry-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Masonry-umbrella.h"; sourceTree = "<group>"; };
 		322EDA62B51FB0A7A7BB7DF2B7EF997B /* Pods-JPImageresizerView_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-JPImageresizerView_Example-umbrella.h"; sourceTree = "<group>"; };
+		32CA8A1F461EEB1FBCE9EF7777AD97CA /* JPImageresizerConfigure.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerConfigure.h; path = JPImageresizerView/Classes/JPImageresizerConfigure.h; sourceTree = "<group>"; };
 		34142A37036D6A7D9F5476581B624480 /* POPAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimation.mm; path = pop/POPAnimation.mm; sourceTree = "<group>"; };
 		34B7011B08C7055CA0EFE8597AB9B411 /* ResourceBundle-JPBrowseImages-JPBasic-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-JPBrowseImages-JPBasic-Info.plist"; sourceTree = "<group>"; };
 		361F97A4458C3AFC68C4ECF04D1E69B9 /* FloatConversion.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FloatConversion.h; path = pop/WebCore/FloatConversion.h; sourceTree = "<group>"; };
@@ -324,7 +321,6 @@
 		3F8EEFEE12FAE82C60604ABE98EEEF18 /* SVProgressAnimatedView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SVProgressAnimatedView.h; path = SVProgressHUD/SVProgressAnimatedView.h; sourceTree = "<group>"; };
 		40B23281C847D8D0AF6C56598EC8851B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		42BF23A5D1C9DD73F7478D0A946E06B2 /* JPBrowseImagesTopView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImagesTopView.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesTopView.m; sourceTree = "<group>"; };
-		46127692A1EE8C6442D6FA22C6D9B960 /* JPImageresizerTypedef.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerTypedef.h; path = JPImageresizerView/Classes/JPImageresizerTypedef.h; sourceTree = "<group>"; };
 		48F5AA5CC194BD832648B1DF62C1BC77 /* JPBrowseImageCell.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImageCell.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImageCell.m; sourceTree = "<group>"; };
 		4A25EB0BF6441A2044983702CA764288 /* UIViewController+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIViewController+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIViewController+JPExtension.h"; sourceTree = "<group>"; };
 		4A2E4444C20D87C622999D01F01D3221 /* POPAnimationTracer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimationTracer.h; path = pop/POPAnimationTracer.h; sourceTree = "<group>"; };
@@ -338,16 +334,15 @@
 		5044211A2F914A0B19EF5539546BD34C /* UIColor+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIColor+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIColor+JPExtension.m"; sourceTree = "<group>"; };
 		51305B2D9D8DA36D89CC277D729083D2 /* pop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = pop.framework; path = pop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FD9E7A6FE0A0D523A44721DF819B1F /* SVProgressHUD-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SVProgressHUD-Info.plist"; sourceTree = "<group>"; };
-		5205A97B959EB238BD1363A3599C0B6E /* JPImageresizerBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerBlurView.m; path = JPImageresizerView/Classes/JPImageresizerBlurView.m; sourceTree = "<group>"; };
+		53D045087EBD883A35204D28D752706F /* JPImageresizerView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPImageresizerView.release.xcconfig; sourceTree = "<group>"; };
+		54074D70989E2F9682C6547EDCE1BC6F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		5431C00D4E5AF3274708412D72561FD9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		54A422729FF2386518F307DCB3BE53C4 /* UIScrollView+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIScrollView+JPExtension.h"; sourceTree = "<group>"; };
 		558DBF7285DCF468044E3169B5CCF1E7 /* SVProgressHUD-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SVProgressHUD-dummy.m"; sourceTree = "<group>"; };
 		57A01AC8D9558559EA251B2DE8BA88BC /* JPBrowseImageCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBrowseImageCell.h; path = JPBasic/Classes/JPBrowseImages/JPBrowseImageCell.h; sourceTree = "<group>"; };
 		57A16F36496F75700A94F44A589F70C0 /* JPImageresizerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = JPImageresizerView.framework; path = JPImageresizerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		58044C93A8D11908267D91046AA6685D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		587EA6F9CFEAE406B5CBE9A646CECACD /* POPDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPDefines.h; path = pop/POPDefines.h; sourceTree = "<group>"; };
 		5963B38C675E9BF6A078015195561437 /* MASConstraint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASConstraint.m; path = Masonry/MASConstraint.m; sourceTree = "<group>"; };
-		59EAF2FEED0D003D17FE9942906D623B /* CALayer+JPImageresizer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "CALayer+JPImageresizer.h"; path = "JPImageresizerView/Classes/CALayer+JPImageresizer.h"; sourceTree = "<group>"; };
 		5A01D3BD13174FAF733083AF00D369F1 /* pop-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "pop-Info.plist"; sourceTree = "<group>"; };
 		5AA7D88AA895FD21912C32A80FD55DFD /* JPBrowseImagesViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBrowseImagesViewController.h; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesViewController.h; sourceTree = "<group>"; };
 		5ABECC0F82D0238DC565FE3B8E526722 /* POPAnimationTracer.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimationTracer.mm; path = pop/POPAnimationTracer.mm; sourceTree = "<group>"; };
@@ -361,54 +356,62 @@
 		608326E2C8CBC8D7E2C43B6B38F4B6B0 /* POPAnimationPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimationPrivate.h; path = pop/POPAnimationPrivate.h; sourceTree = "<group>"; };
 		61CCDEDA3F631C514E247A72FF745F1C /* SVRadialGradientLayer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SVRadialGradientLayer.m; path = SVProgressHUD/SVRadialGradientLayer.m; sourceTree = "<group>"; };
 		622B5BA6C7BBA7E691D2A698A85E26D1 /* JPMacro.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPMacro.h; path = JPBasic/Classes/JPConst/JPMacro.h; sourceTree = "<group>"; };
+		62D1C578E8E178B68B75030AA5034EC5 /* JPImageresizerConfigure.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerConfigure.m; path = JPImageresizerView/Classes/JPImageresizerConfigure.m; sourceTree = "<group>"; };
 		64DDFC149410FB406AA2F028607C2931 /* UIView+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIView+JPExtension.h"; sourceTree = "<group>"; };
 		65C3904404E51B9C3C597637893DCA41 /* JPBrowseImagesTransition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBrowseImagesTransition.h; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesTransition.h; sourceTree = "<group>"; };
 		66683B8CDC5C4DFF9CBB8D0A980A0D90 /* UnitBezier.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = UnitBezier.h; path = pop/WebCore/UnitBezier.h; sourceTree = "<group>"; };
 		66E4F94F604887EEDE3AC9E1E883ED3A /* UINavigationBar+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UINavigationBar+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UINavigationBar+JPExtension.m"; sourceTree = "<group>"; };
+		66FC5F327797524CE8AEC681889EF937 /* JPImageresizerView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerView.m; path = JPImageresizerView/Classes/JPImageresizerView.m; sourceTree = "<group>"; };
 		689FE8A634CC52C5C46A1AEEDB658BEE /* JPLiquidLayout.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JPLiquidLayout.modulemap; sourceTree = "<group>"; };
-		691D359D2517EE63EB84DF1985692903 /* JPImageresizerVideoObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerVideoObject.m; path = JPImageresizerView/Classes/JPImageresizerVideoObject.m; sourceTree = "<group>"; };
 		6A9C4A90D77E1ADB5648AD729ACDFFEA /* POPAnimationEvent.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimationEvent.h; path = pop/POPAnimationEvent.h; sourceTree = "<group>"; };
 		6D478943403137B5FA96D38EFA07BE47 /* Masonry-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Masonry-prefix.pch"; sourceTree = "<group>"; };
+		6F3E286E26DB1C5F0FB22ACC1A9B0DFD /* JPImageresizerTypedef.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerTypedef.h; path = JPImageresizerView/Classes/JPImageresizerTypedef.h; sourceTree = "<group>"; };
 		6F6FE96141D1ADB4EA23EED51A2BEFC3 /* UIView+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIView+JPExtension.m"; sourceTree = "<group>"; };
 		706F142021427ADD819DF45E6B7E2D00 /* UIWindow+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIWindow+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIWindow+JPExtension.m"; sourceTree = "<group>"; };
 		7241ED92BFDC1F8B8E61926CDB937D72 /* JPLiquidLayout-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JPLiquidLayout-Info.plist"; sourceTree = "<group>"; };
-		72C944DA2B337F0A1FD72349F543257F /* JPImageresizerSlider.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerSlider.h; path = JPImageresizerView/Classes/JPImageresizerSlider.h; sourceTree = "<group>"; };
 		7478A3A07D4AA11ADF0C483AC0BB1394 /* POPAction.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAction.h; path = pop/POPAction.h; sourceTree = "<group>"; };
+		758BE08C7C293968B3CA54AE7CB02A6B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		75CE4404A0A9621DFB77483A8ACB78EA /* NSDate+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSDate+JPExtension.h"; path = "JPBasic/Classes/JPCategory/Foundation/NSDate+JPExtension.h"; sourceTree = "<group>"; };
 		7707C4943E71D2ECD14A4499D9CFCE77 /* JPBasic-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JPBasic-dummy.m"; sourceTree = "<group>"; };
 		796F4C5173166C7B7F117B983680BB5C /* MASConstraint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MASConstraint.h; path = Masonry/MASConstraint.h; sourceTree = "<group>"; };
 		7B5C15C36297A2BAE45D487750D20D81 /* NSLayoutConstraint+MASDebugAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+MASDebugAdditions.h"; path = "Masonry/NSLayoutConstraint+MASDebugAdditions.h"; sourceTree = "<group>"; };
+		7C2D98D3A1E7F7996E4E62244C8F723C /* JPImageresizerView-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPImageresizerView-umbrella.h"; sourceTree = "<group>"; };
+		7ECD304D9CACBF5961B0AA310C372ABC /* JPImageresizerView.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JPImageresizerView.modulemap; sourceTree = "<group>"; };
 		7F9467719ACC9AC0067E6789C5F8EC74 /* POPAnimator.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimator.mm; path = pop/POPAnimator.mm; sourceTree = "<group>"; };
 		7FA06E2D517BF92AD3CE3E8DF9904F62 /* POPAnimator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPAnimator.h; path = pop/POPAnimator.h; sourceTree = "<group>"; };
 		7FC205748427101F575636579C34BF46 /* JPLiquidLayout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPLiquidLayout.release.xcconfig; sourceTree = "<group>"; };
 		817918EA5FB736239DFEE02D920B4E84 /* TransformationMatrix.cpp */ = {isa = PBXFileReference; includeInIndex = 1; name = TransformationMatrix.cpp; path = pop/WebCore/TransformationMatrix.cpp; sourceTree = "<group>"; };
 		817EA7DFC9D1E0D7EC39A56DD0561252 /* JPBasic.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JPBasic.modulemap; sourceTree = "<group>"; };
 		831DD322D2572C9A733FF7E93C543F91 /* pop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = pop.debug.xcconfig; sourceTree = "<group>"; };
+		85447A8E48866134BD63945FA11A318D /* JPImageresizerVideoObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerVideoObject.h; path = JPImageresizerView/Classes/JPImageresizerVideoObject.h; sourceTree = "<group>"; };
 		85AD2D6BBF3B93B8FEE026A0043794D2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		865DA551855F3CDC0E5684FC69CB4222 /* Pods-JPImageresizerView_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-JPImageresizerView_Example.modulemap"; sourceTree = "<group>"; };
 		86917612DCF0361B97A7D9A384C83C15 /* MASCompositeConstraint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASCompositeConstraint.m; path = Masonry/MASCompositeConstraint.m; sourceTree = "<group>"; };
 		887859EA8071D4FA94BA91572D5FD493 /* POPLayerExtras.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPLayerExtras.h; path = pop/POPLayerExtras.h; sourceTree = "<group>"; };
 		888ADCD654D36C2C5DF8FF84AD033699 /* jp_back_icon@3x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "jp_back_icon@3x.png"; path = "JPBasic/Assets/JPBrowseImages/jp_back_icon@3x.png"; sourceTree = "<group>"; };
-		88B038D771C88526463CD75B6CB55183 /* JPImageresizerView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPImageresizerView.release.xcconfig; sourceTree = "<group>"; };
+		88E62C4E127E210319FD43287BEA5CAC /* JPImageresizerVideoObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerVideoObject.m; path = JPImageresizerView/Classes/JPImageresizerVideoObject.m; sourceTree = "<group>"; };
+		89A7E1AE55767C93E2364172969F9BAB /* CALayer+JPImageresizer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "CALayer+JPImageresizer.h"; path = "JPImageresizerView/Classes/CALayer+JPImageresizer.h"; sourceTree = "<group>"; };
 		8DBCACDD46CC39570FA6436628B2CC7C /* NSLayoutConstraint+MASDebugAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSLayoutConstraint+MASDebugAdditions.m"; path = "Masonry/NSLayoutConstraint+MASDebugAdditions.m"; sourceTree = "<group>"; };
 		8E6D60349E6CBD1B0A9FC2910FC18CF6 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = SVProgressHUD.bundle; path = SVProgressHUD/SVProgressHUD.bundle; sourceTree = "<group>"; };
 		8F09011A6B39A4DE5AA0D1C7CAFE6809 /* JPBasic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = JPBasic.framework; path = JPBasic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F69CB152B1A0E488CAF34767E7D116B /* JPImageresizerTool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerTool.h; path = JPImageresizerView/Classes/JPImageresizerTool.h; sourceTree = "<group>"; };
 		900B7D1FCC47ACFC7A3CF5EB9D47F176 /* NSObject+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+JPExtension.h"; path = "JPBasic/Classes/JPCategory/Foundation/NSObject+JPExtension.h"; sourceTree = "<group>"; };
 		904A4152E983B3A6C34C2619DBC87D56 /* POPPropertyAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPPropertyAnimation.h; path = pop/POPPropertyAnimation.h; sourceTree = "<group>"; };
 		9075B751320B5F04FA1A82705FAEFECF /* Masonry-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Masonry-dummy.m"; sourceTree = "<group>"; };
+		90F726A2C6E888916BFAD438CF088C10 /* JPImageresizerSlider.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerSlider.h; path = JPImageresizerView/Classes/JPImageresizerSlider.h; sourceTree = "<group>"; };
+		926B76461E0040F126DC984B7A81E414 /* JPImageresizerSlider.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerSlider.m; path = JPImageresizerView/Classes/JPImageresizerSlider.m; sourceTree = "<group>"; };
 		93BAED6796DF5A9DE82CC7EC6987FDAC /* POPSpringSolver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPSpringSolver.h; path = pop/POPSpringSolver.h; sourceTree = "<group>"; };
-		953B6C3A8194BB3B272CE9D9F48B7444 /* JPImageresizerView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPImageresizerView-prefix.pch"; sourceTree = "<group>"; };
+		948BB92BA3047A6533849A68A852F774 /* JPImageresizerFrameView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerFrameView.m; path = JPImageresizerView/Classes/JPImageresizerFrameView.m; sourceTree = "<group>"; };
+		94AA9A24B8F328B40BA233CF69414CDD /* JPImageresizerView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPImageresizerView.debug.xcconfig; sourceTree = "<group>"; };
 		9756D0A7452B164AC74B644374BC3E19 /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SVIndefiniteAnimatedView.h; path = SVProgressHUD/SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
 		97ABF990F235AAB5D2EF0C17B9D0F395 /* POPAnimationEvent.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimationEvent.mm; path = pop/POPAnimationEvent.mm; sourceTree = "<group>"; };
 		9AA55AE41DBE908B99B7A5858A80BA25 /* POPLayerExtras.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPLayerExtras.mm; path = pop/POPLayerExtras.mm; sourceTree = "<group>"; };
 		9AE67F197AEED2DBA887A2667E2AD3ED /* Pods-JPImageresizerView_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-JPImageresizerView_Example-frameworks.sh"; sourceTree = "<group>"; };
 		9B54B832EAD7E2CB2E50A42A410E9AFA /* JPProgressHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPProgressHUD.h; path = JPBasic/Classes/JPProgressHUD/JPProgressHUD.h; sourceTree = "<group>"; };
-		9BE8A52D75EC55CDF81664E62ABCBB4D /* JPImageresizerView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerView.m; path = JPImageresizerView/Classes/JPImageresizerView.m; sourceTree = "<group>"; };
 		9C1E4A9BF04D6FEEBC43B939599ACC01 /* POPAnimatableProperty.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimatableProperty.mm; path = pop/POPAnimatableProperty.mm; sourceTree = "<group>"; };
 		9CD88A4674AE9DF85E69C52DF96CCB4E /* jp_back_icon@2x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "jp_back_icon@2x.png"; path = "JPBasic/Assets/JPBrowseImages/jp_back_icon@2x.png"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9DE48BBC6A7FF0B3F83210095BEA45AA /* UIImage+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIImage+JPExtension.h"; sourceTree = "<group>"; };
-		9E9D53FFC43AA1E13A39724727693C61 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		A16F0B5D399E4064CDA31ECC8254AE08 /* POPPropertyAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPPropertyAnimation.mm; path = pop/POPPropertyAnimation.mm; sourceTree = "<group>"; };
 		A26DFFD20EEFE64F95AB4477D6526F52 /* POPAnimationRuntime.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPAnimationRuntime.mm; path = pop/POPAnimationRuntime.mm; sourceTree = "<group>"; };
 		A524100DC0D0E843D43ED2E01345CF1C /* POPGeometry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPGeometry.h; path = pop/POPGeometry.h; sourceTree = "<group>"; };
@@ -416,9 +419,9 @@
 		A63E86A5CC6E20E08514F622F1966D97 /* Pods-JPImageresizerView_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JPImageresizerView_Example-Info.plist"; sourceTree = "<group>"; };
 		A7511E081C4FDED54DDD2BF488EFCC45 /* JPBasic-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JPBasic-Info.plist"; sourceTree = "<group>"; };
 		A7AE906CAC93C7E914D65855B06FB2D7 /* POPDecayAnimationInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPDecayAnimationInternal.h; path = pop/POPDecayAnimationInternal.h; sourceTree = "<group>"; };
-		A86B8E977AE9F844836255AA26995EA5 /* CALayer+JPImageresizer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "CALayer+JPImageresizer.m"; path = "JPImageresizerView/Classes/CALayer+JPImageresizer.m"; sourceTree = "<group>"; };
 		AB8D65F274287BCD7F2B3E9A779B009F /* POPCustomAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPCustomAnimation.h; path = pop/POPCustomAnimation.h; sourceTree = "<group>"; };
 		ABCAA5F0DB0C748E99E7832F996376C8 /* MASConstraintMaker.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASConstraintMaker.m; path = Masonry/MASConstraintMaker.m; sourceTree = "<group>"; };
+		ABDA207253608EDBBA87AF00A5465B55 /* JPImageresizerFrameView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerFrameView.h; path = JPImageresizerView/Classes/JPImageresizerFrameView.h; sourceTree = "<group>"; };
 		ABE3F3C7F7FAEF7934586A4EFFC28827 /* JPLiquidLayout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPLiquidLayout.debug.xcconfig; sourceTree = "<group>"; };
 		AC26059D576D251DF51795E1639E1CDA /* UIColor+JPExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIColor+JPExtension.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIColor+JPExtension.h"; sourceTree = "<group>"; };
 		AE28925D3C8F67403C343D670F47C71F /* JPLiquidLayoutProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPLiquidLayoutProtocol.h; path = JPLiquidLayout/Classes/JPLiquidLayoutProtocol.h; sourceTree = "<group>"; };
@@ -429,18 +432,16 @@
 		B38EE55ED6884C48E26CBB39C0054F73 /* UIViewController+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIViewController+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIViewController+JPExtension.m"; sourceTree = "<group>"; };
 		B4658DC7A6A1F6830986F642FE19CBE6 /* Pods-JPImageresizerView_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JPImageresizerView_Example.release.xcconfig"; sourceTree = "<group>"; };
 		B90A456275839DC4BC3C254FC7567AB4 /* View+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "View+MASAdditions.m"; path = "Masonry/View+MASAdditions.m"; sourceTree = "<group>"; };
+		BAFFA91C5157BE156AC702C2B1CEEE12 /* JPImageresizerView-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JPImageresizerView-Info.plist"; sourceTree = "<group>"; };
 		BBC39078D64B257DC0CF8B88C01513AD /* NSArray+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSArray+MASAdditions.m"; path = "Masonry/NSArray+MASAdditions.m"; sourceTree = "<group>"; };
 		BE41E0C59014EA4824140DC21670564C /* JPBrowseImagesViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImagesViewController.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesViewController.m; sourceTree = "<group>"; };
 		BEFDA2A33FE4B2944AC858E57420FB86 /* JPBrowseImageModel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImageModel.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImageModel.m; sourceTree = "<group>"; };
 		BFF5040D45CD34090FD2171F635A1A84 /* JPLiquidLayout-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPLiquidLayout-umbrella.h"; sourceTree = "<group>"; };
-		C0A5CD5492427C816C5705A2E421BFFC /* JPImageresizerFrameView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerFrameView.h; path = JPImageresizerView/Classes/JPImageresizerFrameView.h; sourceTree = "<group>"; };
 		C0EF20717515453B67865EEC8992DBFD /* Pods-JPImageresizerView_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JPImageresizerView_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C23F6587D7B4D3A2CF1906BA9C0A0155 /* JPBrowseImagesTransition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImagesTransition.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesTransition.m; sourceTree = "<group>"; };
 		C4B9CF2B00B2AAEEA68ECD471245B0BC /* POPBasicAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPBasicAnimation.h; path = pop/POPBasicAnimation.h; sourceTree = "<group>"; };
 		C4C05A78D06BBB082723B4F0A5E21D8D /* POPVector.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPVector.mm; path = pop/POPVector.mm; sourceTree = "<group>"; };
 		C5040125AC86D8A49AC0F85682087071 /* JPBrowseImages.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = JPBrowseImages.bundle; path = "JPBasic-JPBrowseImages.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C590C95D44E647F9FFEBC19AD5C1B24B /* JPImageresizerView.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JPImageresizerView.modulemap; sourceTree = "<group>"; };
-		C6658DCAB12C884F797D8EFA34EBF7D1 /* JPImageresizerFrameView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerFrameView.m; path = JPImageresizerView/Classes/JPImageresizerFrameView.m; sourceTree = "<group>"; };
 		C6A00A00D23D2E973144C09D1E34AA71 /* POPPropertyAnimationInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPPropertyAnimationInternal.h; path = pop/POPPropertyAnimationInternal.h; sourceTree = "<group>"; };
 		C7D7C6668213859CE3CB573F0487A31A /* JPBasic.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPBasic.release.xcconfig; sourceTree = "<group>"; };
 		C807D3D4FDEE539D54152F1C88D02458 /* pop.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = pop.release.xcconfig; sourceTree = "<group>"; };
@@ -450,8 +451,7 @@
 		CAA30C59BE0DE39EA6FB9B81974C17A6 /* UIImage+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+JPExtension.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIImage+JPExtension.m"; sourceTree = "<group>"; };
 		CAC0468134C0DA400613305F7E96AC70 /* JPLiquidLayoutTool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPLiquidLayoutTool.h; path = JPLiquidLayout/Classes/JPLiquidLayoutTool.h; sourceTree = "<group>"; };
 		CCA4AD3448E33D13B818A701BBBB76DB /* JPConstant.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPConstant.h; path = JPBasic/Classes/JPConst/JPConstant.h; sourceTree = "<group>"; };
-		CCC1E617B638935E562E03E4A4CBAB5E /* JPImageresizerView-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPImageresizerView-umbrella.h"; sourceTree = "<group>"; };
-		D048D7428D77184547DC50EB7BCDDDB3 /* JPImageresizerBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerBlurView.h; path = JPImageresizerView/Classes/JPImageresizerBlurView.h; sourceTree = "<group>"; };
+		CFD9F6EF8D79981362FDF037BE60A60A /* JPImageresizerTool.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPImageresizerTool.m; path = JPImageresizerView/Classes/JPImageresizerTool.m; sourceTree = "<group>"; };
 		D473AF23CDEABF6887BB07848AC90524 /* JPBrowseImagesBottomView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JPBrowseImagesBottomView.m; path = JPBasic/Classes/JPBrowseImages/JPBrowseImagesBottomView.m; sourceTree = "<group>"; };
 		D62AFFE4A0B6925150BB0FE0F594CFD2 /* NSString+JPExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSString+JPExtension.m"; path = "JPBasic/Classes/JPCategory/Foundation/NSString+JPExtension.m"; sourceTree = "<group>"; };
 		D71EADA8EC1BF1DABAA29E90D6AFC7F5 /* MASConstraintMaker.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MASConstraintMaker.h; path = Masonry/MASConstraintMaker.h; sourceTree = "<group>"; };
@@ -459,6 +459,7 @@
 		DA9C29B7C162C91BC3AFA014134AEC61 /* UIView+JPPOP.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+JPPOP.h"; path = "JPBasic/Classes/JPCategory/UIKit/UIView+JPPOP.h"; sourceTree = "<group>"; };
 		DBB34405E21725FEF24C665E2327661E /* POPMath.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPMath.mm; path = pop/POPMath.mm; sourceTree = "<group>"; };
 		DD762EC146E7483D295909DCBC463E4D /* POPCustomAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = POPCustomAnimation.mm; path = pop/POPCustomAnimation.mm; sourceTree = "<group>"; };
+		E0298F52182A94F8AF1C959F53211AF9 /* JPImageresizerView.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = JPImageresizerView.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		E189A8E229F16599B4E59A5FD6C73492 /* JPLiquidLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPLiquidLayout.h; path = JPLiquidLayout/Classes/JPLiquidLayout.h; sourceTree = "<group>"; };
 		E19DE8154FC30C500EEDB9EC4C9B46D5 /* POPSpringAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPSpringAnimation.h; path = pop/POPSpringAnimation.h; sourceTree = "<group>"; };
 		E489F9E780BA84A2C097C139CFAA68D1 /* JPBasic-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPBasic-prefix.pch"; sourceTree = "<group>"; };
@@ -467,8 +468,8 @@
 		ECFA0621413DF79901EDF683FD8F6F40 /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "ViewController+MASAdditions.m"; path = "Masonry/ViewController+MASAdditions.m"; sourceTree = "<group>"; };
 		EDD7CAF153E6B5F054102F0442A7C7B5 /* POPVector.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPVector.h; path = pop/POPVector.h; sourceTree = "<group>"; };
 		EED0D22B5D15A1BCE8B5123365D2220F /* View+MASAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "View+MASAdditions.h"; path = "Masonry/View+MASAdditions.h"; sourceTree = "<group>"; };
-		F05C4798BD8F9DE2325B4145C077E84E /* JPImageresizerView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JPImageresizerView.debug.xcconfig; sourceTree = "<group>"; };
 		F3A21D0A30D45F44F0E4E556AA2FDB15 /* POPMath.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPMath.h; path = pop/POPMath.h; sourceTree = "<group>"; };
+		F7EE19CB1F55045AA9D8F1BAE4E56C31 /* JPImageresizerBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPImageresizerBlurView.h; path = JPImageresizerView/Classes/JPImageresizerBlurView.h; sourceTree = "<group>"; };
 		F86E7B5EBD9A45EA99FA8921F91370A7 /* UIView+JPPOP.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+JPPOP.m"; path = "JPBasic/Classes/JPCategory/UIKit/UIView+JPPOP.m"; sourceTree = "<group>"; };
 		F90E46043CE41896266A860E887EE876 /* pop-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "pop-umbrella.h"; sourceTree = "<group>"; };
 		F965FFE79606C6B6729387607A8F9DB3 /* JPBrowseImageModel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JPBrowseImageModel.h; path = JPBasic/Classes/JPBrowseImages/JPBrowseImageModel.h; sourceTree = "<group>"; };
@@ -478,7 +479,6 @@
 		FBDDEC734E5729B21C3FFC3F82E1D773 /* POPBasicAnimationInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = POPBasicAnimationInternal.h; path = pop/POPBasicAnimationInternal.h; sourceTree = "<group>"; };
 		FBECC60E2775C93878AF0D2A720DC0F4 /* JPLiquidLayout-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JPLiquidLayout-dummy.m"; sourceTree = "<group>"; };
 		FE14DC4300B04DD0D1DA92C41FCE6660 /* SVProgressHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SVProgressHUD.h; path = SVProgressHUD/SVProgressHUD.h; sourceTree = "<group>"; };
-		FE5103237C342EAF1860E5684460CD03 /* UIImage+JPImageresizer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+JPImageresizer.m"; path = "JPImageresizerView/Classes/UIImage+JPImageresizer.m"; sourceTree = "<group>"; };
 		FF0541E0B9564E589A9BC07D62EEBF7A /* JPBasic-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JPBasic-umbrella.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -554,19 +554,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		03C7B21E84D8ED1AA9F023B0DC1A9FD7 /* Support Files */ = {
+		098164087046BCABA023A88FBA534423 /* JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
-				C590C95D44E647F9FFEBC19AD5C1B24B /* JPImageresizerView.modulemap */,
-				1DF45A86F33CF7D7CA1E4D8EC3965646 /* JPImageresizerView-dummy.m */,
-				043603325906D4B306BA7B3C0B4E2A81 /* JPImageresizerView-Info.plist */,
-				953B6C3A8194BB3B272CE9D9F48B7444 /* JPImageresizerView-prefix.pch */,
-				CCC1E617B638935E562E03E4A4CBAB5E /* JPImageresizerView-umbrella.h */,
-				F05C4798BD8F9DE2325B4145C077E84E /* JPImageresizerView.debug.xcconfig */,
-				88B038D771C88526463CD75B6CB55183 /* JPImageresizerView.release.xcconfig */,
+				89A7E1AE55767C93E2364172969F9BAB /* CALayer+JPImageresizer.h */,
+				146E4E91A0F036FC5D42FD339F7ED2CF /* CALayer+JPImageresizer.m */,
+				F7EE19CB1F55045AA9D8F1BAE4E56C31 /* JPImageresizerBlurView.h */,
+				0447517B1D3CBC78AACC4A5A58A19236 /* JPImageresizerBlurView.m */,
+				32CA8A1F461EEB1FBCE9EF7777AD97CA /* JPImageresizerConfigure.h */,
+				62D1C578E8E178B68B75030AA5034EC5 /* JPImageresizerConfigure.m */,
+				ABDA207253608EDBBA87AF00A5465B55 /* JPImageresizerFrameView.h */,
+				948BB92BA3047A6533849A68A852F774 /* JPImageresizerFrameView.m */,
+				90F726A2C6E888916BFAD438CF088C10 /* JPImageresizerSlider.h */,
+				926B76461E0040F126DC984B7A81E414 /* JPImageresizerSlider.m */,
+				8F69CB152B1A0E488CAF34767E7D116B /* JPImageresizerTool.h */,
+				CFD9F6EF8D79981362FDF037BE60A60A /* JPImageresizerTool.m */,
+				6F3E286E26DB1C5F0FB22ACC1A9B0DFD /* JPImageresizerTypedef.h */,
+				85447A8E48866134BD63945FA11A318D /* JPImageresizerVideoObject.h */,
+				88E62C4E127E210319FD43287BEA5CAC /* JPImageresizerVideoObject.m */,
+				1F12DAEC1EA753AEA18A05DA25461905 /* JPImageresizerView.h */,
+				66FC5F327797524CE8AEC681889EF937 /* JPImageresizerView.m */,
+				A0A6BA2F313A66AD06336D201078D85C /* Pod */,
+				DBF3142A4A55933D8117CB8120F2E19B /* Support Files */,
 			);
-			name = "Support Files";
-			path = "Example/Pods/Target Support Files/JPImageresizerView";
+			name = JPImageresizerView;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		0D6BBAB8F29231D131FB58132500DAB9 /* JPBasic */ = {
@@ -858,6 +870,16 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
+		A0A6BA2F313A66AD06336D201078D85C /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				E0298F52182A94F8AF1C959F53211AF9 /* JPImageresizerView.podspec */,
+				758BE08C7C293968B3CA54AE7CB02A6B /* LICENSE */,
+				54074D70989E2F9682C6547EDCE1BC6F /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
 		AAC0828A006241DA2AD43ECF6AE3BB55 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -866,16 +888,6 @@
 				85AD2D6BBF3B93B8FEE026A0043794D2 /* UIKit.framework */,
 			);
 			name = iOS;
-			sourceTree = "<group>";
-		};
-		AD1D7E6EBD4F4B7CADB1C33A7AB3AB0B /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				26A92E9BF5AB84F41A4D0E99815EF07B /* JPImageresizerView.podspec */,
-				58044C93A8D11908267D91046AA6685D /* LICENSE */,
-				9E9D53FFC43AA1E13A39724727693C61 /* README.md */,
-			);
-			name = Pod;
 			sourceTree = "<group>";
 		};
 		B3C0B5FFCF0F43065D7671325D4E0B1B /* Masonry */ = {
@@ -923,33 +935,6 @@
 			name = JPConst;
 			sourceTree = "<group>";
 		};
-		C621C203AA6C14DBE440CFA5A81B8F42 /* JPImageresizerView */ = {
-			isa = PBXGroup;
-			children = (
-				59EAF2FEED0D003D17FE9942906D623B /* CALayer+JPImageresizer.h */,
-				A86B8E977AE9F844836255AA26995EA5 /* CALayer+JPImageresizer.m */,
-				D048D7428D77184547DC50EB7BCDDDB3 /* JPImageresizerBlurView.h */,
-				5205A97B959EB238BD1363A3599C0B6E /* JPImageresizerBlurView.m */,
-				2DC528B52FD8B041DE48B811B9DB2E3A /* JPImageresizerConfigure.h */,
-				157F8D5DE3A52D64CB8B4687EB13B704 /* JPImageresizerConfigure.m */,
-				C0A5CD5492427C816C5705A2E421BFFC /* JPImageresizerFrameView.h */,
-				C6658DCAB12C884F797D8EFA34EBF7D1 /* JPImageresizerFrameView.m */,
-				72C944DA2B337F0A1FD72349F543257F /* JPImageresizerSlider.h */,
-				25CA61EB9CC85D34EAD4D33716535885 /* JPImageresizerSlider.m */,
-				46127692A1EE8C6442D6FA22C6D9B960 /* JPImageresizerTypedef.h */,
-				00B36C1B945B8E82E8D66CDD2B7E38F9 /* JPImageresizerVideoObject.h */,
-				691D359D2517EE63EB84DF1985692903 /* JPImageresizerVideoObject.m */,
-				11007BA358FBDD4272D95151412F71CF /* JPImageresizerView.h */,
-				9BE8A52D75EC55CDF81664E62ABCBB4D /* JPImageresizerView.m */,
-				0CE08FB64F5AD6675EF8F8FB45BD5048 /* UIImage+JPImageresizer.h */,
-				FE5103237C342EAF1860E5684460CD03 /* UIImage+JPImageresizer.m */,
-				AD1D7E6EBD4F4B7CADB1C33A7AB3AB0B /* Pod */,
-				03C7B21E84D8ED1AA9F023B0DC1A9FD7 /* Support Files */,
-			);
-			name = JPImageresizerView;
-			path = ../..;
-			sourceTree = "<group>";
-		};
 		CF1408CF629C7361332E53B88F7BD30C = {
 			isa = PBXGroup;
 			children = (
@@ -960,6 +945,21 @@
 				271139E7611517084A558DE406381125 /* Products */,
 				925DEC0E7DC9CB999B01E331D8F4798E /* Targets Support Files */,
 			);
+			sourceTree = "<group>";
+		};
+		DBF3142A4A55933D8117CB8120F2E19B /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				7ECD304D9CACBF5961B0AA310C372ABC /* JPImageresizerView.modulemap */,
+				0DBBCC02927726068F9A6A307F6726EF /* JPImageresizerView-dummy.m */,
+				BAFFA91C5157BE156AC702C2B1CEEE12 /* JPImageresizerView-Info.plist */,
+				07AC88F2B67FE7FE4D7650D4EE100E50 /* JPImageresizerView-prefix.pch */,
+				7C2D98D3A1E7F7996E4E62244C8F723C /* JPImageresizerView-umbrella.h */,
+				94AA9A24B8F328B40BA233CF69414CDD /* JPImageresizerView.debug.xcconfig */,
+				53D045087EBD883A35204D28D752706F /* JPImageresizerView.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/JPImageresizerView";
 			sourceTree = "<group>";
 		};
 		E4C2F8B3EA55E0B73CAC1251042922D9 /* Support Files */ = {
@@ -996,7 +996,7 @@
 		FD9D00523031A379D01526FF23B34907 /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C621C203AA6C14DBE440CFA5A81B8F42 /* JPImageresizerView */,
+				098164087046BCABA023A88FBA534423 /* JPImageresizerView */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
@@ -1021,6 +1021,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5BE3153BC1E062041F45274B78A95D8 /* Pods-JPImageresizerView_Example-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BB61D7E4A29940374D2AB3FD9569474 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				433D29267221898C2A807502F3904563 /* CALayer+JPImageresizer.h in Headers */,
+				14B401CA6ED8FFF3788ABD960E514FB4 /* JPImageresizerBlurView.h in Headers */,
+				28ACC8703D5468F68209843F4DB4BBD9 /* JPImageresizerConfigure.h in Headers */,
+				2CA350057474F1BEC844467406B10FCC /* JPImageresizerFrameView.h in Headers */,
+				4291731B25B5F3E345D14B56A1761DEE /* JPImageresizerSlider.h in Headers */,
+				32CFB98905DBA8C64FD4DEEC7C621AAE /* JPImageresizerTool.h in Headers */,
+				3EE90942344DF2507124A2BF6FC14A1C /* JPImageresizerTypedef.h in Headers */,
+				4222ECDF6D1B26D2021AFEFE360B253F /* JPImageresizerVideoObject.h in Headers */,
+				4CF60BAD5828B104BC2696794E9A01DC /* JPImageresizerView-umbrella.h in Headers */,
+				83C4BD13E2EFCE3EB67F4A7939B56E26 /* JPImageresizerView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1129,23 +1146,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C98CFF4C77E8803F118C649B5D2B629C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2D5F3DD50D20A623BF28E3C7806CD3A0 /* CALayer+JPImageresizer.h in Headers */,
-				16BB5A5A064D21A0D4768739EB821668 /* JPImageresizerBlurView.h in Headers */,
-				3EABDD1189EB028545DDD344483792B0 /* JPImageresizerConfigure.h in Headers */,
-				991AF3DE20BF332F2824F01A604A9B0B /* JPImageresizerFrameView.h in Headers */,
-				50A4BC6072C5485A60D1CE1AD8B7BCE3 /* JPImageresizerSlider.h in Headers */,
-				5934337A5F6783AB57A35F12783866E3 /* JPImageresizerTypedef.h in Headers */,
-				3BFC4A433FB7BD1FAD0BE8A0A2A329F2 /* JPImageresizerVideoObject.h in Headers */,
-				A8254FA48DCEBDC4C4FB8875CAC908EE /* JPImageresizerView-umbrella.h in Headers */,
-				4DB1C5E7C382C3CCC5C721556F02095C /* JPImageresizerView.h in Headers */,
-				335C6A330920CAA57C80792750F1EE36 /* UIImage+JPImageresizer.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -1171,8 +1171,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2F4E37C8A4D9DF1E001A7B2D136AAC4A /* Build configuration list for PBXNativeTarget "JPImageresizerView" */;
 			buildPhases = (
-				C98CFF4C77E8803F118C649B5D2B629C /* Headers */,
-				3A2A94D4B3262B6397062B369FCAB137 /* Sources */,
+				4BB61D7E4A29940374D2AB3FD9569474 /* Headers */,
+				C34A749FD195879ABF5567EC15D41C4B /* Sources */,
 				F86DF9E760BF2A13CF0CD075A923ED55 /* Frameworks */,
 				8935B40E121D8D6957A80950FB6265A0 /* Resources */,
 			);
@@ -1400,22 +1400,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3A2A94D4B3262B6397062B369FCAB137 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				21DC6A6E8B7F7AE8C7B5965F0994F5F4 /* CALayer+JPImageresizer.m in Sources */,
-				2EA1D721A1BE7D18276AE235E618FA0A /* JPImageresizerBlurView.m in Sources */,
-				9A41284232890E9B933F6702EDA93840 /* JPImageresizerConfigure.m in Sources */,
-				4E46E647B3C5D89DC305EC2EF7B31C9B /* JPImageresizerFrameView.m in Sources */,
-				89EB103512BA186E91EBEF68C1064F14 /* JPImageresizerSlider.m in Sources */,
-				1B754D69A7A7543E55BAC09810C81821 /* JPImageresizerVideoObject.m in Sources */,
-				54C82C940A85844ADB88EE4DF198B10F /* JPImageresizerView-dummy.m in Sources */,
-				F44921B9B91057AAC2C9705E003E7C9C /* JPImageresizerView.m in Sources */,
-				669908A624F05179DC35F3D3232F9C5E /* UIImage+JPImageresizer.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6AB7E0D6B40F654FCDF08F9DA750275D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1458,6 +1442,22 @@
 				CDBDF57665F9EBB507DDEFE4485388AD /* SVProgressHUD-dummy.m in Sources */,
 				0C389A8E49007204C81696839626415D /* SVProgressHUD.m in Sources */,
 				0420F6A194B0827BA57484AB06459217 /* SVRadialGradientLayer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C34A749FD195879ABF5567EC15D41C4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68549CF2E4D0D094210F64EC83469A84 /* CALayer+JPImageresizer.m in Sources */,
+				1BC2B8C200B7B76009BFF157B54EBE97 /* JPImageresizerBlurView.m in Sources */,
+				315B3077ACC0DC9DE75FBC0EE75820F0 /* JPImageresizerConfigure.m in Sources */,
+				4B1490250DD11603D74CD4C9AA09B72E /* JPImageresizerFrameView.m in Sources */,
+				75CE7F8C84E7641B85DB41165E294706 /* JPImageresizerSlider.m in Sources */,
+				349C04F9105C0816E030D1E6E81D1635 /* JPImageresizerTool.m in Sources */,
+				22B12FB5E590CD32D462FAC4F157E799 /* JPImageresizerVideoObject.m in Sources */,
+				C4F7B25B7E390584C74E6D4C8D019694 /* JPImageresizerView-dummy.m in Sources */,
+				069BE69F395516E7FB2B8864CEB35D6C /* JPImageresizerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2092,7 +2092,7 @@
 		};
 		D029B01B72DADEBA2959FDDD6F0B37FC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F05C4798BD8F9DE2325B4145C077E84E /* JPImageresizerView.debug.xcconfig */;
+			baseConfigurationReference = 94AA9A24B8F328B40BA233CF69414CDD /* JPImageresizerView.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -2152,7 +2152,7 @@
 		};
 		E6D34FDD267327160B33D2FCFFB71E1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 88B038D771C88526463CD75B6CB55183 /* JPImageresizerView.release.xcconfig */;
+			baseConfigurationReference = 53D045087EBD883A35204D28D752706F /* JPImageresizerView.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";

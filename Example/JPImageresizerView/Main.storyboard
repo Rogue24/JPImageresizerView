@@ -341,17 +341,51 @@
                                     <constraint firstItem="3Q2-Zj-NPf" firstAttribute="leading" secondItem="23z-V1-CXO" secondAttribute="trailing" priority="999" constant="20" id="zFc-3r-u0I"/>
                                 </constraints>
                             </view>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qPy-Ya-xPL">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KkI-76-JkC">
+                                        <rect key="frame" x="152.5" y="385" width="70" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="Kk6-s1-Glc"/>
+                                            <constraint firstAttribute="width" constant="70" id="kZN-Z6-Zlm"/>
+                                        </constraints>
+                                        <state key="normal" title="取消导出"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="exportCancel" destination="whP-gf-Uak" eventType="touchUpInside" id="F9T-hE-tX9"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="KkI-76-JkC" firstAttribute="centerY" secondItem="qPy-Ya-xPL" secondAttribute="centerY" multiplier="1.2" id="VFh-ut-d20"/>
+                                    <constraint firstItem="KkI-76-JkC" firstAttribute="centerX" secondItem="qPy-Ya-xPL" secondAttribute="centerX" id="qY8-bp-5PA"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="qPy-Ya-xPL" secondAttribute="bottom" id="0Yg-ji-fhF"/>
                             <constraint firstItem="d0j-lu-XGP" firstAttribute="top" secondItem="TpU-gO-2f1" secondAttribute="top" id="AZQ-go-NvO"/>
                             <constraint firstAttribute="trailing" secondItem="d0j-lu-XGP" secondAttribute="trailing" priority="999" id="BC1-5e-oI6"/>
+                            <constraint firstItem="qPy-Ya-xPL" firstAttribute="top" secondItem="TpU-gO-2f1" secondAttribute="top" id="G7F-GD-Sdb"/>
                             <constraint firstItem="d0j-lu-XGP" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" id="Rtf-Bk-Y2b"/>
                             <constraint firstAttribute="bottom" secondItem="LCW-oZ-8f9" secondAttribute="bottom" id="SxE-4i-1uX"/>
                             <constraint firstItem="LCW-oZ-8f9" firstAttribute="top" secondItem="TpU-gO-2f1" secondAttribute="top" priority="1" id="cM9-XK-xNy"/>
                             <constraint firstAttribute="bottom" secondItem="d0j-lu-XGP" secondAttribute="bottom" priority="1" id="e4w-kj-iFh"/>
                             <constraint firstItem="LCW-oZ-8f9" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" priority="999" id="klh-fd-spu"/>
                             <constraint firstAttribute="trailing" secondItem="LCW-oZ-8f9" secondAttribute="trailing" id="oDc-e1-qBJ"/>
+                            <constraint firstItem="qPy-Ya-xPL" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" id="tXA-X3-KrM"/>
+                            <constraint firstAttribute="trailing" secondItem="qPy-Ya-xPL" secondAttribute="trailing" id="v8Y-zF-FJY"/>
                         </constraints>
                     </view>
                     <connections>
@@ -360,6 +394,7 @@
                         <outlet property="bottomBtnPortraitBottomConstraints" destination="Hsg-df-T8p" id="Dd6-Zv-LMs"/>
                         <outlet property="bottomBtnWidthConstraint" destination="yOA-WF-CwK" id="kWd-BA-GSj"/>
                         <outlet property="bottomView" destination="LCW-oZ-8f9" id="deE-nG-h12"/>
+                        <outlet property="exportCancelView" destination="qPy-Ya-xPL" id="Z6X-iA-tAU"/>
                         <outlet property="horMirrorBtn" destination="0oe-Do-HA2" id="S1z-Me-zon"/>
                         <outlet property="recoveryBtn" destination="3Q2-Zj-NPf" id="ggM-oQ-YKY"/>
                         <outlet property="replaceMaskImgBtn" destination="XaN-bE-0my" id="vh6-Uj-aJO"/>

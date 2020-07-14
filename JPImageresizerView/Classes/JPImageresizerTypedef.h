@@ -47,19 +47,19 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 };
 
 /**
- * 裁剪视频失败原因
- * JPCVFReason_NotAssets：视频资源为空
- * JPCVFReason_VideoAlreadyDamage：视频文件已损坏
- * JPCVFReason_CachePathAlreadyExists：缓存路径已存在其他文件
- * JPCVFReason_ExportFailed：视频导出失败
- * JPCVFReason_ExportCancelled：视频导出取消
+ * 裁剪视频错误原因
+ * JPCVEReason_NotAssets：视频资源为空
+ * JPCVEReason_VideoAlreadyDamage：视频文件已损坏
+ * JPCVEReason_CachePathAlreadyExists：缓存路径已存在其他文件
+ * JPCVEReason_ExportFailed：视频导出失败
+ * JPCVEReason_ExportCancelled：视频导出取消
  */
-typedef NS_ENUM(NSUInteger, JPCropVideoFailureReason) {
-    JPCVFReason_NotAssets,
-    JPCVFReason_VideoAlreadyDamage,
-    JPCVFReason_CachePathAlreadyExists,
-    JPCVFReason_ExportFailed,
-    JPCVFReason_ExportCancelled
+typedef NS_ENUM(NSUInteger, JPCropVideoErrorReason) {
+    JPCVEReason_NotAssets,
+    JPCVEReason_VideoAlreadyDamage,
+    JPCVEReason_CachePathAlreadyExists,
+    JPCVEReason_ExportFailed,
+    JPCVEReason_ExportCancelled
 };
 
 #pragma mark - Block
@@ -79,3 +79,34 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
     - NO：没有预备缩放
  */
 typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
+
+/**
+ * 图片裁剪完成的回调
+    - finalImage：裁剪后的图片
+ */
+typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage);
+
+/**
+ * 视频裁剪错误的回调
+    - cachePath：目标存放路径
+    - reason：错误原因（JPCropVideoErrorReason）
+ * 当缓存路径已存在其他文件（JPCVEReason_CachePathAlreadyExists），返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
+ */
+typedef BOOL(^JPCropVideoErrorBlock)(NSString *cachePath, JPCropVideoErrorReason reason);
+
+/**
+ * 视频裁剪导出的进度
+    - progress：进度，单位 0~1
+ */
+typedef void(^JPCropVideoProgressBlock)(float progress);
+
+/**
+ * 视频裁剪完成的回调
+    - cacheURL：导出后的最终存放路径，如果转移失败，该路径为tmp文件夹下
+ */
+typedef void(^JPCropVideoCompleteBlock)(NSURL *cacheURL);
+
+/**
+ * 取消视频导出的回调，可用个强指针持有，当视频正在导出时调用即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
+ */
+typedef void(^JPVideoExportCancelBlock)(void);

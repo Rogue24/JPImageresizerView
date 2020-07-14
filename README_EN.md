@@ -3,13 +3,15 @@
 [![Version](https://img.shields.io/cocoapods/v/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
+[![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
 
 [Juejin](https://juejin.im/post/5ecd0cddf265da7711699e0d)
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView)
+
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.6.1)
+## Brief introduction (Current version: 1.6.2)
 
 A wheel specially designed for cutting pictures and videos is easy to use and has rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, multiple style selection, etc.), which can meet the needs of most pictures and videos cutting.
 
@@ -120,20 +122,20 @@ if (isCropPicture) {
 
 #### Crop the current / specified frame of the video
 ```objc
+// compressScale: If it is greater than or equal to 1, it will be trimmed according to the size of the original image; if it is less than or equal to 0, nil will be returned (for example: compressScale = 0.5, 1000 x 500 -- > 500 x 250)
+
 // 1.The size of the original image cuts the current frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
-[self.imageresizerView cropVideoCurrentFrameWithComplete:^(UIImage *resizeImage) {
-    // After cropping, the resizeimage is the cropped image
+[self.imageresizerView cropVideoCurrentFrameWithCompleteBlock:^(UIImage *finalImage) {
+    // After cropping, finalImage is the cropped image
     // Pay attention to circular references
 }];
 
 // 2.Customize the compressScale to crop the current frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
-// compressScale: If it is greater than or equal to 1, it will be trimmed according to the size of the original image; if it is less than or equal to 0, nil will be returned (for example: compressScale = 0.5, 1000 x 500 -- > 500 x 250)
-- (void)cropVideoCurrentFrameWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 // 3.Customize the compressScale to crop the specified frame of the video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
 // second: What second is the cropping
-// compressScale: If it is greater than or equal to 1, it will be trimmed according to the size of the original image; if it is less than or equal to 0, nil will be returned (for example: compressScale = 0.5, 1000 x 500 -- > 500 x 250)
-- (void)cropVideoOneFrameWithSecond:(float)second complete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale;
+- (void)cropVideoOneFrameWithSecond:(float)second compressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
 
 #### Crop the entire video
@@ -141,46 +143,59 @@ if (isCropPicture) {
 // Crop the entire video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
 // cachePath: If it is nil, the default path is under the caches folder, the video name is the current timestamp, and the format is MP4 (... / library / caches / 1594556710. Mp4)
 // presetName：The quality of exported video is AVAssetExportPresetLowQuality, AVAssetExportPresetMediumQuality, AVAssetExportPresetHighestQuality, etc
-[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
-        
-    // Error callback
-    // Note: the callback is executed under the child thread
-    // Pay attention to circular references
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // reason: Cause of error
-        switch (reason) {
-            case JPCVFReason_NotAssets:
-                // Video resource is empty
-                break;
-            case JPCVFReason_VideoAlreadyDamage:
-                // The video file is corrupted
-                break;
-            case JPCVFReason_CachePathAlreadyExists:
-                // There are other files in the cache path. If yes is returned, the files in this path will be automatically deleted and the subsequent cropping operation will continue.
-                break;
-            case JPCVFReason_ExportFailed:
-                // Video export failed
-                break;
-            case JPCVFReason_ExportCancelled:
-                // Video export cancelled
-                break;
-        }
-    });
-    
-    return reason == JPCVFReason_CachePathAlreadyExists;
-        
-} progressBlock:^(float progress) {
+// Returns a block of JPVideoExportCancelBlock. It is a block to cancel the video export. It can be held by a strong pointer. When the video is being exported, call the block to cancel the export and trigger the errorblock callback.(JPCVEReason_ExportCancelled)
+
+__weak typeof(self) wSelf = self;
+// Hold a block to cancel video export with a strong pointer
+self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
         
     // Monitor progress (the callback is under the main thread)
     // progress: 0~1
     // Pay attention to circular references
         
+} errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+        
+    // Error callback
+    // reason: Cause of error
+    // Pay attention to circular references
+    
+    BOOL isContinue = NO;
+    switch (reason) {
+        case JPCVEReason_NotAssets:
+            // Video resource is empty
+            break;
+        case JPCVEReason_VideoAlreadyDamage:
+            // The video file is corrupted
+            break;
+        case JPCVEReason_CachePathAlreadyExists:
+            // There are other files in the cache path. If YES is returned, the files in this path will be automatically deleted and the subsequent cropping operation will continue.
+            isContinue = YES;
+            break;
+        case JPCVEReason_ExportFailed:
+            // Video export failed
+            break;
+        case JPCVEReason_ExportCancelled:
+            // Video export cancelled
+            break;
+    }
+    
+    return isContinue;
+        
+} progressBlock:^(float progress) {
+        
+    // Monitor progress
+    // progress: 0~1
+    // Pay attention to circular references
+        
 } completeBlock:^(NSURL *cacheURL) {
         
-    // After cropping (the callback is under the main thread), the cacheURL is the cache URL
+    // After cropping, the cacheURL is the cache URL
     // Pay attention to circular references
     
 }];
+
+// Call when the video is being exported to cancel the export
+!self.exportCancelBlock ? : self.exportCancelBlock();
 ```
 **PS1: the function of cropping the whole video picture, circular cutting and masking can't be used. Cutting a frame of picture is OK. At present, it is only effective for a single picture.**
 
@@ -368,14 +383,15 @@ self.imageresizerView.isPreview = YES;
 // example: compressScale = 0.5, 1000 x 500 --> 500 x 250
 
 // 1.Custom Compression scale for Tailoring
-[self.imageresizerView imageresizerWithComplete:^(UIImage *resizeImage) {
-    // When the clipping is completed, resizeImage is the clipped image.
+// example: Compressed to 50% of the original size.
+[self.imageresizerView cropPictureWithCompressScale:0.5 completeBlock:^(UIImage *finalImage) {
+    // When the clipping is completed, finalImage is the clipped image.
     // Pay attention to circular references
-} compressScale:0.7]; // example: Compressed to 70% of the original size.
+}]; 
 
 // 2.Tailoring with original size
-[self.imageresizerView originImageresizerWithComplete:^(UIImage *resizeImage) {
-    // When the clipping is completed, resizeImage is the clipped image.
+[self.imageresizerView cropPictureWithCompleteBlock:^(UIImage *finalImage) {
+    // When the clipping is completed, finalImage is the clipped image.
     // Pay attention to circular references
 }];
 ```

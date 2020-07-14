@@ -153,14 +153,16 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
         JPConfigureModel *model = self.models[indexPath.row];
-        if (!model.configure.resizeImage && !model.configure.videoURL) model.configure.resizeImage = self.randomResizeImage;
+        if (!model.configure.resizeImage && !model.configure.videoURL) {
+            model.configure.resizeImage = self.randomResizeImage;
+        }
         
         JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
         vc.statusBarStyle = model.statusBarStyle;
         vc.configure = model.configure;
         
         CATransition *cubeAnim = [CATransition animation];
-        cubeAnim.duration = 0.5;
+        cubeAnim.duration = 0.45;
         cubeAnim.type = @"cube";
         cubeAnim.subtype = kCATransitionFromRight;
         cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];

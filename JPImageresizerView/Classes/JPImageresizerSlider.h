@@ -1,6 +1,6 @@
 //
 //  JPImageresizerSlider.h
-//  JPBasic
+//  JPImageresizerView
 //
 //  Created by 周健平 on 2020/7/8.
 //

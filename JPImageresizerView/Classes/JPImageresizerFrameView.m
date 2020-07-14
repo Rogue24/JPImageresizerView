@@ -8,9 +8,9 @@
 
 #import "JPImageresizerFrameView.h"
 #import "JPImageresizerBlurView.h"
-#import "UIImage+JPImageresizer.h"
 #import "CALayer+JPImageresizer.h"
 #import "JPImageresizerSlider.h"
+#import "JPImageresizerTool.h"
 
 @interface JPImageresizerProxy : NSProxy
 + (instancetype)proxyWithTarget:(id)target;
@@ -77,8 +77,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (CGSize)imageViewSzie;
 
 @property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, strong) AVAssetExportSession *exporterSession;
-@property (nonatomic, copy) void (^progressBlock)(float progress);
+@property (nonatomic, weak) AVAssetExportSession *exporterSession;
+@property (nonatomic, copy) JPCropVideoProgressBlock progressBlock;
 @end
 
 @implementation JPImageresizerFrameView
@@ -1062,6 +1062,12 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGFloat y = (self.bounds.size.height - _baseImageH) * 0.5;
     self.originImageFrame = CGRectMake(x, y, _baseImageW, _baseImageH);
     [self __updateRotationDirection:rotationDirection];
+    if (self.maskBlurView) {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        [self __updateMaskViewTransform];
+        [CATransaction commit];
+    }
     _imageresizerFrame = [self __baseImageresizerFrame];
     [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
@@ -1248,7 +1254,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (self.maskBlurView != nil || _maskImage == nil) return;
     
     UIImageView *maskImgView = [[UIImageView alloc] init];
-    maskImgView.image = [_maskImage jpir_destinationOutImage];
+    maskImgView.image = [JPImageresizerTool convertBlackImage:_maskImage];
     
     JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha];
     maskBlurView.userInteractionEnabled = NO;
@@ -1311,6 +1317,27 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [maskBlurView removeFromSuperview];
         !completeBlock ? : completeBlock();
     }
+}
+
+#pragma mark 监听视频导出进度的定时器
+
+- (void)__addProgressTimer:(JPCropVideoProgressBlock)progressBlock {
+    [self __removeProgressTimer];
+    if (progressBlock == nil) return;
+    self.progressBlock = progressBlock;
+    self.progressTimer = [NSTimer timerWithTimeInterval:0.05 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.progressTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)__removeProgressTimer {
+    [self.progressTimer invalidate];
+    self.progressTimer = nil;
+    self.progressBlock = nil;
+    self.exporterSession = nil;
+}
+
+- (void)__progressTimerHandle {
+    if (self.progressBlock && self.exporterSession) self.progressBlock(self.exporterSession.progress);
 }
 
 #pragma mark - puild method
@@ -1573,7 +1600,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         [self __updateMaskViewTransform];
-        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[_maskImage jpir_destinationOutImage]];
+        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[JPImageresizerTool convertBlackImage:_maskImage]];
         [CATransaction commit];
         [self.maskBlurView setIsBlur:YES duration:_defaultDuration];
     } else {
@@ -1609,7 +1636,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             [self setResizeWHScale:whScale isToBeArbitrarily:isArbitrarilyMask animated:isAnimated];
             _isArbitrarilyMask = isArbitrarilyMask;
         } else {
-            UIImage *image = [maskImage jpir_destinationOutImage];
+            UIImage *image = [JPImageresizerTool convertBlackImage:maskImage];
             UIImageView *maskImgView = (UIImageView *)self.maskBlurView.maskView;
             if (isAnimated) {
                 [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
@@ -1785,102 +1812,51 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark 图片裁剪
 
-- (void)imageresizerWithComplete:(void(^)(UIImage *resizeImage))complete compressScale:(CGFloat)compressScale {
-    if (!complete) return;
+- (void)cropPictureWithCompressScale:(CGFloat)compressScale
+                       completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    if (!completeBlock) return;
+    
     UIImage *image = self.imageView.image;
     if (!image || compressScale <= 0) {
-        complete(nil);
+        completeBlock(nil);
         return;
     }
-    [self __cropPicture:image compressScale:compressScale complete:complete];
-}
-
-- (void)__cropPicture:(UIImage *)image compressScale:(CGFloat)compressScale complete:(void(^)(UIImage *resizeImage))complete {
-    UIImageOrientation orientation;
-    switch (self.rotationDirection) {
-        case JPImageresizerHorizontalLeftDirection:
-            orientation = UIImageOrientationLeft;
-            break;
-        case JPImageresizerVerticalDownDirection:
-            orientation = UIImageOrientationDown;
-            break;
-        case JPImageresizerHorizontalRightDirection:
-            orientation = UIImageOrientationRight;
-            break;
-        default:
-            orientation = UIImageOrientationUp;
-            break;
-    }
+    
+    UIImage *maskImage = self.maskImage;
+    
+    BOOL isRoundClip = _isRound;
+    
+    JPImageresizerRotationDirection direction = self.rotationDirection;
     
     BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
-    if ([self __isHorizontalDirection:_rotationDirection]) {
+    if ([self __isHorizontalDirection:direction]) {
         BOOL temp = isVerMirror;
         isVerMirror = isHorMirror;
         isHorMirror = temp;
     }
     
-    UIImage *maskImage = self.maskImage;
-    
-    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
-    
-    BOOL isRoundClip = _isRound;
-    
     CGRect imageViewBounds = self.imageView.bounds;
     
-    CGSize relativeSize = imageViewBounds.size;
+    CGSize resizeContentSize = imageViewBounds.size;
     
-    __block CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
+    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
+    
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *finalImage;
-        @autoreleasepool {
-            // 修正图片方向
-            UIImage *resultImage = [image jpir_fixOrientation];
-
-            // 镜像处理
-            if (isVerMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationUpMirrored isRoundClip:NO];
-            if (isHorMirror) resultImage = [resultImage jpir_rotate:UIImageOrientationDownMirrored isRoundClip:NO];
-            
-            if (!CGSizeEqualToSize(cropFrame.size, relativeSize)) {
-                // 获取裁剪区域
-                CGFloat imageScale = resultImage.scale;
-                CGFloat imageWidth = resultImage.size.width;
-                CGFloat imageHeight = resultImage.size.height;
-                CGFloat relativeScale = imageWidth / relativeSize.width;
-                if (cropFrame.origin.x < 0) cropFrame.origin.x = 0;
-                if (cropFrame.origin.y < 0) cropFrame.origin.y = 0;
-                cropFrame.origin.x *= relativeScale;
-                cropFrame.origin.y *= relativeScale;
-                cropFrame.size.width *= relativeScale;
-                if (cropFrame.size.width > imageWidth) cropFrame.size.width = imageWidth;
-                cropFrame.size.height = cropFrame.size.width / resizeWHScale;
-                if (cropFrame.size.height > imageHeight) {
-                    cropFrame.size.height = imageHeight;
-                    cropFrame.size.width = cropFrame.size.height * resizeWHScale;
-                }
-                if (CGRectGetMaxX(cropFrame) > imageWidth) cropFrame.origin.x = imageWidth - cropFrame.size.width;
-                if (CGRectGetMaxY(cropFrame) > imageHeight) cropFrame.origin.y = imageHeight - cropFrame.size.height;
-                if (isVerMirror) cropFrame.origin.x = imageWidth - CGRectGetMaxX(cropFrame);
-                if (isHorMirror) cropFrame.origin.y = imageHeight - CGRectGetMaxY(cropFrame);
-                
-                // 裁剪
-                UIGraphicsBeginImageContextWithOptions(cropFrame.size, NO, imageScale);
-                [resultImage drawInRect:CGRectMake(-cropFrame.origin.x, -cropFrame.origin.y, imageWidth, imageHeight)];
-                finalImage = UIGraphicsGetImageFromCurrentImageContext();
-                UIGraphicsEndImageContext();
-            } else {
-                finalImage = resultImage;
-            }
-            
-            // 旋转并切圆
-            finalImage = [finalImage jpir_rotate:orientation isRoundClip:isRoundClip];
-            
-            // 压缩并蒙版
-            finalImage = [finalImage jpir_resizeImageWithScale:compressScale maskImage:maskImage];
-        }
+        UIImage *finalImage = [JPImageresizerTool cropPicture:image
+                                                    maskImage:maskImage
+                                                  isRoundClip:isRoundClip
+                                                    direction:direction
+                                                  isVerMirror:isVerMirror
+                                                  isHorMirror:isHorMirror
+                                                compressScale:compressScale
+                                            resizeContentSize:resizeContentSize
+                                                resizeWHScale:resizeWHScale
+                                                    cropFrame:cropFrame];
         dispatch_async(dispatch_get_main_queue(), ^{
-            !complete ? : complete(finalImage);
+            completeBlock(finalImage);
         });
     });
 }
@@ -1888,373 +1864,120 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 #pragma mark 视频裁剪
 
 - (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
-                              size:(CGSize)size
                               time:(CMTime)time
-                          complete:(void(^)(UIImage *resizeImage))complete
-                     compressScale:(CGFloat)compressScale {
-    if (!complete) return;
+                       maximumSize:(CGSize)maximumSize
+                     compressScale:(CGFloat)compressScale
+                     completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    if (!completeBlock) return;
     if (!asset || compressScale <= 0) {
-        complete(nil);
+        completeBlock(nil);
         return;
     }
     
-    __weak typeof(self) wSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-        generator.maximumSize = size;
-        generator.appliesPreferredTrackTransform = YES;
-        generator.requestedTimeToleranceAfter = kCMTimeZero;
-        generator.requestedTimeToleranceBefore = kCMTimeZero;
-        CGImageRef imageRef = [generator copyCGImageAtTime:time actualTime:nil error:nil];
-        UIImage *image = [UIImage imageWithCGImage:imageRef];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (image) {
-                [wSelf __cropPicture:image compressScale:compressScale complete:complete];
-            } else {
-                !complete ? : complete(nil);
-            }
-            if (imageRef) CGImageRelease(imageRef);
-        });
-    });
-}
-
-- (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
-                 cachePath:(NSString *)cachePath
-                presetName:(NSString *)presetName
-                errorBlock:(BOOL(^)(NSString *cachePath, JPCropVideoFailureReason reason))errorBlock
-             progressBlock:(void(^)(float progress))progressBlock
-             completeBlock:(void(^)(NSURL *cacheURL))completeBlock {
-    if (!completeBlock) return;
-    if (!asset) {
-        if (errorBlock) errorBlock(nil, JPCVFReason_NotAssets);
-        return;
-    }
+    UIImage *maskImage = self.maskImage;
+    
+    BOOL isRoundClip = _isRound;
     
     JPImageresizerRotationDirection direction = self.rotationDirection;
-    BOOL isHorizontalDirection = [self __isHorizontalDirection:direction];
     
     BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
-    if (isHorizontalDirection) {
+    if ([self __isHorizontalDirection:direction]) {
         BOOL temp = isVerMirror;
         isVerMirror = isHorMirror;
         isHorMirror = temp;
     }
     
-    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : _resizeWHScale;
-    
     CGRect imageViewBounds = self.imageView.bounds;
     
-    CGSize relativeSize = imageViewBounds.size;
+    CGSize resizeContentSize = imageViewBounds.size;
     
-    __block CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
+    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
     
-    NSString *fileName;
-    if (cachePath) {
-        fileName = [cachePath lastPathComponent];
-    } else {
-        fileName = [NSString stringWithFormat:@"%.0lf.mp4", [[NSDate date] timeIntervalSince1970]];
-        cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:fileName];
-    }
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     
-    __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        // 判断缓存路径是否已经存在
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        if ([fileManager fileExistsAtPath:cachePath]) {
-            if (errorBlock) {
-                if (errorBlock(cachePath, JPCVFReason_CachePathAlreadyExists)) {
-                    if ([fileManager fileExistsAtPath:cachePath]) [fileManager removeItemAtPath:cachePath error:nil];
-                } else {
-                    return;
-                }
-            } else {
-                [fileManager removeItemAtPath:cachePath error:nil];
-            }
-        }
-        
-        // 临时导出路径
-        NSString *tmpFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
-        if ([fileManager fileExistsAtPath:tmpFilePath]) {
-            [fileManager removeItemAtPath:tmpFilePath error:nil];
-        }
-        
-        AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
-        if (!videoTrack) {
-            if (errorBlock) errorBlock(nil, JPCVFReason_VideoAlreadyDamage);
-            return;
-        }
-        
-        AVMutableComposition *composition = [AVMutableComposition composition];
-        
-        // 插入音频
-        AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
-        if (audioTrack) {
-            AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-            [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
-        }
-        
-        // 插入视频
-        AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-        [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
-        
-        // 获取视频裁剪尺寸和裁剪区域
-        CGSize renderSize;
-        CGSize videoSize = videoTrack.naturalSize;
-        CGAffineTransform transform = [self __confirmTransformWithVideoSize:videoSize direction:direction isVerMirror:isVerMirror isHorMirror:isHorMirror];
-        if (!CGSizeEqualToSize(cropFrame.size, relativeSize)) {
-            // 获取裁剪区域
-            CGFloat videoWidth = videoSize.width;
-            CGFloat videoHeight = videoSize.height;
-            CGFloat relativeScale = videoWidth / relativeSize.width;
-            if (cropFrame.origin.x < 0) cropFrame.origin.x = 0;
-            if (cropFrame.origin.y < 0) cropFrame.origin.y = 0;
-            cropFrame.origin.x *= relativeScale;
-            cropFrame.origin.y *= relativeScale;
-            cropFrame.size.width *= relativeScale;
-            if (cropFrame.size.width > videoWidth) cropFrame.size.width = videoWidth;
-            cropFrame.size.height = cropFrame.size.width / resizeWHScale;
-            if (cropFrame.size.height > videoHeight) {
-                cropFrame.size.height = videoHeight;
-                cropFrame.size.width = cropFrame.size.height * resizeWHScale;
-            }
-            if (CGRectGetMaxX(cropFrame) > videoWidth) cropFrame.origin.x = videoWidth - cropFrame.size.width;
-            if (CGRectGetMaxY(cropFrame) > videoHeight) cropFrame.origin.y = videoHeight - cropFrame.size.height;
-            
-            CGPoint translate = [self __confirmTranslate:cropFrame videoSize:videoSize direction:direction isVerMirror:isVerMirror isHorMirror:isHorMirror];
-            transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-            
-            // 防止绿边
-            NSInteger renderW = (NSInteger)cropFrame.size.width;
-            NSInteger renderH = (NSInteger)cropFrame.size.height;
-            renderW -= (renderW % 16);
-            renderH -= (renderH % 16);
-            renderSize = CGSizeMake((CGFloat)renderW, (CGFloat)renderH);
-        } else {
-            renderSize = videoSize;
-        }
-        if (isHorizontalDirection) {
-            CGFloat tmp = renderSize.width;
-            renderSize.width = renderSize.height;
-            renderSize.height = tmp;
-        }
-        
-        AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
-        [layerInstruciton setTransform:transform atTime:kCMTimeZero];
-        
-        AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-        compositionInstruction.timeRange = timeRange;
-        compositionInstruction.layerInstructions = @[layerInstruciton];
-        
-        AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
-        videoComposition.instructions = @[compositionInstruction];
-        videoComposition.frameDuration = frameDuration;
-        videoComposition.renderScale = 1;
-        videoComposition.renderSize = renderSize;
-        
-        // 根据文件后缀名获取文件类型
-        NSString *extension = [fileName pathExtension];
-        AVFileType fileType = nil;
-        if ([extension isEqualToString:@"m4a"]) {
-            fileType = AVFileTypeAppleM4A;
-        } else if ([extension isEqualToString:@"m4v"]) {
-            fileType = AVFileTypeAppleM4V;
-        } else if ([extension isEqualToString:@"mov"]) {
-            fileType = AVFileTypeQuickTimeMovie;
-        } else if ([extension isEqualToString:@"mp4"]) {
-            fileType = AVFileTypeMPEG4;
-        } else {
-            fileType = AVFileTypeMPEGLayer3;
-        }
-        
-        AVAssetExportSession *exporterSession = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
-        exporterSession.videoComposition = videoComposition;
-        exporterSession.outputFileType = fileType;
-        exporterSession.outputURL = [NSURL fileURLWithPath:tmpFilePath];
-        exporterSession.shouldOptimizeForNetworkUse = YES;
-        
-        // 监听进度
-        if (progressBlock) {
-            [wSelf __addProgressTimerWithExporterSession:exporterSession progressBlock:progressBlock];
-        }
-        
-        [exporterSession exportAsynchronouslyWithCompletionHandler:^{
-            if (!wSelf) return;
-            __strong typeof(wSelf) sSelf = wSelf;
-            
-            [sSelf __removeProgressTimer];
-            
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            
-            AVAssetExportSessionStatus status = exporterSession.status;
-            if (status == AVAssetExportSessionStatusCompleted) {
-                NSURL *videoURL;
-                if ([tmpFilePath isEqualToString:cachePath]) {
-                    videoURL = [NSURL fileURLWithPath:cachePath];
-                } else {
-                    NSError *error;
-                    [fileManager moveItemAtPath:tmpFilePath toPath:cachePath error:&error];
-                    if (error) {
-                        videoURL = [NSURL fileURLWithPath:tmpFilePath];
-                    } else {
-                        videoURL = [NSURL fileURLWithPath:cachePath];
-                    }
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    !completeBlock ? : completeBlock(videoURL);
-                });
-            } else {
-                [fileManager removeItemAtPath:tmpFilePath error:nil];
-                if (errorBlock) errorBlock(nil, (status == AVAssetExportSessionStatusCancelled ? JPCVFReason_ExportCancelled : JPCVFReason_ExportFailed));
-            }
-        }];
+        UIImage *finalImage = [JPImageresizerTool cropVideoOneFrameWithAsset:asset
+                                                                        time:time
+                                                                 maximumSize:maximumSize
+                                                                   maskImage:maskImage
+                                                                 isRoundClip:isRoundClip
+                                                                   direction:direction
+                                                                 isVerMirror:isVerMirror
+                                                                 isHorMirror:isHorMirror
+                                                               compressScale:compressScale
+                                                           resizeContentSize:resizeContentSize
+                                                               resizeWHScale:resizeWHScale
+                                                                   cropFrame:cropFrame];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completeBlock(finalImage);
+        });
     });
 }
 
-- (void)__addProgressTimerWithExporterSession:(AVAssetExportSession *)exporterSession progressBlock:(void(^)(float progress))progressBlock {
-    [self __removeProgressTimer];
-    if (exporterSession == nil || progressBlock == nil) return;
-    self.exporterSession = exporterSession;
-    self.progressBlock = progressBlock;
-    self.progressTimer = [NSTimer timerWithTimeInterval:0.05 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.progressTimer forMode:NSRunLoopCommonModes];
-}
-
-- (void)__removeProgressTimer {
-    [self.progressTimer invalidate];
-    self.progressTimer = nil;
-    self.progressBlock = nil;
-    self.exporterSession = nil;
-}
-
-- (void)__progressTimerHandle {
-    self.progressBlock(self.exporterSession.progress);
-}
-
-- (CGAffineTransform)__confirmTransformWithVideoSize:(CGSize)videoSize
-                                           direction:(JPImageresizerRotationDirection)direction
-                                         isVerMirror:(BOOL)isVerMirror
-                                         isHorMirror:(BOOL)isHorMirror {
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    switch (direction) {
-        case JPImageresizerHorizontalLeftDirection:
-        {
-            transform = CGAffineTransformTranslate(transform, 0, videoSize.width);
-            transform = CGAffineTransformRotate(transform, M_PI_2 * 3);
-            break;
+- (JPVideoExportCancelBlock)cropVideoWithAsset:(AVURLAsset *)asset
+                                     timeRange:(CMTimeRange)timeRange
+                                 frameDuration:(CMTime)frameDuration
+                                     cachePath:(NSString *)cachePath
+                                    presetName:(NSString *)presetName
+                                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+    
+    JPImageresizerRotationDirection direction = self.rotationDirection;
+    
+    BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
+    BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
+    if ([self __isHorizontalDirection:direction]) {
+        BOOL temp = isVerMirror;
+        isVerMirror = isHorMirror;
+        isHorMirror = temp;
+    }
+    
+    CGRect imageViewBounds = self.imageView.bounds;
+    
+    CGSize resizeContentSize = imageViewBounds.size;
+    
+    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
+    
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
+    
+    __weak typeof(self) wSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [wSelf __addProgressTimer:progressBlock];
+        wSelf.exporterSession = [JPImageresizerTool cropVideoWithAsset:asset
+                                                             timeRange:timeRange
+                                                         frameDuration:frameDuration
+                                                             cachePath:cachePath
+                                                            presetName:presetName
+                                                             direction:direction
+                                                           isVerMirror:isVerMirror
+                                                           isHorMirror:isHorMirror
+                                                     resizeContentSize:resizeContentSize
+                                                         resizeWHScale:resizeWHScale
+                                                             cropFrame:cropFrame
+                                                            errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
+            BOOL isContinue = errorBlock ? errorBlock(cachePath, reason) : NO;
+            if (!isContinue && wSelf) {
+                __strong typeof(wSelf) sSelf = wSelf;
+                [sSelf __removeProgressTimer];
+            }
+            return isContinue;
+        } completeBlock:^(NSURL *cacheURL) {
+            if (wSelf) {
+                __strong typeof(wSelf) sSelf = wSelf;
+                [sSelf __removeProgressTimer];
+            }
+            !completeBlock ? : completeBlock(cacheURL);
+        }];
+    });
+    
+    return ^{
+        if (wSelf) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            [sSelf.exporterSession cancelExport];
         }
-        case JPImageresizerVerticalDownDirection:
-        {
-            transform = CGAffineTransformTranslate(transform, videoSize.width, videoSize.height);
-            transform = CGAffineTransformRotate(transform, M_PI);
-            break;
-        }
-        case JPImageresizerHorizontalRightDirection:
-        {
-            transform = CGAffineTransformTranslate(transform, videoSize.height, 0);
-            transform = CGAffineTransformRotate(transform, M_PI_2);
-            break;
-        }
-        default:
-            break;
-    }
-    if (isVerMirror) {
-        transform = CGAffineTransformTranslate(transform, videoSize.width, 0.0);
-        transform = CGAffineTransformScale(transform, -1.0, 1.0);
-    }
-    if (isHorMirror) {
-        transform = CGAffineTransformTranslate(transform, 0.0, videoSize.height);
-        transform = CGAffineTransformScale(transform, 1.0, -1.0);
-    }
-    return transform;
-}
-
-- (CGPoint)__confirmTranslate:(CGRect)cropFrame
-                    videoSize:(CGSize)videoSize
-                    direction:(JPImageresizerRotationDirection)direction
-                  isVerMirror:(BOOL)isVerMirror
-                  isHorMirror:(BOOL)isHorMirror {
-    if (CGSizeEqualToSize(cropFrame.size, videoSize)) {
-        return CGPointZero;
-    }
-    CGFloat tx = cropFrame.origin.x;
-    CGFloat ty = cropFrame.origin.y;
-    switch (direction) {
-        case JPImageresizerVerticalUpDirection:
-            // 原点在左上
-            if (isVerMirror || isHorMirror) {
-                if (isVerMirror && isHorMirror) {
-                    return [self __confirmTranslate:cropFrame videoSize:videoSize direction:JPImageresizerVerticalDownDirection isVerMirror:NO isHorMirror:NO];
-                } else if (isVerMirror) {
-                    tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                    ty = -ty;
-                } else {
-                    tx = -tx;
-                    ty = videoSize.height - CGRectGetMaxY(cropFrame);
-                }
-            } else {
-                tx = -tx;
-                ty = -ty;
-            }
-            break;
-        case JPImageresizerHorizontalLeftDirection:
-            // 原点在左下
-            if (isVerMirror || isHorMirror) {
-                if (isVerMirror && isHorMirror) {
-                    return [self __confirmTranslate:cropFrame videoSize:videoSize direction:JPImageresizerHorizontalRightDirection isVerMirror:NO isHorMirror:NO];
-                } else if (isVerMirror) {
-                    tx = -tx;
-                    ty = -ty;
-                } else {
-                    tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                    ty = videoSize.height - CGRectGetMaxY(cropFrame);
-                }
-            } else {
-                tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                ty = -ty;
-            }
-            break;
-        case JPImageresizerHorizontalRightDirection:
-            // 原点在右上
-            if (isVerMirror || isHorMirror) {
-                if (isVerMirror && isHorMirror) {
-                    return [self __confirmTranslate:cropFrame videoSize:videoSize direction:JPImageresizerHorizontalLeftDirection isVerMirror:NO isHorMirror:NO];
-                } else if (isVerMirror) {
-                    tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                    ty = videoSize.height - CGRectGetMaxY(cropFrame);
-                } else {
-                    tx = -tx;
-                    ty = -ty;
-                }
-            } else {
-                tx = -tx;
-                ty = videoSize.height - CGRectGetMaxY(cropFrame);
-            }
-            break;
-        case JPImageresizerVerticalDownDirection:
-            // 原点在右下
-            if (isVerMirror || isHorMirror) {
-                if (isVerMirror && isHorMirror) {
-                    return [self __confirmTranslate:cropFrame videoSize:videoSize direction:JPImageresizerVerticalUpDirection isVerMirror:NO isHorMirror:NO];
-                } else if (isVerMirror) {
-                    tx = -tx;
-                    ty = videoSize.height - CGRectGetMaxY(cropFrame);
-                } else {
-                    tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                    ty = -ty;
-                }
-            } else {
-                tx = videoSize.width - CGRectGetMaxX(cropFrame);
-                ty = videoSize.height - CGRectGetMaxY(cropFrame);
-            }
-            break;
-        default:
-            break;
-    }
-    return CGPointMake(tx, ty);
+    };
 }
 
 #pragma mark - UIPanGestureRecognizer

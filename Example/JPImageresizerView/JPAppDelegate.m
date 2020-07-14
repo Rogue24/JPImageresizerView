@@ -12,7 +12,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [JPProgressHUD setMaxSupportedWindowLevel:UIWindowLevelAlert];
-    [JPProgressHUD setMinimumDismissTimeInterval:1.3];
+    [JPProgressHUD setMinimumDismissTimeInterval:1.2];
     [JPProgressHUD setCustomStyle];
     [JPProgressHUD setBackgroundColor:JPRGBColor(240, 240, 240)];
     [JPProgressHUD setForegroundColor:JPRGBColor(16, 16, 16)];

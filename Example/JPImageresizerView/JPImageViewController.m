@@ -28,9 +28,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.title = @"Finish";
+    self.view.backgroundColor = JPRandomColor;
+    
     [self __setupNavigationBar];
     [self __changBgColor];
+    
     if (self.videoURL) {
         [self __setupPlayerLayer];
         [self __setupSlider];
@@ -59,7 +63,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"imageViewController is dead");
+    JPLog(@"imageViewController is dead");
     if (self.videoURL) {
         JPRemoveNotification(self);
         [self.playerLayer removeFromSuperlayer];
@@ -67,7 +71,7 @@
             [self.player removeTimeObserver:self.timeObserver];
             self.timeObserver = nil;
         }
-        NSLog(@"删除视频文件");
+        JPLog(@"删除视频文件");
         [[NSFileManager defaultManager] removeItemAtURL:self.videoURL error:nil];
     }
 }

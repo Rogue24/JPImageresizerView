@@ -57,7 +57,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"photoViewController is dead");
+    JPLog(@"photoViewController is dead");
 }
 
 #pragma mark - setup
