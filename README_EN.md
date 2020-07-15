@@ -104,7 +104,7 @@ if (@available(iOS 11.0, *)) {
 ```
 
 ### Crop local video
-![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cropvideo.gif)
+![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
 ```objc
 // 1.During initialization, you only need to configure the video URL (video URL) in configure
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
@@ -200,7 +200,7 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
 **PS2: since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method, so the width to height ratio of the exported video may be slightly different from the specified width height ratio.**
 
 ### Customize the mask image clipping
-![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
+![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
 ```objc
 // Set mask picture (currently only PNG picture is supported)
 self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
@@ -211,11 +211,11 @@ self.imageresizerView.maskImage = nil;
 // You can set whether the mask image can be dragged at any scale
 self.imageresizerView.isArbitrarilyMask = YES;
 ```
-![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
+![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
 PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
 
 ### Horizontal and vertical screen switching
-![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
+![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
 ```objc
 // This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
 // 1.updateFrame: Refresh frame (e.g. horizontal and vertical screen switching, incoming self.view.bounds Just).
@@ -226,8 +226,8 @@ PS: If the mask image is used, the PNG image is finally cropped out, so the crop
 ```
 
 ### Change border style
-![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
-![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
+![concise](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/conciseframetype.jpg)
+![classic](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/classicframetype.jpg)
 ```objc
 // Only two border styles are available, concise style(JPConciseFrameType) and classic style(JPClassicFrameTypeCurrently).
 // You can modify the border style by initializing or directly setting frameType properties
@@ -235,8 +235,8 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 ### Custom Border Image
-![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
-![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
+![stretch_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder1.jpg)
+![tile_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder2.jpg)
 ```objc
 // Use custom border pictures (example: tile mode)
 UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -249,7 +249,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 ### Switching resizeWHScale
-![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
+![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
 ```objc
 // 1.Custom parameter switching
 /**
@@ -266,7 +266,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 ```
 
 ### Round Resize
-![round_resize](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
+![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
 ```objc
 // Set circle cut
 // After setting, the resizeWHScale is 1:1, the radius is half of the width and height, and the top, left, bottom and right middle of the border can be dragged.
@@ -297,7 +297,7 @@ self.imageresizerView.maskAlpha = 0.5; // Only blurEffect = nil will take effect
 ```
 
 ### Mirror reversal
-![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
+![mirror](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mirror.gif)
 ```objc
 // Vertical Mirror, YES -> Rotates 180 degrees along Y axis, NO -> Reduction
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;

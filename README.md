@@ -13,7 +13,7 @@
 
 一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
 
-![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
+![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
     目前功能：
         ✅ 能自适应裁剪区域的缩放；
@@ -102,7 +102,7 @@ if (@available(iOS 11.0, *)) {
 ```
 
 ### 裁剪本地视频
-![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cropvideo.gif)
+![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
 ```objc
 // 1.初始化时只需要在configure配置好videoURL（视频的URL）即可
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
@@ -201,7 +201,7 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
 **PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
 
 ### 自定义蒙版图片
-![mask](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mask.gif)
+![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
 ```objc
 // 设置蒙版图片（目前仅支持png图片）
 self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
@@ -212,11 +212,11 @@ self.imageresizerView.maskImage = nil;
 // 可以设置蒙版图片是否可以任意比例拖拽
 self.imageresizerView.isArbitrarilyMask = YES;
 ```
-![maskdone](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/maskdone.png)
+![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
 PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
 
 ### 横竖屏切换
-![screenswitching](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/screenswitching.gif)
+![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
 ```objc
 // 需要用户去监听横竖屏的切换，或自己手动切换时，调用该方法刷新
 // 1.updateFrame：刷新的Frame（例如横竖屏切换，传入self.view.bounds即可）
@@ -227,8 +227,8 @@ PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因
 ```
 
 ### 更改边框样式
-![concise](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/conciseframetype.jpg)
-![classic](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/classicframetype.jpg)
+![concise](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/conciseframetype.jpg)
+![classic](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/classicframetype.jpg)
 ```objc
 // 目前只提供两种边框样式，分别是简洁样式JPConciseFrameType，和经典样式JPClassicFrameType
 // 可在初始化或直接设置frameType属性来修改边框样式
@@ -236,8 +236,8 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 ### 自定义边框图片
-![stretch_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder1.jpg)
-![tile_mode](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/customborder2.jpg)
+![stretch_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder1.jpg)
+![tile_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder2.jpg)
 ```objc
 // 使用自定义边框图片（例：平铺模式）
 UIImage *tileBorderImage = [[UIImage imageNamed:@"dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
@@ -250,7 +250,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 ### 切换裁剪宽高比
-![switch_resizeWHScale](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/switchingresizewhscale.gif)
+![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
 ```objc
 // 1.自定义参数切换
 /**
@@ -267,7 +267,7 @@ self.imageresizerView.resizeWHScale = 1.0;
 ```
 
 ### 圆切
-![round_resize](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/roundresize.jpg)
+![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
 ```objc
 // 设置圆切
 // 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上、左、下、右的中部均可拖动。
@@ -298,7 +298,7 @@ self.imageresizerView.maskAlpha = 0.5; // blurEffect = nil 才生效
 ```
 
 ### 镜像翻转
-![mirror](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/mirror.gif)
+![mirror](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mirror.gif)
 ```objc
 // 1.垂直镜像，YES->沿着Y轴旋转180°，NO->还原
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
