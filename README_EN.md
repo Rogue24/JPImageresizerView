@@ -15,7 +15,7 @@
 
 A wheel specially designed for cutting pictures and videos is easy to use and has rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, multiple style selection, etc.), which can meet the needs of most pictures and videos cutting.
 
-![effect](https://upload-images.jianshu.io/upload_images/1491671-d47d12516a2e0e5d.gif?imageMogr2/auto-orient/strip)
+![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
     Current functions:
         ✅ Zooming of area that can be tailored adaptively;
