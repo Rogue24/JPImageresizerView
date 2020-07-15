@@ -127,17 +127,20 @@
 
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;
+
 - (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
                               time:(CMTime)time
                        maximumSize:(CGSize)maximumSize
                      compressScale:(CGFloat)compressScale
                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
-- (JPVideoExportCancelBlock)cropVideoWithAsset:(AVURLAsset *)asset
-                                     timeRange:(CMTimeRange)timeRange
-                                 frameDuration:(CMTime)frameDuration
-                                     cachePath:(NSString *)cachePath
-                                    presetName:(NSString *)presetName
-                                 progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                    errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+
+@property (nonatomic, weak, readonly) AVAssetExportSession *exporterSession;
+- (void)cropVideoWithAsset:(AVURLAsset *)asset
+                 timeRange:(CMTimeRange)timeRange
+             frameDuration:(CMTime)frameDuration
+                 cachePath:(NSString *)cachePath
+                presetName:(NSString *)presetName
+             progressBlock:(JPCropVideoProgressBlock)progressBlock
+                errorBlock:(JPCropVideoErrorBlock)errorBlock
+             completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 @end

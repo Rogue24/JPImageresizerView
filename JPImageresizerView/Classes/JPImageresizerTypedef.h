@@ -51,6 +51,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
  * JPCVEReason_NotAssets：视频资源为空
  * JPCVEReason_VideoAlreadyDamage：视频文件已损坏
  * JPCVEReason_CachePathAlreadyExists：缓存路径已存在其他文件
+ * JPCVEReason_NoSupportedFileType：不支持的文件类型
  * JPCVEReason_ExportFailed：视频导出失败
  * JPCVEReason_ExportCancelled：视频导出取消
  */
@@ -58,6 +59,7 @@ typedef NS_ENUM(NSUInteger, JPCropVideoErrorReason) {
     JPCVEReason_NotAssets,
     JPCVEReason_VideoAlreadyDamage,
     JPCVEReason_CachePathAlreadyExists,
+    JPCVEReason_NoSupportedFileType,
     JPCVEReason_ExportFailed,
     JPCVEReason_ExportCancelled
 };
@@ -105,8 +107,3 @@ typedef void(^JPCropVideoProgressBlock)(float progress);
     - cacheURL：导出后的最终存放路径，如果转移失败，该路径为tmp文件夹下
  */
 typedef void(^JPCropVideoCompleteBlock)(NSURL *cacheURL);
-
-/**
- * 取消视频导出的回调，可用个强指针持有，当视频正在导出时调用即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
- */
-typedef void(^JPVideoExportCancelBlock)(void);

@@ -11,7 +11,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.6.2)
+## Brief introduction (Current version: 1.6.3)
 
 A wheel specially designed for cutting pictures and videos is easy to use and has rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, multiple style selection, etc.), which can meet the needs of most pictures and videos cutting.
 
@@ -141,17 +141,13 @@ if (isCropPicture) {
 // Crop the entire video (the cropping process is in the sub thread, and the callback will switch back to the main thread)
 // cachePath: If it is nil, the default path is under the caches folder, the video name is the current timestamp, and the format is MP4 (... / library / caches / 1594556710. Mp4)
 // presetName：The quality of exported video is AVAssetExportPresetLowQuality, AVAssetExportPresetMediumQuality, AVAssetExportPresetHighestQuality, etc
-// Returns a block of JPVideoExportCancelBlock. It is a block to cancel the video export. It can be held by a strong pointer. When the video is being exported, call the block to cancel the export and trigger the errorblock callback.(JPCVEReason_ExportCancelled)
-
-__weak typeof(self) wSelf = self;
-// Hold a block to cancel video export with a strong pointer
-self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
+[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
         
     // Monitor progress (the callback is under the main thread)
     // progress: 0~1
     // Pay attention to circular references
         
-} errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+} errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
         
     // Error callback
     // reason: Cause of error
@@ -168,6 +164,9 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
         case JPCVEReason_CachePathAlreadyExists:
             // There are other files in the cache path. If YES is returned, the files in this path will be automatically deleted and the subsequent cropping operation will continue.
             isContinue = YES;
+            break;
+        case JPCVEReason_NoSupportedFileType:
+            // File type not supported
             break;
         case JPCVEReason_ExportFailed:
             // Video export failed
@@ -192,8 +191,9 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
     
 }];
 
-// Call when the video is being exported to cancel the export
-!self.exportCancelBlock ? : self.exportCancelBlock();
+// Cancel the export
+// When the video is being exported, the call can be cancelled and the errorblock callback.(JPCVEReason_ExportCancelled)
+[self.imageresizerView videoCancelExport];
 ```
 **PS1: the function of cropping the whole video picture, circular cutting and masking can't be used. Cutting a frame of picture is OK. At present, it is only effective for a single picture.**
 

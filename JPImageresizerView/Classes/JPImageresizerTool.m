@@ -438,9 +438,39 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
     AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
     
+    // 根据文件后缀名获取文件类型
+    NSString *extension = [fileName pathExtension];
+    AVFileType fileType = nil;
+    if ([extension caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4A;
+    } else if ([extension caseInsensitiveCompare:@"m4v"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4V;
+    } else if ([extension caseInsensitiveCompare:@"mov"] == NSOrderedSame) {
+        fileType = AVFileTypeQuickTimeMovie;
+    } else if ([extension caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
+        fileType = AVFileTypeMPEG4;
+    } else {
+        fileType = AVFileTypeMPEGLayer3;
+    }
+    // 创建视频导出会话
+    AVAssetExportSession *exporterSession = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
+    if (![exporterSession.supportedFileTypes containsObject:fileType]) {
+        if (errorBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                errorBlock(cachePath, JPCVEReason_NoSupportedFileType);
+            });
+        }
+        return nil;
+    }
+    exporterSession.outputFileType = fileType;
+    exporterSession.outputURL = [NSURL fileURLWithPath:tmpFilePath];
+    exporterSession.shouldOptimizeForNetworkUse = YES;
+    
+    // 获取准确裁剪区域
     CGSize videoSize = videoTrack.naturalSize;
     cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, videoSize);
     
+    // 获取裁剪尺寸
     CGSize renderSize = cropFrame.size;
     // 防止绿边
     NSInteger renderW = (NSInteger)renderSize.width;
@@ -453,11 +483,11 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
         renderSize = CGSizeMake((CGFloat)renderW, (CGFloat)renderH);
     }
     
+    AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    // 确定形变矩阵
     CGAffineTransform transform = JPConfirmTransform(videoSize, direction, isVerMirror, isHorMirror, NO);
     CGPoint translate = JPConfirmTranslate(cropFrame, videoSize, direction, isVerMirror, isHorMirror, NO);
     transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-    
-    AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
     [layerInstruciton setTransform:transform atTime:kCMTimeZero];
     
     AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
@@ -469,28 +499,9 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
     videoComposition.frameDuration = frameDuration;
     videoComposition.renderScale = 1;
     videoComposition.renderSize = renderSize;
-    
-    // 根据文件后缀名获取文件类型
-    NSString *extension = [fileName pathExtension];
-    AVFileType fileType = nil;
-    if ([extension isEqualToString:@"m4a"]) {
-        fileType = AVFileTypeAppleM4A;
-    } else if ([extension isEqualToString:@"m4v"]) {
-        fileType = AVFileTypeAppleM4V;
-    } else if ([extension isEqualToString:@"mov"]) {
-        fileType = AVFileTypeQuickTimeMovie;
-    } else if ([extension isEqualToString:@"mp4"]) {
-        fileType = AVFileTypeMPEG4;
-    } else {
-        fileType = AVFileTypeMPEGLayer3;
-    }
-    
-    AVAssetExportSession *exporterSession = [[AVAssetExportSession alloc] initWithAsset:composition presetName:(presetName ? presetName : AVAssetExportPresetHighestQuality)];
     exporterSession.videoComposition = videoComposition;
-    exporterSession.outputFileType = fileType;
-    exporterSession.outputURL = [NSURL fileURLWithPath:tmpFilePath];
-    exporterSession.shouldOptimizeForNetworkUse = YES;
     
+    // 开始导出
     [exporterSession exportAsynchronouslyWithCompletionHandler:^{
         AVAssetExportSessionStatus status = exporterSession.status;
         if (status == AVAssetExportSessionStatusCompleted) {

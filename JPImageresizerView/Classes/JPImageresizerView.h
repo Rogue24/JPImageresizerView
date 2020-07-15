@@ -433,13 +433,12 @@
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调
- @return 取消视频导出的block，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
  */
-- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
-                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 
 /*!
  @method
@@ -449,12 +448,19 @@
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调
- @return 取消视频导出的block，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
-                                        presetName:(NSString *)presetName
-                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                    presetName:(NSString *)presetName
+                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+
+/*!
+ @method
+ @brief 取消视频导出
+ @discussion 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
+ */
+- (void)videoCancelExport;
+
 @end

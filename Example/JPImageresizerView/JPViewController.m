@@ -39,7 +39,7 @@
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
 
 @property (weak, nonatomic) IBOutlet UIView *exportCancelView;
-@property (nonatomic, copy) JPVideoExportCancelBlock exportCancelBlock;
+@property (nonatomic, assign) BOOL isExporting;
 @end
 
 @implementation JPViewController
@@ -104,6 +104,9 @@
 
 - (void)__setupBase {
     self.view.backgroundColor = self.configure.bgColor;
+    self.exportCancelView.userInteractionEnabled = NO;
+    self.exportCancelView.alpha = 0;
+    
     self.frameType = self.configure.frameType;
     self.maskImage = self.configure.maskImage;
     self.recoveryBtn.enabled = NO;
@@ -522,7 +525,7 @@ static UIViewController *tmpVC_;
 
 #pragma mark 取消导出（视频裁剪）
 - (IBAction)exportCancel {
-    !self.exportCancelBlock ? : self.exportCancelBlock();
+    [self.imageresizerView videoCancelExport];
 }
 
 #pragma mark - 图片裁剪完成
@@ -553,9 +556,10 @@ static UIViewController *tmpVC_;
     NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:fileName];
     
     __weak typeof(self) wSelf = self;
-    self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath progressBlock:^(float progress) {
+    [self.imageresizerView cropVideoWithCachePath:cachePath progressBlock:^(float progress) {
         
         // 监听进度
+        wSelf.isExporting = YES;
         [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100] userInteractionEnabled:YES];
         
     } errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
@@ -573,6 +577,9 @@ static UIViewController *tmpVC_;
                 JPLog(@"缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。")
                 isContinue = YES;
                 break;
+            case JPCVEReason_NoSupportedFileType:
+                [JPProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"“%@” 不支持的文件格式", [cachePath pathExtension]] userInteractionEnabled:YES];
+                break;
             case JPCVEReason_ExportFailed:
                 [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
                 break;
@@ -583,7 +590,7 @@ static UIViewController *tmpVC_;
         
         if (!isContinue && wSelf) {
             __strong typeof(wSelf) sSelf = wSelf;
-            sSelf.exportCancelBlock = nil;
+            sSelf.isExporting = NO;
         }
         
         return isContinue;
@@ -595,7 +602,7 @@ static UIViewController *tmpVC_;
         __strong typeof(wSelf) sSelf = wSelf;
         if (!sSelf) return;
         
-        sSelf.exportCancelBlock = nil;
+        sSelf.isExporting = NO;
         
         JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.videoURL = cacheURL;
@@ -603,11 +610,13 @@ static UIViewController *tmpVC_;
     }];
 }
 
-- (void)setExportCancelBlock:(JPVideoExportCancelBlock)exportCancelBlock {
-    _exportCancelBlock = [exportCancelBlock copy];
-    [UIView transitionWithView:self.exportCancelView duration:0.25 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-        self.exportCancelView.hidden = exportCancelBlock == nil;
-    } completion:nil];
+- (void)setIsExporting:(BOOL)isExporting {
+    if (_isExporting == isExporting) return;
+    _isExporting = isExporting;
+    self.exportCancelView.userInteractionEnabled = isExporting;
+    [UIView animateWithDuration:0.25 animations:^{
+        self.exportCancelView.alpha = isExporting ? 1 : 0;
+    }];
 }
 
 @end

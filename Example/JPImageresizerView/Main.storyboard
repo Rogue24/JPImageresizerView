@@ -341,7 +341,7 @@
                                     <constraint firstItem="3Q2-Zj-NPf" firstAttribute="leading" secondItem="23z-V1-CXO" secondAttribute="trailing" priority="999" constant="20" id="zFc-3r-u0I"/>
                                 </constraints>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qPy-Ya-xPL">
+                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qPy-Ya-xPL">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KkI-76-JkC">

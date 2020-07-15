@@ -9,7 +9,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.6.2）
+## 简介（当前版本：1.6.3）
 
 一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
 
@@ -139,17 +139,13 @@ if (isCropPicture) {
 // 裁剪整段视频画面（裁剪过程在子线程，回调会切回到主线程）
 // cachePath：缓存路径，如果为 nil，则默认路径为 Caches 文件夹下，视频名为当前时间戳，格式为mp4（.../Library/Caches/1594556710.mp4）
 // presetName：系统导出视频的质量，为 AVAssetExportPresetLowQuality、AVAssetExportPresetMediumQuality、AVAssetExportPresetHighestQuality等
-// 返回一个JPVideoExportCancelBlock类型的block，是取消视频导出的block，可用个强指针持有，当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
-
-__weak typeof(self) wSelf = self;
-// 用个强指针持有取消视频导出的block
-self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
+[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
         
     // 进度监听的回调
     // progress：0~1
     // 注意循环引用
         
-} errorBlock:^BOOL(NSString *cachePath, JPCropVideoFailureReason reason) {
+} errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
         
     // 错误的回调
     // reason：错误原因
@@ -167,17 +163,15 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
             // 缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
             isContinue = YES;
             break;
+        case JPCVEReason_NoSupportedFileType:
+            // 不支持的文件格式
+            break;
         case JPCVEReason_ExportFailed:
             // 视频导出失败
             break;
         case JPCVEReason_ExportCancelled:
             // 视频导出取消
             break;
-    }
-    
-    if (!isContinue && wSelf) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        sSelf.exportCancelBlock = nil; // 释放取消导出的block
     }
     
     return isContinue;
@@ -187,14 +181,11 @@ self.exportCancelBlock = [self.imageresizerView cropVideoWithCachePath:cachePath
     // 裁剪完成，cacheURL为缓存URL
     // 注意循环引用
     
-    __strong typeof(wSelf) sSelf = wSelf;
-    if (!sSelf) return;
-    sSelf.exportCancelBlock = nil; // 释放取消导出的block
-    
 }];
 
-// 当视频正在导出时调用block即可取消导出，触发errorBlock回调（JPCVEReason_ExportCancelled）
-!self.exportCancelBlock ? : self.exportCancelBlock();
+// 取消视频导出
+// 当视频正在导出时调用即可取消，会触发errorBlock回调（JPCVEReason_ExportCancelled）
+[self.imageresizerView videoCancelExport];
 ```
 **PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
 
@@ -412,7 +403,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.6.0~1.6.2 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑。
+1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。
 1.3.8~1.3.9  | 1. 适配横竖屏切换；<br>2. 废除verBaseMargin和horBaseMargin属性，统一使用contentInsets设置裁剪区域与视图的间距；<br>3. 优化代码，并减少裁剪误差。  

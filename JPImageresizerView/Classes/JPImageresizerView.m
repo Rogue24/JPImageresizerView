@@ -940,36 +940,40 @@
                                  completeBlock:completeBlock];
 }
 
-- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
-                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock {
-    return [self cropVideoWithCachePath:cachePath
-                             presetName:AVAssetExportPresetHighestQuality
-                          progressBlock:progressBlock
-                             errorBlock:errorBlock
-                          completeBlock:completeBlock];
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+    [self cropVideoWithCachePath:cachePath
+                      presetName:AVAssetExportPresetHighestQuality
+                   progressBlock:progressBlock
+                      errorBlock:errorBlock
+                   completeBlock:completeBlock];
 }
 
-- (JPVideoExportCancelBlock)cropVideoWithCachePath:(NSString *)cachePath
-                                        presetName:(NSString *)presetName
-                                     progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                        errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                     completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+- (void)cropVideoWithCachePath:(NSString *)cachePath
+                    presetName:(NSString *)presetName
+                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                    errorBlock:(JPCropVideoErrorBlock)errorBlock
+                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !completeBlock ? : completeBlock(nil);
-        return nil;
+        return;
     }
     JPImageresizerVideoObject *videoObj = _videoObj;
-    return [self.frameView cropVideoWithAsset:videoObj.asset
-                                    timeRange:videoObj.timeRange
-                                frameDuration:videoObj.frameDuration
-                                    cachePath:cachePath
-                                   presetName:presetName
-                                progressBlock:progressBlock
-                                   errorBlock:errorBlock
-                                completeBlock:completeBlock];
+    [self.frameView cropVideoWithAsset:videoObj.asset
+                             timeRange:videoObj.timeRange
+                         frameDuration:videoObj.frameDuration
+                             cachePath:cachePath
+                            presetName:presetName
+                         progressBlock:progressBlock
+                            errorBlock:errorBlock
+                         completeBlock:completeBlock];
+}
+
+- (void)videoCancelExport {
+    [_frameView.exporterSession cancelExport];
 }
 
 #pragma mark - <UIScrollViewDelegate>

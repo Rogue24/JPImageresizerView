@@ -77,7 +77,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (CGSize)imageViewSzie;
 
 @property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, copy) JPCropVideoProgressBlock progressBlock;
 @end
 
@@ -1333,7 +1332,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self.progressTimer invalidate];
     self.progressTimer = nil;
     self.progressBlock = nil;
-    self.exporterSession = nil;
+    _exporterSession = nil;
 }
 
 - (void)__progressTimerHandle {
@@ -1915,14 +1914,14 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     });
 }
 
-- (JPVideoExportCancelBlock)cropVideoWithAsset:(AVURLAsset *)asset
-                                     timeRange:(CMTimeRange)timeRange
-                                 frameDuration:(CMTime)frameDuration
-                                     cachePath:(NSString *)cachePath
-                                    presetName:(NSString *)presetName
-                                 progressBlock:(JPCropVideoProgressBlock)progressBlock
-                                    errorBlock:(JPCropVideoErrorBlock)errorBlock
-                                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+- (void)cropVideoWithAsset:(AVURLAsset *)asset
+                 timeRange:(CMTimeRange)timeRange
+             frameDuration:(CMTime)frameDuration
+                 cachePath:(NSString *)cachePath
+                presetName:(NSString *)presetName
+             progressBlock:(JPCropVideoProgressBlock)progressBlock
+                errorBlock:(JPCropVideoErrorBlock)errorBlock
+             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
     
     JPImageresizerRotationDirection direction = self.rotationDirection;
     
@@ -1944,19 +1943,20 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     __weak typeof(self) wSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [wSelf __addProgressTimer:progressBlock];
-        wSelf.exporterSession = [JPImageresizerTool cropVideoWithAsset:asset
-                                                             timeRange:timeRange
-                                                         frameDuration:frameDuration
-                                                             cachePath:cachePath
-                                                            presetName:presetName
-                                                             direction:direction
-                                                           isVerMirror:isVerMirror
-                                                           isHorMirror:isHorMirror
-                                                     resizeContentSize:resizeContentSize
-                                                         resizeWHScale:resizeWHScale
-                                                             cropFrame:cropFrame
-                                                            errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        [sSelf __addProgressTimer:progressBlock];
+        sSelf->_exporterSession = [JPImageresizerTool cropVideoWithAsset:asset
+                                                               timeRange:timeRange
+                                                           frameDuration:frameDuration
+                                                               cachePath:cachePath
+                                                              presetName:(presetName ? presetName : AVAssetExportPresetHighestQuality)
+                                                               direction:direction
+                                                             isVerMirror:isVerMirror
+                                                             isHorMirror:isHorMirror
+                                                       resizeContentSize:resizeContentSize
+                                                           resizeWHScale:resizeWHScale
+                                                               cropFrame:cropFrame
+                                                              errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
             BOOL isContinue = errorBlock ? errorBlock(cachePath, reason) : NO;
             if (!isContinue && wSelf) {
                 __strong typeof(wSelf) sSelf = wSelf;
@@ -1971,13 +1971,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             !completeBlock ? : completeBlock(cacheURL);
         }];
     });
-    
-    return ^{
-        if (wSelf) {
-            __strong typeof(wSelf) sSelf = wSelf;
-            [sSelf.exporterSession cancelExport];
-        }
-    };
 }
 
 #pragma mark - UIPanGestureRecognizer
