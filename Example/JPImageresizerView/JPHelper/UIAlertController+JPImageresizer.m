@@ -155,18 +155,12 @@ static JPObject *obj_;
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        NSInteger index = 1 + arc4random() % 5;
+        NSInteger index = 1 + arc4random() % 7;
         NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
         handler([UIImage imageNamed:girlImageName], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIImage imageNamed:@"Kobe.jpg"], nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Woman" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Woman.jpg"], nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Beauty" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Beauty.jpg"], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Flowers" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIImage imageNamed:@"Flowers.jpg"], nil);

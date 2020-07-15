@@ -187,20 +187,11 @@
 - (UIImage *)randomResizeImage {
     NSString *imageName;
     NSInteger index = 1 + arc4random() % 9;
-    if (index > 5) {
-        switch (index) {
-            case 6:
-                imageName = @"Kobe.jpg";
-                break;
-            case 7:
-                imageName = @"Woman.jpg";
-                break;
-            case 8:
-                imageName = @"Beauty.jpg";
-                break;
-            default:
-                imageName = @"Flowers.jpg";
-                break;
+    if (index > 7) {
+        if (index == 8) {
+            imageName = @"Kobe.jpg";
+        } else {
+            imageName = @"Flowers.jpg";
         }
     } else {
         imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];

@@ -27,20 +27,20 @@
 		1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A0AB36622B2854A00B6B6AB /* Kobe.jpg */; };
 		1A1F268424935DAD00860444 /* shapeList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F268324935DAC00860444 /* shapeList.plist */; };
 		1A1F268624935DC600860444 /* shape.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F268524935DC600860444 /* shape.ttf */; };
-		1A23974524B089A10093B256 /* Beauty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974224B089A10093B256 /* Beauty.jpg */; };
 		1A23974624B089A10093B256 /* Girl5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974324B089A10093B256 /* Girl5.jpg */; };
 		1A23974724B089A10093B256 /* Girl1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974424B089A10093B256 /* Girl1.jpg */; };
 		1A23974A24B08B4A0093B256 /* Girl2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974824B08B4A0093B256 /* Girl2.jpg */; };
 		1A23974B24B08B4A0093B256 /* Girl3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974924B08B4A0093B256 /* Girl3.jpg */; };
 		1A23974D24B08C480093B256 /* Flowers.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974C24B08C480093B256 /* Flowers.jpg */; };
 		1A23974F24B08D790093B256 /* supreme.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A23974E24B08D790093B256 /* supreme.png */; };
-		1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A25802422F3E9BC00DB36B9 /* Woman.jpg */; };
 		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */; };
 		1A601A3A1FEBB523004B39A1 /* README_EN.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A381FEBB523004B39A1 /* README_EN.md */; };
 		1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1A601A391FEBB523004B39A1 /* LICENSE */; };
 		1A604E7424BB1EE000705EDE /* yaorenmao.mov in Resources */ = {isa = PBXBuildFile; fileRef = 1A604E7324BB1EE000705EDE /* yaorenmao.mov */; };
 		1A60C768241E3BA0000E1692 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A60C767241E3BA0000E1692 /* README.md */; };
+		1A663C4924BEB5E1000C54B5 /* Girl7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A663C4724BEB5E1000C54B5 /* Girl7.jpg */; };
+		1A663C4A24BEB5E1000C54B5 /* Girl6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A663C4824BEB5E1000C54B5 /* Girl6.jpg */; };
 		1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */; };
 		1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */; };
 		1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C3249A0CFE0081452F /* DanielWuViewController.m */; };
@@ -127,14 +127,12 @@
 		1A0AB36622B2854A00B6B6AB /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
 		1A1F268324935DAC00860444 /* shapeList.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = shapeList.plist; sourceTree = "<group>"; };
 		1A1F268524935DC600860444 /* shape.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape.ttf; sourceTree = "<group>"; };
-		1A23974224B089A10093B256 /* Beauty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Beauty.jpg; sourceTree = "<group>"; };
 		1A23974324B089A10093B256 /* Girl5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl5.jpg; sourceTree = "<group>"; };
 		1A23974424B089A10093B256 /* Girl1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl1.jpg; sourceTree = "<group>"; };
 		1A23974824B08B4A0093B256 /* Girl2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl2.jpg; sourceTree = "<group>"; };
 		1A23974924B08B4A0093B256 /* Girl3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl3.jpg; sourceTree = "<group>"; };
 		1A23974C24B08C480093B256 /* Flowers.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Flowers.jpg; sourceTree = "<group>"; };
 		1A23974E24B08D790093B256 /* supreme.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = supreme.png; sourceTree = "<group>"; };
-		1A25802422F3E9BC00DB36B9 /* Woman.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Woman.jpg; sourceTree = "<group>"; };
 		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
 		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPImageViewController.h; sourceTree = "<group>"; };
@@ -143,6 +141,8 @@
 		1A601A391FEBB523004B39A1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		1A604E7324BB1EE000705EDE /* yaorenmao.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = yaorenmao.mov; sourceTree = "<group>"; };
 		1A60C767241E3BA0000E1692 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		1A663C4724BEB5E1000C54B5 /* Girl7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl7.jpg; sourceTree = "<group>"; };
+		1A663C4824BEB5E1000C54B5 /* Girl6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl6.jpg; sourceTree = "<group>"; };
 		1A7394E8249DD9210024D2B6 /* ReplaceFaceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplaceFaceViewController.h; sourceTree = "<group>"; };
 		1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplaceFaceViewController.m; sourceTree = "<group>"; };
 		1A87AF97247B8C5900123EC6 /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPSolveTool.h; path = JPImageresizerView/JPHelper/JPSolveTool.h; sourceTree = SOURCE_ROOT; };
@@ -304,9 +304,9 @@
 				1A23974924B08B4A0093B256 /* Girl3.jpg */,
 				1AD9291B2497169F005F7AF0 /* Girl4.jpg */,
 				1A23974324B089A10093B256 /* Girl5.jpg */,
+				1A663C4824BEB5E1000C54B5 /* Girl6.jpg */,
+				1A663C4724BEB5E1000C54B5 /* Girl7.jpg */,
 				1A0AB36622B2854A00B6B6AB /* Kobe.jpg */,
-				1A23974224B089A10093B256 /* Beauty.jpg */,
-				1A25802422F3E9BC00DB36B9 /* Woman.jpg */,
 				1A23974C24B08C480093B256 /* Flowers.jpg */,
 				1A096D15248B960E00F3E0F2 /* DanielWu.jpg */,
 				1A096D41248E45AE00F3E0F2 /* DanielWuFace.png */,
@@ -550,10 +550,11 @@
 			files = (
 				1A096D17248B960E00F3E0F2 /* DanielWu.jpg in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
-				1A25802522F3E9BC00DB36B9 /* Woman.jpg in Resources */,
 				1A604E7424BB1EE000705EDE /* yaorenmao.mov in Resources */,
 				1A23974F24B08D790093B256 /* supreme.png in Resources */,
+				1A663C4924BEB5E1000C54B5 /* Girl7.jpg in Resources */,
 				1A096D42248E45AE00F3E0F2 /* DanielWuFace.png in Resources */,
+				1A663C4A24BEB5E1000C54B5 /* Girl6.jpg in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				1A1F268624935DC600860444 /* shape.ttf in Resources */,
 				1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */,
@@ -565,7 +566,6 @@
 				1A096D44248F30CB00F3E0F2 /* love.png in Resources */,
 				1A23974624B089A10093B256 /* Girl5.jpg in Resources */,
 				1A60C768241E3BA0000E1692 /* README.md in Resources */,
-				1A23974524B089A10093B256 /* Beauty.jpg in Resources */,
 				1A0AB36922B2854A00B6B6AB /* Kobe.jpg in Resources */,
 				1A23974D24B08C480093B256 /* Flowers.jpg in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
