@@ -18,25 +18,23 @@ A wheel specially designed for cutting pictures and videos is easy to use and ha
 ![effect](https://github.com/Rogue24/JPImageresizerView/raw/master/Cover/cover.gif)
 
     Current functions:
-        1. Zooming of area that can be tailored adaptively;
-        2. The parameters are set with high degrees of freedom, include spacing of clipping area, cutting aspect ratio, whether to scale adaptively;
-        3. Supports up to eight drag and drop direction;
-        4. Support rotation;
-        5. Support horizontal and vertical mirror flip;
-        6. Two border styles;
-        7. Supports circular clipping;
-        8. Custom gaussian blur style, border color, background color, mask opacity;
-        9. Custom border image;
-        10. It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
-        11. Can customize the mask image clipping;
-        12. It can cut the whole picture or a frame of local video.
+        ✅ Zooming of area that can be tailored adaptively;
+        ✅ The parameters are set with high degrees of freedom, include spacing of clipping area, cutting aspect ratio, whether to scale adaptively;
+        ✅ Supports up to eight drag and drop direction;
+        ✅ Support rotation;
+        ✅ Support horizontal and vertical mirror flip;
+        ✅ Two border styles;
+        ✅ Supports circular clipping;
+        ✅ Custom gaussian blur style, border color, background color, mask opacity;
+        ✅ Custom border image;
+        ✅ It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
+        ✅ Can customize the mask image clipping;
+        ✅ It can cut the whole picture or a frame of local video.
 
     What I'm trying to achieve:
-        1. Swift version;
-        2. Crop remote video;
-        3. More new border and mask styles;
-        4. More parameter setting;
-        5. To achieve the effect of free dragging rotation direction.
+        ☑️ Swift version;
+        ☑️ Crop remote video;
+        ☑️ To achieve the effect of free drag rotation and flip angle.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
 
