@@ -13,7 +13,7 @@
 
 ## Brief introduction (Current version: 1.7.0)
 
-A wheel specially designed for cutting pictures and videos is easy to use and has rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, multiple style selection, etc.), which can meet the needs of most pictures and videos cutting.
+A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
 ![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
@@ -213,7 +213,7 @@ PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is 
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 #### Crop local video
-![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
 PS: At present, it is only for local video, and remote video is not suitable for the moment.
 ```objc
 // Clip the entire video
