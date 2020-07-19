@@ -149,8 +149,7 @@ if (@available(iOS 11.0, *)) {
 
 #### 裁剪GIF
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgif.gif)
-
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropedgif.gif)
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgifdone.gif)
 ```objc
 // 1.原图尺寸裁剪GIF
 [self.imageresizerView cropGIFWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
