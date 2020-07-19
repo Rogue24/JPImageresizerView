@@ -148,6 +148,8 @@ if (@available(iOS 11.0, *)) {
 ```
 
 #### 裁剪GIF
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgif.gif)
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropedgif.gif)
 ```objc
 // 1.原图尺寸裁剪GIF
 [self.imageresizerView cropGIFWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
@@ -181,7 +183,7 @@ if (@available(iOS 11.0, *)) {
                    completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
 
-可以裁剪GIF的其中一帧
+裁剪GIF的其中一帧
 ```objc
 // 1.原图尺寸裁剪GIF当前帧画面
 // completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
@@ -205,6 +207,7 @@ if (@available(iOS 11.0, *)) {
            completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
 PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
@@ -242,7 +245,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 **PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
 
-可以裁剪视频的其中一帧
+裁剪视频的其中一帧
 ```ojbc
 // 1.原图尺寸裁剪视频当前帧画面
 // cacheURL --- 缓存路径（可设置为nil，则不会缓存）
@@ -272,7 +275,8 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
 
-可以截取裁剪视频某一段转GIF
+截取视频某一段裁剪后转GIF
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
 ```objc
 // 1.视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
 // duration --- 截取多少秒
