@@ -566,7 +566,7 @@
 /*!
  @method
  @brief 裁剪整段视频
- @param cacheURL --- 缓存路径，如果为nil则默认为Tmp文件夹下，视频名为当前时间戳，格式为mp4
+ @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调（返回缓存路径）
@@ -580,7 +580,7 @@
 /*!
  @method
  @brief 裁剪整段视频
- @param cacheURL --- 缓存路径，如果为nil则默认为Tmp文件夹下，视频名为当前时间戳，格式为mp4
+ @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调

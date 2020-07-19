@@ -28,7 +28,7 @@
         ✅ 可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
         ✅ 可自定义蒙版图片裁剪；
         ✅ 可裁剪本地视频整段画面或某一帧画面；
-        ✅ 可裁剪本地视频，并截取某一段转GIF；
+        ✅ 可截取某一段本地视频，裁剪后并转成GIF；
         ✅ 可裁剪GIF。
 
     正在努力着去实现的内容：
@@ -61,7 +61,6 @@
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
     configure
-    .jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"])
     .jp_maskAlpha(0.5)
     .jp_strokeColor([UIColor yellowColor])
     .jp_frameType(JPClassicFrameType)
@@ -97,7 +96,7 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
 self.imageresizerView = imageresizerView;
 
 // 创建后均可动态修改configure的参数
-self.imageresizerView.resizeImage = [UIImage imageNamed:@"Kobe.jpg"]; // 更换裁剪图片（默认带动画效果）
+self.imageresizerView.image = [UIImage imageNamed:@"Kobe.jpg"]; // 更换裁剪图片（默认带动画效果）
 self.imageresizerView.resizeWHScale = 16.0 / 9.0; // 修改裁剪宽高比
 self.imageresizerView.initialResizeWHScale = 0.0; // 默认为初始化时的resizeWHScale，调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
 
@@ -114,7 +113,7 @@ if (@available(iOS 11.0, *)) {
     裁剪说明：
         1.裁剪过程是在子线程中执行，进度、错误、完成的回调都会切回主线程执行，如果是高清图片，裁剪前可添加HUD提示
         2.compressScale：图片和GIF的压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-        3.cacheURL：缓存路径，可设置为nil，图片和GIF则不缓存，而视频会默认缓存到系统的Tmp文件夹下，视频名为当前时间戳，格式为mp4
+        3.cacheURL：缓存路径，可设置为nil，图片和GIF则不缓存，而视频会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
         4.错误原因 JPCropErrorReason 说明：
             - JPCEReason_NilObject：裁剪元素为空
             - JPCEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
@@ -132,7 +131,7 @@ if (@available(iOS 11.0, *)) {
     // 注意循环引用
 } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
     // 裁剪完成
-    // finalImage：裁剪后已经解密的图片
+    // finalImage：裁剪后已经解码的图片
     // cacheURL：缓存路径
     // isCacheSuccess：是否缓存成功，NO为不成功，并且cacheURL为nil
     // 注意循环引用
@@ -158,7 +157,7 @@ if (@available(iOS 11.0, *)) {
     // 注意循环引用
 } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
     // 裁剪完成
-    // finalImage：裁剪后已经解密的GIF
+    // finalImage：裁剪后已经解码的GIF
     // cacheURL：缓存路径
     // isCacheSuccess：是否缓存成功，NO为不成功，并且cacheURL为nil
     // 注意循环引用
@@ -216,7 +215,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 PS：目前只针对本地视频，远程视频暂未适配。
 ```objc
 // 裁剪整段视频
-// cacheURL：如果为nil，会默认缓存到系统的Tmp文件夹下，视频名为当前时间戳，格式为mp4
+// cacheURL：如果为nil，会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
 [self.imageresizerView cropVideoWithCacheURL:cacheURL progressBlock:^(float progress) {
     // 监听进度
     // progress：0~1
@@ -257,8 +256,6 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
 // 2.自定义压缩比例裁剪视频当前帧画面
 // cacheURL --- 缓存路径（可设置为nil，则不会缓存）
 // completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
- */
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                       cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPCropErrorBlock)errorBlock
@@ -301,7 +298,7 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
                            errorBlock:(JPCropErrorBlock)errorBlock
                         completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
-PS：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面或截取转GIF是可以的，目前只能对图片有效。
+PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
 
 ### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
@@ -494,7 +491,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.7.0 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3.裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5.极大地优化了裁剪逻辑。
+1.7.0 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3. 裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5. 极大地优化了裁剪逻辑。
 1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。

@@ -105,7 +105,7 @@ typedef void(^JPCropVideoProgressBlock)(float progress);
 
 /**
  * 视频裁剪完成的回调
-    - cacheURL：导出后的最终存放路径，如果转移失败，该路径为tmp文件夹下
+    - cacheURL：导出后的最终存放路径，如果转移失败，该路径为NSTemporaryDirectory文件夹下
  */
 typedef void(^JPCropVideoCompleteBlock)(NSURL *cacheURL);
 
