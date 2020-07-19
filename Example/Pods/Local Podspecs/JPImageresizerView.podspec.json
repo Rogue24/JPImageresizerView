@@ -1,8 +1,8 @@
 {
   "name": "JPImageresizerView",
-  "version": "1.6.2",
-  "summary": "一个专门裁剪图片和视频的轮子😋简单易用、功能丰富☕️",
-  "description": "专门裁剪图片和视频的轮子，简单易用、功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。",
+  "version": "1.7.0",
+  "summary": "一个专门裁剪图片、GIF、视频的轮子😋简单易用、功能丰富☕️",
+  "description": "专门裁剪图片、GIF、视频的轮子，简单易用、功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分裁剪的需求。",
   "homepage": "https://github.com/Rogue24/JPImageresizerView",
   "license": {
     "type": "MIT",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/Rogue24/JPImageresizerView.git",
-    "tag": "1.6.2"
+    "tag": "1.7.0"
   },
   "platforms": {
     "ios": "8.0"
