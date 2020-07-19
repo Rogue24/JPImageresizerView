@@ -13,7 +13,7 @@
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
-![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover2.GIF)
+![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
     目前功能：
         ✅ 能自适应裁剪区域的缩放；

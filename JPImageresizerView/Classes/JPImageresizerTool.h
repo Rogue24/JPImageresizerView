@@ -26,7 +26,7 @@
 + (NSString *)contentTypeForImageData:(NSData *)data;
 
 /**
- * 解码GIF
+ * 解码GIF【PS：该方法采用的是YYKit的代码】
  */
 + (UIImage *)decodeGIFData:(NSData *)data;
 
