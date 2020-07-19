@@ -422,7 +422,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 - (void)imageresizerWithImageView:(UIImageView *)imageView fromVC:(UIViewController *)fromVC {
     UIImage *image = imageView.image;
     
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithResizeImage:image make:nil];
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:image make:nil];
     if (self.isBecomeDanielWu) {
         configure.jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"]).jp_isArbitrarilyMask(NO);
     }

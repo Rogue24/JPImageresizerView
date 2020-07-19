@@ -48,20 +48,20 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 /**
  * 裁剪视频错误原因
- * JPCVEReason_NotAssets：视频资源为空
- * JPCVEReason_VideoAlreadyDamage：视频文件已损坏
- * JPCVEReason_CachePathAlreadyExists：缓存路径已存在其他文件
- * JPCVEReason_NoSupportedFileType：不支持的文件类型
- * JPCVEReason_ExportFailed：视频导出失败
- * JPCVEReason_ExportCancelled：视频导出取消
+ * JPCEReason_NilObject：裁剪元素为空
+ * JPCEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
+ * JPCEReason_NoSupportedFileType：不支持的文件类型
+ * JPCEReason_VideoAlreadyDamage：视频文件已损坏
+ * JPCEReason_VideoExportFailed：视频导出失败
+ * JPCEReason_VideoExportCancelled：视频导出取消
  */
-typedef NS_ENUM(NSUInteger, JPCropVideoErrorReason) {
-    JPCVEReason_NotAssets,
-    JPCVEReason_VideoAlreadyDamage,
-    JPCVEReason_CachePathAlreadyExists,
-    JPCVEReason_NoSupportedFileType,
-    JPCVEReason_ExportFailed,
-    JPCVEReason_ExportCancelled
+typedef NS_ENUM(NSUInteger, JPCropErrorReason) {
+    JPCEReason_NilObject,
+    JPCEReason_CacheURLAlreadyExists,
+    JPCEReason_NoSupportedFileType,
+    JPCEReason_VideoAlreadyDamage,
+    JPCEReason_VideoExportFailed,
+    JPCEReason_VideoExportCancelled
 };
 
 #pragma mark - Block
@@ -83,18 +83,19 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 /**
- * 图片裁剪完成的回调
-    - finalImage：裁剪后的图片
+ * 视频裁剪错误的回调
+    - cacheURL：目标存放路径
+    - reason：错误原因（JPCropErrorReason）
  */
-typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage);
+typedef void(^JPCropErrorBlock)(NSURL *cacheURL, JPCropErrorReason reason);
 
 /**
- * 视频裁剪错误的回调
-    - cachePath：目标存放路径
-    - reason：错误原因（JPCropVideoErrorReason）
- * 当缓存路径已存在其他文件（JPCVEReason_CachePathAlreadyExists），返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
+ * 图片裁剪完成的回调
+    - finalImage：裁剪后的图片/GIF
+    - cacheURL：目标存放路径
+    - isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
  */
-typedef BOOL(^JPCropVideoErrorBlock)(NSString *cachePath, JPCropVideoErrorReason reason);
+typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess);
 
 /**
  * 视频裁剪导出的进度
@@ -107,3 +108,28 @@ typedef void(^JPCropVideoProgressBlock)(float progress);
     - cacheURL：导出后的最终存放路径，如果转移失败，该路径为tmp文件夹下
  */
 typedef void(^JPCropVideoCompleteBlock)(NSURL *cacheURL);
+
+#pragma mark - 裁剪属性
+
+struct JPCropConfigure {
+    JPImageresizerRotationDirection direction;
+    BOOL isVerMirror;
+    BOOL isHorMirror;
+    BOOL isRoundClip;
+    CGSize resizeContentSize;
+    CGFloat resizeWHScale;
+    CGRect cropFrame;
+};
+typedef struct CG_BOXABLE JPCropConfigure JPCropConfigure;
+
+CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isRoundClip, CGSize resizeContentSize, CGFloat resizeWHScale, CGRect cropFrame) {
+    JPCropConfigure configure;
+    configure.direction = direction;
+    configure.isVerMirror = isVerMirror;
+    configure.isHorMirror = isHorMirror;
+    configure.isRoundClip = isRoundClip;
+    configure.resizeContentSize = resizeContentSize;
+    configure.resizeWHScale = resizeWHScale;
+    configure.cropFrame = cropFrame;
+    return configure;
+}

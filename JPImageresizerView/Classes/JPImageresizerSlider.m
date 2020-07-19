@@ -126,17 +126,17 @@
 #pragma mark - 事件触发方法
 
 - (void)sliderBegin {
-    !self.sliderBeginBlock ? : self.sliderBeginBlock(self.slider.value);
+    !self.sliderBeginBlock ? : self.sliderBeginBlock(self.slider.value, self.slider.maximumValue);
     self.sliding = YES;
 }
 
 - (void)sliderDraging {
-    !self.sliderDragingBlock ? : self.sliderDragingBlock(self.slider.value);
+    !self.sliderDragingBlock ? : self.sliderDragingBlock(self.slider.value, self.slider.maximumValue);
     self.sliding = YES;
 }
 
 - (void)sliderEnd {
-    !self.sliderEndBlock ? : self.sliderEndBlock(self.slider.value);
+    !self.sliderEndBlock ? : self.sliderEndBlock(self.slider.value, self.slider.maximumValue);
     self.sliding = NO;
 }
 

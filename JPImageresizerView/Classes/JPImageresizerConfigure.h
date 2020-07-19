@@ -33,8 +33,10 @@
     - gridCount = 3;
     - maskImage = nil;
     - isArbitrarilyMask = NO;
+    - isLoopPlaybackGIF = NO;
  */
-+ (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
 + (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL make:(void(^)(JPImageresizerConfigure *configure))make;
 
 /**
@@ -43,7 +45,8 @@
     - bgColor = [UIColor whiteColor];
     - maskAlpha = 0.3;
  */
-+ (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
 + (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *configure))make;
 
 /**
@@ -52,11 +55,15 @@
     - bgColor = [UIColor blackColor];
     - maskAlpha = 0.3;
  */
-+ (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
 + (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *configure))make;
 
 /** 裁剪图片 */
-@property (nonatomic, strong) UIImage *resizeImage;
+@property (nonatomic, strong) UIImage *image;
+
+/** 裁剪的视频URL */
+@property (nonatomic, strong) NSData *imageData;
 
 /** 裁剪的视频URL */
 @property (nonatomic, strong) NSURL *videoURL;
@@ -130,6 +137,9 @@
 /** 蒙版图片是否可以拖拽形变 */
 @property (nonatomic, assign) BOOL isArbitrarilyMask;
 
+/** 是否重复循环GIF播放（NO则有拖动条控制） */
+@property (nonatomic, assign) BOOL isLoopPlaybackGIF;
+
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
 @property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
@@ -153,4 +163,5 @@
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);
 @property (readonly) JPImageresizerConfigure *(^jp_isArbitrarilyMask)(BOOL isArbitrarilyMask);
+@property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
 @end

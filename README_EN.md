@@ -147,7 +147,7 @@ if (isCropPicture) {
     // progress: 0~1
     // Pay attention to circular references
         
-} errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
+} errorBlock:^BOOL(NSString *cachePath, JPCropErrorReason reason) {
         
     // Error callback
     // reason: Cause of error
@@ -155,23 +155,23 @@ if (isCropPicture) {
     
     BOOL isContinue = NO;
     switch (reason) {
-        case JPCVEReason_NotAssets:
+        case JPCEReason_NotAssets:
             // Video resource is empty
             break;
-        case JPCVEReason_VideoAlreadyDamage:
+        case JPCEReason_VideoAlreadyDamage:
             // The video file is corrupted
             break;
-        case JPCVEReason_CachePathAlreadyExists:
+        case JPCEReason_CachePathAlreadyExists:
             // There are other files in the cache path. If YES is returned, the files in this path will be automatically deleted and the subsequent cropping operation will continue.
             isContinue = YES;
             break;
-        case JPCVEReason_NoSupportedFileType:
+        case JPCEReason_NoSupportedFileType:
             // File type not supported
             break;
-        case JPCVEReason_ExportFailed:
+        case JPCEReason_ExportFailed:
             // Video export failed
             break;
-        case JPCVEReason_ExportCancelled:
+        case JPCEReason_ExportCancelled:
             // Video export cancelled
             break;
     }
@@ -192,7 +192,7 @@ if (isCropPicture) {
 }];
 
 // Cancel the export
-// When the video is being exported, the call can be cancelled and the errorblock callback.(JPCVEReason_ExportCancelled)
+// When the video is being exported, the call can be cancelled and the errorblock callback.(JPCEReason_ExportCancelled)
 [self.imageresizerView videoCancelExport];
 ```
 **PS1: the function of cropping the whole video picture, circular cutting and masking can't be used. Cutting a frame of picture is OK. At present, it is only effective for a single picture.**

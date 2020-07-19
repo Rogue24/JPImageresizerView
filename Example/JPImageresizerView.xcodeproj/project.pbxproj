@@ -41,6 +41,7 @@
 		1A60C768241E3BA0000E1692 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A60C767241E3BA0000E1692 /* README.md */; };
 		1A663C4924BEB5E1000C54B5 /* Girl7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A663C4724BEB5E1000C54B5 /* Girl7.jpg */; };
 		1A663C4A24BEB5E1000C54B5 /* Girl6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A663C4824BEB5E1000C54B5 /* Girl6.jpg */; };
+		1A663C5224C2BA59000C54B5 /* Gem.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1A663C5124C2BA59000C54B5 /* Gem.gif */; };
 		1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */; };
 		1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */; };
 		1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C3249A0CFE0081452F /* DanielWuViewController.m */; };
@@ -143,6 +144,7 @@
 		1A60C767241E3BA0000E1692 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1A663C4724BEB5E1000C54B5 /* Girl7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl7.jpg; sourceTree = "<group>"; };
 		1A663C4824BEB5E1000C54B5 /* Girl6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl6.jpg; sourceTree = "<group>"; };
+		1A663C5124C2BA59000C54B5 /* Gem.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Gem.gif; sourceTree = "<group>"; };
 		1A7394E8249DD9210024D2B6 /* ReplaceFaceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplaceFaceViewController.h; sourceTree = "<group>"; };
 		1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplaceFaceViewController.m; sourceTree = "<group>"; };
 		1A87AF97247B8C5900123EC6 /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPSolveTool.h; path = JPImageresizerView/JPHelper/JPSolveTool.h; sourceTree = SOURCE_ROOT; };
@@ -315,6 +317,7 @@
 				1A1F268324935DAC00860444 /* shapeList.plist */,
 				1A1F268524935DC600860444 /* shape.ttf */,
 				1A604E7324BB1EE000705EDE /* yaorenmao.mov */,
+				1A663C5124C2BA59000C54B5 /* Gem.gif */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -558,6 +561,7 @@
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				1A1F268624935DC600860444 /* shape.ttf in Resources */,
 				1A601A3B1FEBB523004B39A1 /* LICENSE in Resources */,
+				1A663C5224C2BA59000C54B5 /* Gem.gif in Resources */,
 				1A23974724B089A10093B256 /* Girl1.jpg in Resources */,
 				1A23974A24B08B4A0093B256 /* Girl2.jpg in Resources */,
 				1AD9291C2497169F005F7AF0 /* Girl4.jpg in Resources */,

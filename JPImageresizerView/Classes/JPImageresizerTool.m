@@ -6,16 +6,17 @@
 //
 
 #import "JPImageresizerTool.h"
+#import <MobileCoreServices/UTCoreTypes.h>
 
 @implementation JPImageresizerTool
 
 #pragma mark - 计算函数
 
-CG_INLINE BOOL JPIsSameSize(CGSize size1, CGSize size2) {
+static BOOL JPIsSameSize(CGSize size1, CGSize size2) {
     return (fabs(size1.width - size2.width) < 0.5 && fabs(size1.height - size2.height) < 0.5);
 }
 
-CG_INLINE CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize) {
+static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize) {
     if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
         return (CGRect){CGPointZero, originSize};
     }
@@ -39,7 +40,7 @@ CG_INLINE CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, 
     return cropFrame;
 }
 
-CG_INLINE CGAffineTransform JPConfirmTransform(CGSize originSize, JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isImage) {
+static CGAffineTransform JPConfirmTransform(CGSize originSize, JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isImage) {
     CGAffineTransform transform = CGAffineTransformIdentity;
     switch (direction) {
         case JPImageresizerHorizontalLeftDirection:
@@ -89,7 +90,7 @@ CG_INLINE CGAffineTransform JPConfirmTransform(CGSize originSize, JPImageresizer
     return transform;
 }
 
-CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isImage) {
+static CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isImage) {
     if (JPIsSameSize(cropFrame.size, originSize)) {
         return CGPointZero;
     }
@@ -222,317 +223,43 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
     return CGPointMake(tx, ty);
 }
 
-#pragma mark - 裁剪图片
-
-+ (UIImage *)cropPicture:(UIImage *)image
-               maskImage:(UIImage *)maskImage
-             isRoundClip:(BOOL)isRoundClip
-               direction:(JPImageresizerRotationDirection)direction
-             isVerMirror:(BOOL)isVerMirror
-             isHorMirror:(BOOL)isHorMirror
-           compressScale:(CGFloat)compressScale
-       resizeContentSize:(CGSize)resizeContentSize
-           resizeWHScale:(CGFloat)resizeWHScale
-               cropFrame:(CGRect)cropFrame {
-    if (!image || compressScale <= 0) return nil;
-    @autoreleasepool {
-        
-        image = [self __imageFixOrientation:image];
-        
-        if (compressScale > 1) compressScale = 1;
-        if (JPIsSameSize(cropFrame.size, resizeContentSize) &&
-            direction == JPImageresizerVerticalUpDirection &&
-            isVerMirror == NO &&
-            isHorMirror == NO &&
-            maskImage == nil &&
-            isRoundClip == NO &&
-            compressScale == 1) {
-            return image;
-        }
-        
-        CGImageRef imageRef = image.CGImage;
-        
-        // 获取裁剪尺寸和裁剪区域
-        CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef) * compressScale, CGImageGetHeight(imageRef) * compressScale);
-        
-        cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, imageSize);
-        
-        CGRect renderRect = (CGRect){CGPointZero, cropFrame.size};
-        if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
-            CGFloat tmp = renderRect.size.width;
-            renderRect.size.width = renderRect.size.height;
-            renderRect.size.height = tmp;
-        }
-        
-        CGAffineTransform transform = JPConfirmTransform(imageSize, direction, isVerMirror, isHorMirror, YES);
-        CGPoint translate = JPConfirmTranslate(cropFrame, imageSize, direction, isVerMirror, isHorMirror, YES);
-        transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-        
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
-        if (maskImage || isRoundClip) {
-            bitmapInfo |= kCGImageAlphaPremultipliedFirst;
-        } else {
-            CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-            if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-                alphaInfo == kCGImageAlphaPremultipliedFirst ||
-                alphaInfo == kCGImageAlphaLast ||
-                alphaInfo == kCGImageAlphaFirst) {
-                bitmapInfo |= kCGImageAlphaPremultipliedFirst;
-            } else {
-                bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+static NSTimeInterval JPImageSourceGetGIFFrameDelayAtIndex(CGImageSourceRef source, size_t index) {
+    NSTimeInterval delay = 0;
+    CFDictionaryRef dic = CGImageSourceCopyPropertiesAtIndex(source, index, NULL);
+    if (dic) {
+        CFDictionaryRef dicGIF = CFDictionaryGetValue(dic, kCGImagePropertyGIFDictionary);
+        if (dicGIF) {
+            NSNumber *num = CFDictionaryGetValue(dicGIF, kCGImagePropertyGIFUnclampedDelayTime);
+            if (num.doubleValue <= __FLT_EPSILON__) {
+                num = CFDictionaryGetValue(dicGIF, kCGImagePropertyGIFDelayTime);
             }
+            delay = num.doubleValue;
         }
-        
-        CGContextRef context = CGBitmapContextCreate(NULL,
-                                                     renderRect.size.width,
-                                                     renderRect.size.height,
-                                                     8,
-                                                     0,
-                                                     colorSpace,
-                                                     bitmapInfo);
-        
-        CGContextSetShouldAntialias(context, true);
-        CGContextSetAllowsAntialiasing(context, true);
-        CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-        
-        if (maskImage) {
-            CGImageRef maskImageRef = maskImage.CGImage;
-            CGContextClipToMask(context, renderRect, maskImageRef);
-        }
-        
-        if (isRoundClip) {
-            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:MIN(renderRect.size.width, renderRect.size.height)];
-            CGContextAddPath(context, path.CGPath);
-            CGContextClip(context);
-        }
-        
-        CGContextConcatCTM(context, transform);
-        CGContextDrawImage(context, (CGRect){CGPointZero, imageSize}, imageRef);
-        
-        CGImageRef newImageRef = CGBitmapContextCreateImage(context);
-        UIImage *finalImage = [UIImage imageWithCGImage:newImageRef];
-        
-        CGColorSpaceRelease(colorSpace);
-        CGContextRelease(context);
-        CGImageRelease(newImageRef);
-        
-        return finalImage;
+        CFRelease(dic);
     }
+    // http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility
+    if (delay < 0.02) delay = 0.1;
+    return delay;
+};
+
+static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, UIImage *maskImage, BOOL isRoundClip, CGRect renderRect, CGAffineTransform transform, CGSize imageSize) {
+    if (maskImage) {
+        CGImageRef maskImageRef = maskImage.CGImage;
+        CGContextClipToMask(context, renderRect, maskImageRef);
+    }
+    if (isRoundClip) {
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:MIN(renderRect.size.width, renderRect.size.height)];
+        CGContextAddPath(context, path.CGPath);
+        CGContextClip(context);
+    }
+    CGContextConcatCTM(context, transform);
+    CGContextDrawImage(context, (CGRect){CGPointZero, imageSize}, imageRef);
+    return CGBitmapContextCreateImage(context);
 }
 
-#pragma mark - 裁剪视频一帧画面
+#pragma mark - 私有方法
 
-+ (UIImage *)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
-                                   time:(CMTime)time
-                            maximumSize:(CGSize)maximumSize
-                              maskImage:(UIImage *)maskImage
-                            isRoundClip:(BOOL)isRoundClip
-                              direction:(JPImageresizerRotationDirection)direction
-                            isVerMirror:(BOOL)isVerMirror
-                            isHorMirror:(BOOL)isHorMirror
-                          compressScale:(CGFloat)compressScale
-                      resizeContentSize:(CGSize)resizeContentSize
-                          resizeWHScale:(CGFloat)resizeWHScale
-                              cropFrame:(CGRect)cropFrame {
-    if (!asset || compressScale <= 0) return nil;
-    AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-    generator.maximumSize = maximumSize;
-    generator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
-    generator.appliesPreferredTrackTransform = YES;
-    generator.requestedTimeToleranceAfter = kCMTimeZero;
-    generator.requestedTimeToleranceBefore = kCMTimeZero;
-    CGImageRef imageRef = [generator copyCGImageAtTime:time actualTime:nil error:nil];
-    UIImage *image = [UIImage imageWithCGImage:imageRef];
-    return [self cropPicture:image
-                   maskImage:maskImage
-                 isRoundClip:isRoundClip
-                   direction:direction
-                 isVerMirror:isVerMirror
-                 isHorMirror:isHorMirror
-               compressScale:compressScale
-           resizeContentSize:resizeContentSize
-               resizeWHScale:resizeWHScale
-                   cropFrame:cropFrame];
-}
-
-#pragma mark - 裁剪视频
-
-+ (AVAssetExportSession *)cropVideoWithAsset:(AVURLAsset *)asset
-                                   timeRange:(CMTimeRange)timeRange
-                               frameDuration:(CMTime)frameDuration
-                                   cachePath:(NSString *)cachePath
-                                  presetName:(NSString *)presetName
-                                   direction:(JPImageresizerRotationDirection)direction
-                                 isVerMirror:(BOOL)isVerMirror
-                                 isHorMirror:(BOOL)isHorMirror
-                           resizeContentSize:(CGSize)resizeContentSize
-                               resizeWHScale:(CGFloat)resizeWHScale
-                                   cropFrame:(CGRect)cropFrame
-                                  errorBlock:(JPCropVideoErrorBlock)errorBlock
-                               completeBlock:(JPCropVideoCompleteBlock)completeBlock {
-    if (!asset) {
-        if (errorBlock) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                errorBlock(nil, JPCVEReason_NotAssets);
-            });
-        }
-        return nil;
-    }
-    
-    NSString *fileName;
-    if (cachePath) {
-        fileName = [cachePath lastPathComponent];
-    } else {
-        fileName = [NSString stringWithFormat:@"%.0lf.mp4", [[NSDate date] timeIntervalSince1970]];
-        cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:fileName];
-    }
-    
-    // 判断缓存路径是否已经存在
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:cachePath]) {
-        if (errorBlock) {
-            __block BOOL isContinue = NO;
-            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                isContinue = errorBlock ? errorBlock(cachePath, JPCVEReason_CachePathAlreadyExists) : NO;
-                dispatch_semaphore_signal(semaphore);
-            });
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-            if (isContinue) {
-                if ([fileManager fileExistsAtPath:cachePath]) [fileManager removeItemAtPath:cachePath error:nil];
-            } else {
-                return nil;
-            }
-        } else {
-            [fileManager removeItemAtPath:cachePath error:nil];
-        }
-    }
-    
-    // 设置临时导出路径
-    NSString *tmpFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
-    if ([fileManager fileExistsAtPath:tmpFilePath]) {
-        [fileManager removeItemAtPath:tmpFilePath error:nil];
-    }
-    
-    AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
-    if (!videoTrack) {
-        if (errorBlock) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                errorBlock(nil, JPCVEReason_VideoAlreadyDamage);
-            });
-        }
-        return nil;
-    }
-    
-    AVMutableComposition *composition = [AVMutableComposition composition];
-    
-    // 插入音频
-    AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
-    if (audioTrack) {
-        AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
-    }
-    
-    // 插入视频
-    AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
-    
-    // 根据文件后缀名获取文件类型
-    NSString *extension = [fileName pathExtension];
-    AVFileType fileType = nil;
-    if ([extension caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
-        fileType = AVFileTypeAppleM4A;
-    } else if ([extension caseInsensitiveCompare:@"m4v"] == NSOrderedSame) {
-        fileType = AVFileTypeAppleM4V;
-    } else if ([extension caseInsensitiveCompare:@"mov"] == NSOrderedSame) {
-        fileType = AVFileTypeQuickTimeMovie;
-    } else if ([extension caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
-        fileType = AVFileTypeMPEG4;
-    } else {
-        fileType = AVFileTypeMPEGLayer3;
-    }
-    // 创建视频导出会话
-    AVAssetExportSession *exporterSession = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
-    if (![exporterSession.supportedFileTypes containsObject:fileType]) {
-        if (errorBlock) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                errorBlock(cachePath, JPCVEReason_NoSupportedFileType);
-            });
-        }
-        return nil;
-    }
-    exporterSession.outputFileType = fileType;
-    exporterSession.outputURL = [NSURL fileURLWithPath:tmpFilePath];
-    exporterSession.shouldOptimizeForNetworkUse = YES;
-    
-    // 获取准确裁剪区域
-    CGSize videoSize = videoTrack.naturalSize;
-    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, videoSize);
-    
-    // 获取裁剪尺寸
-    CGSize renderSize = cropFrame.size;
-    // 防止绿边
-    NSInteger renderW = (NSInteger)renderSize.width;
-    NSInteger renderH = (NSInteger)renderSize.height;
-    renderW -= (renderW % 16);
-    renderH -= (renderH % 16);
-    if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
-        renderSize = CGSizeMake((CGFloat)renderH, (CGFloat)renderW);
-    } else {
-        renderSize = CGSizeMake((CGFloat)renderW, (CGFloat)renderH);
-    }
-    
-    AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
-    // 确定形变矩阵
-    CGAffineTransform transform = JPConfirmTransform(videoSize, direction, isVerMirror, isHorMirror, NO);
-    CGPoint translate = JPConfirmTranslate(cropFrame, videoSize, direction, isVerMirror, isHorMirror, NO);
-    transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-    [layerInstruciton setTransform:transform atTime:kCMTimeZero];
-    
-    AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-    compositionInstruction.timeRange = timeRange;
-    compositionInstruction.layerInstructions = @[layerInstruciton];
-    
-    AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
-    videoComposition.instructions = @[compositionInstruction];
-    videoComposition.frameDuration = frameDuration;
-    videoComposition.renderScale = 1;
-    videoComposition.renderSize = renderSize;
-    exporterSession.videoComposition = videoComposition;
-    
-    // 开始导出
-    [exporterSession exportAsynchronouslyWithCompletionHandler:^{
-        AVAssetExportSessionStatus status = exporterSession.status;
-        if (status == AVAssetExportSessionStatusCompleted) {
-            NSURL *videoURL;
-            if ([tmpFilePath isEqualToString:cachePath]) {
-                videoURL = [NSURL fileURLWithPath:cachePath];
-            } else {
-                NSError *error;
-                [[NSFileManager defaultManager] moveItemAtPath:tmpFilePath toPath:cachePath error:&error];
-                videoURL = error == nil ? [NSURL fileURLWithPath:cachePath] : [NSURL fileURLWithPath:tmpFilePath];
-            }
-            if (completeBlock) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completeBlock(videoURL);
-                });
-            }
-        } else {
-            [[NSFileManager defaultManager] removeItemAtPath:tmpFilePath error:nil];
-            if (errorBlock) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    errorBlock(nil, (status == AVAssetExportSessionStatusCancelled ? JPCVEReason_ExportCancelled : JPCVEReason_ExportFailed));
-                });
-            }
-        }
-    }];
-    
-    return exporterSession;
-}
-
-#pragma mark - 图片处理
-
+#pragma mark 修正图片方向
 + (UIImage *)__imageFixOrientation:(UIImage *)image {
     
     // No-op if the orientation is already correct
@@ -624,6 +351,319 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
     return img;
 }
 
+#pragma mark 执行回调的Block
++ (void)__executeErrorBlock:(JPCropErrorBlock)block cacheURL:(NSURL *)cacheURL reason:(JPCropErrorReason)reason {
+    if (!block) return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(cacheURL, reason);
+    });
+}
++ (void)__executeCropPictureDoneBlock:(JPCropPictureDoneBlock)block finalImage:(UIImage *)finalImage cacheURL:(NSURL *)cacheURL isCacheSuccess:(BOOL)isCacheSuccess {
+    if (!block) return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(finalImage, isCacheSuccess ? cacheURL : nil, isCacheSuccess);
+    });
+}
++ (void)__executeCropVideoCompleteBlock:(JPCropVideoCompleteBlock)block cacheURL:(NSURL *)cacheURL {
+    if (!block) return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(cacheURL);
+    });
+}
+
+#pragma mark 缓存图片
++ (BOOL)__cacheImage:(UIImage *)image hasAlpha:(BOOL)hasAlpha cacheURL:(NSURL *)cacheURL {
+    if (!cacheURL || !image) {
+        return NO;
+    }
+    NSData *data = hasAlpha ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, 0.9);
+    BOOL isCacheSuccess = [data writeToURL:cacheURL atomically:YES];
+    if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+    return isCacheSuccess;
+}
+
+#pragma mark 缓存GIF文件
++ (BOOL)__cacheGIF:(NSArray<UIImage *> *)images delays:(NSArray *)delays cacheURL:(NSURL *)cacheURL {
+    if (!cacheURL || images.count == 0) {
+        return NO;
+    }
+    size_t count = images.count;
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, kUTTypeGIF , count, NULL);
+    NSDictionary *gifProperty = @{(__bridge id)kCGImagePropertyGIFDictionary: @{(__bridge id)kCGImagePropertyGIFLoopCount: @0}};
+    CGImageDestinationSetProperties(destination, (CFDictionaryRef)gifProperty);
+    void (^cacheBlock)(NSInteger i);
+    if (images.count == delays.count) {
+        cacheBlock = ^(NSInteger i) {
+           UIImage *img = images[i];
+           NSTimeInterval delay = [delays[i] doubleValue];
+           NSDictionary *frameProperty = @{(NSString *)kCGImagePropertyGIFDictionary: @{(NSString *)kCGImagePropertyGIFDelayTime: @(delay)}};
+           CGImageDestinationAddImage(destination, img.CGImage, (CFDictionaryRef)frameProperty);
+       };
+    } else {
+        NSTimeInterval delay = delays.count ? [delays.firstObject doubleValue] : 0.1;
+        NSDictionary *frameProperty = @{(NSString *)kCGImagePropertyGIFDictionary: @{(NSString *)kCGImagePropertyGIFDelayTime: @(delay)}};
+        cacheBlock = ^(NSInteger i) {
+            UIImage *img = images[i];
+            CGImageDestinationAddImage(destination, img.CGImage, (CFDictionaryRef)frameProperty);
+        };
+    }
+    for (NSInteger i = 0; i < count; i++) {
+        cacheBlock(i);
+    }
+    BOOL isCacheSuccess = CGImageDestinationFinalize(destination);
+    CFRelease(destination);
+    if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+    return isCacheSuccess;
+}
+
+#pragma mark 裁剪图片&GIF
++ (void)__cropPicture:(UIImage *)image
+            imageData:(NSData *)imageData
+                isGIF:(BOOL)isGIF
+       isReverseOrder:(BOOL)isReverseOrder
+                 rate:(float)rate
+                index:(NSInteger)index
+            maskImage:(UIImage *)maskImage
+            configure:(JPCropConfigure)configure
+        compressScale:(CGFloat)compressScale
+             cacheURL:(NSURL *)cacheURL
+           errorBlock:(JPCropErrorBlock)errorBlock
+        completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    
+    if ((!image && !imageData) || compressScale <= 0) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        return;
+    }
+    
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self __cropPicture:image
+                      imageData:imageData
+                          isGIF:isGIF
+                 isReverseOrder:isReverseOrder
+                           rate:rate
+                          index:index
+                      maskImage:maskImage
+                      configure:configure
+                  compressScale:compressScale
+                       cacheURL:cacheURL
+                     errorBlock:errorBlock
+                  completeBlock:completeBlock];
+        });
+        return;
+    }
+    
+    if (!image) image = [UIImage imageWithData:imageData];
+    if (!image) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        return;
+    }
+    
+    JPImageresizerRotationDirection direction = configure.direction;
+    BOOL isVerMirror = configure.isVerMirror;
+    BOOL isHorMirror = configure.isHorMirror;
+    BOOL isRoundClip = configure.isRoundClip;
+    CGSize resizeContentSize = configure.resizeContentSize;
+    CGFloat resizeWHScale = configure.resizeWHScale;
+    CGRect cropFrame = configure.cropFrame;
+    if (compressScale > 1) compressScale = 1;
+    
+    @autoreleasepool {
+        
+        BOOL isCacheSuccess = NO;
+        
+        CGImageRef imageRef = image.CGImage;
+        
+        // 是否带透明度
+        BOOL hasAlpha = NO;
+        if (maskImage || isRoundClip) {
+            hasAlpha = YES;
+        } else {
+            CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+            if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+                alphaInfo == kCGImageAlphaPremultipliedFirst ||
+                alphaInfo == kCGImageAlphaLast ||
+                alphaInfo == kCGImageAlphaFirst) hasAlpha = YES;
+        }
+        
+        if (cacheURL) {
+            NSString *pathExtension = cacheURL.pathExtension;
+            NSString *extension = isGIF ? @"gif" : (hasAlpha ? @"png" : (imageData ? [self contentTypeForImageData:imageData] : @"jpeg"));
+            if (extension.length && ![extension isEqualToString:pathExtension]) {
+                NSString *absoluteString = cacheURL.absoluteString;
+                if (pathExtension.length) {
+                    NSString *lastPathComponent = cacheURL.lastPathComponent;
+                    NSRange lastPathComponentRange = NSMakeRange(absoluteString.length - lastPathComponent.length, lastPathComponent.length);
+                    lastPathComponent = [lastPathComponent componentsSeparatedByString:@"."].firstObject;
+                    absoluteString = [absoluteString stringByReplacingCharactersInRange:lastPathComponentRange withString:lastPathComponent];
+                }
+                cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", absoluteString, extension]];
+            }
+            if ([[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path]) {
+                [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
+                return;
+            }
+        }
+        
+        if (JPIsSameSize(cropFrame.size, resizeContentSize) &&
+            direction == JPImageresizerVerticalUpDirection &&
+            isVerMirror == NO &&
+            isHorMirror == NO &&
+            maskImage == nil &&
+            isRoundClip == NO &&
+            isReverseOrder == NO &&
+            rate == 1 &&
+            index < 0 &&
+            compressScale == 1) {
+            if (cacheURL) {
+                if (imageData) {
+                    isCacheSuccess = [imageData writeToURL:cacheURL atomically:YES];
+                    if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+                } else {
+                    if (isGIF) {
+                        NSUInteger count = image.images.count;
+                        NSTimeInterval duration = image.duration;
+                        NSTimeInterval delay = duration / (NSTimeInterval)count;
+                        if (delay < 0.02) delay = 0.1;
+                        isCacheSuccess = [self __cacheGIF:image.images delays:@[@(delay)] cacheURL:cacheURL];
+                    } else {
+                        isCacheSuccess = [self __cacheImage:image hasAlpha:hasAlpha cacheURL:cacheURL];
+                    }
+                }
+            }
+            [self __executeCropPictureDoneBlock:completeBlock finalImage:image cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+            return;
+        }
+        
+        CGImageSourceRef source = NULL;
+        size_t count = 1;
+        if (isGIF) {
+            if (imageData) {
+                source = CGImageSourceCreateWithData((__bridge CFTypeRef)(imageData), NULL);
+                count = CGImageSourceGetCount(source);
+                if ((index > 0) && (index > (count - 1))) index = count - 1;
+                imageRef = CGImageSourceCreateImageAtIndex(source, (index > 0 ? index : 0), NULL);
+            } else {
+                count = image.images.count;
+                if ((index > 0) && (index > (count - 1))) index = count - 1;
+                imageRef = image.images[index > 0 ? index : 0].CGImage;
+            }
+        } else {
+            image = [self __imageFixOrientation:image];
+            imageRef = image.CGImage;
+        }
+        
+        // 获取裁剪尺寸和裁剪区域
+        CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef) * compressScale, CGImageGetHeight(imageRef) * compressScale);
+        
+        cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, imageSize);
+        
+        CGRect renderRect = (CGRect){CGPointZero, cropFrame.size};
+        if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
+            CGFloat tmp = renderRect.size.width;
+            renderRect.size.width = renderRect.size.height;
+            renderRect.size.height = tmp;
+        }
+        
+        CGAffineTransform transform = JPConfirmTransform(imageSize, direction, isVerMirror, isHorMirror, YES);
+        CGPoint translate = JPConfirmTranslate(cropFrame, imageSize, direction, isVerMirror, isHorMirror, YES);
+        transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
+        
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        
+        CGContextRef context = CGBitmapContextCreate(NULL, renderRect.size.width, renderRect.size.height, 8, 0, colorSpace, bitmapInfo);
+        CGContextSetShouldAntialias(context, true);
+        CGContextSetAllowsAntialiasing(context, true);
+        CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+        
+        UIImage *finalImage;
+        NSMutableArray *images;
+        NSMutableArray *delays;
+        if (isGIF && index < 0) {
+            __block NSTimeInterval duration = 0;
+            images = [NSMutableArray array];
+            delays = [NSMutableArray array];
+            
+            CGImageRef (^getCurrentImageRef)(size_t i);
+            if (imageData) {
+                getCurrentImageRef = ^(size_t i) {
+                    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
+                    NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i) / rate;
+                    duration += delay;
+                    [delays addObject:@(delay)];
+                    return imageRef;
+                };
+            } else {
+                duration = image.duration / rate;
+                NSTimeInterval delay = duration / (NSTimeInterval)count;
+                if (delay < 0.02) delay = 0.1;
+                [delays addObject:@(delay)];
+                getCurrentImageRef = ^(size_t i){
+                    return image.images[i].CGImage;
+                };
+            }
+            
+            void (^createNewImageRef)(size_t i) = ^(size_t i) {
+                // 将当前图形状态推入堆栈
+                CGContextSaveGState(context);
+                
+                // 绘制裁剪后的图片
+                CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i),
+                                                            context,
+                                                            maskImage,
+                                                            isRoundClip,
+                                                            renderRect,
+                                                            transform,
+                                                            imageSize);
+                [images addObject:[UIImage imageWithCGImage:newImageRef]];
+                CGImageRelease(newImageRef);
+                
+                // 清空画布
+                CGContextClearRect(context, renderRect);
+                
+                // 把堆栈顶部的状态弹出，返回到之前的图形状态
+                CGContextRestoreGState(context);
+            };
+            
+            if (isReverseOrder) {
+                for (NSInteger i = (count - 1); i >= 0; i--) {
+                    createNewImageRef(i);
+                }
+            } else {
+                for (NSInteger i = 0; i < count; i++) {
+                    createNewImageRef(i);
+                }
+            }
+            
+            finalImage = images.count > 1 ? [UIImage animatedImageWithImages:images duration:duration] : images.firstObject;
+            
+            CGColorSpaceRelease(colorSpace);
+            CGContextRelease(context);
+            if (source != NULL) CFRelease(source);
+            
+            isCacheSuccess = [self __cacheGIF:images delays:delays cacheURL:cacheURL];
+            [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+            return;
+        }
+        
+        CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+        finalImage = [UIImage imageWithCGImage:newImageRef];
+        CGImageRelease(newImageRef);
+        
+        CGColorSpaceRelease(colorSpace);
+        CGContextRelease(context);
+        if (source != NULL) CFRelease(source);
+        
+        isCacheSuccess = [self __cacheImage:finalImage hasAlpha:hasAlpha cacheURL:cacheURL];
+        [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+    }
+}
+
+#pragma mark - 公开方法
+
+#pragma mark 转换成黑色轮廓的图片
 + (UIImage *)convertBlackImage:(UIImage *)image {
     if (!image) return nil;
     CGRect rect = (CGRect){CGPointZero, image.size};
@@ -636,4 +676,591 @@ CG_INLINE CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImag
     return newImage;
 }
 
+#pragma mark 解码GIF
++ (UIImage *)decodeGIFData:(NSData *)data {
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFTypeRef)(data), NULL);
+    if (!source) return nil;
+    
+    size_t count = CGImageSourceGetCount(source);
+    if (count <= 1) {
+        CFRelease(source);
+        return [UIImage imageWithData:data];
+    }
+    
+    NSUInteger frames[count];
+    double oneFrameTime = 1 / 50.0; // 50 fps
+    NSTimeInterval totalTime = 0;
+    NSUInteger totalFrame = 0;
+    NSUInteger gcdFrame = 0;
+    for (size_t i = 0; i < count; i++) {
+        NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i);
+        totalTime += delay;
+        NSInteger frame = lrint(delay / oneFrameTime);
+        if (frame < 1) frame = 1;
+        frames[i] = frame;
+        totalFrame += frames[i];
+        if (i == 0) gcdFrame = frames[i];
+        else {
+            NSUInteger frame = frames[i], tmp;
+            if (frame < gcdFrame) {
+                tmp = frame; frame = gcdFrame; gcdFrame = tmp;
+            }
+            while (true) {
+                tmp = frame % gcdFrame;
+                if (tmp == 0) break;
+                frame = gcdFrame;
+                gcdFrame = tmp;
+            }
+        }
+    }
+    NSMutableArray *array = [NSMutableArray new];
+    for (size_t i = 0; i < count; i++) {
+        CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
+        if (!imageRef) {
+            CFRelease(source);
+            return nil;
+        }
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        if (width == 0 || height == 0) {
+            CFRelease(source);
+            CFRelease(imageRef);
+            return nil;
+        }
+        
+        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+        BOOL hasAlpha = NO;
+        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+            alphaInfo == kCGImageAlphaPremultipliedFirst ||
+            alphaInfo == kCGImageAlphaLast ||
+            alphaInfo == kCGImageAlphaFirst) {
+            hasAlpha = YES;
+        }
+        // BGRA8888 (premultiplied) or BGRX8888
+        // same as UIGraphicsBeginImageContext() and -[UIView drawRect:]
+        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+        CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, space, bitmapInfo);
+        CGColorSpaceRelease(space);
+        if (!context) {
+            CFRelease(source);
+            CFRelease(imageRef);
+            return nil;
+        }
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+        CGImageRef decoded = CGBitmapContextCreateImage(context);
+        CFRelease(context);
+        if (!decoded) {
+            CFRelease(source);
+            CFRelease(imageRef);
+            return nil;
+        }
+        UIImage *image = [UIImage imageWithCGImage:decoded];
+        CGImageRelease(imageRef);
+        CGImageRelease(decoded);
+        if (!image) {
+            CFRelease(source);
+            return nil;
+        }
+        for (size_t j = 0, max = frames[i] / gcdFrame; j < max; j++) {
+            [array addObject:image];
+        }
+    }
+    CFRelease(source);
+    UIImage *image = [UIImage animatedImageWithImages:array duration:totalTime];
+    return image;
+}
+
+#pragma mark 是否为GIF
++ (BOOL)isGIFData:(NSData *)data {
+    if (!data) return NO;
+    uint8_t c;
+    [data getBytes:&c length:1];
+    return c == 0x47;
+}
+
+#pragma mark 获取图片类型后缀
++ (NSString *)contentTypeForImageData:(NSData *)data {
+    uint8_t c;
+    [data getBytes:&c length:1];
+    switch (c) {
+        case 0xFF:
+            return @"jpeg";
+        case 0x89:
+            return @"png";
+        case 0x47:
+            return @"gif";
+        case 0x49:
+        case 0x4D:
+            return @"tiff";
+        case 0x52:
+        {
+            if ([data length] < 12) {
+                return nil;
+            }
+            NSString *testString = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 12)] encoding:NSASCIIStringEncoding];
+            if ([testString hasPrefix:@"RIFF"] && [testString hasSuffix:@"WEBP"]) {
+                return @"webp";
+            }
+            return nil;
+        }
+    }
+    return nil;
+}
+
+#pragma mark - 裁剪图片
+
+#pragma mark 裁剪图片（UIImage）
++ (void)cropPictureWithImage:(UIImage *)image
+                   maskImage:(UIImage *)maskImage
+                   configure:(JPCropConfigure)configure
+               compressScale:(CGFloat)compressScale
+                    cacheURL:(NSURL *)cacheURL
+                  errorBlock:(JPCropErrorBlock)errorBlock
+               completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:image
+              imageData:nil
+                  isGIF:NO
+         isReverseOrder:NO
+                   rate:1
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+
+#pragma mark 裁剪图片（NSData）
++ (void)cropPictureWithImageData:(NSData *)imageData
+                       maskImage:(UIImage *)maskImage
+                       configure:(JPCropConfigure)configure
+                   compressScale:(CGFloat)compressScale
+                        cacheURL:(NSURL *)cacheURL
+                      errorBlock:(JPCropErrorBlock)errorBlock
+                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:nil
+              imageData:imageData
+                  isGIF:NO
+         isReverseOrder:NO
+                   rate:1
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+#pragma mark - 裁剪GIF
+
+#pragma mark 裁剪GIF（UIImage）
++ (void)cropGIFwithGifImage:(UIImage *)gifImage
+             isReverseOrder:(BOOL)isReverseOrder
+                       rate:(float)rate
+                  maskImage:(UIImage *)maskImage
+                  configure:(JPCropConfigure)configure
+              compressScale:(CGFloat)compressScale
+                   cacheURL:(NSURL *)cacheURL
+                 errorBlock:(JPCropErrorBlock)errorBlock
+              completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:gifImage
+              imageData:nil
+                  isGIF:YES
+         isReverseOrder:isReverseOrder
+                   rate:rate
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+#pragma mark 裁剪GIF其中一帧（UIImage）
++ (void)cropGIFwithGifImage:(UIImage *)gifImage
+                      index:(NSInteger)index
+                  maskImage:(UIImage *)maskImage
+                  configure:(JPCropConfigure)configure
+              compressScale:(CGFloat)compressScale
+                   cacheURL:(NSURL *)cacheURL
+                 errorBlock:(JPCropErrorBlock)errorBlock
+              completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:gifImage
+              imageData:nil
+                  isGIF:YES
+         isReverseOrder:NO
+                   rate:1
+                  index:index
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+#pragma mark 裁剪GIF（NSData）
++ (void)cropGIFwithGifData:(NSData *)gifData
+            isReverseOrder:(BOOL)isReverseOrder
+                      rate:(float)rate
+                 maskImage:(UIImage *)maskImage
+                 configure:(JPCropConfigure)configure
+             compressScale:(CGFloat)compressScale
+                  cacheURL:(NSURL *)cacheURL
+                errorBlock:(JPCropErrorBlock)errorBlock
+             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:nil
+              imageData:gifData
+                  isGIF:YES
+         isReverseOrder:isReverseOrder
+                   rate:rate
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+#pragma mark 裁剪GIF其中一帧（NSData）
++ (void)cropGIFwithGifData:(NSData *)gifData
+                     index:(NSInteger)index
+                 maskImage:(UIImage *)maskImage
+                 configure:(JPCropConfigure)configure
+             compressScale:(CGFloat)compressScale
+                  cacheURL:(NSURL *)cacheURL
+                errorBlock:(JPCropErrorBlock)errorBlock
+             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    [self __cropPicture:nil
+              imageData:gifData
+                  isGIF:YES
+         isReverseOrder:NO
+                   rate:1
+                  index:index
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:completeBlock];
+}
+
+
+#pragma mark - 裁剪视频
+
+#pragma mark 裁剪视频其中一帧
++ (void)cropVideoWithAsset:(AVURLAsset *)asset
+                      time:(CMTime)time
+               maximumSize:(CGSize)maximumSize
+                 maskImage:(UIImage *)maskImage
+                 configure:(JPCropConfigure)configure
+             compressScale:(CGFloat)compressScale
+                  cacheURL:(NSURL *)cacheURL
+                errorBlock:(JPCropErrorBlock)errorBlock
+             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    if (!asset || compressScale <= 0) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        return;
+    }
+    if (compressScale > 1) compressScale = 1;
+    maximumSize = CGSizeMake(maximumSize.width * compressScale, maximumSize.height * compressScale);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+        generator.maximumSize = maximumSize;
+        generator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+        generator.appliesPreferredTrackTransform = YES;
+        generator.requestedTimeToleranceAfter = kCMTimeZero;
+        generator.requestedTimeToleranceBefore = kCMTimeZero;
+        CGImageRef imageRef = [generator copyCGImageAtTime:time actualTime:nil error:nil];
+        UIImage *image = [UIImage imageWithCGImage:imageRef];
+        [self __cropPicture:image
+                  imageData:nil
+                      isGIF:NO
+             isReverseOrder:NO
+                       rate:1
+                      index:-1
+                  maskImage:maskImage
+                  configure:configure
+              compressScale:1
+                   cacheURL:cacheURL
+                 errorBlock:errorBlock
+              completeBlock:completeBlock];
+    });
+}
+
+#pragma mark 截取视频一小段并裁剪成GIF
++ (void)cropVideoToGIFwithAsset:(AVURLAsset *)asset
+                    startSecond:(NSTimeInterval)startSecond
+                       duration:(NSTimeInterval)duration
+                            fps:(float)fps
+                           rate:(float)rate
+                    maximumSize:(CGSize)maximumSize
+                      maskImage:(UIImage *)maskImage
+                      configure:(JPCropConfigure)configure
+                       cacheURL:(NSURL *)cacheURL
+                     errorBlock:(JPCropErrorBlock)errorBlock
+                  completeBlock:(JPCropPictureDoneBlock)completeBlock {
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self cropVideoToGIFwithAsset:asset
+              startSecond:startSecond
+                 duration:duration
+                      fps:fps
+                     rate:rate
+              maximumSize:maximumSize
+                maskImage:maskImage
+                configure:configure
+                 cacheURL:cacheURL
+               errorBlock:errorBlock
+            completeBlock:completeBlock];
+        });
+        return;
+    }
+    
+    AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+    
+    if (maximumSize.width <= 0 ||
+        maximumSize.height <= 0 ||
+        maximumSize.width > videoTrack.naturalSize.width ||
+        maximumSize.height > videoTrack.naturalSize.height) {
+        maximumSize = videoTrack.naturalSize;
+    }
+    
+    float frameRate = videoTrack.nominalFrameRate;
+    if (fps <= 0 || fps > frameRate) fps = frameRate;
+    
+    NSTimeInterval seconds = CMTimeGetSeconds(asset.duration);
+    
+    if (startSecond >= seconds) {
+        [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+        return;
+    }
+    
+    duration = duration * rate;
+    if (startSecond < 0) startSecond = 0;
+    NSTimeInterval maxSecond = startSecond + duration;
+    if (maxSecond > seconds) {
+        duration -= (maxSecond - seconds);
+    }
+    
+    NSUInteger frameTotal = duration * fps;
+    if (frameTotal <= 0) {
+        [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+        return;
+    }
+    
+    float frameInterval = duration / (float)frameTotal;
+    CMTimeScale timescale = asset.duration.timescale;
+    NSMutableArray *times = [NSMutableArray array];
+    for (NSInteger i = 0; i < frameTotal; i++) {
+        CMTime time = CMTimeMakeWithSeconds(startSecond + i * frameInterval, timescale);
+        [times addObject:[NSValue valueWithCMTime:time]];
+    }
+    
+    AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    generator.maximumSize = maximumSize;
+    generator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+    generator.appliesPreferredTrackTransform = YES;
+    generator.requestedTimeToleranceAfter = kCMTimeZero;
+    generator.requestedTimeToleranceBefore = kCMTimeZero;
+    
+    __block NSInteger index = 0;
+    NSMutableArray *images = [NSMutableArray array];
+    [generator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable imageRef, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
+        if (result == AVAssetImageGeneratorSucceeded) {
+            [images addObject:[UIImage imageWithCGImage:imageRef]];
+        }
+        index += 1;
+        if (index == frameTotal) {
+            if (images.count == frameTotal) {
+                [self cropGIFwithGifImage:[UIImage animatedImageWithImages:images duration:duration]
+                           isReverseOrder:NO
+                                     rate:1
+                                maskImage:maskImage
+                                configure:configure
+                            compressScale:1
+                                 cacheURL:cacheURL
+                               errorBlock:errorBlock
+                            completeBlock:completeBlock];
+            } else {
+                [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+            }
+        }
+    }];
+}
+
+#pragma mark 裁剪视频
++ (void)cropVideoWithAsset:(AVURLAsset *)asset
+                 timeRange:(CMTimeRange)timeRange
+             frameDuration:(CMTime)frameDuration
+                presetName:(NSString *)presetName
+                 configure:(JPCropConfigure)configure
+                  cacheURL:(NSURL *)cacheURL
+        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
+                errorBlock:(JPCropErrorBlock)errorBlock
+             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+    if (!asset) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NilObject];
+        return;
+    }
+    
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self cropVideoWithAsset:asset
+                           timeRange:timeRange
+                       frameDuration:frameDuration
+                          presetName:presetName
+                           configure:configure
+                            cacheURL:cacheURL
+                  exportSessionBlock:exportSessionBlock
+                          errorBlock:errorBlock
+                       completeBlock:completeBlock];
+        });
+        return;
+    }
+    
+    NSString *fileName;
+    NSString *extension;
+    if (cacheURL) {
+        extension = cacheURL.pathExtension;
+        if (!extension.length) {
+            extension = @"mp4";
+            cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.absoluteString, extension]];
+        }
+        fileName = [cacheURL lastPathComponent];
+    } else {
+        extension = @"mp4";
+        fileName = [NSString stringWithFormat:@"%.0lf.%@", [[NSDate date] timeIntervalSince1970], extension];
+        NSString *cachePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+        cacheURL = [NSURL fileURLWithPath:cachePath];
+    }
+    
+    // 根据文件后缀名获取文件类型
+    AVFileType fileType = nil;
+    if ([extension caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4A;
+    } else if ([extension caseInsensitiveCompare:@"m4v"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4V;
+    } else if ([extension caseInsensitiveCompare:@"mov"] == NSOrderedSame) {
+        fileType = AVFileTypeQuickTimeMovie;
+    } else if ([extension caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
+        fileType = AVFileTypeMPEG4;
+    } else {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NoSupportedFileType];
+        return;
+    }
+    
+    // 判断缓存路径是否已经存在
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:cacheURL.path]) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
+        return;
+    }
+    
+    // 设置临时导出路径
+    NSString *tmpFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+    if ([fileManager fileExistsAtPath:tmpFilePath]) {
+        [fileManager removeItemAtPath:tmpFilePath error:nil];
+    }
+    NSURL *tmpURL = [NSURL fileURLWithPath:tmpFilePath];
+    
+    // 获取视频轨道
+    AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+    if (!videoTrack) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_VideoAlreadyDamage];
+        return;
+    }
+    
+    AVMutableComposition *composition = [AVMutableComposition composition];
+    
+    // 插入音频轨道
+    AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
+    if (audioTrack) {
+        AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
+    }
+    
+    // 插入视频轨道
+    AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
+    
+    // 创建视频导出会话
+    AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
+    if (![session.supportedFileTypes containsObject:fileType]) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NoSupportedFileType];
+        return;
+    }
+    session.outputFileType = fileType;
+    session.outputURL = tmpURL;
+    session.shouldOptimizeForNetworkUse = YES;
+    !exportSessionBlock ? : exportSessionBlock(session);
+    
+    // 获取配置属性
+    JPImageresizerRotationDirection direction = configure.direction;
+    BOOL isVerMirror = configure.isVerMirror;
+    BOOL isHorMirror = configure.isHorMirror;
+    CGSize resizeContentSize = configure.resizeContentSize;
+    CGFloat resizeWHScale = configure.resizeWHScale;
+    CGRect cropFrame = configure.cropFrame;
+    
+    // 获取准确裁剪区域
+    CGSize videoSize = videoTrack.naturalSize;
+    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, videoSize);
+    
+    // 获取裁剪尺寸
+    CGSize renderSize = cropFrame.size;
+    // 防止绿边
+    NSInteger renderW = (NSInteger)renderSize.width;
+    NSInteger renderH = (NSInteger)renderSize.height;
+    renderW -= (renderW % 16);
+    renderH -= (renderH % 16);
+    if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
+        renderSize = CGSizeMake((CGFloat)renderH, (CGFloat)renderW);
+    } else {
+        renderSize = CGSizeMake((CGFloat)renderW, (CGFloat)renderH);
+    }
+    
+    AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    // 确定形变矩阵
+    CGAffineTransform transform = JPConfirmTransform(videoSize, direction, isVerMirror, isHorMirror, NO);
+    CGPoint translate = JPConfirmTranslate(cropFrame, videoSize, direction, isVerMirror, isHorMirror, NO);
+    transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
+    [layerInstruciton setTransform:transform atTime:kCMTimeZero];
+    
+    AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    compositionInstruction.timeRange = timeRange;
+    compositionInstruction.layerInstructions = @[layerInstruciton];
+    
+    AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
+    videoComposition.instructions = @[compositionInstruction];
+    videoComposition.frameDuration = frameDuration;
+    videoComposition.renderScale = 1;
+    videoComposition.renderSize = renderSize;
+    
+    session.videoComposition = videoComposition;
+    // 开始导出
+    [session exportAsynchronouslyWithCompletionHandler:^{
+        AVAssetExportSessionStatus status = session.status;
+        if (status == AVAssetExportSessionStatusCompleted) {
+            if ([tmpURL isEqual:cacheURL]) {
+                [self __executeCropVideoCompleteBlock:completeBlock cacheURL:cacheURL];
+            } else {
+                NSError *error;
+                [[NSFileManager defaultManager] moveItemAtURL:tmpURL toURL:cacheURL error:&error];
+                if (error) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+                [self __executeCropVideoCompleteBlock:completeBlock cacheURL:(error ? tmpURL : cacheURL)];
+            }
+        } else {
+            [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
+            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:(status == AVAssetExportSessionStatusCancelled ?  JPCEReason_VideoExportCancelled : JPCEReason_VideoExportFailed)];
+        }
+    }];
+}
 @end

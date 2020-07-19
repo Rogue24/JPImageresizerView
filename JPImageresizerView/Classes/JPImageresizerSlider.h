@@ -14,7 +14,7 @@
 - (void)resetSeconds:(float)seconds second:(float)second;
 - (float)seconds;
 @property (nonatomic) float second;
-@property (nonatomic, copy) void (^sliderBeginBlock)(float second);
-@property (nonatomic, copy) void (^sliderDragingBlock)(float second);
-@property (nonatomic, copy) void (^sliderEndBlock)(float second);
+@property (nonatomic, copy) void (^sliderBeginBlock)(float second, float totalSecond);
+@property (nonatomic, copy) void (^sliderDragingBlock)(float second, float totalSecond);
+@property (nonatomic, copy) void (^sliderEndBlock)(float second, float totalSecond);
 @end

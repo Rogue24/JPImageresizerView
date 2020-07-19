@@ -12,11 +12,6 @@
 #import "JPImageresizerSlider.h"
 #import "JPImageresizerTool.h"
 
-@interface JPImageresizerProxy : NSProxy
-+ (instancetype)proxyWithTarget:(id)target;
-@property (nonatomic, weak) id target;
-@end
-
 @implementation JPImageresizerProxy
 + (instancetype)proxyWithTarget:(id)target {
     JPImageresizerProxy *proxy = [self alloc];
@@ -75,9 +70,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 @property (nonatomic) CGFloat imageresizeH;
 - (CGSize)imageresizerSize;
 - (CGSize)imageViewSzie;
-
-@property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, copy) JPCropVideoProgressBlock progressBlock;
 @end
 
 @implementation JPImageresizerFrameView
@@ -640,7 +632,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 - (void)dealloc {
     [self __removeTimer];
-    [self __removeProgressTimer];
 }
 
 #pragma mark - override method
@@ -1318,27 +1309,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
-#pragma mark 监听视频导出进度的定时器
-
-- (void)__addProgressTimer:(JPCropVideoProgressBlock)progressBlock {
-    [self __removeProgressTimer];
-    if (progressBlock == nil) return;
-    self.progressBlock = progressBlock;
-    self.progressTimer = [NSTimer timerWithTimeInterval:0.05 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.progressTimer forMode:NSRunLoopCommonModes];
-}
-
-- (void)__removeProgressTimer {
-    [self.progressTimer invalidate];
-    self.progressTimer = nil;
-    self.progressBlock = nil;
-    _exporterSession = nil;
-}
-
-- (void)__progressTimerHandle {
-    if (self.progressBlock && self.exporterSession) self.progressBlock(self.exporterSession.progress);
-}
-
 #pragma mark - puild method
 
 #pragma mark 设置线框颜色、模糊样式、背景颜色、遮罩透明度
@@ -1809,24 +1779,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
-#pragma mark 图片裁剪
+#pragma mark 获取裁剪属性
 
-- (void)cropPictureWithCompressScale:(CGFloat)compressScale
-                       completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    if (!completeBlock) return;
-    
-    UIImage *image = self.imageView.image;
-    if (!image || compressScale <= 0) {
-        completeBlock(nil);
-        return;
-    }
-    
-    UIImage *maskImage = self.maskImage;
-    
-    BOOL isRoundClip = _isRound;
-    
+- (JPCropConfigure)currentCropConfigure {
     JPImageresizerRotationDirection direction = self.rotationDirection;
-    
     BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     if ([self __isHorizontalDirection:direction]) {
@@ -1836,141 +1792,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
     
     CGRect imageViewBounds = self.imageView.bounds;
-    
-    CGSize resizeContentSize = imageViewBounds.size;
-    
+    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
     CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
     
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *finalImage = [JPImageresizerTool cropPicture:image
-                                                    maskImage:maskImage
-                                                  isRoundClip:isRoundClip
-                                                    direction:direction
-                                                  isVerMirror:isVerMirror
-                                                  isHorMirror:isHorMirror
-                                                compressScale:compressScale
-                                            resizeContentSize:resizeContentSize
-                                                resizeWHScale:resizeWHScale
-                                                    cropFrame:cropFrame];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completeBlock(finalImage);
-        });
-    });
-}
-
-#pragma mark 视频裁剪
-
-- (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
-                              time:(CMTime)time
-                       maximumSize:(CGSize)maximumSize
-                     compressScale:(CGFloat)compressScale
-                     completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    if (!completeBlock) return;
-    if (!asset || compressScale <= 0) {
-        completeBlock(nil);
-        return;
-    }
-    
-    UIImage *maskImage = self.maskImage;
-    
-    BOOL isRoundClip = _isRound;
-    
-    JPImageresizerRotationDirection direction = self.rotationDirection;
-    
-    BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
-    BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
-    if ([self __isHorizontalDirection:direction]) {
-        BOOL temp = isVerMirror;
-        isVerMirror = isHorMirror;
-        isHorMirror = temp;
-    }
-    
-    CGRect imageViewBounds = self.imageView.bounds;
-    
-    CGSize resizeContentSize = imageViewBounds.size;
-    
-    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
-    
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *finalImage = [JPImageresizerTool cropVideoOneFrameWithAsset:asset
-                                                                        time:time
-                                                                 maximumSize:maximumSize
-                                                                   maskImage:maskImage
-                                                                 isRoundClip:isRoundClip
-                                                                   direction:direction
-                                                                 isVerMirror:isVerMirror
-                                                                 isHorMirror:isHorMirror
-                                                               compressScale:compressScale
-                                                           resizeContentSize:resizeContentSize
-                                                               resizeWHScale:resizeWHScale
-                                                                   cropFrame:cropFrame];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completeBlock(finalImage);
-        });
-    });
-}
-
-- (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
-                 cachePath:(NSString *)cachePath
-                presetName:(NSString *)presetName
-             progressBlock:(JPCropVideoProgressBlock)progressBlock
-                errorBlock:(JPCropVideoErrorBlock)errorBlock
-             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
-    
-    JPImageresizerRotationDirection direction = self.rotationDirection;
-    
-    BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
-    BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
-    if ([self __isHorizontalDirection:direction]) {
-        BOOL temp = isVerMirror;
-        isVerMirror = isHorMirror;
-        isHorMirror = temp;
-    }
-    
-    CGRect imageViewBounds = self.imageView.bounds;
-    
-    CGSize resizeContentSize = imageViewBounds.size;
-    
-    CGFloat resizeWHScale = _isArbitrarily ? (self.imageresizeW / self.imageresizeH) : self.resizeWHScale;
-    
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
-    
-    __weak typeof(self) wSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        [sSelf __addProgressTimer:progressBlock];
-        sSelf->_exporterSession = [JPImageresizerTool cropVideoWithAsset:asset
-                                                               timeRange:timeRange
-                                                           frameDuration:frameDuration
-                                                               cachePath:cachePath
-                                                              presetName:(presetName ? presetName : AVAssetExportPresetHighestQuality)
-                                                               direction:direction
-                                                             isVerMirror:isVerMirror
-                                                             isHorMirror:isHorMirror
-                                                       resizeContentSize:resizeContentSize
-                                                           resizeWHScale:resizeWHScale
-                                                               cropFrame:cropFrame
-                                                              errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
-            BOOL isContinue = errorBlock ? errorBlock(cachePath, reason) : NO;
-            if (!isContinue && wSelf) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                [sSelf __removeProgressTimer];
-            }
-            return isContinue;
-        } completeBlock:^(NSURL *cacheURL) {
-            if (wSelf) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                [sSelf __removeProgressTimer];
-            }
-            !completeBlock ? : completeBlock(cacheURL);
-        }];
-    });
+    return JPCropConfigureMake(direction, isVerMirror, isHorMirror, _isRound, imageViewBounds.size, resizeWHScale, cropFrame);
 }
 
 #pragma mark - UIPanGestureRecognizer

@@ -9,9 +9,16 @@
 
 @implementation JPImageresizerConfigure
 
-+ (instancetype)defaultConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
     JPImageresizerConfigure *configure = [[self alloc] init];
-    configure.resizeImage = resizeImage;
+    configure.image = image;
+    [configure __defaultSetup];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [[self alloc] init];
+    configure.imageData = imageData;
     [configure __defaultSetup];
     !make ? : make(configure);
     return configure;
@@ -24,8 +31,18 @@
     return configure;
 }
 
-+ (instancetype)lightBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
++ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
+        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
+        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
         .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
@@ -45,8 +62,17 @@
     return configure;
 }
 
-+ (instancetype)darkBlurMaskTypeConfigureWithResizeImage:(UIImage *)resizeImage make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithResizeImage:resizeImage make:^(JPImageresizerConfigure *configure) {
++ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
+        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
+    }];
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
+    JPImageresizerConfigure *configure = [self defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
         .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
@@ -87,17 +113,32 @@
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
     .jp_maskImage(nil)
-    .jp_isArbitrarilyMask(NO);
+    .jp_isArbitrarilyMask(NO)
+    .jp_isLoopPlaybackGIF(NO);
 }
 
-- (void)setResizeImage:(UIImage *)resizeImage {
-    _resizeImage = resizeImage;
-    if (resizeImage) _videoURL = nil;
+- (void)setImage:(UIImage *)image {
+    _image = image;
+    if (image) {
+        _imageData = nil;
+        _videoURL = nil;
+    }
+}
+
+- (void)setImageData:(NSData *)imageData {
+    _imageData = imageData;
+    if (imageData) {
+        _image = nil;
+        _videoURL = nil;
+    }
 }
 
 - (void)setVideoURL:(NSURL *)videoURL {
     _videoURL = videoURL;
-    if (videoURL) _resizeImage = nil;
+    if (videoURL) {
+        _image = nil;
+        _imageData = nil;
+    }
 }
 
 - (JPImageresizerConfigure *(^)(CGRect))jp_viewFrame {
@@ -257,6 +298,13 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_isArbitrarilyMask {
     return ^(BOOL isArbitrarilyMask) {
         self.isArbitrarilyMask = isArbitrarilyMask;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isLoopPlaybackGIF {
+    return ^(BOOL isLoopPlaybackGIF) {
+        self.isLoopPlaybackGIF = isLoopPlaybackGIF;
         return self;
     };
 }

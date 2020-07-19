@@ -35,11 +35,11 @@
     [self __setupNavigationBar];
     [self __changBgColor];
     
-    if (self.videoURL) {
+    if (self.image || self.imageURL) {
+        [self __setupImageView];
+    } else if (self.videoURL) {
         [self __setupPlayerLayer];
         [self __setupSlider];
-    } else {
-        [self __setupImageView];
     }
     
     JPObserveNotification(self, @selector(__didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
@@ -71,9 +71,10 @@
             [self.player removeTimeObserver:self.timeObserver];
             self.timeObserver = nil;
         }
-        JPLog(@"删除视频文件");
-        [[NSFileManager defaultManager] removeItemAtURL:self.videoURL error:nil];
     }
+    JPLog(@"删除图片和视频文件");
+    [[NSFileManager defaultManager] removeItemAtURL:self.imageURL error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:self.videoURL error:nil];
 }
 
 #pragma mark - 初始布局
@@ -109,17 +110,17 @@
 - (void)__setupSlider {
     @jp_weakify(self);
     JPImageresizerSlider *slider = [JPImageresizerSlider imageresizerSlider:CMTimeGetSeconds(self.player.currentItem.asset.duration) second:0];
-    slider.sliderBeginBlock = ^(float second) {
+    slider.sliderBeginBlock = ^(float second, float totalSecond) {
         @jp_strongify(self);
         if (!self) return;
         [self.player pause];
     };
-    slider.sliderDragingBlock = ^(float second) {
+    slider.sliderDragingBlock = ^(float second, float totalSecond) {
         @jp_strongify(self);
         if (!self) return;
         [self.player seekToTime:CMTimeMakeWithSeconds(second, 600) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     };
-    slider.sliderEndBlock = ^(float second) {
+    slider.sliderEndBlock = ^(float second, float totalSecond) {
         @jp_strongify(self);
         if (!self) return;
         [self.player play];
@@ -131,10 +132,24 @@
 - (void)__setupImageView {
     self.toolbar.hidden = YES;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:self.image];
+    NSData *data = [NSData dataWithContentsOfURL:self.imageURL];
+    UIImage *image = self.image;
+    if (!image) image = [UIImage imageWithData:data];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.view addSubview:imageView];
     self.imageView = imageView;
+    
+    if (data && [JPImageresizerTool isGIFData:data]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [JPImageresizerTool decodeGIFData:data];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [UIView transitionWithView:self.imageView duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                    self.imageView.image = image;
+                } completion:nil];
+            });
+        });
+    }
 }
 
 #pragma mark - 通知方法
@@ -190,18 +205,24 @@
 - (void)__savePhotoToAppAlbum {
     [JPProgressHUD show];
     if (self.videoURL) {
-        [JPPhotoToolSI saveVideoWithFileURL:self.videoURL successHandle:^(NSString *assetID) {
+        [JPPhotoToolSI saveVideoToAppAlbumWithFileURL:self.videoURL successHandle:^(NSString *assetID) {
             [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
-        } failHandle:^{
-            [JPProgressHUD showSuccessWithStatus:@"保存失败" userInteractionEnabled:YES];
+        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
         }];
-        return;
+    } else if (self.imageURL) {
+        [JPPhotoToolSI saveFileToAppAlbumWithFileURL:self.imageURL successHandle:^(NSString *assetID) {
+            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+        }];
+    } else {
+        [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.image successHandle:^(NSString *assetID) {
+            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+        }];
     }
-    [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.image successHandle:^(NSString *assetID) {
-        [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
-    } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
-        [JPProgressHUD showSuccessWithStatus:@"保存失败" userInteractionEnabled:YES];
-    }];
 }
 
 

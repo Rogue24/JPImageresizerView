@@ -11,6 +11,11 @@
 #import "JPImageresizerTypedef.h"
 @class JPImageresizerSlider;
 
+@interface JPImageresizerProxy : NSProxy
++ (instancetype)proxyWithTarget:(id)target;
+@property (nonatomic, weak) id target;
+@end
+
 @interface JPImageresizerFrameView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -122,25 +127,7 @@
 @property (nonatomic, assign) BOOL isArbitrarilyMask;
 - (void)setIsArbitrarilyMask:(BOOL)isArbitrarilyMask animated:(BOOL)isAnimated;
 
-- (void)cropPictureWithCompressScale:(CGFloat)compressScale
-                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
-
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;
-
-- (void)cropVideoOneFrameWithAsset:(AVURLAsset *)asset
-                              time:(CMTime)time
-                       maximumSize:(CGSize)maximumSize
-                     compressScale:(CGFloat)compressScale
-                     completeBlock:(JPCropPictureDoneBlock)completeBlock;
-
-@property (nonatomic, weak, readonly) AVAssetExportSession *exporterSession;
-- (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
-                 cachePath:(NSString *)cachePath
-                presetName:(NSString *)presetName
-             progressBlock:(JPCropVideoProgressBlock)progressBlock
-                errorBlock:(JPCropVideoErrorBlock)errorBlock
-             completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+- (JPCropConfigure)currentCropConfigure;
 @end

@@ -145,7 +145,7 @@ if (isCropPicture) {
     // progress：0~1
     // 注意循环引用
         
-} errorBlock:^BOOL(NSString *cachePath, JPCropVideoErrorReason reason) {
+} errorBlock:^BOOL(NSString *cachePath, JPCropErrorReason reason) {
         
     // 错误的回调
     // reason：错误原因
@@ -153,23 +153,23 @@ if (isCropPicture) {
     
     BOOL isContinue = NO;
     switch (reason) {
-        case JPCVEReason_NotAssets:
+        case JPCEReason_NotAssets:
             // 视频资源为空
             break;
-        case JPCVEReason_VideoAlreadyDamage:
+        case JPCEReason_VideoAlreadyDamage:
             // 视频文件已损坏
             break;
-        case JPCVEReason_CachePathAlreadyExists:
+        case JPCEReason_CachePathAlreadyExists:
             // 缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
             isContinue = YES;
             break;
-        case JPCVEReason_NoSupportedFileType:
+        case JPCEReason_NoSupportedFileType:
             // 不支持的文件格式
             break;
-        case JPCVEReason_ExportFailed:
+        case JPCEReason_ExportFailed:
             // 视频导出失败
             break;
-        case JPCVEReason_ExportCancelled:
+        case JPCEReason_ExportCancelled:
             // 视频导出取消
             break;
     }
@@ -184,7 +184,7 @@ if (isCropPicture) {
 }];
 
 // 取消视频导出
-// 当视频正在导出时调用即可取消，会触发errorBlock回调（JPCVEReason_ExportCancelled）
+// 当视频正在导出时调用即可取消，会触发errorBlock回调（JPCEReason_ExportCancelled）
 [self.imageresizerView videoCancelExport];
 ```
 **PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
