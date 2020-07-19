@@ -57,7 +57,7 @@
 /**
  * 裁剪GIF（UIImage）
  */
-+ (void)cropGIFwithGifImage:(UIImage *)gifImage
++ (void)cropGIFWithGifImage:(UIImage *)gifImage
              isReverseOrder:(BOOL)isReverseOrder
                        rate:(float)rate
                   maskImage:(UIImage *)maskImage
@@ -70,7 +70,7 @@
 /**
  * 裁剪GIF其中一帧（UIImage）
  */
-+ (void)cropGIFwithGifImage:(UIImage *)gifImage
++ (void)cropGIFWithGifImage:(UIImage *)gifImage
                       index:(NSInteger)index
                   maskImage:(UIImage *)maskImage
                   configure:(JPCropConfigure)configure
@@ -82,7 +82,7 @@
 /**
  * 裁剪GIF（NSData）
  */
-+ (void)cropGIFwithGifData:(NSData *)gifData
++ (void)cropGIFWithGifData:(NSData *)gifData
             isReverseOrder:(BOOL)isReverseOrder
                       rate:(float)rate
                  maskImage:(UIImage *)maskImage
@@ -95,7 +95,7 @@
 /**
  * 裁剪GIF其中一帧（NSData）
  */
-+ (void)cropGIFwithGifData:(NSData *)gifData
++ (void)cropGIFWithGifData:(NSData *)gifData
                      index:(NSInteger)index
                  maskImage:(UIImage *)maskImage
                  configure:(JPCropConfigure)configure
@@ -122,7 +122,7 @@
 /**
  * 截取视频一小段并裁剪成GIF
  */
-+ (void)cropVideoToGIFwithAsset:(AVURLAsset *)asset
++ (void)cropVideoToGIFWithAsset:(AVURLAsset *)asset
                     startSecond:(NSTimeInterval)startSecond
                        duration:(NSTimeInterval)duration
                             fps:(float)fps

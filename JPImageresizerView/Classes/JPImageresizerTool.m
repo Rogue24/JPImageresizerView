@@ -859,7 +859,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 #pragma mark - 裁剪GIF
 
 #pragma mark 裁剪GIF（UIImage）
-+ (void)cropGIFwithGifImage:(UIImage *)gifImage
++ (void)cropGIFWithGifImage:(UIImage *)gifImage
              isReverseOrder:(BOOL)isReverseOrder
                        rate:(float)rate
                   maskImage:(UIImage *)maskImage
@@ -883,7 +883,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 裁剪GIF其中一帧（UIImage）
-+ (void)cropGIFwithGifImage:(UIImage *)gifImage
++ (void)cropGIFWithGifImage:(UIImage *)gifImage
                       index:(NSInteger)index
                   maskImage:(UIImage *)maskImage
                   configure:(JPCropConfigure)configure
@@ -906,7 +906,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 裁剪GIF（NSData）
-+ (void)cropGIFwithGifData:(NSData *)gifData
++ (void)cropGIFWithGifData:(NSData *)gifData
             isReverseOrder:(BOOL)isReverseOrder
                       rate:(float)rate
                  maskImage:(UIImage *)maskImage
@@ -930,7 +930,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 裁剪GIF其中一帧（NSData）
-+ (void)cropGIFwithGifData:(NSData *)gifData
++ (void)cropGIFWithGifData:(NSData *)gifData
                      index:(NSInteger)index
                  maskImage:(UIImage *)maskImage
                  configure:(JPCropConfigure)configure
@@ -996,7 +996,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 截取视频一小段并裁剪成GIF
-+ (void)cropVideoToGIFwithAsset:(AVURLAsset *)asset
++ (void)cropVideoToGIFWithAsset:(AVURLAsset *)asset
                     startSecond:(NSTimeInterval)startSecond
                        duration:(NSTimeInterval)duration
                             fps:(float)fps
@@ -1009,17 +1009,17 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self cropVideoToGIFwithAsset:asset
-              startSecond:startSecond
-                 duration:duration
-                      fps:fps
-                     rate:rate
-              maximumSize:maximumSize
-                maskImage:maskImage
-                configure:configure
-                 cacheURL:cacheURL
-               errorBlock:errorBlock
-            completeBlock:completeBlock];
+            [self cropVideoToGIFWithAsset:asset
+                              startSecond:startSecond
+                                 duration:duration
+                                      fps:fps
+                                     rate:rate
+                              maximumSize:maximumSize
+                                maskImage:maskImage
+                                configure:configure
+                                 cacheURL:cacheURL
+                               errorBlock:errorBlock
+                            completeBlock:completeBlock];
         });
         return;
     }
@@ -1080,7 +1080,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         index += 1;
         if (index == frameTotal) {
             if (images.count == frameTotal) {
-                [self cropGIFwithGifImage:[UIImage animatedImageWithImages:images duration:duration]
+                [self cropGIFWithGifImage:[UIImage animatedImageWithImages:images duration:duration]
                            isReverseOrder:NO
                                      rate:1
                                 maskImage:maskImage

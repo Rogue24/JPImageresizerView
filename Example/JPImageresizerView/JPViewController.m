@@ -491,6 +491,7 @@ static UIViewController *tmpVC_;
 - (IBAction)resize:(id)sender {
     __weak typeof(self) wSelf = self;
     
+    // 裁剪视频
     if (self.imageresizerView.videoURL) {
         UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -507,7 +508,7 @@ static UIViewController *tmpVC_;
         }]];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"截取5秒为GIF" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
-            [self.imageresizerView cropVideoToGIFfromCurrentSecondWithDuration:5 cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:5 cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 if (!sSelf) return;
                 [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
@@ -525,10 +526,11 @@ static UIViewController *tmpVC_;
         return;
     }
     
+    // 裁剪GIF
     if (self.imageresizerView.isGIF) {
         void (^cropGIF)(void) = ^{
             [JPProgressHUD show];
-            [self.imageresizerView cropGIFwithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 if (!sSelf) return;
                 [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
@@ -546,7 +548,7 @@ static UIViewController *tmpVC_;
             UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [JPProgressHUD show];
-                [self.imageresizerView cropGIFcurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+                [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
                     __strong typeof(wSelf) sSelf = wSelf;
                     if (!sSelf) return;
                     [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
@@ -564,20 +566,22 @@ static UIViewController *tmpVC_;
             [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
             [self presentViewController:alertCtr animated:YES completion:nil];
         }
-    } else {
-        [JPProgressHUD show];
-        [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-            __strong typeof(wSelf) sSelf = wSelf;
-            if (!sSelf) return;
-            [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-        } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
-            // 裁剪完成，finalImage为裁剪后的图片
-            // 注意循环引用
-            __strong typeof(wSelf) sSelf = wSelf;
-            if (!sSelf) return;
-            [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
-        }];
+        return;
     }
+    
+    // 裁剪图片
+    [JPProgressHUD show];
+    [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+    } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
+        // 裁剪完成，finalImage为裁剪后的图片
+        // 注意循环引用
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+    }];
 }
 
 #pragma mark 取消导出（视频裁剪）

@@ -112,6 +112,8 @@
 
 @implementation JPTableViewController
 
+#define JPGIFDuration 3.0
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Example";
@@ -248,7 +250,7 @@ static JPImageresizerConfigure *gifConfigure_;
     }
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
-    return [UIImage animatedImageWithImages:images duration:3];
+    return [UIImage animatedImageWithImages:images duration:JPGIFDuration];
 }
 
 #pragma mark - 打开相册

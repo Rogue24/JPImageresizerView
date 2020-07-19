@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'JPImageresizerView'
   s.version          = '1.7.0'
-  s.summary          = '一个专门裁剪图片和视频的轮子😋简单易用、功能丰富☕️'
+  s.summary          = '一个专门裁剪图片、GIF、视频的轮子😋简单易用、功能丰富☕️'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-专门裁剪图片和视频的轮子，简单易用、功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
+专门裁剪图片、GIF、视频的轮子，简单易用、功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分裁剪的需求。
                        DESC
 
   s.homepage         = 'https://github.com/Rogue24/JPImageresizerView'

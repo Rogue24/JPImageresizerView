@@ -9,9 +9,9 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.6.3）
+## 简介（当前版本：1.7.0）
 
-一个专门裁剪图片和视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、多种样式选择等），能满足绝大部分图片和视频裁剪的需求。
+一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
 ![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
@@ -27,7 +27,9 @@
         ✅ 自定义边框图片；
         ✅ 可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
         ✅ 可自定义蒙版图片裁剪；
-        ✅ 可裁剪本地视频整段画面或某一帧画面。
+        ✅ 可裁剪本地视频整段画面或某一帧画面；
+        ✅ 可裁剪本地视频，并截取某一段转GIF；
+        ✅ 可裁剪GIF。
 
     正在努力着去实现的内容：
         ☑️ Swift版本；
@@ -43,7 +45,8 @@
 // 1.配置初始参数（更多可查看JPImageresizerView的头文件）
 /**
  * 部分可配置参数注释：
-    - resizeImage：裁剪的图片
+    - image：裁剪的图片/GIF（以UIImage传入）
+    - imageData：裁剪的图片/GIF（以NSData传入）
     - videoURL：裁剪的视频URL（本地）
     - blurEffect：毛玻璃样式
     - borderImage：边框图片
@@ -54,7 +57,8 @@
     - contentInsets：裁剪区域与视图的间距
     - maskImage：蒙版图片
  */
-JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithResizeImage:image make:^(JPImageresizerConfigure *configure) {
+// 1.1【裁剪的图片/GIF】以UIImage传入
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
     configure
     .jp_resizeImage([UIImage imageNamed:@"Kobe.jpg"])
@@ -67,8 +71,13 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
-// 如果裁剪的是视频，需要使用这个方法来传入视频路径：[JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... }];
-// 裁剪视频或图片同时只能选择一个。
+// 1.2【裁剪的图片/GIF】以NSData传入
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
+
+// 1.3【视频】以NSURL传入
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... }];
+
+// PS：【裁剪视频或图片同时只能选择一个】
 
 // 2.创建JPImageresizerView对象
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
@@ -101,95 +110,194 @@ if (@available(iOS 11.0, *)) {
 }
 ```
 
-### 裁剪本地视频
-![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
+### 裁剪
+    裁剪说明：
+        1.裁剪过程是在子线程中执行，进度、错误、完成的回调都会切回主线程执行，如果是高清图片，裁剪前可添加HUD提示
+        2.compressScale：图片和GIF的压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+        3.cacheURL：缓存路径，可设置为nil，图片和GIF则不缓存，而视频会默认缓存到系统的Tmp文件夹下，视频名为当前时间戳，格式为mp4
+        4.错误原因 JPCropErrorReason 说明：
+            - JPCEReason_NilObject：裁剪元素为空
+            - JPCEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
+            - JPCEReason_NoSupportedFileType：不支持的文件类型
+            - JPCEReason_VideoAlreadyDamage：视频文件已损坏
+            - JPCEReason_VideoExportFailed：视频导出失败
+            - JPCEReason_VideoExportCancelled：视频导出取消
+    
+#### 裁剪图片
 ```objc
-// 1.初始化时只需要在configure配置好videoURL（视频的URL）即可
-JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil];
-
-// 2.可动态切换图片或视频（视频或图片同时只能选择一个）
-if (isCropPicture) {
-    self.imageresizerView.resizeImage = image; // 裁剪图片
-} else {
-    self.imageresizerView.videoURL = videoURL; // 裁剪视频
-}
-```
-**PS：目前只针对本地视频，远程视频暂未适配。**
-
-#### 裁剪视频当前/指定帧的画面
-```objc
-// compressScale：压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-
-// 1.原图尺寸裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
-[self.imageresizerView cropVideoCurrentFrameWithCompleteBlock:^(UIImage *finalImage) {
-    // 裁剪完成，finalImage为裁剪后的图片
-    // 注意循环引用
-}];
-
-// 2.【自定义压缩比例】裁剪视频当前帧画面（裁剪过程在子线程，回调会切回到主线程）
-- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
-
-// 3.【自定义压缩比例]裁剪视频[指定帧]画面（裁剪过程在子线程，回调会切回到主线程）
-// second：裁剪第几秒的画面
-- (void)cropVideoOneFrameWithSecond:(float)second compressScale:(CGFloat)compressScale completeBlock:(JPCropPictureDoneBlock)completeBlock;
-```
-
-#### 裁剪整段视频
-```objc
-// 裁剪整段视频画面（裁剪过程在子线程，回调会切回到主线程）
-// cachePath：缓存路径，如果为 nil，则默认路径为 Caches 文件夹下，视频名为当前时间戳，格式为mp4（.../Library/Caches/1594556710.mp4）
-// presetName：系统导出视频的质量，为 AVAssetExportPresetLowQuality、AVAssetExportPresetMediumQuality、AVAssetExportPresetHighestQuality等
-[self.imageresizerView cropVideoWithCachePath:cachePath presetName:AVAssetExportPresetHighestQuality progressBlock:^(float progress) {
-        
-    // 进度监听的回调
-    // progress：0~1
-    // 注意循环引用
-        
-} errorBlock:^BOOL(NSString *cachePath, JPCropErrorReason reason) {
-        
+// 1.以原图尺寸进行裁剪
+[self.imageresizerView cropPictureWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
     // 错误的回调
     // reason：错误原因
     // 注意循环引用
-    
-    BOOL isContinue = NO;
-    switch (reason) {
-        case JPCEReason_NotAssets:
-            // 视频资源为空
-            break;
-        case JPCEReason_VideoAlreadyDamage:
-            // 视频文件已损坏
-            break;
-        case JPCEReason_CachePathAlreadyExists:
-            // 缓存路径已存在其他文件，返回【YES】方法内部会删除已存在的文件并继续裁剪，返回NO则不再继续裁剪。
-            isContinue = YES;
-            break;
-        case JPCEReason_NoSupportedFileType:
-            // 不支持的文件格式
-            break;
-        case JPCEReason_ExportFailed:
-            // 视频导出失败
-            break;
-        case JPCEReason_ExportCancelled:
-            // 视频导出取消
-            break;
-    }
-    
-    return isContinue;
-        
-} completeBlock:^(NSURL *cacheURL) {
-        
-    // 裁剪完成，cacheURL为缓存URL
+} completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
+    // 裁剪完成
+    // finalImage：裁剪后已经解密的图片
+    // cacheURL：缓存路径
+    // isCacheSuccess：是否缓存成功，NO为不成功，并且cacheURL为nil
     // 注意循环引用
-    
 }];
 
-// 取消视频导出
-// 当视频正在导出时调用即可取消，会触发errorBlock回调（JPCEReason_ExportCancelled）
-[self.imageresizerView videoCancelExport];
-```
-**PS1：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面是可以的，目前只能对单张图片有效。**
 
-**PS2：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
+// 2.自定义压缩比例裁剪图片
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+- (void)cropPictureWithCompressScale:(CGFloat)compressScale
+                            cacheURL:(NSURL *)cacheURL
+                          errorBlock:(JPCropErrorBlock)errorBlock
+                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
+```
+
+#### 裁剪GIF
+```objc
+// 1.原图尺寸裁剪GIF
+[self.imageresizerView cropGIFWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+    // 错误的回调
+    // reason：错误原因
+    // 注意循环引用
+} completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
+    // 裁剪完成
+    // finalImage：裁剪后已经解密的GIF
+    // cacheURL：缓存路径
+    // isCacheSuccess：是否缓存成功，NO为不成功，并且cacheURL为nil
+    // 注意循环引用
+}];
+
+// 2.自定义压缩比例裁剪GIF
+// completeBlock --- 裁剪完成的回调（返回已解码好的GIF，缓存路径，是否缓存成功）
+- (void)cropGIFWithCompressScale:(CGFloat)compressScale
+                        cacheURL:(NSURL *)cacheURL
+                      errorBlock:(JPCropErrorBlock)errorBlock
+                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 3.自定义裁剪GIF
+// isReverseOrder --- 是否倒放
+// rate --- 速率
+// completeBlock --- 裁剪完成的回调（返回已解码好的GIF，缓存路径，是否缓存成功）
+- (void)cropGIFWithCompressScale:(CGFloat)compressScale
+                  isReverseOrder:(BOOL)isReverseOrder
+                            rate:(float)rate
+                        cacheURL:(NSURL *)cacheURL
+                      errorBlock:(JPCropErrorBlock)errorBlock
+                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+```
+
+可以裁剪GIF的其中一帧
+```objc
+// 1.原图尺寸裁剪GIF当前帧画面
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+- (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
+                             errorBlock:(JPCropErrorBlock)errorBlock
+                          completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 2.自定义压缩比例裁剪GIF当前帧画面
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+- (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
+                                    cacheURL:(NSURL *)cacheURL
+                                  errorBlock:(JPCropErrorBlock)errorBlock
+                               completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 3.自定义压缩比例裁剪GIF指定帧画面
+// index --- 第几帧画面
+- (void)cropGIFWithIndex:(NSUInteger)index
+           compressScale:(CGFloat)compressScale
+                cacheURL:(NSURL *)cacheURL
+              errorBlock:(JPCropErrorBlock)errorBlock
+           completeBlock:(JPCropPictureDoneBlock)completeBlock;
+```
+PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
+```objc
+self.imageresizerView.isLoopPlaybackGIF = NO;
+```
+#### 裁剪本地视频
+![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
+**PS：目前只针对本地视频，远程视频暂未适配。**
+```objc
+// 裁剪整段视频
+// cacheURL：如果为nil，会默认缓存到系统的Tmp文件夹下，视频名为当前时间戳，格式为mp4
+[self.imageresizerView cropVideoWithCacheURL:cacheURL progressBlock:^(float progress) {
+    // 监听进度
+    // progress：0~1
+    // 注意循环引用
+} errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+    // 错误的回调
+    // reason：错误原因
+    // 注意循环引用
+} completeBlock:^(NSURL *cacheURL) {
+    // 裁剪完成
+    // cacheURL：缓存路径
+    // 注意循环引用
+}];
+
+// 可设置视频导出质量
+// presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+- (void)cropVideoWithPresetName:(NSString *)presetName
+                       cacheURL:(NSURL *)cacheURL
+                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                    errorBlock:(JPCropErrorBlock)errorBlock
+                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+
+// 取消视频导出
+// 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPCEReason_ExportCancelled）
+- (void)videoCancelExport;
+```
+**PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。**
+
+可以裁剪视频的其中一帧
+```ojbc
+// 1.原图尺寸裁剪视频当前帧画面
+// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+- (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
+                               errorBlock:(JPCropErrorBlock)errorBlock
+                            completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 2.自定义压缩比例裁剪视频当前帧画面
+// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
+                                      cacheURL:(NSURL *)cacheURL
+                                    errorBlock:(JPCropErrorBlock)errorBlock
+                                 completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 3.自定义压缩比例裁剪视频指定帧画面
+// second --- 第几秒画面
+// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
+// completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+- (void)cropVideoOneFrameWithSecond:(float)second
+                      compressScale:(CGFloat)compressScale
+                           cacheURL:(NSURL *)cacheURL
+                         errorBlock:(JPCropErrorBlock)errorBlock
+                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+```
+
+可以截取裁剪视频某一段转GIF
+```objc
+// 1.视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
+// duration --- 截取多少秒
+// completeBlock --- 裁剪完成的回调（返回已解码好的GIF、缓存路径、是否缓存成功）
+- (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
+                                           cacheURL:(NSURL *)cacheURL
+                                         errorBlock:(JPCropErrorBlock)errorBlock
+                                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+
+// 2.视频自定义截取指定秒数画面转GIF
+// duration --- 截取多少秒
+// fps --- 帧率（设置为0则以视频真身帧率）
+// rate --- 速率
+// maximumSize --- 截取的尺寸（设置为0则以视频真身尺寸）
+// completeBlock --- 裁剪完成的回调（返回已解码好的GIF、缓存路径、是否缓存成功）
+- (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
+                             duration:(NSTimeInterval)duration
+                                  fps:(float)fps
+                                 rate:(float)rate
+                          maximumSize:(CGSize)maximumSize
+                             cacheURL:(NSURL *)cacheURL
+                           errorBlock:(JPCropErrorBlock)errorBlock
+                        completeBlock:(JPCropPictureDoneBlock)completeBlock;
+```
+**PS：裁剪整段视频画面圆切、蒙版的功能不能使用，裁剪一帧画面或截取转GIF是可以的，目前只能对图片有效。**
 
 ### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
@@ -368,27 +476,6 @@ self.imageresizerView.isPreview = YES;
 [self.imageresizerView setIsPreview:YES animated:YES];
 ```
 
-### 裁剪
-```objc
-// 裁剪过程是在子线程中执行，回调则切回主线程执行
-// 如果是高清图片，调用前可添加HUD提示...
-// compressScale：压缩比例（0.0 ~ 1.0），大于等于1.0按原图尺寸裁剪，小于等于0.0则返回nil
-// 例：compressScale = 0.5，1000 x 500 --> 500 x 250
-
-// 1.自定义压缩比例进行裁剪
-// 例：压缩为原图尺寸的50%
-[self.imageresizerView cropPictureWithCompressScale:0.5 completeBlock:^(UIImage *finalImage) {
-    // 裁剪完成，finalImage为裁剪后的图片
-    // 注意循环引用
-}]; 
-
-// 2.以原图尺寸进行裁剪
-[self.imageresizerView cropPictureWithCompleteBlock:^(UIImage *finalImage) {
-    // 裁剪完成，finalImage为裁剪后的图片
-    // 注意循环引用
-}];
-```
-
 ### 其他
 ```objc
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
@@ -403,6 +490,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.7.0 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3.裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5.极大地优化了裁剪逻辑。
 1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
 1.4.0 | 1. 新增isBlurWhenDragging属性：拖拽时是否遮罩裁剪区域以外的区域；<br>2. 新增isShowGridlinesWhenDragging属性：拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）；<br>3. 新增gridCount属性：每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 才显示网格）。

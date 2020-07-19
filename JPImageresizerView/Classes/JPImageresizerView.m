@@ -1116,10 +1116,10 @@
 }
 
 #pragma mark 裁剪GIF
-- (void)cropGIFwithCacheURL:(NSURL *)cacheURL
+- (void)cropGIFWithCacheURL:(NSURL *)cacheURL
                      errorBlock:(JPCropErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    [self cropGIFwithCompressScale:1
+    [self cropGIFWithCompressScale:1
                     isReverseOrder:NO
                               rate:1
                           cacheURL:cacheURL
@@ -1127,11 +1127,11 @@
                      completeBlock:completeBlock];
 }
 
-- (void)cropGIFwithCompressScale:(CGFloat)compressScale
+- (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPCropErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    [self cropGIFwithCompressScale:compressScale
+    [self cropGIFWithCompressScale:compressScale
                     isReverseOrder:NO
                               rate:1
                           cacheURL:cacheURL
@@ -1139,7 +1139,7 @@
                      completeBlock:completeBlock];
 }
 
-- (void)cropGIFwithCompressScale:(CGFloat)compressScale
+- (void)cropGIFWithCompressScale:(CGFloat)compressScale
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
@@ -1161,22 +1161,38 @@
         return;
     }
     if (self.imageData) {
-        [JPImageresizerTool cropGIFwithGifData:self.imageData isReverseOrder:isReverseOrder rate:rate maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropGIFWithGifData:self.imageData
+                                isReverseOrder:isReverseOrder
+                                          rate:rate
+                                     maskImage:self.frameView.maskImage
+                                     configure:self.frameView.currentCropConfigure
+                                 compressScale:compressScale
+                                      cacheURL:cacheURL
+                                    errorBlock:errorBlock
+                                 completeBlock:completeBlock];
     } else {
-        [JPImageresizerTool cropGIFwithGifImage:self.image isReverseOrder:isReverseOrder rate:rate maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropGIFWithGifImage:self.image
+                                 isReverseOrder:isReverseOrder
+                                           rate:rate
+                                      maskImage:self.frameView.maskImage
+                                      configure:self.frameView.currentCropConfigure
+                                  compressScale:compressScale
+                                       cacheURL:cacheURL
+                                     errorBlock:errorBlock
+                                  completeBlock:completeBlock];
     }
 }
 
-- (void)cropGIFcurrentIndexWithCacheURL:(NSURL *)cacheURL
+- (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
                                errorBlock:(JPCropErrorBlock)errorBlock
                           completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    [self cropGIFcurrentIndexWithCompressScale:1
+    [self cropGIFCurrentIndexWithCompressScale:1
                                       cacheURL:cacheURL
                                     errorBlock:errorBlock
                                  completeBlock:completeBlock];
 }
 
-- (void)cropGIFcurrentIndexWithCompressScale:(CGFloat)compressScale
+- (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                      cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPCropErrorBlock)errorBlock
                                completeBlock:(JPCropPictureDoneBlock)completeBlock {
@@ -1188,14 +1204,14 @@
         if (index < 0) index = 0;
         if (index > maxIndex) index = maxIndex;
     }
-    [self cropGIFwithIndex:index
+    [self cropGIFWithIndex:index
              compressScale:compressScale
                   cacheURL:cacheURL
                 errorBlock:errorBlock
              completeBlock:completeBlock];
 }
 
-- (void)cropGIFwithIndex:(NSUInteger)index
+- (void)cropGIFWithIndex:(NSUInteger)index
             compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
               errorBlock:(JPCropErrorBlock)errorBlock
@@ -1216,9 +1232,22 @@
         return;
     }
     if (self.imageData) {
-        [JPImageresizerTool cropGIFwithGifData:self.imageData index:index maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropGIFWithGifData:self.imageData
+                                         index:index
+                                     maskImage:self.frameView.maskImage
+                                     configure:self.frameView.currentCropConfigure
+                                 compressScale:compressScale
+                                      cacheURL:cacheURL
+                                    errorBlock:errorBlock
+                                 completeBlock:completeBlock];
     } else {
-        [JPImageresizerTool cropGIFwithGifImage:self.image index:index maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropGIFWithGifImage:self.image
+                                          index:index maskImage:self.frameView.maskImage
+                                      configure:self.frameView.currentCropConfigure
+                                  compressScale:compressScale
+                                       cacheURL:cacheURL
+                                     errorBlock:errorBlock
+                                  completeBlock:completeBlock];
     }
 }
 
@@ -1283,11 +1312,11 @@
                              completeBlock:completeBlock];
 }
 
-- (void)cropVideoToGIFfromCurrentSecondWithDuration:(NSTimeInterval)duration
+- (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPCropErrorBlock)errorBlock
                                       completeBlock:(JPCropPictureDoneBlock)completeBlock {
-    [self cropVideoToGIFfromStartSecond:self.slider.second
+    [self cropVideoToGIFFromStartSecond:self.slider.second
                                duration:duration
                                     fps:10
                                    rate:1
@@ -1296,7 +1325,7 @@
                              errorBlock:errorBlock
                           completeBlock:completeBlock];
 }
-- (void)cropVideoToGIFfromStartSecond:(NSTimeInterval)startSecond
+- (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
                              duration:(NSTimeInterval)duration
                                   fps:(float)fps
                                  rate:(float)rate
@@ -1321,7 +1350,7 @@
         !completeBlock ? : completeBlock(nil, nil, NO);
         return;
     }
-    [JPImageresizerTool cropVideoToGIFwithAsset:self.videoObj.asset
+    [JPImageresizerTool cropVideoToGIFWithAsset:self.videoObj.asset
                                     startSecond:startSecond
                                        duration:duration
                                             fps:fps
