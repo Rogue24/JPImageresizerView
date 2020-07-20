@@ -44,6 +44,8 @@
 
 @implementation JPViewController
 
+#define JPCutGIFDuration 5.0
+
 + (UIImage *)stretchBorderImage {
     static UIImage *stretchBorderImage_;
     if (!stretchBorderImage_) {
@@ -506,9 +508,9 @@ static UIViewController *tmpVC_;
                 [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
             }];
         }]];
-        [alertCtr addAction:[UIAlertAction actionWithTitle:@"截取5秒为GIF" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
-            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:5 cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 if (!sSelf) return;
                 [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
