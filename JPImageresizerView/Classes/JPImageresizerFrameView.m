@@ -1783,6 +1783,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 - (JPCropConfigure)currentCropConfigure {
     JPImageresizerRotationDirection direction = self.rotationDirection;
+    
     BOOL isVerMirror = self.isVerticalityMirror ? self.isVerticalityMirror() : NO;
     BOOL isHorMirror = self.isHorizontalMirror ? self.isHorizontalMirror() : NO;
     if ([self __isHorizontalDirection:direction]) {

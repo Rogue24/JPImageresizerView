@@ -32,8 +32,8 @@
  @method
  @brief 类方法（推荐）
  @param configure --- 可配置以下初始化参数
-    image --- 裁剪的图片（UIImage）
-    imageData --- 裁剪的图片（NSData）
+    image --- 裁剪的图片/GIF（UIImage）
+    imageData --- 裁剪的图片/GIF（NSData）
     videoURL --- 裁剪的视频URL
     frame --- 相对父视图的区域
     frameType --- 边框样式
@@ -82,13 +82,13 @@
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
 /**
- * 裁剪的图片（UIImage）
+ * 裁剪的图片/GIF（UIImage）
  * 设置该值会调用 -setImage: animated: transition: 方法（默认isAnimated = YES，transition = UIViewAnimationOptionTransitionCrossDissolve，淡入淡出的效果）
  */
 @property (nonatomic, strong) UIImage *image;
 
 /**
- * 裁剪的图片（NSData）
+ * 裁剪的图片/GIF（NSData）
  * 设置该值会调用 -setImageData: animated: transition: 方法（默认isAnimated = YES，transition = UIViewAnimationOptionTransitionCrossDissolve，淡入淡出的效果）
  */
 @property (nonatomic, strong) NSData *imageData;
@@ -195,8 +195,8 @@
 #pragma mark - 更换裁剪元素
 /*!
  @method
- @brief 更换裁剪的图片（UIImage）
- @param image --- 裁剪的图片
+ @brief 更换裁剪的图片/GIF（UIImage）
+ @param image --- 裁剪的图片/GIF
  @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationOptionTransitionNone则默认为淡入淡出效果）
  @param isAnimated --- 是否带动画效果
  @discussion 更换裁剪的图片，裁剪宽高比会重置
@@ -205,8 +205,8 @@
 
 /*!
  @method
- @brief 更换裁剪的图片（NSData）
- @param imageData --- 裁剪的二进制图片
+ @brief 更换裁剪的图片/GIF（NSData）
+ @param imageData --- 裁剪的二进制图片/GIF
  @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationOptionTransitionNone则默认为淡入淡出效果）
  @param isAnimated --- 是否带动画效果
  @discussion 更换裁剪的图片，裁剪宽高比会重置

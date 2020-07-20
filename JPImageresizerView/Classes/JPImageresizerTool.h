@@ -9,7 +9,6 @@
 #import "JPImageresizerTypedef.h"
 
 @interface JPImageresizerTool : NSObject
-
 /**
  * 转换成黑色轮廓的图片
  */
@@ -26,7 +25,7 @@
 + (NSString *)contentTypeForImageData:(NSData *)data;
 
 /**
- * 解码GIF【PS：该方法采用的是YYKit的代码】
+ * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
  */
 + (UIImage *)decodeGIFData:(NSData *)data;
 

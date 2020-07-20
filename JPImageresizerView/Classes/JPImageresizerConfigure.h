@@ -59,10 +59,10 @@
 + (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
 + (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *configure))make;
 
-/** 裁剪图片 */
+/** 裁剪的图片/GIF（UIImage） */
 @property (nonatomic, strong) UIImage *image;
 
-/** 裁剪的视频URL */
+/** 裁剪的图片/GIF（NSData） */
 @property (nonatomic, strong) NSData *imageData;
 
 /** 裁剪的视频URL */

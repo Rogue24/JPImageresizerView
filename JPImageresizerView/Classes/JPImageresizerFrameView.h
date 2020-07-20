@@ -129,5 +129,7 @@
 
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;
+
 - (JPCropConfigure)currentCropConfigure;
+
 @end

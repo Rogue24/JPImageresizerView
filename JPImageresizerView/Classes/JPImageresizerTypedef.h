@@ -122,7 +122,13 @@ struct JPCropConfigure {
 };
 typedef struct CG_BOXABLE JPCropConfigure JPCropConfigure;
 
-CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection direction, BOOL isVerMirror, BOOL isHorMirror, BOOL isRoundClip, CGSize resizeContentSize, CGFloat resizeWHScale, CGRect cropFrame) {
+CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection direction,
+                                              BOOL isVerMirror,
+                                              BOOL isHorMirror,
+                                              BOOL isRoundClip,
+                                              CGSize resizeContentSize,
+                                              CGFloat resizeWHScale,
+                                              CGRect cropFrame) {
     JPCropConfigure configure;
     configure.direction = direction;
     configure.isVerMirror = isVerMirror;
