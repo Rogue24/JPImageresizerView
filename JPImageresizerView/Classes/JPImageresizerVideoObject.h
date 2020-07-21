@@ -9,8 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface JPImageresizerVideoObject : NSObject
-- (instancetype)initWithVideoURL:(NSURL *)videoURL;
-@property (nonatomic, strong, readonly) NSURL *videoURL;
+- (instancetype)initWithAsset:(AVURLAsset *)asset isFixedOrientation:(BOOL)isFixedOrientation;
 @property (nonatomic, strong, readonly) AVURLAsset *asset;
 @property (nonatomic, assign, readonly) NSTimeInterval seconds;
 @property (nonatomic, assign, readonly) CMTimeScale timescale;

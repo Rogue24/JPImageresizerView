@@ -809,6 +809,22 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     return nil;
 }
 
++ (AVFileType)videoFileTypeForURL:(NSURL *)url {
+    NSString *extension = url.pathExtension;
+    // 根据文件后缀名获取文件类型
+    AVFileType fileType = nil;
+    if ([extension caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4A;
+    } else if ([extension caseInsensitiveCompare:@"m4v"] == NSOrderedSame) {
+        fileType = AVFileTypeAppleM4V;
+    } else if ([extension caseInsensitiveCompare:@"mov"] == NSOrderedSame) {
+        fileType = AVFileTypeQuickTimeMovie;
+    } else if ([extension caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
+        fileType = AVFileTypeMPEG4;
+    }
+    return fileType;
+}
+
 #pragma mark - 裁剪图片
 
 #pragma mark 裁剪图片（UIImage）
@@ -1126,50 +1142,40 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         return;
     }
     
-    NSString *fileName;
-    NSString *extension;
+    // 校验缓存路径
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *tmpURL;
     if (cacheURL) {
-        extension = cacheURL.pathExtension;
-        if (!extension.length) {
-            extension = @"mp4";
-            cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.absoluteString, extension]];
+        // 校验后缀
+        if (!cacheURL.pathExtension.length) {
+            cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.mp4", cacheURL.absoluteString]];
         }
-        fileName = [cacheURL lastPathComponent];
+        // 判断缓存路径是否已经存在
+        if ([fileManager fileExistsAtPath:cacheURL.path]) {
+            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
+            return;
+        }
+        // 设置临时导出路径
+        NSString *tmpFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[cacheURL lastPathComponent]];
+        tmpURL = [NSURL fileURLWithPath:tmpFilePath];
     } else {
-        extension = @"mp4";
-        fileName = [NSString stringWithFormat:@"%.0lf.%@", [[NSDate date] timeIntervalSince1970], extension];
+        // 为空则设置其默认路径
+        NSString *fileName = [NSString stringWithFormat:@"%.0lf.mp4", [[NSDate date] timeIntervalSince1970]];
         NSString *cachePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+        if ([fileManager fileExistsAtPath:cachePath]) {
+            [fileManager removeItemAtPath:cachePath error:nil];
+        }
         cacheURL = [NSURL fileURLWithPath:cachePath];
+        // 设置临时导出路径
+        tmpURL = cacheURL;
     }
     
     // 根据文件后缀名获取文件类型
-    AVFileType fileType = nil;
-    if ([extension caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
-        fileType = AVFileTypeAppleM4A;
-    } else if ([extension caseInsensitiveCompare:@"m4v"] == NSOrderedSame) {
-        fileType = AVFileTypeAppleM4V;
-    } else if ([extension caseInsensitiveCompare:@"mov"] == NSOrderedSame) {
-        fileType = AVFileTypeQuickTimeMovie;
-    } else if ([extension caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
-        fileType = AVFileTypeMPEG4;
-    } else {
+    AVFileType fileType = [self videoFileTypeForURL:cacheURL];
+    if (!fileType) {
         [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NoSupportedFileType];
         return;
     }
-    
-    // 判断缓存路径是否已经存在
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:cacheURL.path]) {
-        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
-        return;
-    }
-    
-    // 设置临时导出路径
-    NSString *tmpFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
-    if ([fileManager fileExistsAtPath:tmpFilePath]) {
-        [fileManager removeItemAtPath:tmpFilePath error:nil];
-    }
-    NSURL *tmpURL = [NSURL fileURLWithPath:tmpFilePath];
     
     // 获取视频轨道
     AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
@@ -1217,14 +1223,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 获取裁剪尺寸
     CGSize renderSize = cropFrame.size;
     // 防止绿边
-    NSInteger renderW = (NSInteger)renderSize.width;
-    NSInteger renderH = (NSInteger)renderSize.height;
-    renderW -= (renderW % 16);
-    renderH -= (renderH % 16);
+    renderSize.width = floor(renderSize.width / 16.0) * 16.0;
+    renderSize.height = floor(renderSize.height / 16.0) * 16.0;
+    // 横竖切换
     if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
-        renderSize = CGSizeMake((CGFloat)renderH, (CGFloat)renderW);
-    } else {
-        renderSize = CGSizeMake((CGFloat)renderW, (CGFloat)renderH);
+        renderSize = CGSizeMake(renderSize.height, renderSize.width);
     }
     
     AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
@@ -1260,6 +1263,109 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         } else {
             [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
             [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:(status == AVAssetExportSessionStatusCancelled ?  JPCEReason_VideoExportCancelled : JPCEReason_VideoExportFailed)];
+        }
+    }];
+}
+
+#pragma mark 修正视频方向并导出
++ (void)exportFixOrientationVideoWithAsset:(AVURLAsset *)asset
+                        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
+                                errorBlock:(JPCropErrorBlock)errorBlock
+                             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+    if (!asset) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        return;
+    }
+    
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self exportFixOrientationVideoWithAsset:asset
+                                  exportSessionBlock:exportSessionBlock
+                                          errorBlock:errorBlock
+                                       completeBlock:completeBlock];
+        });
+        return;
+    }
+    
+    NSURL *videoURL = asset.URL;
+    CMTimeScale timescale = asset.duration.timescale;
+    CMTimeRange timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
+    
+    // 根据文件后缀名获取文件类型
+    AVFileType fileType = [self videoFileTypeForURL:videoURL];
+    if (!fileType) {
+        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_NoSupportedFileType];
+        return;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    // 为空则设置其默认路径
+    NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"jpTmp_%@", videoURL.lastPathComponent]];
+    if ([fileManager fileExistsAtPath:tmpPath]) {
+        [fileManager removeItemAtPath:tmpPath error:nil];
+    }
+    NSURL *tmpURL = [NSURL fileURLWithPath:tmpPath];
+    
+    // 获取视频轨道
+    AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+    if (!videoTrack) {
+        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_VideoAlreadyDamage];
+        return;
+    }
+    CGAffineTransform preferredTransform = videoTrack.preferredTransform;
+    if (CGAffineTransformEqualToTransform(preferredTransform, CGAffineTransformIdentity)) {
+        [self __executeCropVideoCompleteBlock:completeBlock cacheURL:videoURL];
+        return;
+    }
+    CGSize renderSize = CGRectApplyAffineTransform((CGRect){CGPointZero, videoTrack.naturalSize}, preferredTransform).size;
+    CMTime frameDuration = CMTimeMakeWithSeconds(1.0 / videoTrack.nominalFrameRate, timescale);
+    
+    AVMutableComposition *composition = [AVMutableComposition composition];
+    
+    // 插入音频轨道
+    AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
+    if (audioTrack) {
+        AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
+    }
+    
+    // 插入视频轨道
+    AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
+    
+    // 创建视频导出会话
+    AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetHighestQuality];
+    if (![session.supportedFileTypes containsObject:fileType]) {
+        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_NoSupportedFileType];
+        return;
+    }
+    session.outputFileType = fileType;
+    session.outputURL = tmpURL;
+    session.shouldOptimizeForNetworkUse = YES;
+    !exportSessionBlock ? : exportSessionBlock(session);
+    
+    AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    [layerInstruciton setTransform:preferredTransform atTime:kCMTimeZero];
+    
+    AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    compositionInstruction.timeRange = timeRange;
+    compositionInstruction.layerInstructions = @[layerInstruciton];
+    
+    AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
+    videoComposition.instructions = @[compositionInstruction];
+    videoComposition.frameDuration = frameDuration;
+    videoComposition.renderScale = 1;
+    videoComposition.renderSize = renderSize;
+    
+    session.videoComposition = videoComposition;
+    // 开始导出
+    [session exportAsynchronouslyWithCompletionHandler:^{
+        AVAssetExportSessionStatus status = session.status;
+        if (status == AVAssetExportSessionStatusCompleted) {
+            [self __executeCropVideoCompleteBlock:completeBlock cacheURL:tmpURL];
+        } else {
+            [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
+            [self __executeErrorBlock:errorBlock cacheURL:nil reason:(status == AVAssetExportSessionStatusCancelled ?  JPCEReason_VideoExportCancelled : JPCEReason_VideoExportFailed)];
         }
     }];
 }

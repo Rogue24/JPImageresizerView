@@ -81,7 +81,7 @@
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 @property (nonatomic, copy) JPImageresizerIsCanRecoveryBlock imageresizerIsCanRecovery;
 
-@property (nonatomic, assign, readonly) BOOL isPrepareToScale;
+@property (nonatomic, assign) BOOL isPrepareToScale;
 @property (nonatomic, copy) JPImageresizerIsPrepareToScaleBlock imageresizerIsPrepareToScale;
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection rotationDirection;

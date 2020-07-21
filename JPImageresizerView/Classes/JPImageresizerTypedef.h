@@ -101,7 +101,14 @@ typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage, NSURL *cacheURL, BOOL
  * 视频裁剪导出的进度
     - progress：进度，单位 0~1
  */
-typedef void(^JPCropVideoProgressBlock)(float progress);
+typedef void(^JPVideoExportProgressBlock)(float progress);
+
+/**
+ * 视频修正方向导出完成的回调
+    - videoURL：修正过方向的视频导出后的URL，该路径为NSTemporaryDirectory文件夹下，为nil则导出失败或取消
+    - isCanceled：是否取消导出
+ */
+typedef void(^JPVideoFixOrientationCompleteBlock)(NSURL *videoURL, BOOL isCanceled);
 
 /**
  * 视频裁剪完成的回调

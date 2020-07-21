@@ -44,8 +44,6 @@
 
 @implementation JPViewController
 
-#define JPCutGIFDuration 5.0
-
 + (UIImage *)stretchBorderImage {
     static UIImage *stretchBorderImage_;
     if (!stretchBorderImage_) {
@@ -478,20 +476,37 @@ static UIViewController *tmpVC_;
 
 #pragma mark 更换素材
 - (IBAction)replace:(UIButton *)sender {
-    [UIAlertController replace:^(UIImage *image, NSData *imageData, NSURL *videoURL) {
+    [UIAlertController replaceObj:^(UIImage *image, NSData *imageData, NSURL *videoURL) {
         if (image) {
             self.imageresizerView.image = image;
         } else if (imageData) {
             self.imageresizerView.imageData = imageData;
         } else if (videoURL) {
-            self.imageresizerView.videoURL = videoURL;
+            @jp_weakify(self);
+            [self.imageresizerView setVideoURL:videoURL animated:YES startFixBlock:^{
+                [JPProgressHUD show];
+            } fixProgressBlock:^(float progress) {
+                weak_self.isExporting = YES;
+                [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100] userInteractionEnabled:YES];
+            } fixCompleteBlock:^(NSURL *videoURL, BOOL isCanceled) {
+                weak_self.isExporting = NO;
+                if (videoURL) {
+                    [JPProgressHUD dismiss];
+                } else {
+                    if (isCanceled) {
+                        [JPProgressHUD showInfoWithStatus:@"视频导出已取消" userInteractionEnabled:YES];
+                    } else {
+                        [JPProgressHUD showErrorWithStatus:@"视频方向修正失败" userInteractionEnabled:YES];
+                    }
+                }
+            }];
         }
     } fromVC:self];
 }
 
 #pragma mark 裁剪
 - (IBAction)resize:(id)sender {
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     
     // 裁剪视频
     if (self.imageresizerView.videoURL) {
@@ -499,25 +514,25 @@ static UIViewController *tmpVC_;
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
             [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __imageresizerDone:finalImage cacheURL:cacheURL];
             }];
         }]];
         [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
             [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __imageresizerDone:finalImage cacheURL:cacheURL];
             }];
         }]];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -533,15 +548,15 @@ static UIViewController *tmpVC_;
         void (^cropGIF)(void) = ^{
             [JPProgressHUD show];
             [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 // 裁剪完成，finalImage为裁剪后的图片
                 // 注意循环引用
-                __strong typeof(wSelf) sSelf = wSelf;
-                if (!sSelf) return;
-                [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __imageresizerDone:finalImage cacheURL:cacheURL];
             }];
         };
         if (self.imageresizerView.isLoopPlaybackGIF) {
@@ -551,15 +566,15 @@ static UIViewController *tmpVC_;
             [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [JPProgressHUD show];
                 [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-                    __strong typeof(wSelf) sSelf = wSelf;
-                    if (!sSelf) return;
-                    [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                    @jp_strongify(self);
+                    if (!self) return;
+                    [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
                 } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                     // 裁剪完成，finalImage为裁剪后的图片
                     // 注意循环引用
-                    __strong typeof(wSelf) sSelf = wSelf;
-                    if (!sSelf) return;
-                    [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+                    @jp_strongify(self);
+                    if (!self) return;
+                    [self __imageresizerDone:finalImage cacheURL:cacheURL];
                 }];
             }]];
             [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪GIF" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -574,15 +589,15 @@ static UIViewController *tmpVC_;
     // 裁剪图片
     [JPProgressHUD show];
     [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        @jp_strongify(self);
+        if (!self) return;
+        [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
     } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
         // 裁剪完成，finalImage为裁剪后的图片
         // 注意循环引用
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf __imageresizerDone:finalImage cacheURL:cacheURL];
+        @jp_strongify(self);
+        if (!self) return;
+        [self __imageresizerDone:finalImage cacheURL:cacheURL];
     }];
 }
 
@@ -625,27 +640,31 @@ static UIViewController *tmpVC_;
 
 - (void)__cropVideo {
     [JPProgressHUD show];
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] progressBlock:^(float progress) {
+        
         // 监听进度
-        wSelf.isExporting = YES;
+        weak_self.isExporting = YES;
         [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100] userInteractionEnabled:YES];
+        
     } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        sSelf.isExporting = NO;
-        [sSelf __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        @jp_strongify(self);
+        if (!self) return;
+        
+        self.isExporting = NO;
+        [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        
     } completeBlock:^(NSURL *cacheURL) {
         // 裁剪完成
         [JPProgressHUD dismiss];
         
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        sSelf.isExporting = NO;
+        @jp_strongify(self);
+        if (!self) return;
+        self.isExporting = NO;
         
-        JPImageViewController *vc = [sSelf.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
         vc.videoURL = cacheURL;
-        [sSelf.navigationController pushViewController:vc animated:YES];
+        [self.navigationController pushViewController:vc animated:YES];
     }];
 }
 

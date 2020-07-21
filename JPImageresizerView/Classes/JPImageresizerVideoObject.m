@@ -9,22 +9,14 @@
 #import "JPImageresizerVideoObject.h"
 
 @implementation JPImageresizerVideoObject
-- (instancetype)initWithVideoURL:(NSURL *)videoURL {
+{
+    BOOL _isFixedOrientation;
+}
+
+- (instancetype)initWithAsset:(AVURLAsset *)asset isFixedOrientation:(BOOL)isFixedOrientation {
     if (self = [super init]) {
-        _videoURL = videoURL;
-        _asset = [AVURLAsset assetWithURL:videoURL];
-        
-        if (![self __assetIsLoaded]) {
-            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-            [_asset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
-                dispatch_semaphore_signal(semaphore);
-            }];
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        }
-        
-        if (![self __assetIsLoaded]) {
-            return nil;
-        }
+        _asset = asset;
+        _isFixedOrientation = isFixedOrientation;
         
         _seconds = CMTimeGetSeconds(_asset.duration);
         _timescale = _asset.duration.timescale;
@@ -38,11 +30,15 @@
     return self;
 }
 
-- (BOOL)__assetIsLoaded {
-    return _asset != nil &&
-           [_asset statusOfValueForKey:@"duration" error:nil] == AVKeyValueStatusLoaded &&
-           [_asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded;
+- (void)dealloc {
+    if (_isFixedOrientation) {
+        NSURL *tmpURL = self.asset.URL;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
+        });
+    }
 }
+
 @end
 
 @implementation JPPlayerView

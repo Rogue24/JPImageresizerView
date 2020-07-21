@@ -15,6 +15,11 @@
 + (UIImage *)convertBlackImage:(UIImage *)image;
 
 /**
+ * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
+ */
++ (UIImage *)decodeGIFData:(NSData *)data;
+
+/**
  * 是否GIF
  */
 + (BOOL)isGIFData:(NSData *)data;
@@ -25,9 +30,9 @@
 + (NSString *)contentTypeForImageData:(NSData *)data;
 
 /**
- * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
+ * 获取视频类型
  */
-+ (UIImage *)decodeGIFData:(NSData *)data;
++ (AVFileType)videoFileTypeForURL:(NSURL *)url;
 
 #pragma mark - 裁剪图片
 /**
@@ -145,4 +150,12 @@
         exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
                 errorBlock:(JPCropErrorBlock)errorBlock
              completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+
+/**
+ * 修正视频方向并导出
+ */
++ (void)exportFixOrientationVideoWithAsset:(AVURLAsset *)asset
+                        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
+                                errorBlock:(JPCropErrorBlock)errorBlock
+                             completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 @end

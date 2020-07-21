@@ -10,88 +10,125 @@
 @implementation JPImageresizerConfigure
 
 + (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [[self alloc] init];
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
     configure.image = image;
-    [configure __defaultSetup];
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [[self alloc] init];
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
     configure.imageData = imageData;
-    [configure __defaultSetup];
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [[self alloc] init];
++ (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL
+                                        make:(void (^)(JPImageresizerConfigure *))make
+                               startFixBlock:(void(^)(void))startFixBlock
+                            fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                            fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
     configure.videoURL = videoURL;
-    [configure __defaultSetup];
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)defaultConfigureWithVideoAsset:(AVURLAsset *)videoAsset
+                                          make:(void (^)(JPImageresizerConfigure *))make
+                                 startFixBlock:(void(^)(void))startFixBlock
+                              fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                              fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
+    configure.videoAsset = videoAsset;
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
     !make ? : make(configure);
     return configure;
 }
 
 + (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
-        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
-        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
-    }];
+    JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
+    configure.image = image;
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
-        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
-        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
-    }];
+    JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
+    configure.imageData = imageData;
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
-        .jp_bgColor(UIColor.whiteColor).jp_maskAlpha(0.25)
-        .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
-    }];
++ (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
+                                                  make:(void (^)(JPImageresizerConfigure *))make
+                                         startFixBlock:(void(^)(void))startFixBlock
+                                      fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                                      fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
+    configure.videoURL = videoURL;
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)lightBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
+                                                    make:(void (^)(JPImageresizerConfigure *))make
+                                           startFixBlock:(void(^)(void))startFixBlock
+                                        fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                                        fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
+    configure.videoAsset = videoAsset;
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
     !make ? : make(configure);
     return configure;
 }
 
 + (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
-        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
-    }];
+    JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
+    configure.image = image;
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
-        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
-    }];
+    JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
+    configure.imageData = imageData;
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL make:(void (^)(JPImageresizerConfigure *))make {
-    JPImageresizerConfigure *configure = [self defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
-        .jp_bgColor(UIColor.blackColor).jp_maskAlpha(0.25);
-    }];
++ (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
+                                                 make:(void (^)(JPImageresizerConfigure *))make
+                                        startFixBlock:(void(^)(void))startFixBlock
+                                     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                                     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
+    configure.videoURL = videoURL;
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
+    !make ? : make(configure);
+    return configure;
+}
++ (instancetype)darkBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
+                                                   make:(void (^)(JPImageresizerConfigure *))make
+                                          startFixBlock:(void(^)(void))startFixBlock
+                                       fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                                       fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
+    configure.videoAsset = videoAsset;
+    configure.startFixBlock = startFixBlock;
+    configure.fixProgressBlock = fixProgressBlock;
+    configure.fixCompleteBlock = fixCompleteBlock;
     !make ? : make(configure);
     return configure;
 }
 
-- (void)__defaultSetup {
-    self
++ (instancetype)__defaultConfigure {
+    JPImageresizerConfigure *configure = [[self alloc] init];
+    configure
     .jp_viewFrame([UIScreen mainScreen].bounds)
     .jp_blurEffect(nil)
     .jp_frameType(JPConciseFrameType)
@@ -115,6 +152,26 @@
     .jp_maskImage(nil)
     .jp_isArbitrarilyMask(NO)
     .jp_isLoopPlaybackGIF(NO);
+    return configure;
+}
+
++ (JPImageresizerConfigure *)__lightBlurMaskTypeConfigure {
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
+    configure
+    .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
+    .jp_bgColor(UIColor.whiteColor)
+    .jp_maskAlpha(0.25)
+    .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
+    return configure;
+}
+
++ (JPImageresizerConfigure *)__darkBlurMaskTypeConfigure {
+    JPImageresizerConfigure *configure = [self __defaultConfigure];
+    configure
+    .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
+    .jp_bgColor(UIColor.blackColor)
+    .jp_maskAlpha(0.25);
+    return configure;
 }
 
 - (void)setImage:(UIImage *)image {
@@ -122,6 +179,7 @@
     if (image) {
         _imageData = nil;
         _videoURL = nil;
+        _videoAsset = nil;
     }
 }
 
@@ -130,6 +188,7 @@
     if (imageData) {
         _image = nil;
         _videoURL = nil;
+        _videoAsset = nil;
     }
 }
 
@@ -138,6 +197,16 @@
     if (videoURL) {
         _image = nil;
         _imageData = nil;
+        _videoAsset = nil;
+    }
+}
+
+- (void)setVideoAsset:(AVURLAsset *)videoAsset {
+    _videoAsset = videoAsset;
+    if (videoAsset) {
+        _image = nil;
+        _imageData = nil;
+        _videoURL = nil;
     }
 }
 

@@ -9,6 +9,7 @@
 #import "JPTableViewController.h"
 #import "JPViewController.h"
 #import "JPPhotoViewController.h"
+#import "UIAlertController+JPImageresizer.h"
 
 @interface JPConfigureModel : NSObject
 @property (nonatomic, copy) NSString *title;
@@ -92,7 +93,7 @@
         configure
         .jp_borderImage([JPViewController stretchBorderImage])
         .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
-    }];
+    } startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
     
     NSString *gifPath = JPMainBundleResourcePath(@"Gem.gif", nil);
     JPConfigureModel *model10 = [self new];
@@ -108,11 +109,12 @@
 
 @interface JPTableViewController ()
 @property (nonatomic, copy) NSArray<JPConfigureModel *> *models;
+@property (nonatomic, weak) AVAssetExportSession *exporterSession;
+@property (nonatomic, strong) NSTimer *progressTimer;
+@property (nonatomic, copy) JPVideoExportProgressBlock progressBlock;
 @end
 
 @implementation JPTableViewController
-
-#define JPGIFDuration 3.0
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -125,6 +127,10 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (void)dealloc {
+    [self __removeProgressTimer];
 }
 
 #pragma mark - Table view data source
@@ -182,7 +188,9 @@ static JPImageresizerConfigure *gifConfigure_;
                 if (!gifConfigure_) {
                     [JPProgressHUD show];
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:nil];
+                        gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:^(JPImageresizerConfigure *configure) {
+                            configure.jp_isLoopPlaybackGIF(YES);
+                        }];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [JPProgressHUD dismiss];
                             [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
@@ -255,14 +263,98 @@ static JPImageresizerConfigure *gifConfigure_;
 
 #pragma mark - 打开相册
 - (void)__openAlbum:(BOOL)isBecomeDanielWu {
-    __weak typeof(self) wSelf = self;
-    [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
-        vc.isBecomeDanielWu = isBecomeDanielWu;
-        [sSelf.navigationController pushViewController:vc animated:YES];
-    } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
+    if (isBecomeDanielWu) {
+        @jp_weakify(self);
+        [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
+            vc.isBecomeDanielWu = isBecomeDanielWu;
+            [self.navigationController pushViewController:vc animated:YES];
+        } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
+        return;
+    }
+    
+    [UIAlertController openAlbum:^(UIImage *image, NSData *imageData, NSURL *videoURL) {
+        if (image) {
+            JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:nil];
+            [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        } else if (imageData) {
+            JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:nil];
+            [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        } else if (videoURL) {
+            [self __confirmVideo:videoURL isConfirmOutSide:YES];
+        }
+    } fromVC:self];
+}
+
+#pragma mark - 判断视频是否需要修正方向
+- (void)__confirmVideo:(NSURL *)videoURL isConfirmOutSide:(BOOL)isConfirmOutSide {
+    
+    
+    @jp_weakify(self);
+    if (!isConfirmOutSide) {
+        
+#pragma mark 内部修正（进入页面后修正）
+        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil startFixBlock:^{
+            [JPProgressHUD show];
+        } fixProgressBlock:^(float progress) {
+            [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100]];
+        } fixCompleteBlock:^(NSURL *videoURL, BOOL isCanceled) {
+            if (videoURL) {
+                [JPProgressHUD dismiss];
+            } else {
+                if (isCanceled) {
+                    [JPProgressHUD showInfoWithStatus:@"视频导出已取消" userInteractionEnabled:YES];
+                } else {
+                    [JPProgressHUD showErrorWithStatus:@"视频修正失败" userInteractionEnabled:YES];
+                }
+                
+                @jp_strongify(self);
+                if (!self) return;
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+        }];
+        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        return;
+    }
+    
+#pragma mark 外部修正（进入页面前修正）
+    [JPProgressHUD show];
+    AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
+    [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
+        if ([videoAsset statusOfValueForKey:@"duration" error:nil] &&
+            [videoAsset statusOfValueForKey:@"tracks" error:nil]) {
+            AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+            if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [JPProgressHUD dismiss];
+                    @jp_strongify(self);
+                    if (!self) return;
+                    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+                    [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+                });
+                return;
+            }
+            [JPImageresizerTool exportFixOrientationVideoWithAsset:videoAsset exportSessionBlock:^(AVAssetExportSession *exportSession) {
+                [weak_self __addProgressTimer:^(float progress) {
+                    [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100]];
+                } exporterSession:exportSession];
+            } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+                [JPProgressHUD showErrorWithStatus:@"视频方向修正失败" userInteractionEnabled:YES];
+            } completeBlock:^(NSURL *cacheURL) {
+                [JPProgressHUD dismiss];
+                @jp_strongify(self);
+                if (!self) return;
+                JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+                [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+            }];
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [JPProgressHUD showErrorWithStatus:@"视频获取失败" userInteractionEnabled:YES];
+            });
+        }
+    }];
 }
 
 #pragma mark - 开始裁剪
@@ -279,6 +371,28 @@ static JPImageresizerConfigure *gifConfigure_;
     [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
     
     [self.navigationController pushViewController:vc animated:NO];
+}
+
+#pragma mark - 监听视频导出进度的定时器
+
+- (void)__addProgressTimer:(JPVideoExportProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
+    [self __removeProgressTimer];
+    if (progressBlock == nil || exporterSession == nil) return;
+    self.exporterSession = exporterSession;
+    self.progressBlock = progressBlock;
+    self.progressTimer = [NSTimer timerWithTimeInterval:0.02 target:self selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.progressTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)__removeProgressTimer {
+    [self.progressTimer invalidate];
+    self.progressTimer = nil;
+    self.progressBlock = nil;
+    self.exporterSession = nil;
+}
+
+- (void)__progressTimerHandle {
+    if (self.progressBlock && self.exporterSession) self.progressBlock(self.exporterSession.progress);
 }
 
 @end

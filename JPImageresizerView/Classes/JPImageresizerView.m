@@ -25,7 +25,7 @@
 @property (nonatomic, strong) JPImageresizerSlider *slider;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, copy) JPCropVideoProgressBlock progressBlock;
+@property (nonatomic, copy) JPVideoExportProgressBlock progressBlock;
 @end
 
 @implementation JPImageresizerView
@@ -58,11 +58,11 @@
 }
 
 - (void)setImage:(UIImage *)image {
-    [self setImage:image animated:YES transition:UIViewAnimationOptionTransitionCrossDissolve];
+    [self setImage:image animated:YES];
 }
 
 - (void)setImageData:(NSData *)imageData {
-    [self setImageData:imageData animated:YES transition:UIViewAnimationOptionTransitionCrossDissolve];
+    [self setImageData:imageData animated:YES];
 }
 
 - (void)setIsLoopPlaybackGIF:(BOOL)isLoopPlaybackGIF {
@@ -92,10 +92,6 @@
         self.frameView.slider = self.slider;
     }
     [self __updateImageViewImage:NO];
-}
-
-- (void)setVideoURL:(NSURL *)videoURL {
-    [self setVideoURL:videoURL animated:YES transition:UIViewAnimationOptionTransitionCrossDissolve];
 }
 
 - (void)setResizeWHScale:(CGFloat)resizeWHScale {
@@ -231,7 +227,11 @@
 }
 
 - (NSURL *)videoURL {
-    return _videoObj.videoURL;
+    return _videoObj.asset.URL;
+}
+
+- (AVURLAsset *)videoAsset {
+    return _videoObj.asset;
 }
 
 - (CGFloat)resizeWHScale {
@@ -300,67 +300,14 @@
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
-    JPImageresizerView *imageresizerView = [[self alloc]
-                               initWithImage:configure.image
-                                   imageData:configure.imageData
-                                    videoURL:configure.videoURL
-                                       frame:configure.viewFrame
-                                   frameType:configure.frameType
-                              animationCurve:configure.animationCurve blurEffect:configure.blurEffect
-                                     bgColor:configure.bgColor
-                                   maskAlpha:configure.maskAlpha
-                                 strokeColor:configure.strokeColor
-                               resizeWHScale:configure.resizeWHScale
-                        isArbitrarilyInitial:configure.isArbitrarilyInitial
-                               contentInsets:configure.contentInsets
-                         isClockwiseRotation:configure.isClockwiseRotation
-                                 borderImage:configure.borderImage
-                        borderImageRectInset:configure.borderImageRectInset
-                            maximumZoomScale:configure.maximumZoomScale
-                               isRoundResize:configure.isRoundResize
-                               isShowMidDots:configure.isShowMidDots
-                          isBlurWhenDragging:configure.isBlurWhenDragging
-                     isShowGridlinesWhenIdle:configure.isShowGridlinesWhenIdle
-                 isShowGridlinesWhenDragging:configure.isShowGridlinesWhenDragging
-                                   gridCount:configure.gridCount
-                                   maskImage:configure.maskImage
-                           isArbitrarilyMask:configure.isArbitrarilyMask
-                           isLoopPlaybackGIF:configure.isLoopPlaybackGIF
-                   imageresizerIsCanRecovery:imageresizerIsCanRecovery
-                imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
-    imageresizerView.edgeLineIsEnabled = configure.edgeLineIsEnabled;
-    return imageresizerView;
+    return [[self alloc] initWithConfigure:configure imageresizerIsCanRecovery:imageresizerIsCanRecovery imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
 }
 
-- (instancetype)initWithImage:(UIImage *)image
-                    imageData:(NSData *)imageData
-                     videoURL:(NSURL *)videoURL
-                        frame:(CGRect)frame
-                    frameType:(JPImageresizerFrameType)frameType
-               animationCurve:(JPAnimationCurve)animationCurve
-                   blurEffect:(UIBlurEffect *)blurEffect
-                      bgColor:(UIColor *)bgColor
-                    maskAlpha:(CGFloat)maskAlpha
-                  strokeColor:(UIColor *)strokeColor
-                resizeWHScale:(CGFloat)resizeWHScale
-         isArbitrarilyInitial:(BOOL)isArbitrarilyInitial
-                contentInsets:(UIEdgeInsets)contentInsets
-          isClockwiseRotation:(BOOL)isClockwiseRotation
-                  borderImage:(UIImage *)borderImage
-         borderImageRectInset:(CGPoint)borderImageRectInset
-             maximumZoomScale:(CGFloat)maximumZoomScale
-                isRoundResize:(BOOL)isRoundResize
-                isShowMidDots:(BOOL)isShowMidDots
-           isBlurWhenDragging:(BOOL)isBlurWhenDragging
-      isShowGridlinesWhenIdle:(BOOL)isShowGridlinesWhenIdle
-  isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
-                    gridCount:(NSUInteger)gridCount
-                    maskImage:(UIImage *)maskImage
-            isArbitrarilyMask:(BOOL)isArbitrarilyMask
-            isLoopPlaybackGIF:(BOOL)isLoopPlaybackGIF
-    imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
- imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
+- (instancetype)initWithConfigure:(JPImageresizerConfigure *)configure
+        imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+     imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale {
     
+    CGRect frame = configure.viewFrame;
     NSAssert((frame.size.width != 0 && frame.size.height != 0), @"must have width and height.");
     
     if (self = [super initWithFrame:frame]) {
@@ -369,10 +316,10 @@
         self.backgroundColor = UIColor.clearColor;
         
         _containerView = [[UIView alloc] initWithFrame:self.bounds];
-        _containerView.layer.backgroundColor = bgColor.CGColor;
+        _containerView.layer.backgroundColor = configure.bgColor.CGColor;
         [self addSubview:_containerView];
         
-        _contentInsets = contentInsets;
+        _contentInsets = configure.contentInsets;
         
         CGFloat contentWidth = (self.bounds.size.width - _contentInsets.left - _contentInsets.right);
         CGFloat contentHeight = (self.bounds.size.height - _contentInsets.top - _contentInsets.bottom);
@@ -382,46 +329,86 @@
                                 @(JPImageresizerHorizontalLeftDirection),
                                 @(JPImageresizerVerticalDownDirection),
                                 @(JPImageresizerHorizontalRightDirection)] mutableCopy];
-        self.isClockwiseRotation = isClockwiseRotation;
+        self.isClockwiseRotation = configure.isClockwiseRotation;
         
-        self.animationCurve = animationCurve;
+        self.animationCurve = configure.animationCurve;
         
-        _isLoopPlaybackGIF = isLoopPlaybackGIF;
-        if (image) {
-            [self setImage:image animated:NO transition:kNilOptions];
-        } else if (imageData) {
-            [self setImageData:imageData animated:NO transition:kNilOptions];
-        } else if (videoURL) {
-            [self setVideoURL:videoURL animated:NO transition:kNilOptions];
+        _objWhScale = 1;
+        _isLoopPlaybackGIF = configure.isLoopPlaybackGIF;
+        
+        BOOL isVideo = NO;
+        if (configure.image) {
+            [self setImage:configure.image animated:NO];
+        } else if (configure.imageData) {
+            [self setImageData:configure.imageData animated:NO];
+        } else {
+            isVideo = YES;
+            
+            AVURLAsset *videoAsset;
+            if (configure.videoURL) {
+                videoAsset = [AVURLAsset assetWithURL:configure.videoURL];
+            } else if (configure.videoAsset) {
+                videoAsset = configure.videoAsset;
+            }
+            
+            NSAssert(videoAsset != nil, @"resizeObj cannot be nil.");
+            
+            if ([videoAsset statusOfValueForKey:@"duration" error:nil] != AVKeyValueStatusLoaded ||
+                [videoAsset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
+                dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+                [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
+                    dispatch_semaphore_signal(semaphore);
+                }];
+                dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            }
+            
+            AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+            if (videoTrack) {
+                if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+                    [self __createVideoObj:videoAsset isFixedOrientation:NO animated:NO];
+                } else {
+                    [self __exportFixOrientationVideo:videoAsset
+                                             animated:YES
+                                        startFixBlock:configure.startFixBlock
+                                     fixProgressBlock:configure.fixProgressBlock
+                                     fixCompleteBlock:configure.fixCompleteBlock];
+                }
+            }
         }
         
-        [self __setupScrollViewWithBaseContentMaxSize:baseContentMaxSize maxZoomScale:maximumZoomScale];
+        [self __setupScrollViewWithBaseContentMaxSize:baseContentMaxSize maxZoomScale:configure.maximumZoomScale];
         [self __setupImageView];
         [self __updateImageViewFrame];
+        [self __updateImageViewImage:isVideo];
+        
+        if (_playerView) {
+            _playerView.frame = _imageView.bounds;
+            [_imageView addSubview:_playerView];
+        }
         
         JPImageresizerFrameView *frameView =
-        [[JPImageresizerFrameView alloc] initWithFrame:self.scrollView.frame
+        [[JPImageresizerFrameView alloc] initWithFrame:_scrollView.frame
                                     baseContentMaxSize:baseContentMaxSize
-                                             frameType:frameType
-                                        animationCurve:animationCurve
-                                            blurEffect:blurEffect
-                                               bgColor:bgColor
-                                             maskAlpha:maskAlpha
-                                           strokeColor:strokeColor
-                                         resizeWHScale:resizeWHScale
-                                  isArbitrarilyInitial:isArbitrarilyInitial
-                                            scrollView:self.scrollView
-                                             imageView:self.imageView
-                                           borderImage:borderImage
-                                  borderImageRectInset:borderImageRectInset
-                                         isRoundResize:isRoundResize
-                                         isShowMidDots:isShowMidDots
-                                    isBlurWhenDragging:isBlurWhenDragging
-                               isShowGridlinesWhenIdle:isShowGridlinesWhenIdle
-                           isShowGridlinesWhenDragging:isShowGridlinesWhenDragging
-                                             gridCount:gridCount
-                                             maskImage:maskImage
-                                     isArbitrarilyMask:isArbitrarilyMask
+                                             frameType:configure.frameType
+                                        animationCurve:configure.animationCurve
+                                            blurEffect:configure.blurEffect
+                                               bgColor:configure.bgColor
+                                             maskAlpha:configure.maskAlpha
+                                           strokeColor:configure.strokeColor
+                                         resizeWHScale:configure.resizeWHScale
+                                  isArbitrarilyInitial:configure.isArbitrarilyInitial
+                                            scrollView:_scrollView
+                                             imageView:_imageView
+                                           borderImage:configure.borderImage
+                                  borderImageRectInset:configure.borderImageRectInset
+                                         isRoundResize:configure.isRoundResize
+                                         isShowMidDots:configure.isShowMidDots
+                                    isBlurWhenDragging:configure.isBlurWhenDragging
+                               isShowGridlinesWhenIdle:configure.isShowGridlinesWhenIdle
+                           isShowGridlinesWhenDragging:configure.isShowGridlinesWhenDragging
+                                             gridCount:configure.gridCount
+                                             maskImage:configure.maskImage
+                                     isArbitrarilyMask:configure.isArbitrarilyMask
                              imageresizerIsCanRecovery:imageresizerIsCanRecovery
                           imageresizerIsPrepareToScale:imageresizerIsPrepareToScale];
         
@@ -445,16 +432,13 @@
             return sSelf.horizontalMirror;
         };
         
-        [self __updateImageViewImage:(_videoObj != nil)];
-        if (_videoObj) {
-            _playerView.frame = _imageView.bounds;
-            [_imageView addSubview:_playerView];
-        }
         frameView.slider = _slider;
         frameView.playerView = _playerView;
         
         [_containerView addSubview:frameView];
         _frameView = frameView;
+        
+        self.edgeLineIsEnabled = configure.edgeLineIsEnabled;
     }
     return self;
 }
@@ -637,21 +621,20 @@
     }
 }
 
-- (void)__updateObject:(BOOL)isVideo animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition {
-    if (self.superview) {
-        [self __updateImageView:isVideo animated:isAnimated transition:transition];
-    } else {
+- (void)__updateImageView:(BOOL)isVideo animated:(BOOL)isAnimated {
+    if (!self.superview) {
         if (isVideo) {
-            [self __removeImage];
-        } else {
-            [self __removeVideoObj];
-        }
-        if (_imageView) {
-            [self __updateImageViewImage:isVideo];
-            if (isVideo) {
+            [_playerView removeFromSuperview];
+            _playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
+            if (_imageView) {
                 _playerView.frame = _imageView.bounds;
                 [_imageView addSubview:_playerView];
             }
+            if (_frameView) _frameView.playerView = _playerView;
+            [self __removeImage];
+        } else {
+            if (_imageView) [self __updateImageViewImage:NO];
+            [self __removeVideoObj];
         }
         if (_slider) {
             _slider.alpha = 1;
@@ -660,17 +643,17 @@
                 CGRect sliderFrame = [_frameView convertRect:_frameView.imageresizerFrame toView:self];
                 [_slider setImageresizerFrame:sliderFrame isRoundResize:_frameView.isRoundResizing];
                 _frameView.slider = _slider;
-                if (isVideo) _frameView.playerView = _playerView;
             }
         }
+        return;
     }
-}
-
-- (void)__updateImageView:(BOOL)isVideo animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition {
+    
     BOOL isGIF = _isGIF;
     BOOL isLoopPlaybackGIF = _isLoopPlaybackGIF;
     if (isAnimated) {
-        NSTimeInterval duration = 0.35;
+        self.userInteractionEnabled = NO;
+        NSTimeInterval duration1 = 0.18;
+        NSTimeInterval duration2 = 0.35;
         UIViewAnimationOptions options = _animationOption;
         if ((isVideo && _image != nil) ||
             (!isVideo && _videoObj != nil)) {
@@ -683,45 +666,45 @@
             }
             
             if (isVideo) {
-                self.playerView.frame = self.imageView.bounds;
-                self.playerView.alpha = 0;
-                [self.imageView addSubview:self.playerView];
-                [UIView animateWithDuration:0.25 delay:0 options:options animations:^{
-                    self.playerView.alpha = 1;
-                    self.slider.alpha = 1;
-                } completion:^(BOOL finished) {
-                    [self __removeImage];
-                    self.frameView.playerView = self.playerView;
-                    self.frameView.slider = self.slider;
-                    [UIView animateWithDuration:duration delay:0 options:options animations:^{
-                        [self __updateSubviewLayouts:duration];
-                    } completion:nil];
-                }];
+                [self.playerView removeFromSuperview];
+                JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
+                playerView.frame = self.imageView.bounds;
+                playerView.alpha = 0;
+                [self.imageView addSubview:playerView];
+                self.playerView = playerView;
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
+                        self.playerView.alpha = 1;
+                        self.slider.alpha = 1;
+                    } completion:^(BOOL finished) {
+                        [self __removeImage];
+                        self.frameView.playerView = self.playerView;
+                        self.frameView.slider = self.slider;
+                        [UIView animateWithDuration:duration2 delay:0 options:options animations:^{
+                            [self __updateSubviewLayouts:duration2];
+                        } completion:^(BOOL finished) {
+                            self.userInteractionEnabled = YES;
+                        }];
+                    }];
+                });
             } else {
                 self.frameView.playerView = nil;
                 self.frameView.slider = (isGIF && !isLoopPlaybackGIF) ? self.slider : nil;
                 [self __updateImageViewImage:NO];
-                [UIView animateWithDuration:0.25 delay:0 options:options animations:^{
+                [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
                     self.playerView.alpha = 0;
                     self.slider.alpha = (isGIF && !isLoopPlaybackGIF) ? 1 : 0;
                 } completion:^(BOOL finished) {
                     [self __removeVideoObj];
-                    [UIView animateWithDuration:duration delay:0 options:options animations:^{
-                        [self __updateSubviewLayouts:duration];
-                    } completion:nil];
+                    [UIView animateWithDuration:duration2 delay:0 options:options animations:^{
+                        [self __updateSubviewLayouts:duration2];
+                    } completion:^(BOOL finished) {
+                        self.userInteractionEnabled = YES;
+                    }];
                 }];
             }
             return;
         }
-        
-        if (transition == UIViewAnimationOptionTransitionNone) transition = UIViewAnimationOptionTransitionCrossDissolve;
-        if (transition == UIViewAnimationOptionTransitionFlipFromLeft ||
-            transition == UIViewAnimationOptionTransitionFlipFromRight ||
-            transition == UIViewAnimationOptionTransitionCurlUp ||
-            transition == UIViewAnimationOptionTransitionCurlDown ||
-            transition == UIViewAnimationOptionTransitionCrossDissolve ||
-            transition == UIViewAnimationOptionTransitionFlipFromTop ||
-            transition == UIViewAnimationOptionTransitionFlipFromBottom) options |= transition;
         
         if (!isVideo) {
             if (isGIF && !isLoopPlaybackGIF) {
@@ -735,21 +718,35 @@
             } else {
                 self.frameView.slider = nil;
             }
-            [UIView animateWithDuration:duration delay:0 options:_animationOption animations:^{
-                [self __updateSubviewLayouts:duration];
-            } completion:nil];
-            [UIView transitionWithView:self.imageView duration:duration options:options animations:^{
+            [UIView transitionWithView:self.imageView duration:duration1 options:(options | UIViewAnimationOptionTransitionCrossDissolve) animations:^{
                 [self __updateImageViewImage:NO];
                 self.slider.alpha = (isGIF && !isLoopPlaybackGIF) ? 1 : 0;
             } completion:^(BOOL finished) {
-                [self __removeVideoObj];
+                [UIView animateWithDuration:duration2 delay:0 options:self->_animationOption animations:^{
+                    [self __updateSubviewLayouts:duration2];
+                } completion:^(BOOL finished) {
+                    [self __removeVideoObj];
+                    self.userInteractionEnabled = YES;
+                }];
             }];
         } else {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [UIView animateWithDuration:duration delay:0 options:options animations:^{
-                    [self __updateSubviewLayouts:duration];
+            JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
+            playerView.frame = self.imageView.bounds;
+            playerView.alpha = 0;
+            [self.imageView addSubview:playerView];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
+                    playerView.alpha = 1;
                 } completion:^(BOOL finished) {
-                    [self __removeImage];
+                    [self.playerView removeFromSuperview];
+                    self.playerView = playerView;
+                    self.frameView.playerView = playerView;
+                    [UIView animateWithDuration:duration2 delay:0 options:options animations:^{
+                        [self __updateSubviewLayouts:duration2];
+                    } completion:^(BOOL finished) {
+                        [self __removeImage];
+                        self.userInteractionEnabled = YES;
+                    }];
                 }];
             });
         }
@@ -759,9 +756,13 @@
             [self __updateImageViewImage:NO];
         } else {
             [self __removeImage];
-            self.frameView.playerView = self.playerView;
-            self.playerView.frame = self.imageView.bounds;
-            [self.imageView addSubview:self.playerView];
+            
+            [self.playerView removeFromSuperview];
+            JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
+            playerView.frame = self.imageView.bounds;
+            [self.imageView addSubview:playerView];
+            self.playerView = playerView;
+            self.frameView.playerView = playerView;
         }
         if (_slider) {
             self.frameView.slider = self.slider;
@@ -823,14 +824,52 @@
     }
 }
 
+- (void)__createVideoObj:(AVURLAsset *)asset isFixedOrientation:(BOOL)isFixedOrientation animated:(BOOL)isAnimated {
+    JPImageresizerVideoObject *videoObj = [[JPImageresizerVideoObject alloc] initWithAsset:asset isFixedOrientation:isFixedOrientation];
+    _videoObj = videoObj;
+    _objWhScale = videoObj.videoSize.width / videoObj.videoSize.height;
+    _isGIF = NO;
+    [self __setupSlider:YES];
+    [self __updateImageView:YES animated:isAnimated];
+}
+
+- (void)__exportFixOrientationVideo:(AVURLAsset *)videoAsset
+                           animated:(BOOL)isAnimated
+                      startFixBlock:(void(^)(void))startFixBlock
+                   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+                   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    !startFixBlock ? : startFixBlock();
+    self.userInteractionEnabled = NO;
+    self.frameView.isPrepareToScale = YES;
+    __weak typeof(self) wSelf = self;
+    [JPImageresizerTool exportFixOrientationVideoWithAsset:videoAsset exportSessionBlock:^(AVAssetExportSession *exportSession) {
+        if (!wSelf) return;
+        __strong typeof(wSelf) sSelf = wSelf;
+        [sSelf __addProgressTimer:fixProgressBlock exporterSession:exportSession];
+    } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        sSelf.userInteractionEnabled = YES;
+        sSelf.frameView.isPrepareToScale = NO;
+        !fixCompleteBlock ? : fixCompleteBlock(nil, reason == JPCEReason_VideoExportCancelled);
+    } completeBlock:^(NSURL *cacheURL) {
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf) return;
+        [sSelf __createVideoObj:[AVURLAsset assetWithURL:cacheURL] isFixedOrientation:YES animated:isAnimated];
+        sSelf.userInteractionEnabled = YES;
+        sSelf.frameView.isPrepareToScale = NO;
+        !fixCompleteBlock ? : fixCompleteBlock(cacheURL, NO);
+    }];
+}
+
 #pragma mark 监听视频导出进度的定时器
 
-- (void)__addProgressTimer:(JPCropVideoProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
+- (void)__addProgressTimer:(JPVideoExportProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
     [self __removeProgressTimer];
     if (progressBlock == nil || exporterSession == nil) return;
     self.exporterSession = exporterSession;
     self.progressBlock = progressBlock;
-    self.progressTimer = [NSTimer timerWithTimeInterval:0.05 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
+    self.progressTimer = [NSTimer timerWithTimeInterval:0.02 target:[JPImageresizerProxy proxyWithTarget:self] selector:@selector(__progressTimerHandle) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:self.progressTimer forMode:NSRunLoopCommonModes];
 }
 
@@ -848,7 +887,7 @@
 #pragma mark - puild method
 
 #pragma mark 更换裁剪元素
-- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition {
+- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated {
     NSAssert(image != nil, @"image cannot be nil.");
     if (image) {
         _imageData = nil;
@@ -856,11 +895,11 @@
         _objWhScale = _image.size.width / _image.size.height;
         _isGIF = image.images.count > 1;
         if (_isGIF && !_isLoopPlaybackGIF) [self __setupSlider:NO];
-        [self __updateObject:NO animated:isAnimated transition:transition];
+        [self __updateImageView:NO animated:isAnimated];
     }
 }
 
-- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition {
+- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated {
     NSAssert(imageData != nil, @"imageData cannot be nil.");
     if (imageData) {
         _imageData = imageData;
@@ -891,31 +930,53 @@
                 });
             });
         }
-        [self __updateObject:NO animated:isAnimated transition:transition];
+        [self __updateImageView:NO animated:isAnimated];
     }
 }
 
-- (void)setVideoURL:(NSURL *)videoURL animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition {
+- (void)setVideoURL:(NSURL *)videoURL
+           animated:(BOOL)isAnimated
+      startFixBlock:(void(^)(void))startFixBlock
+   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
     NSAssert(videoURL != nil, @"videoURL cannot be nil.");
     if (videoURL) {
-        JPImageresizerVideoObject *videoObj = [[JPImageresizerVideoObject alloc] initWithVideoURL:videoURL];
-        _videoObj = videoObj;
-        _objWhScale = videoObj.videoSize.width / videoObj.videoSize.height;
-        _isGIF = NO;
-        if (_playerView) {
-            if (self.superview && isAnimated) {
-                CATransition *transition = [CATransition animation];
-                transition.duration = 0.35;
-                transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-                transition.type = kCATransitionFade;
-                [_playerView.playerLayer addAnimation:transition forKey:@"JPFadeAnimation"];
-            }
-            _playerView.videoObj = videoObj;
-        } else {
-            _playerView = [[JPPlayerView alloc] initWithVideoObj:videoObj];
+        [self setVideoAsset:[AVURLAsset assetWithURL:videoURL]
+                   animated:isAnimated
+              startFixBlock:startFixBlock
+           fixProgressBlock:fixProgressBlock
+           fixCompleteBlock:fixCompleteBlock];
+    }
+}
+
+- (void)setVideoAsset:(AVURLAsset *)videoAsset
+             animated:(BOOL)isAnimated
+        startFixBlock:(void(^)(void))startFixBlock
+     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+    NSAssert(videoAsset != nil, @"videoAsset cannot be nil.");
+    if (videoAsset) {
+        if ([videoAsset statusOfValueForKey:@"duration" error:nil] != AVKeyValueStatusLoaded ||
+            [videoAsset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
+            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+            [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
+                dispatch_semaphore_signal(semaphore);
+            }];
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
         }
-        [self __setupSlider:YES];
-        [self __updateObject:YES animated:isAnimated transition:transition];
+        
+        AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+        if (videoTrack) {
+            if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+                [self __createVideoObj:videoAsset isFixedOrientation:NO animated:isAnimated];
+            } else {
+                [self __exportFixOrientationVideo:videoAsset
+                                         animated:isAnimated
+                                    startFixBlock:startFixBlock
+                                 fixProgressBlock:fixProgressBlock
+                                 fixCompleteBlock:fixCompleteBlock];
+            }
+        }
     }
 }
 
@@ -1365,7 +1426,7 @@
 
 // 裁剪整段视频
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
-                progressBlock:(JPCropVideoProgressBlock)progressBlock
+                progressBlock:(JPVideoExportProgressBlock)progressBlock
                    errorBlock:(JPCropErrorBlock)errorBlock
                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
     [self cropVideoWithPresetName:AVAssetExportPresetHighestQuality
@@ -1378,7 +1439,7 @@
 // 裁剪整段视频
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
-                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                 progressBlock:(JPVideoExportProgressBlock)progressBlock
                     errorBlock:(JPCropErrorBlock)errorBlock
                  completeBlock:(JPCropVideoCompleteBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {

@@ -30,7 +30,7 @@
 
 /*!
  @method
- @brief 类方法（推荐）
+ @brief 创建方法
  @param configure --- 可配置以下初始化参数
     image --- 裁剪的图片/GIF（UIImage）
     imageData --- 裁剪的图片/GIF（NSData）
@@ -58,13 +58,21 @@
     maskImage --- 蒙版图片
     isArbitrarilyMask --- 蒙版图片是否可以以任意比例进行拖拽形变
     isLoopPlaybackGIF --- 是否重复循环GIF播放（NO则有拖动条控制）
+    startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
+    fixProgressBlock --- 修正视频方向的进度回调
+    fixCompleteBlock --- 修正视频方向的完成回调
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
  */
+// 类工厂
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
+// 实例工厂
+- (instancetype)initWithConfigure:(JPImageresizerConfigure *)configure
+        imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
+     imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
 /** 边框样式 */
 @property (nonatomic) JPImageresizerFrameType frameType;
@@ -83,21 +91,27 @@
 
 /**
  * 裁剪的图片/GIF（UIImage）
- * 设置该值会调用 -setImage: animated: transition: 方法（默认isAnimated = YES，transition = UIViewAnimationOptionTransitionCrossDissolve，淡入淡出的效果）
+ * 设置该值会调用 -setImage: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
  */
 @property (nonatomic, strong) UIImage *image;
 
 /**
  * 裁剪的图片/GIF（NSData）
- * 设置该值会调用 -setImageData: animated: transition: 方法（默认isAnimated = YES，transition = UIViewAnimationOptionTransitionCrossDissolve，淡入淡出的效果）
+ * 设置该值会调用 -setImageData: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
  */
 @property (nonatomic, strong) NSData *imageData;
 
 /**
- * 裁剪的视频URL
- * 设置该值会调用 -setVideoURL: animated: transition: 方法（默认isAnimated = YES，transition = UIViewAnimationOptionTransitionCrossDissolve，淡入淡出的效果）
+ * 裁剪的视频（NSURL）
+ * 设置该值需调用 -setVideoURL: animated: fixProgressBlock: fixCompleteBlock: 方法
  */
-@property (nonatomic) NSURL *videoURL;
+@property (readonly) NSURL *videoURL;
+
+/**
+ * 裁剪的视频（AVURLAsset）
+ * 设置该值需调用 -setVideoAsset: animated: fixProgressBlock: fixCompleteBlock: 方法
+ */
+@property (readonly) AVURLAsset *videoAsset;
 
 /**
  * 模糊效果
@@ -197,31 +211,51 @@
  @method
  @brief 更换裁剪的图片/GIF（UIImage）
  @param image --- 裁剪的图片/GIF
- @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationOptionTransitionNone则默认为淡入淡出效果）
- @param isAnimated --- 是否带动画效果
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
  @discussion 更换裁剪的图片，裁剪宽高比会重置
  */
-- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition;
+- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated;
 
 /*!
  @method
  @brief 更换裁剪的图片/GIF（NSData）
  @param imageData --- 裁剪的二进制图片/GIF
- @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationOptionTransitionNone则默认为淡入淡出效果）
- @param isAnimated --- 是否带动画效果
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
  @discussion 更换裁剪的图片，裁剪宽高比会重置
  */
-- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition;
+- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated;
 
 /*!
  @method
- @brief 更换裁剪的视频模型
- @param videoURL --- 裁剪的视频URL
- @param transition --- 切换效果（isAnimated为YES才生效，若为UIViewAnimationOptionTransitionNone则默认为淡入淡出效果）
- @param isAnimated --- 是否带动画效果
+ @brief 更换裁剪的视频
+ @param videoURL --- 裁剪的视频（NSURL）
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @param startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
+ @param fixProgressBlock --- 修正方向时的进度回调
+ @param fixCompleteBlock --- 修正方向完成后的回调
  @discussion 更换裁剪的视频，裁剪宽高比会重置
  */
-- (void)setVideoURL:(NSURL *)videoURL animated:(BOOL)isAnimated transition:(UIViewAnimationOptions)transition;
+- (void)setVideoURL:(NSURL *)videoURL
+           animated:(BOOL)isAnimated
+      startFixBlock:(void(^)(void))startFixBlock
+   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+
+/*!
+ @method
+ @brief 更换裁剪的视频
+ @param videoAsset --- 裁剪的视频（AVURLAsset）
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @param startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
+ @param fixProgressBlock --- 修正方向时的进度回调
+ @param fixCompleteBlock --- 修正方向完成后的回调
+ @discussion 更换裁剪的视频，裁剪宽高比会重置
+ */
+- (void)setVideoAsset:(AVURLAsset *)videoAsset
+             animated:(BOOL)isAnimated
+        startFixBlock:(void(^)(void))startFixBlock
+     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
+     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
 
 #pragma mark - 设置颜色
 /*!
@@ -573,7 +607,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
  */
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
-                progressBlock:(JPCropVideoProgressBlock)progressBlock
+                progressBlock:(JPVideoExportProgressBlock)progressBlock
                    errorBlock:(JPCropErrorBlock)errorBlock
                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 
@@ -589,14 +623,14 @@
  */
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
-                 progressBlock:(JPCropVideoProgressBlock)progressBlock
+                 progressBlock:(JPVideoExportProgressBlock)progressBlock
                     errorBlock:(JPCropErrorBlock)errorBlock
                  completeBlock:(JPCropVideoCompleteBlock)completeBlock;
 
 /*!
  @method
  @brief 取消视频导出
- @discussion 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPCEReason_ExportCancelled）
+ @discussion 当视频正在导出时（包括修正方向时）调用即可取消导出，触发errorBlock回调（JPCEReason_ExportCancelled）
  */
 - (void)videoCancelExport;
 

@@ -155,7 +155,7 @@ static JPObject *obj_;
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)replace:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler fromVC:(UIViewController *)fromVC {
++ (void)replaceObj:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -176,23 +176,27 @@ static JPObject *obj_;
         handler(nil, [NSData dataWithContentsOfFile:JPMainBundleResourcePath(@"Gem.gif", nil)], nil);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        obj_ = [JPObject new];
-        obj_.replaceHandler = handler;
-        
-        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-        picker.delegate = obj_;
-        NSMutableArray *mediaTypes = @[(NSString *)kUTTypeMovie,
-                                       (NSString *)kUTTypeVideo,
-                                       (NSString *)kUTTypeImage].mutableCopy;
-        if (@available(iOS 9.0, *)) {
-            [mediaTypes addObject:(NSString *)kUTTypeLivePhoto];
-        }
-        picker.mediaTypes = mediaTypes;
-        picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
-        [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
+        [self openAlbum:handler fromVC:fromVC];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
+}
+
++ (void)openAlbum:(void (^)(UIImage *, NSData *, NSURL *))handler fromVC:(UIViewController *)fromVC {
+    obj_ = [JPObject new];
+    obj_.replaceHandler = handler;
+    
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = obj_;
+    NSMutableArray *mediaTypes = @[(NSString *)kUTTypeMovie,
+                                   (NSString *)kUTTypeVideo,
+                                   (NSString *)kUTTypeImage].mutableCopy;
+//    if (@available(iOS 9.0, *)) {
+//        [mediaTypes addObject:(NSString *)kUTTypeLivePhoto];
+//    }
+    picker.mediaTypes = mediaTypes;
+    picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
+    [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
 }
 
 @end

@@ -345,7 +345,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KkI-76-JkC">
-                                        <rect key="frame" x="172" y="522.5" width="70" height="30"/>
+                                        <rect key="frame" x="172" y="567.5" width="70" height="30"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="Kk6-s1-Glc"/>
@@ -367,7 +367,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="KkI-76-JkC" firstAttribute="centerY" secondItem="qPy-Ya-xPL" secondAttribute="centerY" multiplier="1.2" id="VFh-ut-d20"/>
+                                    <constraint firstItem="KkI-76-JkC" firstAttribute="centerY" secondItem="qPy-Ya-xPL" secondAttribute="centerY" multiplier="1.3" id="VFh-ut-d20"/>
                                     <constraint firstItem="KkI-76-JkC" firstAttribute="centerX" secondItem="qPy-Ya-xPL" secondAttribute="centerX" id="qY8-bp-5PA"/>
                                 </constraints>
                             </view>
@@ -486,7 +486,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZRh-CY-pR9">
-                                <rect key="frame" x="0.0" y="818" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="lbt-yM-C1L"/>
                                     <barButtonItem systemItem="play" id="dUp-dt-HZE">
