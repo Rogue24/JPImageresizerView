@@ -10,8 +10,7 @@
 #import "JPImageresizerTypedef.h"
 
 @interface JPImageresizerConfigure : NSObject
-/**
- * 默认参数值：
+/* 默认参数值：
     - viewFrame = [UIScreen mainScreen].bounds;
     - frameType = JPConciseFrameType;
     - animationCurve = JPAnimationCurveLinear;
@@ -33,59 +32,96 @@
     - gridCount = 3;
     - maskImage = nil;
     - isArbitrarilyMask = NO;
-    - isLoopPlaybackGIF = NO;
+    - isLoopPlaybackGIF = NO; */
+/**
+ * 默认配置裁剪图片/GIF（UIImage）
  */
 + (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void(^)(JPImageresizerConfigure *configure))make;
+/**
+ * 默认配置裁剪图片/GIF（NSData）
+ */
 + (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
+/**
+ * 默认配置裁剪视频（NSURL）
+ */
 + (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL
                                         make:(void(^)(JPImageresizerConfigure *configure))make
-                               startFixBlock:(void(^)(void))startFixBlock
-                            fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                            fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                               fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                               fixStartBlock:(void(^)(void))fixStartBlock
+                            fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                            fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+/**
+ * 默认配置裁剪视频（AVURLAsset）
+ */
 + (instancetype)defaultConfigureWithVideoAsset:(AVURLAsset *)videoAsset
                                           make:(void(^)(JPImageresizerConfigure *configure))make
-                                 startFixBlock:(void(^)(void))startFixBlock
-                              fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                              fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                                 fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                                 fixStartBlock:(void(^)(void))fixStartBlock
+                              fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                              fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-/**
- * 默认参数的基础上：
+/* 默认参数的基础上：
     - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     - bgColor = UIColor.whiteColor;
     - maskAlpha = 0.3;
-    - strokeColor = R: 56, G: 121,  B: 242
+    - strokeColor = R: 56, G: 121, B: 242 */
+/**
+ * 浅色毛玻璃配置裁剪图片/GIF（UIImage）
  */
 + (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
+/**
+ * 浅色毛玻璃配置裁剪图片/GIF（NSData）
+ */
 + (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
+/**
+ * 浅色毛玻璃配置裁剪视频（NSURL）
+ */
 + (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
                                                   make:(void (^)(JPImageresizerConfigure *configure))make
-                                         startFixBlock:(void(^)(void))startFixBlock
-                                      fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                                      fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                                         fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                                         fixStartBlock:(void(^)(void))fixStartBlock
+                                      fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                                      fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+/**
+ * 浅色毛玻璃配置裁剪视频（AVURLAsset）
+ */
 + (instancetype)lightBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
                                                     make:(void (^)(JPImageresizerConfigure *configure))make
-                                           startFixBlock:(void(^)(void))startFixBlock
-                                        fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                                        fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                                           fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                                           fixStartBlock:(void(^)(void))fixStartBlock
+                                        fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                                        fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-/**
- * 默认参数的基础上：
+/* 默认参数的基础上：
     - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     - bgColor = UIColor.blackColor;
-    - maskAlpha = 0.3;
+    - maskAlpha = 0.3; */
+/**
+ * 深色毛玻璃配置裁剪图片/GIF（UIImage）
  */
 + (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
+/**
+ * 深色毛玻璃配置裁剪图片/GIF（NSData）
+ */
 + (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
+/**
+ * 深色毛玻璃配置裁剪视频（NSURL）
+ */
 + (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
                                                  make:(void (^)(JPImageresizerConfigure *configure))make
-                                        startFixBlock:(void(^)(void))startFixBlock
-                                     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                                     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                                        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                                        fixStartBlock:(void(^)(void))fixStartBlock
+                                     fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                                     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+/**
+ * 深色毛玻璃配置裁剪视频（AVURLAsset）
+ */
 + (instancetype)darkBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
                                                    make:(void (^)(JPImageresizerConfigure *configure))make
-                                          startFixBlock:(void(^)(void))startFixBlock
-                                       fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                                       fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+                                          fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                                          fixStartBlock:(void(^)(void))fixStartBlock
+                                       fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+                                       fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
 /** 裁剪的图片/GIF（UIImage） */
 @property (nonatomic, strong) UIImage *image;
@@ -99,14 +135,17 @@
 /** 裁剪的视频（AVURLAsset） */
 @property (nonatomic, strong) AVURLAsset *videoAsset;
 
-/** 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用） */
-@property (nonatomic, copy) void(^startFixBlock)(void);
+/** 修正视频方向的错误回调 */
+@property (nonatomic, copy) JPImageresizerErrorBlock fixErrorBlock;
+
+/** 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用） */
+@property (nonatomic, copy) void(^fixStartBlock)(void);
 
 /** 修正视频方向的进度回调 */
-@property (nonatomic, copy) JPVideoExportProgressBlock fixProgressBlock;
+@property (nonatomic, copy) JPExportVideoProgressBlock fixProgressBlock;
 
-/** 修正视频方向的完成回调 */
-@property (nonatomic, copy) JPVideoFixOrientationCompleteBlock fixCompleteBlock;
+/** 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径） */
+@property (nonatomic, copy) JPExportVideoCompleteBlock fixCompleteBlock;
 
 /** 视图区域 */
 @property (nonatomic, assign) CGRect viewFrame;

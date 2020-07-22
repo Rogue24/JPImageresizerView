@@ -23,4 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomView;
 @property (nonatomic, weak) JPImageresizerView *imageresizerView;
 @property (nonatomic, copy) void (^backBlock)(JPViewController *vc);
+
++ (void)showErrorMsg:(JPImageresizerErrorReason)reason pathExtension:(NSString *)pathExtension;
 @end

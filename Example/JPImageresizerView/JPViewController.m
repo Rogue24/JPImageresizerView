@@ -38,7 +38,6 @@
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *portraitConstraints;
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
 
-@property (weak, nonatomic) IBOutlet UIView *exportCancelView;
 @property (nonatomic, assign) BOOL isExporting;
 @end
 
@@ -104,12 +103,6 @@
 
 - (void)__setupBase {
     self.view.backgroundColor = self.configure.bgColor;
-    self.exportCancelView.userInteractionEnabled = NO;
-    self.exportCancelView.alpha = 0;
-    
-    self.frameType = self.configure.frameType;
-    self.maskImage = self.configure.maskImage;
-    self.recoveryBtn.enabled = NO;
     
     // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
     if (@available(iOS 11.0, *)) {
@@ -117,6 +110,10 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
+    
+    self.frameType = self.configure.frameType;
+    self.maskImage = self.configure.maskImage;
+    self.recoveryBtn.enabled = NO;
 }
 
 - (void)__setupConstraints {
@@ -483,22 +480,17 @@ static UIViewController *tmpVC_;
             self.imageresizerView.imageData = imageData;
         } else if (videoURL) {
             @jp_weakify(self);
-            [self.imageresizerView setVideoURL:videoURL animated:YES startFixBlock:^{
+            [self.imageresizerView setVideoURL:videoURL animated:YES fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+                weak_self.isExporting = NO;
+                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            } fixStartBlock:^{
                 [JPProgressHUD show];
             } fixProgressBlock:^(float progress) {
                 weak_self.isExporting = YES;
                 [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100] userInteractionEnabled:YES];
-            } fixCompleteBlock:^(NSURL *videoURL, BOOL isCanceled) {
+            } fixCompleteBlock:^(NSURL *cacheURL) {
                 weak_self.isExporting = NO;
-                if (videoURL) {
-                    [JPProgressHUD dismiss];
-                } else {
-                    if (isCanceled) {
-                        [JPProgressHUD showInfoWithStatus:@"视频导出已取消" userInteractionEnabled:YES];
-                    } else {
-                        [JPProgressHUD showErrorWithStatus:@"视频方向修正失败" userInteractionEnabled:YES];
-                    }
-                }
+                [JPProgressHUD dismiss];
             }];
         }
     } fromVC:self];
@@ -513,10 +505,10 @@ static UIViewController *tmpVC_;
         UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
-            [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -525,10 +517,10 @@ static UIViewController *tmpVC_;
         }]];
         [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [JPProgressHUD show];
-            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -547,10 +539,10 @@ static UIViewController *tmpVC_;
     if (self.imageresizerView.isGIF) {
         void (^cropGIF)(void) = ^{
             [JPProgressHUD show];
-            [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+            [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 // 裁剪完成，finalImage为裁剪后的图片
                 // 注意循环引用
@@ -565,10 +557,10 @@ static UIViewController *tmpVC_;
             UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             [alertCtr addAction:[UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [JPProgressHUD show];
-                [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+                [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                     @jp_strongify(self);
                     if (!self) return;
-                    [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                    [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
                 } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                     // 裁剪完成，finalImage为裁剪后的图片
                     // 注意循环引用
@@ -588,10 +580,10 @@ static UIViewController *tmpVC_;
     
     // 裁剪图片
     [JPProgressHUD show];
-    [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+    [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         @jp_strongify(self);
         if (!self) return;
-        [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
     } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
         // 裁剪完成，finalImage为裁剪后的图片
         // 注意循环引用
@@ -599,11 +591,6 @@ static UIViewController *tmpVC_;
         if (!self) return;
         [self __imageresizerDone:finalImage cacheURL:cacheURL];
     }];
-}
-
-#pragma mark 取消导出（视频裁剪）
-- (IBAction)exportCancel {
-    [self.imageresizerView videoCancelExport];
 }
 
 #pragma mark - 以当前时间戳生成缓存路径
@@ -641,19 +628,13 @@ static UIViewController *tmpVC_;
 - (void)__cropVideo {
     [JPProgressHUD show];
     @jp_weakify(self);
-    [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] progressBlock:^(float progress) {
-        
+    [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+        weak_self.isExporting = NO;
+        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+    } progressBlock:^(float progress) {
         // 监听进度
         weak_self.isExporting = YES;
         [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100] userInteractionEnabled:YES];
-        
-    } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-        @jp_strongify(self);
-        if (!self) return;
-        
-        self.isExporting = NO;
-        [self __showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-        
     } completeBlock:^(NSURL *cacheURL) {
         // 裁剪完成
         [JPProgressHUD dismiss];
@@ -671,30 +652,37 @@ static UIViewController *tmpVC_;
 - (void)setIsExporting:(BOOL)isExporting {
     if (_isExporting == isExporting) return;
     _isExporting = isExporting;
-    self.exportCancelView.userInteractionEnabled = isExporting;
-    [UIView animateWithDuration:0.25 animations:^{
-        self.exportCancelView.alpha = isExporting ? 1 : 0;
-    }];
+    if (isExporting) {
+        @jp_weakify(self);
+        [JPExportCancelView showWithCancelHandler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [self.imageresizerView videoCancelExport];
+        }];
+    } else {
+        [JPExportCancelView hide];
+    }
 }
 
-- (void)__showErrorMsg:(JPCropErrorReason)reason pathExtension:(NSString *)pathExtension {
+#pragma mark - 打印错误信息
++ (void)showErrorMsg:(JPImageresizerErrorReason)reason pathExtension:(NSString *)pathExtension {
     switch (reason) {
-        case JPCEReason_NilObject:
+        case JPIEReason_NilObject:
             [JPProgressHUD showErrorWithStatus:@"资源为空" userInteractionEnabled:YES];
             break;
-        case JPCEReason_CacheURLAlreadyExists:
+        case JPIEReason_CacheURLAlreadyExists:
             [JPProgressHUD showErrorWithStatus:@"缓存路径已存在其他文件" userInteractionEnabled:YES];
             break;
-        case JPCEReason_NoSupportedFileType:
+        case JPIEReason_NoSupportedFileType:
             [JPProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"“%@” 不支持的文件格式", pathExtension] userInteractionEnabled:YES];
             break;
-        case JPCEReason_VideoAlreadyDamage:
+        case JPIEReason_VideoAlreadyDamage:
             [JPProgressHUD showErrorWithStatus:@"视频文件已损坏" userInteractionEnabled:YES];
             break;
-        case JPCEReason_VideoExportFailed:
+        case JPIEReason_VideoExportFailed:
             [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
             break;
-        case JPCEReason_VideoExportCancelled:
+        case JPIEReason_VideoExportCancelled:
             [JPProgressHUD showInfoWithStatus:@"视频导出取消" userInteractionEnabled:YES];
             break;
     }

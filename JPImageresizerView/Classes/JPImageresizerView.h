@@ -58,9 +58,10 @@
     maskImage --- 蒙版图片
     isArbitrarilyMask --- 蒙版图片是否可以以任意比例进行拖拽形变
     isLoopPlaybackGIF --- 是否重复循环GIF播放（NO则有拖动条控制）
-    startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
+    fixErrorBlock --- 修正视频方向的错误回调
+    fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
     fixProgressBlock --- 修正视频方向的进度回调
-    fixCompleteBlock --- 修正视频方向的完成回调
+    fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
@@ -230,32 +231,36 @@
  @brief 更换裁剪的视频
  @param videoURL --- 裁剪的视频（NSURL）
  @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @param startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
- @param fixProgressBlock --- 修正方向时的进度回调
- @param fixCompleteBlock --- 修正方向完成后的回调
+ @param fixErrorBlock  --- 修正视频方向的错误回调
+ @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
+ @param fixProgressBlock --- 修正视频方向的进度回调
+ @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
  @discussion 更换裁剪的视频，裁剪宽高比会重置
  */
 - (void)setVideoURL:(NSURL *)videoURL
            animated:(BOOL)isAnimated
-      startFixBlock:(void(^)(void))startFixBlock
-   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+      fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+      fixStartBlock:(void(^)(void))fixStartBlock
+   fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+   fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
 /*!
  @method
  @brief 更换裁剪的视频
  @param videoAsset --- 裁剪的视频（AVURLAsset）
  @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @param startFixBlock --- 开始修正视频方向的回调（如果视频不需要修正，该Block和fixProgressBlock、fixCompleteBlock均不会调用）
- @param fixProgressBlock --- 修正方向时的进度回调
- @param fixCompleteBlock --- 修正方向完成后的回调
+ @param fixErrorBlock  --- 修正视频方向的错误回调
+ @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
+ @param fixProgressBlock --- 修正视频方向的进度回调
+ @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
  @discussion 更换裁剪的视频，裁剪宽高比会重置
  */
 - (void)setVideoAsset:(AVURLAsset *)videoAsset
              animated:(BOOL)isAnimated
-        startFixBlock:(void(^)(void))startFixBlock
-     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock;
+        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+        fixStartBlock:(void(^)(void))fixStartBlock
+     fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
 #pragma mark - 设置颜色
 /*!
@@ -417,7 +422,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropPictureWithCacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -431,7 +436,7 @@
  */
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
-                          errorBlock:(JPCropErrorBlock)errorBlock
+                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                        completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 #pragma mark 裁剪GIF
@@ -444,7 +449,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithCacheURL:(NSURL *)cacheURL
-                 errorBlock:(JPCropErrorBlock)errorBlock
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -458,7 +463,7 @@
  */
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -476,7 +481,7 @@
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -488,7 +493,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
-                             errorBlock:(JPCropErrorBlock)errorBlock
+                             errorBlock:(JPImageresizerErrorBlock)errorBlock
                           completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -502,7 +507,7 @@
  */
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                     cacheURL:(NSURL *)cacheURL
-                                  errorBlock:(JPCropErrorBlock)errorBlock
+                                  errorBlock:(JPImageresizerErrorBlock)errorBlock
                                completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -518,7 +523,7 @@
 - (void)cropGIFWithIndex:(NSUInteger)index
            compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
-              errorBlock:(JPCropErrorBlock)errorBlock
+              errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 #pragma mark 裁剪视频
@@ -530,7 +535,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPCropErrorBlock)errorBlock
+                               errorBlock:(JPImageresizerErrorBlock)errorBlock
                             completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -543,7 +548,7 @@
  */
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                       cacheURL:(NSURL *)cacheURL
-                                    errorBlock:(JPCropErrorBlock)errorBlock
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                                  completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -558,7 +563,7 @@
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
-                         errorBlock:(JPCropErrorBlock)errorBlock
+                         errorBlock:(JPImageresizerErrorBlock)errorBlock
                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -572,7 +577,7 @@
  */
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
-                                         errorBlock:(JPCropErrorBlock)errorBlock
+                                         errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -594,7 +599,7 @@
                                  rate:(float)rate
                           maximumSize:(CGSize)maximumSize
                              cacheURL:(NSURL *)cacheURL
-                           errorBlock:(JPCropErrorBlock)errorBlock
+                           errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /*!
@@ -607,30 +612,30 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
  */
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
-                progressBlock:(JPVideoExportProgressBlock)progressBlock
-                   errorBlock:(JPCropErrorBlock)errorBlock
-                completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                progressBlock:(JPExportVideoProgressBlock)progressBlock
+                completeBlock:(JPExportVideoCompleteBlock)completeBlock;
 
 /*!
  @method
  @brief 裁剪整段视频
  @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
- @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
+ @param progressBlock --- 进度回调
  @param completeBlock --- 裁剪完成的回调（返回缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
-                 progressBlock:(JPVideoExportProgressBlock)progressBlock
-                    errorBlock:(JPCropErrorBlock)errorBlock
-                 completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                  progressBlock:(JPExportVideoProgressBlock)progressBlock
+                  completeBlock:(JPExportVideoCompleteBlock)completeBlock;
 
 /*!
  @method
  @brief 取消视频导出
- @discussion 当视频正在导出时（包括修正方向时）调用即可取消导出，触发errorBlock回调（JPCEReason_ExportCancelled）
+ @discussion 当视频正在导出时（裁剪、修正方向）调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
  */
 - (void)videoCancelExport;
 

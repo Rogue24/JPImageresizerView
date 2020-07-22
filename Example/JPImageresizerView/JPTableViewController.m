@@ -93,7 +93,7 @@
         configure
         .jp_borderImage([JPViewController stretchBorderImage])
         .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
-    } startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+    } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
     
     NSString *gifPath = JPMainBundleResourcePath(@"Gem.gif", nil);
     JPConfigureModel *model10 = [self new];
@@ -111,7 +111,8 @@
 @property (nonatomic, copy) NSArray<JPConfigureModel *> *models;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, copy) JPVideoExportProgressBlock progressBlock;
+@property (nonatomic, copy) JPExportVideoProgressBlock progressBlock;
+@property (nonatomic, assign) BOOL isExporting;
 @end
 
 @implementation JPTableViewController
@@ -283,78 +284,94 @@ static JPImageresizerConfigure *gifConfigure_;
             JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:nil];
             [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
         } else if (videoURL) {
-            [self __confirmVideo:videoURL isConfirmOutSide:YES];
+            [self __confirmVideo:videoURL isConfirmOutSide:NO];
         }
     } fromVC:self];
 }
 
-#pragma mark - 判断视频是否需要修正方向
+#pragma mark - 判断视频是否需要修正方向（内部or外部修正）
 - (void)__confirmVideo:(NSURL *)videoURL isConfirmOutSide:(BOOL)isConfirmOutSide {
-    
     
     @jp_weakify(self);
     if (!isConfirmOutSide) {
         
 #pragma mark 内部修正（进入页面后修正）
-        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil startFixBlock:^{
+        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+            [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            @jp_strongify(self);
+            if (!self) return;
+            [self.navigationController popViewControllerAnimated:YES];
+        } fixStartBlock:^{
             [JPProgressHUD show];
         } fixProgressBlock:^(float progress) {
             [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100]];
-        } fixCompleteBlock:^(NSURL *videoURL, BOOL isCanceled) {
-            if (videoURL) {
-                [JPProgressHUD dismiss];
-            } else {
-                if (isCanceled) {
-                    [JPProgressHUD showInfoWithStatus:@"视频导出已取消" userInteractionEnabled:YES];
-                } else {
-                    [JPProgressHUD showErrorWithStatus:@"视频修正失败" userInteractionEnabled:YES];
-                }
-                
-                @jp_strongify(self);
-                if (!self) return;
-                [self.navigationController popViewControllerAnimated:YES];
-            }
+        } fixCompleteBlock:^(NSURL *cacheURL) {
+            [JPProgressHUD dismiss];
         }];
         [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
         return;
     }
     
 #pragma mark 外部修正（进入页面前修正）
-    [JPProgressHUD show];
+    
     AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
-        if ([videoAsset statusOfValueForKey:@"duration" error:nil] &&
-            [videoAsset statusOfValueForKey:@"tracks" error:nil]) {
-            AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
-            if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [JPProgressHUD dismiss];
-                    @jp_strongify(self);
-                    if (!self) return;
-                    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
-                    [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
-                });
-                return;
-            }
-            [JPImageresizerTool exportFixOrientationVideoWithAsset:videoAsset exportSessionBlock:^(AVAssetExportSession *exportSession) {
-                [weak_self __addProgressTimer:^(float progress) {
-                    [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100]];
-                } exporterSession:exportSession];
-            } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-                [JPProgressHUD showErrorWithStatus:@"视频方向修正失败" userInteractionEnabled:YES];
-            } completeBlock:^(NSURL *cacheURL) {
-                [JPProgressHUD dismiss];
-                @jp_strongify(self);
-                if (!self) return;
-                JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil startFixBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
-                [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
-            }];
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [JPProgressHUD showErrorWithStatus:@"视频获取失败" userInteractionEnabled:YES];
-            });
-        }
+        dispatch_semaphore_signal(semaphore);
     }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+    if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        return;
+    }
+    
+    [JPProgressHUD show];
+    [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+        
+        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        
+        @jp_strongify(self);
+        if (!self) return;
+        self.isExporting = NO;
+        
+    } fixStartBlock:^(AVAssetExportSession *exportSession) {
+        
+        @jp_strongify(self);
+        if (!self) return;
+        self.isExporting = YES;
+        
+        [self __addProgressTimer:^(float progress) {
+            [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100] userInteractionEnabled:YES];
+        } exporterSession:exportSession];
+        
+    } fixCompleteBlock:^(NSURL *cacheURL) {
+        [JPProgressHUD dismiss];
+        
+        @jp_strongify(self);
+        if (!self) return;
+        self.isExporting = NO;
+        
+        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+    }];
+}
+
+- (void)setIsExporting:(BOOL)isExporting {
+    if (_isExporting == isExporting) return;
+    _isExporting = isExporting;
+    if (isExporting) {
+        @jp_weakify(self);
+        [JPExportCancelView showWithCancelHandler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [self.exporterSession cancelExport];
+        }];
+    } else {
+        [JPExportCancelView hide];
+    }
 }
 
 #pragma mark - 开始裁剪
@@ -375,7 +392,7 @@ static JPImageresizerConfigure *gifConfigure_;
 
 #pragma mark - 监听视频导出进度的定时器
 
-- (void)__addProgressTimer:(JPVideoExportProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
+- (void)__addProgressTimer:(JPExportVideoProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
     [self __removeProgressTimer];
     if (progressBlock == nil || exporterSession == nil) return;
     self.exporterSession = exporterSession;

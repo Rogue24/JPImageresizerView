@@ -352,7 +352,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 执行回调的Block
-+ (void)__executeErrorBlock:(JPCropErrorBlock)block cacheURL:(NSURL *)cacheURL reason:(JPCropErrorReason)reason {
++ (void)__executeErrorBlock:(JPImageresizerErrorBlock)block cacheURL:(NSURL *)cacheURL reason:(JPImageresizerErrorReason)reason {
     if (!block) return;
     dispatch_async(dispatch_get_main_queue(), ^{
         block(cacheURL, reason);
@@ -364,7 +364,13 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         block(finalImage, isCacheSuccess ? cacheURL : nil, isCacheSuccess);
     });
 }
-+ (void)__executeCropVideoCompleteBlock:(JPCropVideoCompleteBlock)block cacheURL:(NSURL *)cacheURL {
++ (void)__executeExportVideoStart:(JPExportVideoStartBlock)block exportSession:(AVAssetExportSession *)exportSession {
+    if (!block) return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(exportSession);
+    });
+}
++ (void)__executeExportVideoCompleteBlock:(JPExportVideoCompleteBlock)block cacheURL:(NSURL *)cacheURL {
     if (!block) return;
     dispatch_async(dispatch_get_main_queue(), ^{
         block(cacheURL);
@@ -427,11 +433,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             configure:(JPCropConfigure)configure
         compressScale:(CGFloat)compressScale
              cacheURL:(NSURL *)cacheURL
-           errorBlock:(JPCropErrorBlock)errorBlock
+           errorBlock:(JPImageresizerErrorBlock)errorBlock
         completeBlock:(JPCropPictureDoneBlock)completeBlock {
     
     if ((!image && !imageData) || compressScale <= 0) {
-        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     
@@ -455,7 +461,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     if (!image) image = [UIImage imageWithData:imageData];
     if (!image) {
-        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     
@@ -500,7 +506,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                 cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", absoluteString, extension]];
             }
             if ([[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path]) {
-                [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
+                [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_CacheURLAlreadyExists];
                 return;
             }
         }
@@ -833,7 +839,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                    configure:(JPCropConfigure)configure
                compressScale:(CGFloat)compressScale
                     cacheURL:(NSURL *)cacheURL
-                  errorBlock:(JPCropErrorBlock)errorBlock
+                  errorBlock:(JPImageresizerErrorBlock)errorBlock
                completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:image
               imageData:nil
@@ -856,7 +862,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                        configure:(JPCropConfigure)configure
                    compressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:imageData
@@ -882,7 +888,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
-                 errorBlock:(JPCropErrorBlock)errorBlock
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
@@ -905,7 +911,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
-                 errorBlock:(JPCropErrorBlock)errorBlock
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
@@ -929,7 +935,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
@@ -952,7 +958,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
@@ -979,10 +985,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (!asset || compressScale <= 0) {
-        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     if (compressScale > 1) compressScale = 1;
@@ -1021,7 +1027,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                       maskImage:(UIImage *)maskImage
                       configure:(JPCropConfigure)configure
                        cacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -1119,11 +1125,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *)cacheURL
-        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
-                errorBlock:(JPCropErrorBlock)errorBlock
-             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
+                startBlock:(JPExportVideoStartBlock)startBlock
+             completeBlock:(JPExportVideoCompleteBlock)completeBlock {
     if (!asset) {
-        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NilObject];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NilObject];
         return;
     }
     
@@ -1135,8 +1141,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                           presetName:presetName
                            configure:configure
                             cacheURL:cacheURL
-                  exportSessionBlock:exportSessionBlock
                           errorBlock:errorBlock
+                          startBlock:startBlock
                        completeBlock:completeBlock];
         });
         return;
@@ -1152,7 +1158,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         }
         // 判断缓存路径是否已经存在
         if ([fileManager fileExistsAtPath:cacheURL.path]) {
-            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_CacheURLAlreadyExists];
+            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_CacheURLAlreadyExists];
             return;
         }
         // 设置临时导出路径
@@ -1173,14 +1179,14 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 根据文件后缀名获取文件类型
     AVFileType fileType = [self videoFileTypeForURL:cacheURL];
     if (!fileType) {
-        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NoSupportedFileType];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NoSupportedFileType];
         return;
     }
     
     // 获取视频轨道
     AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
     if (!videoTrack) {
-        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_VideoAlreadyDamage];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_VideoAlreadyDamage];
         return;
     }
     
@@ -1200,13 +1206,12 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 创建视频导出会话
     AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
     if (![session.supportedFileTypes containsObject:fileType]) {
-        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPCEReason_NoSupportedFileType];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NoSupportedFileType];
         return;
     }
     session.outputFileType = fileType;
     session.outputURL = tmpURL;
     session.shouldOptimizeForNetworkUse = YES;
-    !exportSessionBlock ? : exportSessionBlock(session);
     
     // 获取配置属性
     JPImageresizerRotationDirection direction = configure.direction;
@@ -1248,41 +1253,44 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     videoComposition.renderSize = renderSize;
     
     session.videoComposition = videoComposition;
+    
     // 开始导出
+    [self __executeExportVideoStart:startBlock exportSession:session];
+    
     [session exportAsynchronouslyWithCompletionHandler:^{
         AVAssetExportSessionStatus status = session.status;
         if (status == AVAssetExportSessionStatusCompleted) {
             if ([tmpURL isEqual:cacheURL]) {
-                [self __executeCropVideoCompleteBlock:completeBlock cacheURL:cacheURL];
+                [self __executeExportVideoCompleteBlock:completeBlock cacheURL:cacheURL];
             } else {
                 NSError *error;
                 [[NSFileManager defaultManager] moveItemAtURL:tmpURL toURL:cacheURL error:&error];
                 if (error) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
-                [self __executeCropVideoCompleteBlock:completeBlock cacheURL:(error ? tmpURL : cacheURL)];
+                [self __executeExportVideoCompleteBlock:completeBlock cacheURL:(error ? tmpURL : cacheURL)];
             }
         } else {
             [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
-            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:(status == AVAssetExportSessionStatusCancelled ?  JPCEReason_VideoExportCancelled : JPCEReason_VideoExportFailed)];
+            [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:(status == AVAssetExportSessionStatusCancelled ?  JPIEReason_VideoExportCancelled : JPIEReason_VideoExportFailed)];
         }
     }];
 }
 
 #pragma mark 修正视频方向并导出
-+ (void)exportFixOrientationVideoWithAsset:(AVURLAsset *)asset
-                        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
-                                errorBlock:(JPCropErrorBlock)errorBlock
-                             completeBlock:(JPCropVideoCompleteBlock)completeBlock {
++ (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset
+                       fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                       fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
+                    fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     if (!asset) {
-        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPCEReason_NilObject];
+        [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self exportFixOrientationVideoWithAsset:asset
-                                  exportSessionBlock:exportSessionBlock
-                                          errorBlock:errorBlock
-                                       completeBlock:completeBlock];
+            [self fixOrientationVideoWithAsset:asset
+                                 fixErrorBlock:fixErrorBlock
+                                 fixStartBlock:fixStartBlock
+                              fixCompleteBlock:fixCompleteBlock];
         });
         return;
     }
@@ -1294,7 +1302,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 根据文件后缀名获取文件类型
     AVFileType fileType = [self videoFileTypeForURL:videoURL];
     if (!fileType) {
-        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_NoSupportedFileType];
+        [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_NoSupportedFileType];
         return;
     }
     
@@ -1309,12 +1317,12 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 获取视频轨道
     AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
     if (!videoTrack) {
-        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_VideoAlreadyDamage];
+        [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_VideoAlreadyDamage];
         return;
     }
     CGAffineTransform preferredTransform = videoTrack.preferredTransform;
     if (CGAffineTransformEqualToTransform(preferredTransform, CGAffineTransformIdentity)) {
-        [self __executeCropVideoCompleteBlock:completeBlock cacheURL:videoURL];
+        [self __executeExportVideoCompleteBlock:fixCompleteBlock cacheURL:videoURL];
         return;
     }
     CGSize renderSize = CGRectApplyAffineTransform((CGRect){CGPointZero, videoTrack.naturalSize}, preferredTransform).size;
@@ -1336,13 +1344,12 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     // 创建视频导出会话
     AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetHighestQuality];
     if (![session.supportedFileTypes containsObject:fileType]) {
-        [self __executeErrorBlock:errorBlock cacheURL:videoURL reason:JPCEReason_NoSupportedFileType];
+        [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_NoSupportedFileType];
         return;
     }
     session.outputFileType = fileType;
     session.outputURL = tmpURL;
     session.shouldOptimizeForNetworkUse = YES;
-    !exportSessionBlock ? : exportSessionBlock(session);
     
     AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
     [layerInstruciton setTransform:preferredTransform atTime:kCMTimeZero];
@@ -1358,14 +1365,17 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     videoComposition.renderSize = renderSize;
     
     session.videoComposition = videoComposition;
+    
     // 开始导出
+    [self __executeExportVideoStart:fixStartBlock exportSession:session];
+    
     [session exportAsynchronouslyWithCompletionHandler:^{
         AVAssetExportSessionStatus status = session.status;
         if (status == AVAssetExportSessionStatusCompleted) {
-            [self __executeCropVideoCompleteBlock:completeBlock cacheURL:tmpURL];
+            [self __executeExportVideoCompleteBlock:fixCompleteBlock cacheURL:tmpURL];
         } else {
             [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
-            [self __executeErrorBlock:errorBlock cacheURL:nil reason:(status == AVAssetExportSessionStatusCancelled ?  JPCEReason_VideoExportCancelled : JPCEReason_VideoExportFailed)];
+            [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:(status == AVAssetExportSessionStatusCancelled ?  JPIEReason_VideoExportCancelled : JPIEReason_VideoExportFailed)];
         }
     }];
 }

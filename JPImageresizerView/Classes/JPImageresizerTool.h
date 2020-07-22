@@ -43,7 +43,7 @@
                    configure:(JPCropConfigure)configure
                compressScale:(CGFloat)compressScale
                     cacheURL:(NSURL *)cacheURL
-                  errorBlock:(JPCropErrorBlock)errorBlock
+                  errorBlock:(JPImageresizerErrorBlock)errorBlock
                completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -54,7 +54,7 @@
                        configure:(JPCropConfigure)configure
                    compressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 #pragma mark - 裁剪GIF
@@ -68,7 +68,7 @@
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
-                 errorBlock:(JPCropErrorBlock)errorBlock
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -80,7 +80,7 @@
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
-                 errorBlock:(JPCropErrorBlock)errorBlock
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -93,7 +93,7 @@
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -105,7 +105,7 @@
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 
@@ -120,7 +120,7 @@
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
-                errorBlock:(JPCropErrorBlock)errorBlock
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -135,7 +135,7 @@
                       maskImage:(UIImage *)maskImage
                       configure:(JPCropConfigure)configure
                        cacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
 
 /**
@@ -147,15 +147,15 @@
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *)cacheURL
-        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
-                errorBlock:(JPCropErrorBlock)errorBlock
-             completeBlock:(JPCropVideoCompleteBlock)completeBlock;
+                errorBlock:(JPImageresizerErrorBlock)errorBlock
+                startBlock:(JPExportVideoStartBlock)startBlock
+             completeBlock:(JPExportVideoCompleteBlock)completeBlock;
 
 /**
- * 修正视频方向并导出
+ * 修正视频方向
  */
-+ (void)exportFixOrientationVideoWithAsset:(AVURLAsset *)asset
-                        exportSessionBlock:(void(^)(AVAssetExportSession *exportSession))exportSessionBlock
-                                errorBlock:(JPCropErrorBlock)errorBlock
-                             completeBlock:(JPCropVideoCompleteBlock)completeBlock;
++ (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset
+                       fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                       fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
+                    fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 @end

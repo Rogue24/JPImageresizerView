@@ -49,6 +49,7 @@
 		1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468CB249A0D9B0081452F /* ShapeMergeCell.m */; };
 		1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468D0249A0DC60081452F /* JPAttachmentFlowLayout.m */; };
 		1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468D5249A0E240081452F /* ShapeListViewController.m */; };
+		1AB5C8E024C7390D007FA965 /* JPExportCancelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB5C8DF24C7390D007FA965 /* JPExportCancelView.m */; };
 		1AD9291C2497169F005F7AF0 /* Girl4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1AD9291B2497169F005F7AF0 /* Girl4.jpg */; };
 		1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */; };
 		21BDBEA482917FC9EB2A4274 /* Pods_JPImageresizerView_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE78341388E24FD10242AEE /* Pods_JPImageresizerView_Example.framework */; };
@@ -160,6 +161,8 @@
 		1AA468D4249A0E240081452F /* ShapeListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeListViewController.h; sourceTree = "<group>"; };
 		1AA468D5249A0E240081452F /* ShapeListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShapeListViewController.m; sourceTree = "<group>"; };
 		1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		1AB5C8DE24C7390D007FA965 /* JPExportCancelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPExportCancelView.h; sourceTree = "<group>"; };
+		1AB5C8DF24C7390D007FA965 /* JPExportCancelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPExportCancelView.m; sourceTree = "<group>"; };
 		1AD9291B2497169F005F7AF0 /* Girl4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl4.jpg; sourceTree = "<group>"; };
 		1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+JPImageresizer.h"; sourceTree = "<group>"; };
 		1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+JPImageresizer.m"; sourceTree = "<group>"; };
@@ -410,6 +413,8 @@
 				6003F5A6195388D20070C39A /* JPViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPImageViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPImageViewController.m */,
+				1AB5C8DE24C7390D007FA965 /* JPExportCancelView.h */,
+				1AB5C8DF24C7390D007FA965 /* JPExportCancelView.m */,
 				1AA468C1249A0CFE0081452F /* 成为吴彦祖 */,
 				1AA468C0249A0CFE0081452F /* 蒙版素材列表 */,
 				1A0AB2DC22B22B0F00B6B6AB /* 个人相册 */,
@@ -666,6 +671,7 @@
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
+				1AB5C8E024C7390D007FA965 /* JPExportCancelView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPImageViewController.m in Sources */,
 				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,

@@ -6,6 +6,8 @@
 //
 //  公共类型定义
 
+#import <AVFoundation/AVFoundation.h>
+
 #pragma mark - 枚举
 
 /**
@@ -48,20 +50,20 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
 
 /**
  * 裁剪视频错误原因
- * JPCEReason_NilObject：裁剪元素为空
- * JPCEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
- * JPCEReason_NoSupportedFileType：不支持的文件类型
- * JPCEReason_VideoAlreadyDamage：视频文件已损坏
- * JPCEReason_VideoExportFailed：视频导出失败
- * JPCEReason_VideoExportCancelled：视频导出取消
+ * JPIEReason_NilObject：裁剪元素为空
+ * JPIEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
+ * JPIEReason_NoSupportedFileType：不支持的文件类型
+ * JPIEReason_VideoAlreadyDamage：视频文件已损坏
+ * JPIEReason_VideoExportFailed：视频导出失败
+ * JPIEReason_VideoExportCancelled：视频导出取消
  */
-typedef NS_ENUM(NSUInteger, JPCropErrorReason) {
-    JPCEReason_NilObject,
-    JPCEReason_CacheURLAlreadyExists,
-    JPCEReason_NoSupportedFileType,
-    JPCEReason_VideoAlreadyDamage,
-    JPCEReason_VideoExportFailed,
-    JPCEReason_VideoExportCancelled
+typedef NS_ENUM(NSUInteger, JPImageresizerErrorReason) {
+    JPIEReason_NilObject,
+    JPIEReason_CacheURLAlreadyExists,
+    JPIEReason_NoSupportedFileType,
+    JPIEReason_VideoAlreadyDamage,
+    JPIEReason_VideoExportFailed,
+    JPIEReason_VideoExportCancelled
 };
 
 #pragma mark - Block
@@ -83,11 +85,11 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 /**
- * 视频裁剪错误的回调
+ * 错误的回调
     - cacheURL：目标存放路径
-    - reason：错误原因（JPCropErrorReason）
+    - reason：错误原因（JPImageresizerErrorReason）
  */
-typedef void(^JPCropErrorBlock)(NSURL *cacheURL, JPCropErrorReason reason);
+typedef void(^JPImageresizerErrorBlock)(NSURL *cacheURL, JPImageresizerErrorReason reason);
 
 /**
  * 图片裁剪完成的回调
@@ -101,20 +103,21 @@ typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage, NSURL *cacheURL, BOOL
  * 视频裁剪导出的进度
     - progress：进度，单位 0~1
  */
-typedef void(^JPVideoExportProgressBlock)(float progress);
+typedef void(^JPExportVideoProgressBlock)(float progress);
 
 /**
- * 视频修正方向导出完成的回调
-    - videoURL：修正过方向的视频导出后的URL，该路径为NSTemporaryDirectory文件夹下，为nil则导出失败或取消
-    - isCanceled：是否取消导出
+ * 视频导出开始的回调
+    - exportSession：导出会话，可用于取消
  */
-typedef void(^JPVideoFixOrientationCompleteBlock)(NSURL *videoURL, BOOL isCanceled);
+typedef void(^JPExportVideoStartBlock)(AVAssetExportSession *exportSession);
 
 /**
- * 视频裁剪完成的回调
-    - cacheURL：导出后的最终存放路径，如果转移失败，该路径为NSTemporaryDirectory文件夹下
+ * 视频导出完成的回调
+    - cacheURL：修正方向/裁剪后的视频导出后的最终存放路径，默认该路径为NSTemporaryDirectory文件夹下
+        - 如果是修正方向的视频，是无需修正的视频，cacheURL则以原路径返回
+        - 如果是裁剪的视频，裁剪后自定义的路径转移失败，cacheURL返回的是也是在NSTemporaryDirectory里
  */
-typedef void(^JPCropVideoCompleteBlock)(NSURL *cacheURL);
+typedef void(^JPExportVideoCompleteBlock)(NSURL *cacheURL);
 
 #pragma mark - 裁剪属性
 

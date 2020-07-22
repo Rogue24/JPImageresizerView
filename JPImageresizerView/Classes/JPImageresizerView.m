@@ -25,7 +25,7 @@
 @property (nonatomic, strong) JPImageresizerSlider *slider;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, copy) JPVideoExportProgressBlock progressBlock;
+@property (nonatomic, copy) JPExportVideoProgressBlock progressBlock;
 @end
 
 @implementation JPImageresizerView
@@ -367,11 +367,12 @@
                 if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
                     [self __createVideoObj:videoAsset isFixedOrientation:NO animated:NO];
                 } else {
-                    [self __exportFixOrientationVideo:videoAsset
-                                             animated:YES
-                                        startFixBlock:configure.startFixBlock
-                                     fixProgressBlock:configure.fixProgressBlock
-                                     fixCompleteBlock:configure.fixCompleteBlock];
+                    [self __fixOrientationVideo:videoAsset
+                                       animated:YES
+                                  fixErrorBlock:configure.fixErrorBlock
+                                  fixStartBlock:configure.fixStartBlock
+                               fixProgressBlock:configure.fixProgressBlock
+                               fixCompleteBlock:configure.fixCompleteBlock];
                 }
             }
         }
@@ -833,38 +834,44 @@
     [self __updateImageView:YES animated:isAnimated];
 }
 
-- (void)__exportFixOrientationVideo:(AVURLAsset *)videoAsset
-                           animated:(BOOL)isAnimated
-                      startFixBlock:(void(^)(void))startFixBlock
-                   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-                   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
-    !startFixBlock ? : startFixBlock();
+- (void)__fixOrientationVideo:(AVURLAsset *)videoAsset
+                     animated:(BOOL)isAnimated
+                fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+                fixStartBlock:(void(^)(void))fixStartBlock
+             fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+             fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     self.userInteractionEnabled = NO;
     self.frameView.isPrepareToScale = YES;
     __weak typeof(self) wSelf = self;
-    [JPImageresizerTool exportFixOrientationVideoWithAsset:videoAsset exportSessionBlock:^(AVAssetExportSession *exportSession) {
-        if (!wSelf) return;
-        __strong typeof(wSelf) sSelf = wSelf;
-        [sSelf __addProgressTimer:fixProgressBlock exporterSession:exportSession];
-    } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        sSelf.userInteractionEnabled = YES;
-        sSelf.frameView.isPrepareToScale = NO;
-        !fixCompleteBlock ? : fixCompleteBlock(nil, reason == JPCEReason_VideoExportCancelled);
-    } completeBlock:^(NSURL *cacheURL) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf __createVideoObj:[AVURLAsset assetWithURL:cacheURL] isFixedOrientation:YES animated:isAnimated];
-        sSelf.userInteractionEnabled = YES;
-        sSelf.frameView.isPrepareToScale = NO;
-        !fixCompleteBlock ? : fixCompleteBlock(cacheURL, NO);
+    [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+        if (wSelf) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            [sSelf __removeProgressTimer];
+            sSelf.userInteractionEnabled = YES;
+            sSelf.frameView.isPrepareToScale = NO;
+        }
+        !fixErrorBlock ? : fixErrorBlock(cacheURL, reason);
+    } fixStartBlock:^(AVAssetExportSession *exportSession) {
+        if (wSelf) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            [sSelf __addProgressTimer:fixProgressBlock exporterSession:exportSession];
+        }
+        !fixStartBlock ? : fixStartBlock();
+    } fixCompleteBlock:^(NSURL *cacheURL) {
+        if (wSelf) {
+            __strong typeof(wSelf) sSelf = wSelf;
+            [sSelf __removeProgressTimer];
+            [sSelf __createVideoObj:[AVURLAsset assetWithURL:cacheURL] isFixedOrientation:YES animated:isAnimated];
+            sSelf.userInteractionEnabled = YES;
+            sSelf.frameView.isPrepareToScale = NO;
+        }
+        !fixCompleteBlock ? : fixCompleteBlock(cacheURL);
     }];
 }
 
 #pragma mark 监听视频导出进度的定时器
 
-- (void)__addProgressTimer:(JPVideoExportProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
+- (void)__addProgressTimer:(JPExportVideoProgressBlock)progressBlock exporterSession:(AVAssetExportSession *)exporterSession {
     [self __removeProgressTimer];
     if (progressBlock == nil || exporterSession == nil) return;
     self.exporterSession = exporterSession;
@@ -936,14 +943,16 @@
 
 - (void)setVideoURL:(NSURL *)videoURL
            animated:(BOOL)isAnimated
-      startFixBlock:(void(^)(void))startFixBlock
-   fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-   fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+      fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+      fixStartBlock:(void(^)(void))fixStartBlock
+   fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+   fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     NSAssert(videoURL != nil, @"videoURL cannot be nil.");
     if (videoURL) {
         [self setVideoAsset:[AVURLAsset assetWithURL:videoURL]
                    animated:isAnimated
-              startFixBlock:startFixBlock
+              fixErrorBlock:fixErrorBlock
+              fixStartBlock:fixStartBlock
            fixProgressBlock:fixProgressBlock
            fixCompleteBlock:fixCompleteBlock];
     }
@@ -951,9 +960,10 @@
 
 - (void)setVideoAsset:(AVURLAsset *)videoAsset
              animated:(BOOL)isAnimated
-        startFixBlock:(void(^)(void))startFixBlock
-     fixProgressBlock:(JPVideoExportProgressBlock)fixProgressBlock
-     fixCompleteBlock:(JPVideoFixOrientationCompleteBlock)fixCompleteBlock {
+        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+        fixStartBlock:(void(^)(void))fixStartBlock
+     fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     NSAssert(videoAsset != nil, @"videoAsset cannot be nil.");
     if (videoAsset) {
         if ([videoAsset statusOfValueForKey:@"duration" error:nil] != AVKeyValueStatusLoaded ||
@@ -970,11 +980,12 @@
             if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
                 [self __createVideoObj:videoAsset isFixedOrientation:NO animated:isAnimated];
             } else {
-                [self __exportFixOrientationVideo:videoAsset
-                                         animated:isAnimated
-                                    startFixBlock:startFixBlock
-                                 fixProgressBlock:fixProgressBlock
-                                 fixCompleteBlock:fixCompleteBlock];
+                [self __fixOrientationVideo:videoAsset
+                                   animated:isAnimated
+                              fixErrorBlock:fixErrorBlock
+                              fixStartBlock:fixStartBlock
+                           fixProgressBlock:fixProgressBlock
+                           fixCompleteBlock:fixCompleteBlock];
             }
         }
     }
@@ -1141,7 +1152,7 @@
 #pragma mark 裁剪图片
 // 原图尺寸裁剪图片
 - (void)cropPictureWithCacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropPictureWithCompressScale:1
                               cacheURL:cacheURL
@@ -1152,7 +1163,7 @@
 // 自定义压缩比例裁剪图片
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
@@ -1178,7 +1189,7 @@
 
 #pragma mark 裁剪GIF
 - (void)cropGIFWithCacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPCropErrorBlock)errorBlock
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropGIFWithCompressScale:1
                     isReverseOrder:NO
@@ -1190,7 +1201,7 @@
 
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropGIFWithCompressScale:compressScale
                     isReverseOrder:NO
@@ -1204,7 +1215,7 @@
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
-                      errorBlock:(JPCropErrorBlock)errorBlock
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
@@ -1245,7 +1256,7 @@
 }
 
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPCropErrorBlock)errorBlock
+                               errorBlock:(JPImageresizerErrorBlock)errorBlock
                           completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropGIFCurrentIndexWithCompressScale:1
                                       cacheURL:cacheURL
@@ -1255,7 +1266,7 @@
 
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                      cacheURL:(NSURL *)cacheURL
-                                    errorBlock:(JPCropErrorBlock)errorBlock
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                                completeBlock:(JPCropPictureDoneBlock)completeBlock {
     NSUInteger index = 0;
     if (self.isLoopPlaybackGIF == NO) {
@@ -1275,7 +1286,7 @@
 - (void)cropGIFWithIndex:(NSUInteger)index
             compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
-              errorBlock:(JPCropErrorBlock)errorBlock
+              errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
@@ -1315,7 +1326,7 @@
 #pragma mark 裁剪视频
 // 原图尺寸裁剪视频当前帧画面
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPCropErrorBlock)errorBlock
+                               errorBlock:(JPImageresizerErrorBlock)errorBlock
                              completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropVideoOneFrameWithSecond:self.slider.second
                         compressScale:1
@@ -1327,7 +1338,7 @@
 // 自定义压缩比例裁剪视频当前帧画面
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                      cacheURL:(NSURL *)cacheURL
-                                    errorBlock:(JPCropErrorBlock)errorBlock
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                                  completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropVideoOneFrameWithSecond:self.slider.second
                         compressScale:compressScale
@@ -1340,7 +1351,7 @@
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
-                         errorBlock:(JPCropErrorBlock)errorBlock
+                         errorBlock:(JPImageresizerErrorBlock)errorBlock
                       completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
@@ -1375,7 +1386,7 @@
 
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
-                                         errorBlock:(JPCropErrorBlock)errorBlock
+                                         errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropPictureDoneBlock)completeBlock {
     [self cropVideoToGIFFromStartSecond:self.slider.second
                                duration:duration
@@ -1392,7 +1403,7 @@
                                  rate:(float)rate
                           maximumSize:(CGSize)maximumSize
                              cacheURL:(NSURL *)cacheURL
-                           errorBlock:(JPCropErrorBlock)errorBlock
+                           errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropPictureDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
@@ -1426,22 +1437,22 @@
 
 // 裁剪整段视频
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
-                progressBlock:(JPVideoExportProgressBlock)progressBlock
-                   errorBlock:(JPCropErrorBlock)errorBlock
-                completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                progressBlock:(JPExportVideoProgressBlock)progressBlock
+                completeBlock:(JPExportVideoCompleteBlock)completeBlock {
     [self cropVideoWithPresetName:AVAssetExportPresetHighestQuality
                          cacheURL:cacheURL
-                    progressBlock:progressBlock
                        errorBlock:errorBlock
+                    progressBlock:progressBlock
                     completeBlock:completeBlock];
 }
 
 // 裁剪整段视频
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
-                 progressBlock:(JPVideoExportProgressBlock)progressBlock
-                    errorBlock:(JPCropErrorBlock)errorBlock
-                 completeBlock:(JPCropVideoCompleteBlock)completeBlock {
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                 progressBlock:(JPExportVideoProgressBlock)progressBlock
+                 completeBlock:(JPExportVideoCompleteBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !completeBlock ? : completeBlock(nil);
@@ -1459,16 +1470,16 @@
                                 presetName:presetName
                                  configure:self.frameView.currentCropConfigure
                                   cacheURL:cacheURL
-                        exportSessionBlock:^(AVAssetExportSession *exportSession) {
-        if (!wSelf) return;
-        __strong typeof(wSelf) sSelf = wSelf;
-        [sSelf __addProgressTimer:progressBlock exporterSession:exportSession];
-    } errorBlock:^(NSURL *cacheURL, JPCropErrorReason reason) {
+                                errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         if (wSelf) {
             __strong typeof(wSelf) sSelf = wSelf;
             [sSelf __removeProgressTimer];
         }
         !errorBlock ? : errorBlock(cacheURL, reason);
+    } startBlock:^(AVAssetExportSession *exportSession) {
+        if (!wSelf) return;
+        __strong typeof(wSelf) sSelf = wSelf;
+        [sSelf __addProgressTimer:progressBlock exporterSession:exportSession];
     } completeBlock:^(NSURL *cacheURL) {
         if (wSelf) {
             __strong typeof(wSelf) sSelf = wSelf;
