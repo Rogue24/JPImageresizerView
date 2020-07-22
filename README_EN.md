@@ -44,7 +44,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
 ## How to use
 
 ### Initialization
-**1. Configure initial parameters**
+#### 1. Configure initial parameters
 
     You can only select one of the clipping elements (picture, GIF, video) that can be set and cannot be nil:
         - image: Image / GIF to crop (sent in as UIImage)
@@ -62,7 +62,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
       - contentInsets: the inner margin between the crop region and the main view
       - maskImage: customize the mask image
      
-- Image / GIF
+**Image / GIF**
 ```objc
 // 1.Image / GIF to crop (sent in as UIImage)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
@@ -80,7 +80,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 // 2.Image / GIF to crop (sent in as NSData)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
 ```
-- Local Video 
+**Local Video**
 
 For the video obtained from the system album, the video direction may be modified (i.e. rotated and flipped in system album), revised `videoTrack.preferredTransform != CGAffineTransformIdentity`. The image will, but at least the image has an `imageOrientation` property to tell me what has been changed. Due to my shallow learning, I don't know what specific changes have been made from `preferredTransform` alone, If only the rotation is good, the value after rotation + flip is not certain, which will lead to confusion in the final cutting. At present, we have to correct the direction before cutting, and improve it in the future. We hope that we can get some advice from those who have the chance!
 
@@ -139,13 +139,11 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
     ......
 }];
 ```
-PS1: If the video does not need to be corrected, `fixStartBlock`, `fixProgressBlock`, `fixErrorBlock` will not be called. Instead, `fixCompleteBlock` will be called directly to return to the original path; 
+- PS1: If the video does not need to be corrected, `fixStartBlock`, `fixProgressBlock`, `fixErrorBlock` will not be called. Instead, `fixCompleteBlock` will be called directly to return to the original path; 
+- PS2: If it is determined that the video does not need to be corrected, `fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock` are transmitted to `nil`;
+- PS3: The same is true for replace video `-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` and `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` methods, internal will determine whether it needs to be corrected.
 
-PS2: If it is determined that the video does not need to be corrected, `fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock` are transmitted to `nil`;
-
-PS3: The same is true for replace video `-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` and `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` methods.
-
-**2. Create JPImageresizerView instance object and add to view**
+#### 2. Create JPImageresizerView instance object and add to view
 ```objc
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // You can listen here to see if you can reset it.
@@ -270,14 +268,14 @@ if (@available(iOS 11.0, *)) {
               errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
-PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is NO, if YES is set, GIF will be played automatically)
+- PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is NO, if YES is set, GIF will be played automatically)
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 #### Crop local video
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
-PS: At present, it is only for local video, and remote video is not suitable for the moment.
+- PS: At present, it is only for local video, and remote video is not suitable for the moment.
 ```objc
 // Clip the entire video
 // cacheURL: If it is nil, it will be cached in the NSTemporaryDirectory folder of the system by default. The video name is the current timestamp, and the format is MP4
@@ -307,7 +305,7 @@ PS: At present, it is only for local video, and remote video is not suitable for
 // When the video is being exported, the call can cancel the export and trigger the errorblock callback (JPIEReason_ExportCancelled)
 - (void)videoCancelExport;
 ```
-PS: Since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method. Therefore, the width to height ratio of the exported video may be slightly different from the specified width height ratio.
+- PS: Since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method. Therefore, the width to height ratio of the exported video may be slightly different from the specified width height ratio.
 
 **Clip one frame of the video**
 ```ojbc
@@ -362,7 +360,7 @@ PS: Since the width and height of the video must be an integer multiple of 16, o
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
-PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
+- PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
 
 ### Customize the mask image clipping
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
@@ -377,7 +375,7 @@ self.imageresizerView.maskImage = nil;
 self.imageresizerView.isArbitrarilyMask = YES;
 ```
 ![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
-PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
+- PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
 
 ### Horizontal and vertical screen switching
 ![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
