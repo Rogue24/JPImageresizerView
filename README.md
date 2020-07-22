@@ -51,10 +51,6 @@
         - videoAsset：裁剪的本地视频（以AVURLAsset传入）
         
     其他部分可配置参数（更多可查看JPImageresizerView的头文件）：
-        - image：裁剪的图片/GIF（以UIImage传入）
-        - imageData：裁剪的图片/GIF（以NSData传入）
-        - videoURL：裁剪的本地视频（以NSURL传入）
-        - videoAsset：裁剪的本地视频（以AVURLAsset传入）
         - blurEffect：毛玻璃样式
         - borderImage：边框图片
         - frameType & strokeColor：边框样式&颜色
@@ -90,21 +86,13 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 ```objc
 // 1.【视频】以NSURL传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... } fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-    
     // 初始化修正视频方向的错误回调
-    
 } fixStartBlock:^{
-    
-    // 初始化修正视频方向的错误回调
-
+    // 初始化修正视频方向的开始回调
 } fixProgressBlock:^(float progress) {
-
-    // 初始化修正视频方向的进度回调
-    
+    // 初始化修正视频方向的进度回调 
 } fixCompleteBlock:^(NSURL *cacheURL) {
-    
     // 初始化修正视频方向的完成回调
-    
 }];
 
 // 2.【视频】以AVURLAsset传入
@@ -114,6 +102,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
                                           fixStartBlock:^{ ...... } fixProgressBlock:^(float progress) { ...... } 
                                        fixCompleteBlock:^(NSURL *cacheURL) { ...... }];
 ```
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/videofixorientation.gif)
 
 又或者先修正再初始化（先修正后再进入页面），可以使用`JPImageresizerTool`的API来修正，具体操作可参照Demo：
 ```objc
@@ -127,22 +116,19 @@ dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
 AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
 if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
-    // 无需修正
+    // 无需修正，进入裁剪界面
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+    ......
     return;
 }
 
 // 修正方向
 [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-    
     // 修正视频方向的错误回调
-    
 } fixStartBlock:^(AVAssetExportSession *exportSession) {
-    
     // 修正视频方向的开始回调
-    // 返回exportSession，可监听进度
-    
+    // 返回exportSession，可监听进度或取消导出
 } fixCompleteBlock:^(NSURL *cacheURL) {
-
     // 修正视频方向的完成回调
     // cacheURL：修正方向后的视频导出后的最终存放路径，默认该路径为NSTemporaryDirectory文件夹下，保存该路径，裁剪后删除视频。
     
@@ -151,7 +137,7 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
     ......
 }];
 ```
-PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock均`不会调用，会直接调用`fixCompleteBlock`，返回原路径；
+PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock`均不会调用，会直接调用`fixCompleteBlock`，返回原路径；
 
 PS2：如果确定是无需修正方向的视频，`fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock`传`nil`；
 
@@ -170,7 +156,6 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
     // 具体操作可参照Demo
     // 注意循环引用
 }];
-
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
