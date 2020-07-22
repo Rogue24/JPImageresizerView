@@ -83,9 +83,9 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 ```
 - 视频
 
-关于从系统相册获取的视频，视频方向有可能是修改过的（即相册中旋转、翻转过，videoTrack.preferredTransform != CGAffineTransformIdentity），由于我才疏学浅，单单从preferredTransform并不知道是经过了具体的哪些改动，如果只是旋转还好，旋转+翻转后的数值都是不一定的，这样导致最后裁剪时会错乱，目前只好先修正方向后再进行裁剪，日后改进，希望有大牛指点！
+关于从系统相册获取的视频，视频方向有可能是修改过的（即相册中旋转、翻转过，videoTrack.preferredTransform != CGAffineTransformIdentity），由于我才疏学浅，单单从preferredTransform并不知道是经过了具体的哪些改动，如果只是旋转还好，旋转+翻转后的数值都是不一定的，这样导致最后裁剪时会错乱，目前只好先修正方向后再进行裁剪，日后改进，希望能有缘之士给予指点！
 
-初始化后再修正（先进入页面后再修正，具体操作可参照Demo）：
+初始化后再修正（先进入页面后再修正），具体操作可参照Demo：
 ```objc
 // 1.【视频】以NSURL传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... } fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
@@ -114,9 +114,10 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
                                        fixCompleteBlock:^(NSURL *cacheURL) { ...... }];
 ```
 `PS1：如果视频不需要修正，fixStartBlock、fixProgressBlock、fixErrorBlock均不会调用，会直接调用fixCompleteBlock，返回原路径；`
+
 `PS2：如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil。`
 
-又或者先修正再初始化（先修正后再进入页面），可以使用JPImageresizerTool的API来修正（具体操作可参照Demo）：
+又或者先修正再初始化（先修正后再进入页面），可以使用JPImageresizerTool的API来修正，具体操作可参照Demo：
 ```objc
 // 获取视频信息
 AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
