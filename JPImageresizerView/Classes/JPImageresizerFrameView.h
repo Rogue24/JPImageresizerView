@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
 #import "JPImageresizerTypedef.h"
 @class JPImageresizerSlider;
 

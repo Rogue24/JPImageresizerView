@@ -104,13 +104,13 @@
 
 /**
  * 裁剪的视频（NSURL）
- * 设置该值需调用 -setVideoURL: animated: fixProgressBlock: fixCompleteBlock: 方法
+ * 设置该值需调用 -setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
  */
 @property (readonly) NSURL *videoURL;
 
 /**
  * 裁剪的视频（AVURLAsset）
- * 设置该值需调用 -setVideoAsset: animated: fixProgressBlock: fixCompleteBlock: 方法
+ * 设置该值需调用 -setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
  */
 @property (readonly) AVURLAsset *videoAsset;
 
@@ -235,7 +235,7 @@
  @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
  @param fixProgressBlock --- 修正视频方向的进度回调
  @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
- @discussion 更换裁剪的视频，裁剪宽高比会重置
+ @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
  */
 - (void)setVideoURL:(NSURL *)videoURL
            animated:(BOOL)isAnimated
@@ -253,7 +253,7 @@
  @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
  @param fixProgressBlock --- 修正视频方向的进度回调
  @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
- @discussion 更换裁剪的视频，裁剪宽高比会重置
+ @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
  */
 - (void)setVideoAsset:(AVURLAsset *)videoAsset
              animated:(BOOL)isAnimated

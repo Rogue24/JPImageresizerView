@@ -5,7 +5,7 @@
 //  Created by 周健平 on 2020/7/13.
 //
 
-#import <AVFoundation/AVFoundation.h>
+#import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
 
 @interface JPImageresizerTool : NSObject
@@ -151,9 +151,7 @@
                 startBlock:(JPExportVideoStartBlock)startBlock
              completeBlock:(JPExportVideoCompleteBlock)completeBlock;
 
-/**
- * 修正视频方向
- */
+#pragma mark - 修正视频方向
 + (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset
                        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock

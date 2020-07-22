@@ -109,6 +109,7 @@
 
 @interface JPTableViewController ()
 @property (nonatomic, copy) NSArray<JPConfigureModel *> *models;
+@property (nonatomic, strong) NSURL *tmpURL;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
 @property (nonatomic, copy) JPExportVideoProgressBlock progressBlock;
@@ -128,6 +129,17 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (self.tmpURL) {
+        NSURL *tmpURL = self.tmpURL;
+        self.tmpURL = nil;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
+        });
+    }
 }
 
 - (void)dealloc {
@@ -284,7 +296,7 @@ static JPImageresizerConfigure *gifConfigure_;
             JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:nil];
             [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
         } else if (videoURL) {
-            [self __confirmVideo:videoURL isConfirmOutSide:NO];
+            [self __confirmVideo:videoURL isConfirmOutSide:YES];
         }
     } fromVC:self];
 }
@@ -353,6 +365,7 @@ static JPImageresizerConfigure *gifConfigure_;
         @jp_strongify(self);
         if (!self) return;
         self.isExporting = NO;
+        self.tmpURL = cacheURL; // 保存该路径，裁剪后删除视频。
         
         JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
         [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];

@@ -41,23 +41,31 @@
 ## 如何使用
 
 ### 初始化
+**1. 配置初始参数**
+
+    可设置的裁剪元素（图片、GIF、视频），只能选择其中一个，并且不能为nil：
+        - image：裁剪的图片/GIF（以UIImage传入）
+        - imageData：裁剪的图片/GIF（以NSData传入）
+        - videoURL：裁剪的本地视频（以NSURL传入）
+        - videoAsset：裁剪的本地视频（以AVURLAsset传入）
+        
+    其他部分可配置参数（更多可查看JPImageresizerView的头文件）：
+        - image：裁剪的图片/GIF（以UIImage传入）
+        - imageData：裁剪的图片/GIF（以NSData传入）
+        - videoURL：裁剪的本地视频（以NSURL传入）
+        - videoAsset：裁剪的本地视频（以AVURLAsset传入）
+        - blurEffect：毛玻璃样式
+        - borderImage：边框图片
+        - frameType & strokeColor：边框样式&颜色
+        - bgColor：背景色
+        - maskAlpha：遮罩透明度
+        - resizeWHScale：裁剪的宽高比
+        - contentInsets：裁剪区域与视图的间距
+        - maskImage：蒙版图片
+     
+- 图片/GIF
 ```objc
-// 1.配置初始参数（更多可查看JPImageresizerView的头文件）
-/**
- * 部分可配置参数注释：
-    - image：裁剪的图片/GIF（以UIImage传入）
-    - imageData：裁剪的图片/GIF（以NSData传入）
-    - videoURL：裁剪的视频URL（本地）
-    - blurEffect：毛玻璃样式
-    - borderImage：边框图片
-    - frameType & strokeColor：边框样式&颜色
-    - bgColor：背景色
-    - maskAlpha：遮罩透明度
-    - resizeWHScale：裁剪的宽高比
-    - contentInsets：裁剪区域与视图的间距
-    - maskImage：蒙版图片
- */
-// 1.1【裁剪的图片/GIF】以UIImage传入
+//【裁剪的图片/GIF】以UIImage传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
     // 到这里已经有了默认参数值，可以在这里另外设置你想要的参数值（使用了链式编程方式）
     configure
@@ -70,15 +78,81 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
 
-// 1.2【裁剪的图片/GIF】以NSData传入
+// 2.【裁剪的图片/GIF】以NSData传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
+```
+- 视频
+    关于从系统相册获取的视频，视频方向有可能是修改过的（即相册中旋转、翻转过，videoTrack.preferredTransform != CGAffineTransformIdentity），由于我才疏学浅，单单从preferredTransform并不知道是经过了具体的哪些改动，如果只是旋转还好，旋转+翻转后的数值都是不一定的，这样导致最后裁剪时会错乱，目前只好先修正方向后再进行裁剪，日后改进，希望有大牛指点！
+初始化后再修正（先进入页面后再修正，具体操作可参照Demo）：
+```objc
+// 1.【视频】以NSURL传入
+JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... } fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    
+    // 初始化修正视频方向的错误回调
+    
+} fixStartBlock:^{
+    
+    // 初始化修正视频方向的错误回调
 
-// 1.3【视频】以NSURL传入
-JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... }];
+} fixProgressBlock:^(float progress) {
 
-// PS：【裁剪视频或图片同时只能选择一个】
+    // 初始化修正视频方向的进度回调
+    
+} fixCompleteBlock:^(NSURL *cacheURL) {
+    
+    // 初始化修正视频方向的完成回调
+    
+}];
 
-// 2.创建JPImageresizerView对象
+// 2.【视频】以AVURLAsset传入
+[JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset 
+                                                   make:^(JPImageresizerConfigure *configure) { ...... } 
+                                          fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) { ...... } 
+                                          fixStartBlock:^{ ...... } fixProgressBlock:^(float progress) { ...... } 
+                                       fixCompleteBlock:^(NSURL *cacheURL) { ...... }];
+```
+PS1：如果视频不需要修正，fixStartBlock、fixProgressBlock、fixErrorBlock均不会调用，会直接调用fixCompleteBlock，返回原路径；
+PS2：如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil。
+
+又或者先修正再初始化（先修正后再进入页面），可以使用JPImageresizerTool的API来修正（具体操作可参照Demo）：
+```objc
+// 获取视频信息
+AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
+dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+[videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
+    dispatch_semaphore_signal(semaphore);
+}];
+dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+    // 无需修正
+    return;
+}
+
+// 修正方向
+[JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    
+    // 修正视频方向的错误回调
+    
+} fixStartBlock:^(AVAssetExportSession *exportSession) {
+    
+    // 修正视频方向的开始回调
+    // 返回exportSession，可监听进度
+    
+} fixCompleteBlock:^(NSURL *cacheURL) {
+
+    // 修正视频方向的完成回调
+    // cacheURL：修正方向后的视频导出后的最终存放路径，默认该路径为NSTemporaryDirectory文件夹下，保存该路径，裁剪后删除视频。
+    
+    // 开始裁剪，进入裁剪界面
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+    ......
+}];
+```
+
+**2. 创建JPImageresizerView对象并添加到视图上**
+```objc
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
     // 如果不需要重置（isCanRecovery为NO），可在这里做相应处理，例如将重置按钮设置为不可点或隐藏
@@ -91,7 +165,6 @@ JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithC
     // 注意循环引用
 }];
 
-// 3.添加到视图上
 [self.view addSubview:imageresizerView];
 self.imageresizerView = imageresizerView;
 
@@ -216,13 +289,13 @@ PS：目前只针对本地视频，远程视频暂未适配。
 ```objc
 // 裁剪整段视频
 // cacheURL：如果为nil，会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
-[self.imageresizerView cropVideoWithCacheURL:cacheURL progressBlock:^(float progress) {
-    // 监听进度
-    // progress：0~1
-    // 注意循环引用
-} errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+[self.imageresizerView cropVideoWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
     // 错误的回调
     // reason：错误原因
+    // 注意循环引用
+} progressBlock:^(float progress) {
+    // 监听进度
+    // progress：0~1
     // 注意循环引用
 } completeBlock:^(NSURL *cacheURL) {
     // 裁剪完成
@@ -234,15 +307,15 @@ PS：目前只针对本地视频，远程视频暂未适配。
 // presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
-                 progressBlock:(JPExportVideoProgressBlock)progressBlock
                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                 progressBlock:(JPExportVideoProgressBlock)progressBlock
                  completeBlock:(JPExportVideoCompleteBlock)completeBlock;
 
 // 取消视频导出
 // 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
 - (void)videoCancelExport;
 ```
-PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，所以最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
+PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
 
 **裁剪视频的其中一帧**
 ```ojbc
@@ -491,6 +564,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.7.2 | 1. 新增修正视频方向的功能（有待改进）；<br>2. 优化切换裁剪元素的过度；<br>3. 裁剪视频可以以AVURLAsset形式传入。
 1.7.0~1.7.1 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3. 裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5. 极大地优化了裁剪逻辑。
 1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。

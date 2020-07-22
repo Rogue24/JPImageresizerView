@@ -6,7 +6,7 @@
 //
 //  用于配置初始化参数
 
-#import <AVFoundation/AVFoundation.h>
+#import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
 
 @interface JPImageresizerConfigure : NSObject

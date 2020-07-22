@@ -1275,7 +1275,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }];
 }
 
-#pragma mark 修正视频方向并导出
+#pragma mark - 修正视频方向并导出
 + (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset
                        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
