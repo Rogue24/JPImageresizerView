@@ -42,7 +42,7 @@
 ## 如何使用
 
 ### 初始化
-**1. 配置初始参数**
+#### 1. 配置初始参数
 
     可设置的裁剪元素（图片、GIF、视频），只能选择其中一个，并且不能为nil：
         - image：裁剪的图片/GIF（以UIImage传入）
@@ -60,7 +60,7 @@
         - contentInsets：裁剪区域与视图的间距
         - maskImage：蒙版图片
      
-- 图片/GIF
+**图片/GIF**
 ```objc
 //【裁剪的图片/GIF】以UIImage传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
@@ -78,7 +78,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 // 2.【裁剪的图片/GIF】以NSData传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
 ```
-- 视频
+**视频**
 
 关于从系统相册获取的视频，视频方向有可能是修改过的（即相册中旋转、翻转过），修改后的`videoTrack.preferredTransform != CGAffineTransformIdentity`，图片也会，不过好歹图片有个`imageOrientation`属性告知具体改动了什么，由于我才疏学浅，单单从`preferredTransform`并不知道是经过了具体的哪些改动，如果只是旋转还好，旋转+翻转后的数值都是不一定的，这样导致最后裁剪时会错乱，目前只好先修正方向后再进行裁剪，日后改进，希望能有缘之士给予指点！
 
@@ -137,13 +137,11 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
     ......
 }];
 ```
-PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock`均不会调用，会直接调用`fixCompleteBlock`，返回原路径；
+- PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock`均不会调用，会直接调用`fixCompleteBlock`，返回原路径；
+- PS2：如果确定是无需修正方向的视频，`fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock`传`nil`；
+- PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理。
 
-PS2：如果确定是无需修正方向的视频，`fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock`传`nil`；
-
-PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理。
-
-**2. 创建JPImageresizerView对象并添加到视图上**
+#### 2. 创建JPImageresizerView对象并添加到视图上
 ```objc
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // 可在这里监听到是否可以重置
@@ -269,14 +267,14 @@ if (@available(iOS 11.0, *)) {
               errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
-PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
+- PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 #### 裁剪本地视频
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
-PS：目前只针对本地视频，远程视频暂未适配。
+- PS：目前只针对本地视频，远程视频暂未适配。
 ```objc
 // 裁剪整段视频
 // cacheURL：如果为nil，会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
@@ -306,7 +304,7 @@ PS：目前只针对本地视频，远程视频暂未适配。
 // 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
 - (void)videoCancelExport;
 ```
-PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
+- PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
 
 **裁剪视频的其中一帧**
 ```ojbc
@@ -362,7 +360,7 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropPictureDoneBlock)completeBlock;
 ```
-PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
+- PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
 
 ### 自定义蒙版图片
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
@@ -377,7 +375,7 @@ self.imageresizerView.maskImage = nil;
 self.imageresizerView.isArbitrarilyMask = YES;
 ```
 ![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
-PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
+- PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
 
 ### 横竖屏切换
 ![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
