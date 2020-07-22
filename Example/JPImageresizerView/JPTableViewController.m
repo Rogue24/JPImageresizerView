@@ -296,18 +296,34 @@ static JPImageresizerConfigure *gifConfigure_;
             JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:nil];
             [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
         } else if (videoURL) {
-            [self __confirmVideo:videoURL isConfirmOutSide:YES];
+            [self __confirmVideo:videoURL];
         }
     } fromVC:self];
 }
 
 #pragma mark - 判断视频是否需要修正方向（内部or外部修正）
-- (void)__confirmVideo:(NSURL *)videoURL isConfirmOutSide:(BOOL)isConfirmOutSide {
+- (void)__confirmVideo:(NSURL *)videoURL {
+    // 校验视频信息
+    AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
+        dispatch_semaphore_signal(semaphore);
+    }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
-    @jp_weakify(self);
-    if (!isConfirmOutSide) {
-        
-#pragma mark 内部修正（进入页面后修正）
+    // 方向没被修改过，无需修正，直接进入
+    AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+    if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
+        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        return;
+    }
+    
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:@"该视频方向需要先修正" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+#pragma mark 内部修正
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"先进页面再修正" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        @jp_weakify(self);
         JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
             [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             @jp_strongify(self);
@@ -321,55 +337,45 @@ static JPImageresizerConfigure *gifConfigure_;
             [JPProgressHUD dismiss];
         }];
         [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
-        return;
-    }
+    }]];
     
-#pragma mark 外部修正（进入页面前修正）
+#pragma mark 外部修正
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"先修正再进页面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [JPProgressHUD show];
+        @jp_weakify(self);
+        [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+            
+            [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            
+            @jp_strongify(self);
+            if (!self) return;
+            self.isExporting = NO;
+            
+        } fixStartBlock:^(AVAssetExportSession *exportSession) {
+            
+            @jp_strongify(self);
+            if (!self) return;
+            self.isExporting = YES;
+            
+            [self __addProgressTimer:^(float progress) {
+                [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100] userInteractionEnabled:YES];
+            } exporterSession:exportSession];
+            
+        } fixCompleteBlock:^(NSURL *cacheURL) {
+            [JPProgressHUD dismiss];
+            
+            @jp_strongify(self);
+            if (!self) return;
+            self.isExporting = NO;
+            self.tmpURL = cacheURL; // 保存该路径，裁剪后删除视频。
+            
+            JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+            [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        }];
+    }]];
     
-    AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    [videoAsset loadValuesAsynchronouslyForKeys:@[@"duration", @"tracks"] completionHandler:^{
-        dispatch_semaphore_signal(semaphore);
-    }];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    
-    AVAssetTrack *videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo].firstObject;
-    if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTransformIdentity)) {
-        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:videoAsset make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
-        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
-        return;
-    }
-    
-    [JPProgressHUD show];
-    [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-        
-        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-        
-        @jp_strongify(self);
-        if (!self) return;
-        self.isExporting = NO;
-        
-    } fixStartBlock:^(AVAssetExportSession *exportSession) {
-        
-        @jp_strongify(self);
-        if (!self) return;
-        self.isExporting = YES;
-        
-        [self __addProgressTimer:^(float progress) {
-            [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"修正方向中...%.0lf%%", progress * 100] userInteractionEnabled:YES];
-        } exporterSession:exportSession];
-        
-    } fixCompleteBlock:^(NSURL *cacheURL) {
-        [JPProgressHUD dismiss];
-        
-        @jp_strongify(self);
-        if (!self) return;
-        self.isExporting = NO;
-        self.tmpURL = cacheURL; // 保存该路径，裁剪后删除视频。
-        
-        JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoAsset:[AVURLAsset assetWithURL:cacheURL] make:nil fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
-        [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
-    }];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
 }
 
 - (void)setIsExporting:(BOOL)isExporting {
