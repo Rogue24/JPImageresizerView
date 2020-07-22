@@ -139,7 +139,7 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
 ```
 - PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock`均不会调用，会直接调用`fixCompleteBlock`，返回原路径；
 - PS2：如果确定是无需修正方向的视频，`fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock`传`nil`；
-- PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理。
+- PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理，内部会判定是否需要修正。
 
 #### 2. 创建JPImageresizerView对象并添加到视图上
 ```objc
@@ -553,7 +553,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.7.2 | 1. 新增修正视频方向的功能（有待改进）；<br>2. 优化切换裁剪元素的过度；<br>3. 裁剪视频可以以AVURLAsset形式传入。
+1.7.2 | 1. 新增修正视频方向的功能（有待改进）；<br>2. 裁剪视频可以以AVURLAsset形式传入；<br>3. 优化切换裁剪元素的过渡。
 1.7.0~1.7.1 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3. 裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5. 极大地优化了裁剪逻辑。
 1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。
 1.5.0~1.5.3 | 1. 新增自定义蒙版图片功能，从而实现可自定义任意裁剪区域；<br>2. 修复了经旋转重置后裁剪宽高比错乱的问题；<br>3. 优化了旋转、翻转的过渡动画。
