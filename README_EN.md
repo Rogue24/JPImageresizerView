@@ -80,6 +80,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 // 2.Image / GIF to crop (sent in as NSData)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
 ```
+
 **Local Video**
 
 For the video obtained from the system album, the video direction may be modified (i.e. rotated and flipped in system album), revised `videoTrack.preferredTransform != CGAffineTransformIdentity`. The image will, but at least the image has an `imageOrientation` property to tell me what has been changed. Due to my shallow learning, I don't know what specific changes have been made from `preferredTransform` alone, If only the rotation is good, the value after rotation + flip is not certain, which will lead to confusion in the final cutting. At present, we have to correct the direction before cutting, and improve it in the future. We hope that we can get some advice from those who have the chance!
