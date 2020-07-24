@@ -330,14 +330,17 @@ static UIViewController *tmpVC_;
         self.imageresizerView.maskImage = [UIImage imageNamed:@"supreme.png"];
     }]];
     
-    BOOL isArbitrarilyMask = self.imageresizerView.isArbitrarilyMask;
-    [alertCtr addAction:[UIAlertAction actionWithTitle:(isArbitrarilyMask ? @"蒙版使用固定比例" : @"蒙版使用任意比例") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.isArbitrarilyMask = !isArbitrarilyMask;
-    }]];
+    if (self.isBecomeDanielWu) {
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"DanielWu-Face" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            self.imageresizerView.maskImage = self.maskImage;
+        }]];
+    }
     
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除蒙版" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.maskImage = nil;
-    }]];
+    if (self.imageresizerView.maskImage) {
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除蒙版" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            self.imageresizerView.maskImage = nil;
+        }]];
+    }
     
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     
@@ -401,33 +404,20 @@ static UIViewController *tmpVC_;
 
 #pragma mark 重置
 - (IBAction)recovery:(id)sender {
-    if (self.imageresizerView.maskImage) {
-        [self.imageresizerView recoveryByCurrentMaskImage];
-//        [self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]];
-    } else if ([self.imageresizerView isRoundResizing]) {
-        [self.imageresizerView recoveryToRoundResize];
-    } else {
-        // 1.按当前【resizeWHScale】进行重置
-//        [self.imageresizerView recoveryByCurrentResizeWHScale];
-//        [self.imageresizerView recoveryByCurrentResizeWHScale:YES];
-        
-        // 2.按【initialResizeWHScale】进行重置
-        [self.imageresizerView recoveryByInitialResizeWHScale:self.isToBeArbitrarily];
-        
-        // 3.按【目标裁剪宽高比】进行重置
-//        [self.imageresizerView recoveryToTargetResizeWHScale:self.imageresizerView.imageresizeWHScale isToBeArbitrarily:self.isToBeArbitrarily];
-    }
+    [self.imageresizerView recovery];
 }
 
 #pragma mark 设置宽高比
 - (IBAction)changeResizeWHScale:(id)sender {
     [UIAlertController changeResizeWHScale:^(CGFloat resizeWHScale) {
         if (resizeWHScale < 0) {
-            [self.imageresizerView roundResize:YES];
+            self.imageresizerView.isArbitrarily = !self.imageresizerView.isArbitrarily;
+        } else if (resizeWHScale == 0) {
+            self.imageresizerView.isRoundResize = !self.imageresizerView.isRoundResize;
         } else {
-            [self.imageresizerView setResizeWHScale:resizeWHScale isToBeArbitrarily:self.isToBeArbitrarily animated:YES];
+            self.imageresizerView.resizeWHScale = resizeWHScale;
         }
-    } fromVC:self];
+    } isArbitrarily:self.imageresizerView.isArbitrarily isRoundResize:self.imageresizerView.isRoundResize fromVC:self];
 }
 
 #pragma mark 设置毛玻璃

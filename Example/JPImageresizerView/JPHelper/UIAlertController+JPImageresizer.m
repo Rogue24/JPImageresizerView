@@ -49,14 +49,14 @@ static JPObject *obj_;
 
 @implementation UIAlertController (JPImageresizer)
 
-+ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler fromVC:(UIViewController *)fromVC {
++ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler isArbitrarily:(BOOL)isArbitrarily isRoundResize:(BOOL)isRoundResize fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"任意比例" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"圆切" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"使用%@", isArbitrarily ? @"固定比例" : @"任意比例"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler(-1);
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"%@圆切", isRoundResize ? @"取消" : @""] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler(0);
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"1 : 1" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler(1);

@@ -64,7 +64,9 @@
 
 - (void)dealloc {
     JPLog(@"imageViewController is dead");
-    if (self.videoURL) {
+    NSURL *imageURL = self.imageURL;
+    NSURL *videoURL = self.videoURL;
+    if (videoURL) {
         JPRemoveNotification(self);
         [self.playerLayer removeFromSuperlayer];
         if (self.timeObserver) {
@@ -72,9 +74,26 @@
             self.timeObserver = nil;
         }
     }
-    JPLog(@"删除图片和视频文件");
-    [[NSFileManager defaultManager] removeItemAtURL:self.imageURL error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:self.videoURL error:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (imageURL) {
+            NSError *error;
+            [[NSFileManager defaultManager] removeItemAtURL:imageURL error:&error];
+            if (error) {
+                JPLog(@"删除图片文件失败 %@ --- %@", error, imageURL.absoluteString);
+            } else {
+                JPLog(@"已删除图片文件");
+            }
+        }
+        if (videoURL) {
+            NSError *error;
+            [[NSFileManager defaultManager] removeItemAtURL:videoURL error:&error];
+            if (error) {
+                JPLog(@"删除视频文件失败 %@ --- %@", error, videoURL.absoluteString);
+            } else {
+                JPLog(@"已删除视频文件");
+            }
+        }
+    });
 }
 
 #pragma mark - 初始布局

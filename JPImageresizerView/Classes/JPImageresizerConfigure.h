@@ -19,12 +19,12 @@
     - maskAlpha = 0.75;
     - strokeColor = UIColor.whiteColor;
     - resizeWHScale = 0.0;
-    - isArbitrarilyInitial = YES;
+    - isRoundResize = NO;
+    - isArbitrarily = YES;
     - contentInsets = UIEdgeInsetsZero;
     - borderImage = nil;
     - borderImageRectInset = CGPointZero;
     - maximumZoomScale = 10.0;
-    - isRoundResize = NO;
     - isShowMidDots = YES;
     - isBlurWhenDragging = NO;
     - isShowGridlinesWhenIdle = NO;
@@ -32,7 +32,9 @@
     - gridCount = 3;
     - maskImage = nil;
     - isArbitrarilyMask = NO;
-    - isLoopPlaybackGIF = NO; */
+    - isLoopPlaybackGIF = NO;
+ */
+
 /**
  * 默认配置裁剪图片/GIF（UIImage）
  */
@@ -168,11 +170,17 @@
 /** 裁剪线颜色 */
 @property (nonatomic, strong) UIColor *strokeColor;
 
-/** 裁剪宽高比（0则为任意比例） */
+/** 初始化裁剪宽高比（0 为元素的宽高比，若 isRoundResize 为  YES，或 maskImage 不为空，该属性无效） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
-/** 初始化后裁剪宽高比是否可以任意改变（resizeWHScale 为 0 则为任意比例，该值则为 YES） */
-@property (nonatomic, assign) BOOL isArbitrarilyInitial;
+/** 初始化是否圆切（若为 YES 则 resizeWHScale 为 1，若  maskImage 不为空，该属性无效） */
+@property (nonatomic, assign) BOOL isRoundResize;
+
+/** 初始化蒙版图片 */
+@property (nonatomic, strong) UIImage *maskImage;
+
+/** 初始化后是否可以任意比例拖拽 */
+@property (nonatomic, assign) BOOL isArbitrarily;
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
@@ -192,9 +200,6 @@
 /** 最大缩放比例（默认为10.0，小于1.0则无效） */
 @property (nonatomic, assign) CGFloat maximumZoomScale;
 
-/** 是否初始化圆切（若为YES则resizeWHScale为1） */
-@property (nonatomic, assign) BOOL isRoundResize;
-
 /** 是否显示中间的4个点（上、下、左、右的中点） */
 @property (nonatomic, assign) BOOL isShowMidDots;
 
@@ -210,12 +215,6 @@
 /** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic, assign) NSUInteger gridCount;
 
-/** 蒙版图片 */
-@property (nonatomic, strong) UIImage *maskImage;
-
-/** 蒙版图片是否可以拖拽形变 */
-@property (nonatomic, assign) BOOL isArbitrarilyMask;
-
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
@@ -227,20 +226,19 @@
 @property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
 @property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
-@property (readonly) JPImageresizerConfigure *(^jp_isArbitrarilyInitial)(BOOL isArbitrarilyInitial);
+@property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
+@property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);
+@property (readonly) JPImageresizerConfigure *(^jp_isArbitrarily)(BOOL isArbitrarily);
 @property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
 @property (readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
 @property (readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
 @property (readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
 @property (readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
 @property (readonly) JPImageresizerConfigure *(^jp_maximumZoomScale)(CGFloat maximumZoomScale);
-@property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowMidDots)(BOOL isShowMidDots);
 @property (readonly) JPImageresizerConfigure *(^jp_isBlurWhenDragging)(BOOL isBlurWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenIdle)(BOOL isShowGridlinesWhenIdle);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
-@property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);
-@property (readonly) JPImageresizerConfigure *(^jp_isArbitrarilyMask)(BOOL isArbitrarilyMask);
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
 @end

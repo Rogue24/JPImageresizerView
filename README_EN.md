@@ -11,7 +11,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.7.2)
+## Brief introduction (Current version: 1.7.3)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -35,6 +35,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
 
     What I'm trying to achieve:
         ☑️ Swift version;
+        ☑️ Fix the clipping region without scaling;
         ☑️ The video does not need to fix the orientation before clipping;
         ☑️ Crop remote video;
         ☑️ To achieve the effect of free drag rotation and flip angle.
@@ -76,6 +77,11 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_isClockwiseRotation(YES)
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
+
+// If you want to initialize to a square, you can set the resizeWHScale property of JPImageresizerConfigure
+configure.resizeWHScale = 1; // The default value is 0, full display
+// In addition, if a fixed proportion is needed:
+configure.isArbitrarily = YES; // The default is YES
 
 // 2.Image / GIF to crop (sent in as NSData)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
@@ -142,7 +148,15 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
 ```
 - PS1: If the video does not need to be corrected, `fixStartBlock`, `fixProgressBlock`, `fixErrorBlock` will not be called. Instead, `fixCompleteBlock` will be called directly to return to the original path; 
 - PS2: If it is determined that the video does not need to be corrected, `fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock` are transmitted to `nil`;
-- PS3: The same is true for replace video `-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` and `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` methods, internal will determine whether it needs to be corrected.
+- PS3: The same is true for replace video `-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` and `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` methods, internal will determine whether it needs to be corrected;
+- PS4: If you need to initialize and fix the clipping aspect ratio (such as circular cutting, masking, etc.), you need to set the `isArbitrarily` property of `JPImageresizerConfigure` to **NO** (the default is YES) :
+```objc
+JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+    configure
+    .jp_maskImage([UIImage imageNamed:@"love.png"])
+    .jp_isArbitrarily(NO);
+}];
+```
 
 #### 2. Create JPImageresizerView instance object and add to view
 ```objc
@@ -363,20 +377,34 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 - PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
 
-### Customize the mask image clipping
+### Mask image
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
 ```objc
 // Set mask picture (currently only PNG picture is supported)
 self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
 
+// Setting this value directly calls the `-setMaskImage: isToBeArbitrarily: animated:` method, where the default `isToBeArbitrarily` = (maskImage ? No : self.isArbitrarily), `isAnimated` = YES
+
 // Remove mask image
 self.imageresizerView.maskImage = nil;
-
-// You can set whether the mask image can be dragged at any scale
-self.imageresizerView.isArbitrarilyMask = YES;
 ```
 ![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
 - PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
+
+### Round Resize
+![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
+```objc
+// Set circle cut
+// After setting, the resizeWHScale is 1:1, the radius is half of the width and height, and the top, left, bottom and right middle of the border can be dragged.
+self.imageresizerView.isRoundResize = YES;
+
+// Setting this value directly calls the `-setIsRoundResize: isToBeArbitrarily: animated:` method, where the default `isToBeArbitrarily` = (isRoundResize ? No : self.isArbitrarily), `isAnimated` = YES
+
+// Reduced rectangle
+self.imageresizerView.isRoundResize = NO;
+// Or just set resizeWHScale to any value
+self.imageresizerView.resizeWHScale = 0.0;
+```
 
 ### Horizontal and vertical screen switching
 ![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
@@ -414,6 +442,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 
 ### Switching resizeWHScale
 ![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
+- PS: Setting the clipping aspect ratio automatically removes the circular cuts and masks
 ```objc
 // 1.Custom parameter switching
 /**
@@ -425,20 +454,13 @@ self.imageresizerView.borderImage = tileBorderImage;
 
 // 2.Direct Settings
 self.imageresizerView.resizeWHScale = 1.0;
-// The latest resizeWHScale is saved after the default switch, and it has its own animation effect, which is equivalent to:
-[self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
-```
+// After the default switch, the latest resizeWHScale is saved with its own animation effect. If it is set to 0, the width to height ratio of the current clipping box is set, and finally isArbitrarily = YES, which is equivalent to:
+[self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:(resizeWHScale <= 0) animated:YES];
 
-### Round Resize
-![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
-```objc
-// Set circle cut
-// After setting, the resizeWHScale is 1:1, the radius is half of the width and height, and the top, left, bottom and right middle of the border can be dragged.
-[self.imageresizerView roundResize:YES];
+// Whether it can be dragged in any proportion (including circle cutting and masking)
+self.imageresizerView.isArbitrarily = !self.imageresizerView.isArbitrarily;
 
-// Reduced rectangle
-// Just set resizeWHScale to any value
-self.imageresizerView.resizeWHScale = 0.0;
+// For more APIs, see the comments on JPImagerestoreview.h
 ```
 
 ### Custom gaussian blur style, border color, background color, mask opacity
@@ -482,48 +504,42 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 ### Reset
+Reset the target state, the direction is vertical upward, can be reset to different resizeWHScale, circle cut, mask
+#### 1.Everything is reset according to the current state
 ```objc
-// Reset to the initial state, vertical direction, can be reset to different resizeWHScale
+- (void)recovery;
+```
 
-// 1.Reset by currently resizeWHScale
-/**
- * With this method, the width-height ratio of the clipping box is reset according to the current resizeWHScale value.
- */
-[self.imageresizerView recoveryByCurrentResizeWHScale];
+#### 2.Reset with resizeWHScale (circle cuts and masks will be removed)
+```objc
+// 2.1 Reset according to the initial clipping aspect ratio
+- (void)recoveryByInitialResizeWHScale;
+- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
 
-// isToBeArbitrarily: Is resizeWHScale in any proportion after reset (if YES, last resizeWHScale = 0)
-BOOL isToBeArbitrarily = self.isToBeArbitrarily;   
+// 2.2 Reset to the current clipping aspect ratio (reset to the entire crop element area if the resizeWHScale is 0)
+- (void)recoveryByCurrentResizeWHScale;
+- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
 
-// 2.Reset by initialResizeWHScale
-/**
- * initialResizeWHScale defaults to resizeWHScale at initialization, after which it can modify the value of initialResizeWHScale itself.
- * With this method, the width-height ratio of the clipping box is reset according to the initialResizeWHScale value.
- * If isToBeArbitrarily is NO, resizeWHScale = initialResizeWHScale after reset.
- */
-[self.imageresizerView recoveryByInitialResizeWHScale:isToBeArbitrarily];
-    
-// 3.Reset by targetResizeWHScale
-/**
- * With this method, the width-to-height ratio of the clipping frame is reset according to the targetResizeWHScale.
- * If isToBeArbitrarily is NO, resizeWHScale = targetResizeWHScale after reset.
- */
-CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // Gets the aspect ratio of the current clipping box
-[self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+// 2.3 Reset by target crop aspect ratio (reset to the entire crop element area if resizeWHScale is 0)
+// targetResizeWHScale: Target clipping aspect ratio
+// isToBeArbitrarily: Whether the size of the resizewhscale is any scale after reset (if YES, the last resizeWHScale = 0)
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+```
 
-// 4.Reset rounding status
-/**
- * Use this method to reset and return to the original state in circular cutting state
- * After reset: resizeWHScale = 1
- */
-[self.imageresizerView recoveryToRoundResize];
+#### 3.Reset with circle cut
+```objc
+- (void)recoveryToRoundResize;
+- (void)recoveryToRoundResize:(BOOL)isToBeArbitrarily;
+```
 
-// 5.Reset with mask image
-/**
- * Use this method to reset and take the aspect ratio of the mask image as the clipping aspect ratio to return to the original state
- * After reset: resizeWHScale = maskImage.size.width / maskImage.size.height
- */
-[self.imageresizerView recoveryByCurrentMaskImage]; // Use the current mask image
-[self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // Specify mask image
+#### 4.Reset with mask imag
+```objc
+// 4.1 Reset by current mask image
+- (void)recoveryByCurrentMaskImage;
+- (void)recoveryByCurrentMaskImage:(BOOL)isToBeArbitrarily;
+
+// 4.2 Specify mask image reset
+- (void)recoveryToMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 ```
 
 ### Preview

@@ -9,7 +9,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
 
-## 简介（当前版本：1.7.2）
+## 简介（当前版本：1.7.3）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -33,6 +33,7 @@
 
     正在努力着去实现的内容：
         ☑️ Swift版本；
+        ☑️ 固定不缩放裁剪区域；
         ☑️ 视频不再需要修正方向再裁剪；
         ☑️ 裁剪远程视频；
         ☑️ 实现苹果相册裁剪功能中的自由拖拽旋转、翻转角度的效果。
@@ -74,6 +75,11 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
     .jp_isClockwiseRotation(YES)
     .jp_animationCurve(JPAnimationCurveEaseOut);
 }];
+
+// 如果想要初始化为正方形，可设置 JPImageresizerConfigure 的 resizeWHScale 属性
+configure.resizeWHScale = 1; // 默认为0，完全显示
+// 另外如果还需要固定比例的话：
+configure.isArbitrarily = YES; // 默认为YES
 
 // 2.【裁剪的图片/GIF】以NSData传入
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImageData:imageData make:^(JPImageresizerConfigure *configure) { ...... };
@@ -140,7 +146,15 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
 ```
 - PS1：如果视频不需要修正，`fixStartBlock`、`fixProgressBlock`、`fixErrorBlock`均不会调用，会直接调用`fixCompleteBlock`，返回原路径；
 - PS2：如果确定是无需修正方向的视频，`fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock`传`nil`；
-- PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理，内部会判定是否需要修正。
+- PS3：更换视频：`-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 和 `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` 方法也与之同理，内部会判定是否需要修正；
+- PS4：如果需要初始化就**固定**裁剪宽高比（如圆切、蒙版等），需要设置`JPImageresizerConfigure`的`isArbitrarily`属性为**NO**（默认为YES）：
+```objc
+JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+    configure
+    .jp_maskImage([UIImage imageNamed:@"love.png"])
+    .jp_isArbitrarily(NO);
+}];
+```
 
 #### 2. 创建JPImageresizerView对象并添加到视图上
 ```objc
@@ -363,20 +377,34 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
 - PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
 
-### 自定义蒙版图片
+### 蒙版
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
 ```objc
 // 设置蒙版图片（目前仅支持png图片）
 self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
 
+// 直接设置该值即是调用 -setMaskImage: isToBeArbitrarily: animated: 方法，其中默认 isToBeArbitrarily = (maskImage ? NO : self.isArbitrarily)，isAnimated = YES
+
 // 移除蒙版图片
 self.imageresizerView.maskImage = nil;
-
-// 可以设置蒙版图片是否可以任意比例拖拽
-self.imageresizerView.isArbitrarilyMask = YES;
 ```
 ![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
 - PS：如果使用了蒙版图片，那么最后裁剪出来的是png图片，因此裁剪后体积有可能会比原本的图片更大。
+
+### 圆切
+![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
+```objc
+// 设置圆切
+// 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上、左、下、右的中部均可拖动。
+self.imageresizerView.isRoundResize = YES;
+
+// 直接设置该值即是调用 -setIsRoundResize: isToBeArbitrarily: animated: 方法，其中默认 isToBeArbitrarily = (isRoundResize ? NO : self.isArbitrarily)，isAnimated = YES
+
+// 还原矩形
+self.imageresizerView.isRoundResize = NO;
+// 或者只需设置一下resizeWHScale为任意值即可
+self.imageresizerView.resizeWHScale = 0.0;
+```
 
 ### 横竖屏切换
 ![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
@@ -414,6 +442,7 @@ self.imageresizerView.borderImage = tileBorderImage;
 
 ### 切换裁剪宽高比
 ![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
+- PS：设置裁剪宽高比会自动移除圆切和蒙版
 ```objc
 // 1.自定义参数切换
 /**
@@ -425,20 +454,13 @@ self.imageresizerView.borderImage = tileBorderImage;
 
 // 2.直接切换
 self.imageresizerView.resizeWHScale = 1.0;
-// 默认切换之后保存最新的 resizeWHScale，且自带动画效果，相当于：
-[self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:NO animated:YES];
-```
+// 默认切换之后保存最新的 resizeWHScale，且自带动画效果，如果设置为0，以当前裁剪框的宽高比设置，并且最后 isArbitrarily = YES，相当于：
+[self.imageresizerView setResizeWHScale:1.0 isToBeArbitrarily:(resizeWHScale <= 0) animated:YES];
 
-### 圆切
-![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
-```objc
-// 设置圆切
-// 设置后，resizeWHScale为1:1，半径为宽高的一半，边框的上、左、下、右的中部均可拖动。
-[self.imageresizerView roundResize:YES];
+// 是否可以任意比例拖拽（包括圆切、蒙版）
+self.imageresizerView.isArbitrarily = !self.imageresizerView.isArbitrarily;
 
-// 还原矩形
-// 只需设置一下resizeWHScale为任意值即可
-self.imageresizerView.resizeWHScale = 0.0;
+// 更多API可查看 JPImageresizerView.h 上的注释
 ```
 
 ### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
@@ -486,48 +508,42 @@ self.imageresizerView.isClockwiseRotation = YES;
 ```
 
 ### 重置
+重置目标状态，方向垂直向上，可重置为不同的resizeWHScale、圆切、蒙版
+#### 1. 一切按当前状态重置
 ```objc
-// 重置为初始状态，方向垂直向上，可重置为不同的resizeWHScale
+- (void)recovery;
+```
 
-// 1.按当前 resizeWHScale 进行重置
-/**
- * 使用该方法进行重置，裁剪框的宽高比会按照当前 resizeWHScale 的值进行重置
- */
-[self.imageresizerView recoveryByCurrentResizeWHScale];
+#### 2. 以resizeWHScale重置（会移除圆切、蒙版）
+```objc
+// 2.1 按初始裁剪宽高比（initialResizeWHScale）进行重置
+- (void)recoveryByInitialResizeWHScale;
+- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
 
+// 2.2 按当前裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
+- (void)recoveryByCurrentResizeWHScale;
+- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
+
+// 2.3 按目标裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
+// targetResizeWHScale：目标裁剪宽高比
 // isToBeArbitrarily：重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
-BOOL isToBeArbitrarily = self.isToBeArbitrarily;   
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+```
 
-// 2.按 initialResizeWHScale 进行重置
-/**
- * initialResizeWHScale 默认为初始化时的 resizeWHScale，此后可自行修改 initialResizeWHScale 的值
- * 使用该方法进行重置，裁剪框的宽高比会按照 initialResizeWHScale 的值进行重置
- * 若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = initialResizeWHScale
- */
-[self.imageresizerView recoveryByInitialResizeWHScale:isToBeArbitrarily];
-    
-// 3.按 目标裁剪宽高比 进行重置
-/**
- * 使用该方法进行重置，裁剪框的宽高比会按照 目标裁剪宽高比 进行重置
- * 若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = targetResizeWHScale
- */
-CGFloat imageresizeWHScale = self.imageresizerView.imageresizeWHScale; // 获取当前裁剪框的宽高比
-[self.imageresizerView recoveryToTargetResizeWHScale:imageresizeWHScale isToBeArbitrarily:isToBeArbitrarily];
+#### 3. 以圆切重置
+```objc
+- (void)recoveryToRoundResize;
+- (void)recoveryToRoundResize:(BOOL)isToBeArbitrarily;
+```
 
-// 4.重置回圆切状态
-/**
- * 使用该方法进行重置，以圆切状态回到最初状态
- * 重置之后 resizeWHScale = 1
- */
-[self.imageresizerView recoveryToRoundResize];
+#### 4. 以蒙版图片重置
+```objc
+// 4.1 按当前蒙版图片重置
+- (void)recoveryByCurrentMaskImage;
+- (void)recoveryByCurrentMaskImage:(BOOL)isToBeArbitrarily;
 
-// 5.以蒙版图片重置
-/**
- * 使用该方法进行重置，以蒙版图片的宽高比作为裁剪宽高比回到最初状态
- * 重置之后 resizeWHScale = maskImage.size.width / maskImage.size.height
- */
-[self.imageresizerView recoveryByCurrentMaskImage]; // 使用当前蒙版图片
-[self.imageresizerView recoveryToMaskImage:[UIImage imageNamed:@"love.png"]]; // 指定蒙版图片
+// 4.2 指定蒙版图片重置
+- (void)recoveryToMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 ```
 
 ### 预览
@@ -554,6 +570,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.7.3 | 1. 修复了初始化无法固定裁剪比例的问题；<br>2. 现在圆切和蒙版均可设置是否自由拖拽；<br>3. 优化了设置裁剪宽高比和重置的接口。
 1.7.1~1.7.2 | 1. 新增修正视频方向的功能（有待改进）；<br>2. 裁剪视频可以以AVURLAsset形式传入；<br>3. 优化切换裁剪元素的过渡。
 1.7.0 | 1. 新增可裁剪GIF功能，可以裁剪一整个GIF文件，也可以裁剪其中一帧画面，可设置是否倒放、速率；<br>2. 视频可以截取任意一段转成GIF，可设置帧率、尺寸；<br>3. 裁剪图片和GIF可以以UIImage形式传入，也可以以NSData形式传入；<br>4. 图片和GIF可设置缓存路径保存到本地磁盘；<br>5. 极大地优化了裁剪逻辑。
 1.6.0~1.6.3 | 1. 可裁剪本地视频整段画面或某一帧画面，并且可以动态切换裁剪素材；<br>2. 现在默认经典模式下，闲置时网格线会隐藏，拖拽时才会显示，新增了isShowGridlinesWhenIdle属性，可以跟isShowGridlinesWhenDragging属性自定义显示时机；<br>3. 修复了设置蒙版图片后切换裁剪素材时的方向错乱问题；<br>4. 优化图片裁剪的逻辑，优化API。

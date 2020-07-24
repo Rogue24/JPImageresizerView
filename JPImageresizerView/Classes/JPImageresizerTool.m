@@ -248,7 +248,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         CGContextClipToMask(context, renderRect, maskImageRef);
     }
     if (isRoundClip) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:MIN(renderRect.size.width, renderRect.size.height)];
+        CGFloat radius = MIN(renderRect.size.width, renderRect.size.height) * 0.5;
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:radius];
         CGContextAddPath(context, path.CGPath);
         CGContextClip(context);
     }

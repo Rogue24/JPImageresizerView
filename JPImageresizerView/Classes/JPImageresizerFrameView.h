@@ -26,21 +26,27 @@
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
                 resizeWHScale:(CGFloat)resizeWHScale
-         isArbitrarilyInitial:(BOOL)isArbitrarilyInitial
+                isRoundResize:(BOOL)isRoundResize
+                    maskImage:(UIImage *)maskImage
+                isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
                   borderImage:(UIImage *)borderImage
          borderImageRectInset:(CGPoint)borderImageRectInset
-                isRoundResize:(BOOL)isRoundResize
                 isShowMidDots:(BOOL)isShowMidDots
            isBlurWhenDragging:(BOOL)isBlurWhenDragging
       isShowGridlinesWhenIdle:(BOOL)isShowGridlinesWhenIdle
   isShowGridlinesWhenDragging:(BOOL)isShowGridlinesWhenDragging
                     gridCount:(NSUInteger)gridCount
-                    maskImage:(UIImage *)maskImage
-            isArbitrarilyMask:(BOOL)isArbitrarilyMask
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
- imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
+ imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale
+          isVerticalityMirror:(BOOL(^)(void))isVerticalityMirror
+           isHorizontalMirror:(BOOL(^)(void))isHorizontalMirror
+             resizeObjWhScale:(CGFloat(^)(void))resizeObjWhScale;
+
+@property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
+@property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
+@property (nonatomic, copy) CGFloat (^resizeObjWhScale)(void);
 
 @property (nonatomic, assign, readonly) CGSize baseContentMaxSize;
 
@@ -63,12 +69,19 @@
                 animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign, readonly) CGRect imageresizerFrame;
+@property (readonly) CGFloat imageresizerWHScale;
 
 @property (nonatomic, assign) CGFloat resizeWHScale;
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
-- (void)roundResize:(BOOL)isAnimated;
-- (BOOL)isRoundResizing;
+@property (nonatomic, assign) BOOL isRoundResize;
+- (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+@property (nonatomic, strong) UIImage *maskImage;
+- (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+@property (nonatomic, assign) BOOL isArbitrarily;
+- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
@@ -94,10 +107,6 @@
 @property (nonatomic, assign) BOOL isShowGridlinesWhenDragging;
 @property (nonatomic, assign) NSUInteger gridCount;
 
-@property (nonatomic, copy) CGFloat (^contentWhScale)(void);
-@property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
-@property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
-
 - (void)updateFrameType:(JPImageresizerFrameType)frameType;
 
 - (void)updateImageOriginFrameWithDuration:(NSTimeInterval)duration;
@@ -112,19 +121,15 @@
 - (NSTimeInterval)willMirror:(BOOL)isHorizontalMirror diffValue:(CGFloat)diffValue afterFrame:(CGRect *)afterFrame animated:(BOOL)isAnimated;
 - (void)mirrorDone;
 
-- (NSTimeInterval)willRecoveryToRoundResize:(BOOL)isAnimated;
-- (NSTimeInterval)willRecoveryToMaskImage:(UIImage *)maskImage animated:(BOOL)isAnimated;
-- (NSTimeInterval)willRecoveryToResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+- (NSTimeInterval)willRecoveryToResizeWHScale:(CGFloat)resizeWHScale
+                              orToRoundResize:(BOOL)isRoundResize
+                                orToMaskImage:(UIImage *)maskImage
+                            isToBeArbitrarily:(BOOL)isToBeArbitrarily
+                                     animated:(BOOL)isAnimated;
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone:(BOOL)isUpdateMaskImage;
 
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
-
-@property (nonatomic, strong) UIImage *maskImage;
-- (void)setMaskImage:(UIImage *)maskImage animated:(BOOL)isAnaimated;
-
-@property (nonatomic, assign) BOOL isArbitrarilyMask;
-- (void)setIsArbitrarilyMask:(BOOL)isArbitrarilyMask animated:(BOOL)isAnimated;
 
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;

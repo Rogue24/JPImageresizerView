@@ -12,6 +12,7 @@
 
 @interface JPImageresizerView : UIView
 
+#pragma mark - UI控件
 /**
  * 层级结构
     - JPImageresizerView（self）
@@ -28,10 +29,8 @@
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) JPImageresizerFrameView *frameView;
 
-/*!
- @method
- @brief 创建方法
- @param configure --- 可配置以下初始化参数
+/**
+ * 可配置初始化（configure）：
     image --- 裁剪的图片/GIF（UIImage）
     imageData --- 裁剪的图片/GIF（NSData）
     videoURL --- 裁剪的视频URL
@@ -42,47 +41,126 @@
     bgColor --- 背景颜色
     maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
     strokeColor ---裁剪线颜色
-    resizeWHScale --- 裁剪宽高比
-    isArbitrarilyInitial --- 初始化后裁剪宽高比是否可以任意改变（resizeWHScale 为 0 则为任意比例，该值则为 YES）
+    resizeWHScale --- 裁剪宽高比（设置为0则为任意比例）
+    maskImage --- 蒙版图片
+    isRoundResize --- 是否初始化圆切
+    isArbitrarily --- 是否可以任意比例拖拽
     contentInsets --- 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
     isClockwiseRotation --- 是否顺时针旋转
     borderImage --- 边框图片（若为nil则使用frameType的边框）
     borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
     maximumZoomScale --- 最大缩放比例
-    isRoundResize --- 是否初始化圆切（若为YES则resizeWHScale为1）
     isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
     isBlurWhenDragging --- 拖拽时是否遮罩裁剪区域以外的区域
     isShowGridlinesWhenIdle --- 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
     isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
     gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
-    maskImage --- 蒙版图片
-    isArbitrarilyMask --- 蒙版图片是否可以以任意比例进行拖拽形变
     isLoopPlaybackGIF --- 是否重复循环GIF播放（NO则有拖动条控制）
     fixErrorBlock --- 修正视频方向的错误回调
     fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
     fixProgressBlock --- 修正视频方向的进度回调
     fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
+ */
+
+#pragma mark - 工厂
+/*!
+ @method
+ @brief 类工厂
  @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
  */
-// 类工厂
 + (instancetype)imageresizerViewWithConfigure:(JPImageresizerConfigure *)configure
                     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
                  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
-// 实例工厂
+/*!
+ @method
+ @brief 实例工厂
+ @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
+ @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
+ @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
+ */
 - (instancetype)initWithConfigure:(JPImageresizerConfigure *)configure
         imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
      imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale;
 
-/** 边框样式 */
-@property (nonatomic) JPImageresizerFrameType frameType;
+#pragma mark - 裁剪元素相关
+/**
+ * 裁剪的图片/GIF（UIImage）
+ * 设置该值会调用 -setImage: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
+ */
+@property (nonatomic, strong) UIImage *image;
+/*!
+ @method
+ @brief 更换裁剪的图片/GIF（UIImage）
+ @param image --- 裁剪的图片/GIF
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @discussion 更换裁剪的图片，裁剪宽高比会重置
+ */
+- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated;
 
-/** 动画曲线（默认是线性Linear） */
-@property (nonatomic, assign) JPAnimationCurve animationCurve;
+/**
+ * 裁剪的图片/GIF（NSData）
+ * 设置该值会调用 -setImageData: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
+ */
+@property (nonatomic, strong) NSData *imageData;
+/*!
+ @method
+ @brief 更换裁剪的图片/GIF（NSData）
+ @param imageData --- 裁剪的二进制图片/GIF
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @discussion 更换裁剪的图片，裁剪宽高比会重置
+ */
+- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated;
 
-/** 缩放系数zoomScale为最小时的裁剪最大显示区域 */
-@property (readonly) CGSize baseContentMaxSize;
+/**
+ * 裁剪的视频（NSURL）
+ * 设置该值需调用 -setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
+ */
+@property (readonly) NSURL *videoURL;
+/*!
+ @method
+ @brief 更换裁剪的视频
+ @param videoURL --- 裁剪的视频（NSURL）
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @param fixErrorBlock  --- 修正视频方向的错误回调
+ @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
+ @param fixProgressBlock --- 修正视频方向的进度回调
+ @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
+ @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
+ */
+- (void)setVideoURL:(NSURL *)videoURL
+           animated:(BOOL)isAnimated
+      fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+      fixStartBlock:(void(^)(void))fixStartBlock
+   fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+   fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+
+/**
+ * 裁剪的视频（AVURLAsset）
+ * 设置该值需调用 -setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
+ */
+@property (readonly) AVURLAsset *videoAsset;
+/*!
+ @method
+ @brief 更换裁剪的视频
+ @param videoAsset --- 裁剪的视频（AVURLAsset）
+ @param isAnimated --- 是否带动画效果（淡入淡出的效果）
+ @param fixErrorBlock  --- 修正视频方向的错误回调
+ @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
+ @param fixProgressBlock --- 修正视频方向的进度回调
+ @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
+ @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
+ */
+- (void)setVideoAsset:(AVURLAsset *)videoAsset
+             animated:(BOOL)isAnimated
+        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
+        fixStartBlock:(void(^)(void))fixStartBlock
+     fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
+     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+
+/** 当前裁剪元素的宽高比 */
+@property (nonatomic, assign, readonly) CGFloat resizeObjWhScale;
 
 /** 当前裁剪元素是否为GIF */
 @property (nonatomic, assign, readonly) BOOL isGIF;
@@ -90,95 +168,75 @@
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
-/**
- * 裁剪的图片/GIF（UIImage）
- * 设置该值会调用 -setImage: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
- */
-@property (nonatomic, strong) UIImage *image;
-
-/**
- * 裁剪的图片/GIF（NSData）
- * 设置该值会调用 -setImageData: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
- */
-@property (nonatomic, strong) NSData *imageData;
-
-/**
- * 裁剪的视频（NSURL）
- * 设置该值需调用 -setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
- */
-@property (readonly) NSURL *videoURL;
-
-/**
- * 裁剪的视频（AVURLAsset）
- * 设置该值需调用 -setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
- */
-@property (readonly) AVURLAsset *videoAsset;
-
-/**
- * 模糊效果
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIBlurEffect *blurEffect;
-
-/**
- * 背景颜色
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIColor *bgColor;
-
-/**
- * 遮罩颜色的透明度（背景颜色 * 透明度）
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) CGFloat maskAlpha;
-
-/**
- * 裁剪线颜色
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIColor *strokeColor;
-
-/**
- * 裁剪宽高比（0则为任意比例）
- * 设置该值会调用 -setResizeWHScale: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = NO，isAnimated = YES）
- */
-@property (nonatomic) CGFloat resizeWHScale;
-
+#pragma mark - 裁剪宽高比相关
 /**
  * 初始裁剪宽高比（默认为初始化时的resizeWHScalem）
  * 调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
  */
 @property (nonatomic) CGFloat initialResizeWHScale;
 
+/**
+ * 裁剪宽高比（直接设置：若设置为0，则 self.isArbitrarily = YES，可任意比例拖拽；否则 self.isArbitrarily = NO，固定比例拖拽）
+ * 设置该值会调用 -setResizeWHScale: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (resizeWHScale <= 0)，isAnimated = YES）
+ */
+@property (nonatomic) CGFloat resizeWHScale;
+/*!
+ @method
+ @brief 设置裁剪宽高比
+ @param resizeWHScale --- 目标裁剪宽高比
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，并且 resizeWHScale 设置为0，则最后以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale）
+ @param isAnimated --- 是否带动画效果
+ @discussion 以最合适的尺寸更新裁剪框的尺寸
+ */
+- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+/**
+ * 是否圆切（直接设置：YES --> self.isArbitrarily = NO，固定以 1:1 比例拖拽）
+ * 设置该值会调用 -setIsRoundResize: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (isRoundResize ? NO : self.isArbitrarily)，isAnimated = YES）
+ */
+@property (nonatomic) BOOL isRoundResize;
+/*!
+ @method
+ @brief 设置是否圆切
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = 1）
+ @param isAnimated --- 是否带动画效果
+ @discussion 以圆形裁剪，此状态下边框图片会隐藏，并且宽高比是1:1
+ */
+- (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+/**
+ * 蒙版图片（直接设置：不为空 --> self.isArbitrarily = NO，固定以蒙版图片的宽高比例拖拽）
+ * 设置该值会调用 -setMaskImage: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (maskImage ? NO : self.isArbitrarily)，isAnimated = YES）
+ */
+@property (nonatomic) UIImage *maskImage;
+/*!
+ @method
+ @brief 设置蒙版图片
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = maskImage.size.width / maskImage.size.height）
+ @param isAnimated --- 是否带动画效果
+ @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
+ */
+- (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+/**
+ * 是否可以任意比例拖拽
+ * 设置该值会调用 -setIsArbitrarily: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic) BOOL isArbitrarily;
+/*!
+@method
+@brief 设置是否可以任意比例拖拽
+@param isAnimated --- 是否带动画效果
+@discussion 若为NO，以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale；如果是 isRoundResize，则 resizeWHScale = 1；如果有 maskImage，则以蒙版图片的宽高比固定比例 resizeWHScale = maskImage.size.width / maskImage.size.height
+*/
+- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
+
 /** 裁剪框当前的宽高比 */
-@property (readonly) CGFloat imageresizeWHScale;
+@property (readonly) CGFloat imageresizerWHScale;
 
-/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
-@property (nonatomic, assign) BOOL edgeLineIsEnabled;
-
-/** 是否顺时针旋转（默认逆时针） */
-@property (nonatomic, assign) BOOL isClockwiseRotation;
-
-/** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
-@property (nonatomic) BOOL isLockResizeFrame;
-
-/**
- * 垂直镜像（沿着Y轴旋转180）
- * 设置该值会调用 -setVerticalityMirror: animated: 方法（isAnimated = YES）
- */
-@property (nonatomic, assign) BOOL verticalityMirror;
-
-/**
- * 水平镜像（沿着X轴旋转180）
- * 设置该值会调用 -setHorizontalMirror: animated: 方法（isAnimated = YES）
- */
-@property (nonatomic, assign) BOOL horizontalMirror;
-
-/**
- * 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域）
- * 设置该值会调用 -setIsPreview: animated: 方法（isAnimated = YES）
- */
-@property (nonatomic, assign) BOOL isPreview;
+#pragma mark - 裁剪框样式相关
+/** 边框样式 */
+@property (nonatomic) JPImageresizerFrameType frameType;
 
 /** 边框图片（若为nil则使用frameType的边框） */
 @property (nonatomic) UIImage *borderImage;
@@ -201,68 +259,33 @@
 /** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic, assign) NSUInteger gridCount;
 
-/** 蒙版图片 */
-@property (nonatomic) UIImage *maskImage;
+/** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
+@property (nonatomic) BOOL isLockResizeFrame;
 
-/** 蒙版图片是否可以拖拽形变 */
-@property (nonatomic) BOOL isArbitrarilyMask;
+/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
+@property (nonatomic, assign) BOOL edgeLineIsEnabled;
 
-#pragma mark - 更换裁剪元素
-/*!
- @method
- @brief 更换裁剪的图片/GIF（UIImage）
- @param image --- 裁剪的图片/GIF
- @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @discussion 更换裁剪的图片，裁剪宽高比会重置
+#pragma mark - 裁剪框、背景、遮罩颜色相关
+/**
+ * 裁剪线颜色
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-- (void)setImage:(UIImage *)image animated:(BOOL)isAnimated;
-
-/*!
- @method
- @brief 更换裁剪的图片/GIF（NSData）
- @param imageData --- 裁剪的二进制图片/GIF
- @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @discussion 更换裁剪的图片，裁剪宽高比会重置
+@property (nonatomic) UIColor *strokeColor;
+/**
+ * 模糊效果
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-- (void)setImageData:(NSData *)imageData animated:(BOOL)isAnimated;
-
-/*!
- @method
- @brief 更换裁剪的视频
- @param videoURL --- 裁剪的视频（NSURL）
- @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @param fixErrorBlock  --- 修正视频方向的错误回调
- @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
- @param fixProgressBlock --- 修正视频方向的进度回调
- @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
- @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
+@property (nonatomic) UIBlurEffect *blurEffect;
+/**
+ * 背景颜色
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-- (void)setVideoURL:(NSURL *)videoURL
-           animated:(BOOL)isAnimated
-      fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-      fixStartBlock:(void(^)(void))fixStartBlock
-   fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
-   fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
-
-/*!
- @method
- @brief 更换裁剪的视频
- @param videoAsset --- 裁剪的视频（AVURLAsset）
- @param isAnimated --- 是否带动画效果（淡入淡出的效果）
- @param fixErrorBlock  --- 修正视频方向的错误回调
- @param fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
- @param fixProgressBlock --- 修正视频方向的进度回调
- @param fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
- @discussion 更换裁剪的视频，裁剪宽高比会重置，如果确定是无需修正方向的视频，fixErrorBlock、fixStartBlock、fixProgressBlock、fixCompleteBlock传nil
+@property (nonatomic) UIColor *bgColor;
+/**
+ * 遮罩颜色的透明度（背景颜色 * 透明度）
+ * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-- (void)setVideoAsset:(AVURLAsset *)videoAsset
-             animated:(BOOL)isAnimated
-        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-        fixStartBlock:(void(^)(void))fixStartBlock
-     fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
-     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
-
-#pragma mark - 设置颜色
+@property (nonatomic) CGFloat maskAlpha;
 /*!
  @method
  @brief 设置颜色
@@ -279,33 +302,22 @@
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated;
 
-#pragma mark - 设置裁剪宽高比
-/*!
- @method
- @brief 设置裁剪宽高比
- @param resizeWHScale --- 目标裁剪宽高比
- @param isToBeArbitrarily --- 设置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @param isAnimated --- 是否带动画效果
- @discussion 以最合适的尺寸更新裁剪框的尺寸（0则为任意比例）
- */
-- (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+#pragma mark - 旋转、镜像翻转相关
+/** 是否顺时针旋转（默认逆时针） */
+@property (nonatomic, assign) BOOL isClockwiseRotation;
 
 /*!
  @method
- @brief 圆切
- @param isAnimated --- 是否带动画效果
- @discussion 以圆形裁剪，此状态下边框图片会隐藏，并且宽高比是1:1，恢复矩形则重设resizeWHScale
+ @brief 旋转图片
+ @discussion 旋转90度，支持4个方向，分别是垂直向上、水平向左、垂直向下、水平向右
  */
-- (void)roundResize:(BOOL)isAnimated;
+- (void)rotation;
 
-/*!
- @method
- @brief 是否正在圆切
- @return YES：圆切，NO：矩形
+/**
+ * 垂直镜像（沿着Y轴旋转180）
+ * 设置该值会调用 -setVerticalityMirror: animated: 方法（isAnimated = YES）
  */
-- (BOOL)isRoundResizing;
-
-#pragma mark - 镜像翻转
+@property (nonatomic, assign) BOOL verticalityMirror;
 /*!
  @method
  @brief 设置是否垂直镜像
@@ -315,6 +327,11 @@
  */
 - (void)setVerticalityMirror:(BOOL)verticalityMirror animated:(BOOL)isAnimated;
 
+/**
+ * 水平镜像（沿着X轴旋转180）
+ * 设置该值会调用 -setHorizontalMirror: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic, assign) BOOL horizontalMirror;
 /*!
  @method
  @brief 设置是否水平镜像
@@ -324,7 +341,19 @@
  */
 - (void)setHorizontalMirror:(BOOL)horizontalMirror animated:(BOOL)isAnimated;
 
-#pragma mark - 预览
+#pragma mark - 其他
+/** 缩放系数zoomScale为最小时的裁剪最大显示区域 */
+@property (readonly) CGSize baseContentMaxSize;
+
+/** 动画曲线（默认是线性Linear） */
+@property (nonatomic, assign) JPAnimationCurve animationCurve;
+
+#pragma mark 预览
+/**
+ * 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域）
+ * 设置该值会调用 -setIsPreview: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic, assign) BOOL isPreview;
 /*!
  @method
  @brief 设置是否预览
@@ -334,70 +363,7 @@
  */
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;
 
-#pragma mark - 旋转
-/*!
- @method
- @brief 旋转图片
- @discussion 旋转90度，支持4个方向，分别是垂直向上、水平向左、垂直向下、水平向右
- */
-- (void)rotation;
-
-#pragma mark - 重置
-/*!
- @method
- @brief 重置回圆切状态
- @discussion 以圆切状态回到最初状态
- */
-- (void)recoveryToRoundResize;
-
-/*!
- @method
- @brief 按当前蒙版图片重置
- @discussion 以当前蒙版图片的宽高比作为裁剪宽高比回到最初状态
- */
-- (void)recoveryByCurrentMaskImage;
-
-/*!
- @method
- @brief 按指定蒙版图片重置
- @discussion 重置指定蒙版图片，并以蒙版图片的宽高比作为裁剪宽高比回到最初状态
- */
-- (void)recoveryToMaskImage:(UIImage *)maskImage;
-
-/*!
- @method
- @brief 按当前裁剪宽高比（resizeWHScale）进行重置
- @discussion 回到最初状态，resizeWHScale 不会被重置
- */
-- (void)recoveryByCurrentResizeWHScale;
-
-/*!
- @method
- @brief 按当前裁剪宽高比（resizeWHScale）进行重置
- @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，若 isToBeArbitrarily 为 YES，则重置之后 resizeWHScale =  0
- */
-- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
-
-/*!
- @method
- @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
- @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale =  initialResizeWHScale
- */
-- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
-
-/*!
- @method
- @brief 按目标裁剪宽高比进行重置
- @param targetResizeWHScale --- 目标裁剪宽高比
- @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale
- */
-- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale
-                    isToBeArbitrarily:(BOOL)isToBeArbitrarily;
-
-#pragma mark - 更新视图整体Frame，例如横竖屏切换
+#pragma mark 更新视图整体Frame，可作用于横竖屏切换
 /*!
  @method
  @brief 更新视图整体Frame
@@ -409,6 +375,89 @@
 - (void)updateFrame:(CGRect)frame
       contentInsets:(UIEdgeInsets)contentInsets
            duration:(NSTimeInterval)duration;
+
+#pragma mark - 重置
+/*!
+ @method
+ @brief 一切按当前状态重置
+ @discussion 回到最初状态
+ */
+- (void)recovery;
+
+#pragma mark 以resizeWHScale重置（会移除圆切、蒙版）
+/*!
+ @method
+ @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
+ @discussion 回到最初状态，会移除圆切、蒙版
+ */
+- (void)recoveryByInitialResizeWHScale;
+/*!
+ @method
+ @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale =  initialResizeWHScale，否则为 0
+ */
+- (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
+
+/*!
+ @method
+ @brief 按当前裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
+ @discussion 回到最初状态，会移除圆切、蒙版，resizeWHScale 不会被重置
+ */
+- (void)recoveryByCurrentResizeWHScale;
+/*!
+ @method
+ @brief 按当前裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 YES，则重置之后 resizeWHScale =  0
+ */
+- (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
+/*!
+ @method
+ @brief 按目标裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
+ @param targetResizeWHScale --- 目标裁剪宽高比
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale，否则为 0
+ */
+- (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+
+#pragma mark 以圆切重置
+/*!
+ @method
+ @brief 重置回圆切状态
+ @discussion 以圆切状态回到最初状态
+ */
+- (void)recoveryToRoundResize;
+/*!
+ @method
+ @brief 重置回圆切状态
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0，否则为 1）
+ @discussion 以圆切状态回到最初状态
+ */
+- (void)recoveryToRoundResize:(BOOL)isToBeArbitrarily;
+
+#pragma mark 以蒙版图片重置
+/*!
+ @method
+ @brief 按当前蒙版图片重置
+ @discussion 以当前蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ */
+- (void)recoveryByCurrentMaskImage;
+/*!
+ @method
+ @brief 按当前蒙版图片重置
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0，否则为蒙版图片的宽高比 resizeWHScale = maskImage.size.width / maskImage.size.height）
+ @discussion 以当前蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ */
+- (void)recoveryByCurrentMaskImage:(BOOL)isToBeArbitrarily;
+/*!
+ @method
+ @brief 按指定蒙版图片重置
+ @param maskImage --- 指定蒙版图片，为 nil 则以当前 resizeWHScale 重置
+ @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0，否则为蒙版图片的宽高比 resizeWHScale = maskImage.size.width / maskImage.size.height）
+ @discussion 重置指定蒙版图片，并以蒙版图片的宽高比作为裁剪宽高比回到最初状态
+ */
+- (void)recoveryToMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 #pragma mark - 裁剪
 

@@ -149,20 +149,19 @@
     .jp_bgColor(UIColor.blackColor)
     .jp_maskAlpha(0.75)
     .jp_resizeWHScale(0.0)
-    .jp_isArbitrarilyInitial(YES)
+    .jp_isRoundResize(NO)
+    .jp_maskImage(nil)
+    .jp_isArbitrarily(YES)
     .jp_edgeLineIsEnabled(YES)
     .jp_contentInsets(UIEdgeInsetsZero)
     .jp_borderImage(nil)
     .jp_borderImageRectInset(CGPointZero)
     .jp_maximumZoomScale(10.0)
-    .jp_isRoundResize(NO)
     .jp_isShowMidDots(YES)
     .jp_isBlurWhenDragging(NO)
     .jp_isShowGridlinesWhenIdle(NO)
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
-    .jp_maskImage(nil)
-    .jp_isArbitrarilyMask(NO)
     .jp_isLoopPlaybackGIF(NO);
     return configure;
 }
@@ -278,9 +277,23 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(BOOL))jp_isArbitrarilyInitial {
-    return ^(BOOL isArbitrarilyInitial) {
-        self.isArbitrarilyInitial = isArbitrarilyInitial;
+- (JPImageresizerConfigure *(^)(BOOL))jp_isRoundResize {
+    return ^(BOOL isRoundResize) {
+        self.isRoundResize = isRoundResize;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIImage *))jp_maskImage {
+    return ^(UIImage *maskImage) {
+        self.maskImage = maskImage;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isArbitrarily {
+    return ^(BOOL isArbitrarily) {
+        self.isArbitrarily = isArbitrarily;
         return self;
     };
 }
@@ -327,13 +340,6 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(BOOL))jp_isRoundResize {
-    return ^(BOOL isRoundResize) {
-        self.isRoundResize = isRoundResize;
-        return self;
-    };
-}
-
 - (JPImageresizerConfigure *(^)(BOOL))jp_isShowMidDots {
     return ^(BOOL isShowMidDots) {
         self.isShowMidDots = isShowMidDots;
@@ -365,20 +371,6 @@
 - (JPImageresizerConfigure *(^)(NSUInteger))jp_gridCount {
     return ^(NSUInteger gridCount) {
         self.gridCount = gridCount;
-        return self;
-    };
-}
-
-- (JPImageresizerConfigure *(^)(UIImage *))jp_maskImage {
-    return ^(UIImage *maskImage) {
-        self.maskImage = maskImage;
-        return self;
-    };
-}
-
-- (JPImageresizerConfigure *(^)(BOOL))jp_isArbitrarilyMask {
-    return ^(BOOL isArbitrarilyMask) {
-        self.isArbitrarilyMask = isArbitrarilyMask;
         return self;
     };
 }

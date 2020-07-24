@@ -36,74 +36,49 @@
     model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:nil];
     
     JPConfigureModel *model4 = [self new];
-    model4.title = @"其他样式";
+    model4.title = @"拉伸样式的边框图片";
     model4.statusBarStyle = UIStatusBarStyleDefault;
-    model4.configure = [JPImageresizerConfigure defaultConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_maskAlpha(0.5)
-        .jp_strokeColor(JPRandomColor)
-        .jp_frameType(JPClassicFrameType)
-        .jp_bgColor(JPRandomColor)
-        .jp_isClockwiseRotation(YES)
-        .jp_animationCurve(JPAnimationCurveEaseOut);
-    }];
-    
-    JPConfigureModel *model5 = [self new];
-    model5.title = @"自定义边框图片（拉伸模式）";
-    model5.statusBarStyle = UIStatusBarStyleDefault;
-    model5.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+    model4.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage([JPViewController stretchBorderImage])
         .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
     }];
     
-    JPConfigureModel *model6 = [self new];
-    model6.title = @"自定义边框图片（平铺模式）";
-    model6.statusBarStyle = UIStatusBarStyleLightContent;
-    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+    JPConfigureModel *model5 = [self new];
+    model5.title = @"平铺样式的边框图片";
+    model5.statusBarStyle = UIStatusBarStyleLightContent;
+    model5.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage([JPViewController tileBorderImage])
         .jp_borderImageRectInset([JPViewController tileBorderImageRectInset]);
     }];
     
-    JPConfigureModel *model7 = [self new];
-    model7.title = @"自定义蒙版图片（固定比例）";
-    model7.statusBarStyle = UIStatusBarStyleLightContent;
-    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure.jp_maskImage([UIImage imageNamed:@"supreme.png"]);
+    JPConfigureModel *model6 = [self new];
+    model6.title = @"圆切样式";
+    model6.statusBarStyle = UIStatusBarStyleDefault;
+    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+        configure
+        .jp_strokeColor(JPRGBColor(250, 250, 250))
+        .jp_frameType(JPClassicFrameType)
+        .jp_isClockwiseRotation(YES)
+        .jp_animationCurve(JPAnimationCurveEaseOut)
+        .jp_isRoundResize(YES)
+        .jp_isArbitrarily(NO);
     }];
     
-    JPConfigureModel *model8 = [self new];
-    model8.title = @"自定义蒙版图片（任意比例）";
-    model8.statusBarStyle = UIStatusBarStyleLightContent;
-    model8.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
+    JPConfigureModel *model7 = [self new];
+    model7.title = @"蒙版样式";
+    model7.statusBarStyle = UIStatusBarStyleLightContent;
+    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_frameType(JPClassicFrameType)
         .jp_maskImage([UIImage imageNamed:@"love.png"])
-        .jp_isArbitrarilyMask(YES);
+        .jp_isArbitrarily(NO);
     }];
     
-    NSString *videoPath = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
-    JPConfigureModel *model9 = [self new];
-    model9.title = @"裁剪本地视频";
-    model9.statusBarStyle = UIStatusBarStyleDefault;
-    model9.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_borderImage([JPViewController stretchBorderImage])
-        .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
-    } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
-    
-    NSString *gifPath = JPMainBundleResourcePath(@"Gem.gif", nil);
-    JPConfigureModel *model10 = [self new];
-    model10.title = @"裁剪本地GIF";
-    model10.statusBarStyle = UIStatusBarStyleLightContent;
-    model10.configure = [JPImageresizerConfigure defaultConfigureWithImageData:[NSData dataWithContentsOfFile:gifPath] make:^(JPImageresizerConfigure *configure) {
-        configure.jp_frameType(JPClassicFrameType);
-    }];
-    
-    return @[model1, model2, model3, model4, model5, model6, model7, model8, model9, model10];
+    return @[model1, model2, model3, model4, model5, model6, model7];
 }
 @end
 
@@ -149,16 +124,17 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         return self.models.count;
-    } else if (section == 2) {
+    } else if (section == 1 || section == 2) {
         return 2;
+    } else {
+        return 1;
     }
-    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -166,16 +142,20 @@
     if (indexPath.section == 0) {
         JPConfigureModel *model = self.models[indexPath.row];
         cell.textLabel.text = model.title;
-    } else {
-        if (indexPath.section == 1) {
-            cell.textLabel.text = @"用户相册";
+    } else if (indexPath.section == 1) {
+        if (indexPath.item == 0) {
+            cell.textLabel.text = @"裁剪本地GIF";
         } else {
-            if (indexPath.item == 0) {
-                cell.textLabel.text = @"成为吴彦祖";
-            } else {
-                cell.textLabel.text = @"暂停选老婆";
-            }
+            cell.textLabel.text = @"裁剪本地视频";
         }
+    } else if (indexPath.section == 2) {
+        if (indexPath.item == 0) {
+            cell.textLabel.text = @"成为吴彦祖";
+        } else {
+            cell.textLabel.text = @"暂停选老婆";
+        }
+    } else {
+        cell.textLabel.text = @"从系统相册选择";
     }
     return cell;
 }
@@ -191,29 +171,47 @@ static JPImageresizerConfigure *gifConfigure_;
             model.configure.image = [self __randomImage];
         }
         [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
-    } else {
-        if (indexPath.section == 1) {
-            [self __openAlbum:NO];
-        } else if (indexPath.section == 2) {
-            if (indexPath.item == 0) {
-                [self __openAlbum:YES];
-            } else {
-                if (!gifConfigure_) {
-                    [JPProgressHUD show];
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:^(JPImageresizerConfigure *configure) {
-                            configure.jp_isLoopPlaybackGIF(YES);
-                        }];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [JPProgressHUD dismiss];
-                            [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
-                        });
-                    });
-                    return;
-                }
-                [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
-            }
+    } else if (indexPath.section == 1) {
+        JPConfigureModel *model = [JPConfigureModel new];
+        if (indexPath.item == 0) {
+            NSString *gifPath = JPMainBundleResourcePath(@"Gem.gif", nil);
+            model.title = @"裁剪本地GIF";
+            model.statusBarStyle = UIStatusBarStyleLightContent;
+            model.configure = [JPImageresizerConfigure defaultConfigureWithImageData:[NSData dataWithContentsOfFile:gifPath] make:^(JPImageresizerConfigure *configure) {
+                configure.jp_frameType(JPClassicFrameType);
+            }];
+        } else {
+            NSString *videoPath = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
+            model.title = @"裁剪本地视频";
+            model.statusBarStyle = UIStatusBarStyleDefault;
+            model.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
+                configure
+                .jp_borderImage([JPViewController stretchBorderImage])
+                .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
+            } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
         }
+        [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
+    } else if (indexPath.section == 2) {
+        if (indexPath.item == 0) {
+            [self __openAlbum:YES];
+        } else {
+            if (!gifConfigure_) {
+                [JPProgressHUD show];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:^(JPImageresizerConfigure *configure) {
+                        configure.jp_isLoopPlaybackGIF(YES);
+                    }];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [JPProgressHUD dismiss];
+                        [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
+                    });
+                });
+                return;
+            }
+            [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
+        }
+    } else {
+        [self __openAlbum:NO];
     }
 }
 
