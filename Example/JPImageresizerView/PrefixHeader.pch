@@ -9,12 +9,14 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
+#define GirlCount 8
+
 #define JPMargin 16.0
 #define LandscapeVerBtnSpace 10.0
 #define PortraitHorBtnSpace 20.0
 #define ButtonHeight 30.0
 
-#define JPGIFDuration 3.0
+#define JPGIFDuration 2.0
 #define JPCutGIFDuration 5.0
 
 #import "JPImageresizerView.h"

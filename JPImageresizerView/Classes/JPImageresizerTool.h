@@ -24,16 +24,6 @@
  */
 + (BOOL)isGIFData:(NSData *)data;
 
-/**
- * 获取图片类型后缀
- */
-+ (NSString *)contentTypeForImageData:(NSData *)data;
-
-/**
- * 获取视频类型
- */
-+ (AVFileType)videoFileTypeForURL:(NSURL *)url;
-
 #pragma mark - 裁剪图片
 /**
  * 裁剪图片（UIImage）

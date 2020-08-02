@@ -570,7 +570,7 @@ static UIViewController *tmpVC_;
     
     // 裁剪图片
     [JPProgressHUD show];
-    [self.imageresizerView cropPictureWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    [self.imageresizerView cropPictureWithCacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         @jp_strongify(self);
         if (!self) return;
         [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];

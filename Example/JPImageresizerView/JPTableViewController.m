@@ -167,18 +167,18 @@ static JPImageresizerConfigure *gifConfigure_;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
         JPConfigureModel *model = self.models[indexPath.row];
-        if (!model.configure.image && !model.configure.imageData && !model.configure.videoURL) {
-            model.configure.image = [self __randomImage];
-        }
+        model.configure.image = [self __randomImage];
         [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
     } else if (indexPath.section == 1) {
         JPConfigureModel *model = [JPConfigureModel new];
         if (indexPath.item == 0) {
-            NSString *gifPath = JPMainBundleResourcePath(@"Gem.gif", nil);
+            NSString *gifPath =(arc4random() % 2) ? JPMainBundleResourcePath(@"Gem.gif", nil) : JPMainBundleResourcePath(@"Dilraba.gif", nil);
+            BOOL isLoopPlaybackGIF = arc4random() % 2;
             model.title = @"裁剪本地GIF";
             model.statusBarStyle = UIStatusBarStyleLightContent;
             model.configure = [JPImageresizerConfigure defaultConfigureWithImageData:[NSData dataWithContentsOfFile:gifPath] make:^(JPImageresizerConfigure *configure) {
                 configure.jp_frameType(JPClassicFrameType);
+                configure.jp_isLoopPlaybackGIF(isLoopPlaybackGIF);
             }];
         } else {
             NSString *videoPath = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
@@ -218,9 +218,9 @@ static JPImageresizerConfigure *gifConfigure_;
 #pragma mark - 随机图片
 - (UIImage *)__randomImage {
     NSString *imageName;
-    NSInteger index = 1 + arc4random() % 9;
-    if (index > 7) {
-        if (index == 8) {
+    NSInteger index = 1 + arc4random() % (GirlCount + 2);
+    if (index > GirlCount) {
+        if (index == GirlCount + 1) {
             imageName = @"Kobe.jpg";
         } else {
             imageName = @"Flowers.jpg";
@@ -240,7 +240,7 @@ static JPImageresizerConfigure *gifConfigure_;
     bitmapInfo |= kCGImageAlphaNoneSkipFirst;
     CGContextRef context = CGBitmapContextCreate(NULL, size.width, size.height, 8, 0, colorSpace, bitmapInfo);
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    for (NSInteger i = 1; i <= 7; i++) {
+    for (NSInteger i = 1; i <= GirlCount; i++) {
         NSString *imageName = [NSString stringWithFormat:@"Girl%zd.jpg", i];
         UIImage *image = [UIImage imageWithContentsOfFile:JPMainBundleResourcePath(imageName, nil)];
         
