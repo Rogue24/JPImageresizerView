@@ -5,9 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
 
-[掘金](https://juejin.im/post/5e67cf33f265da5749475935)
-
-[英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md)
+[英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.im/post/5e67cf33f265da5749475935)
 
 ## 简介（当前版本：1.7.4）
 
