@@ -1140,16 +1140,26 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         }
         index += 1;
         if (index == frameTotal) {
-            if (images.count == frameTotal) {
-                [self cropGIFWithGifImage:[UIImage animatedImageWithImages:images duration:duration]
-                           isReverseOrder:NO
-                                     rate:1
-                                maskImage:maskImage
-                                configure:configure
-                            compressScale:1
-                                 cacheURL:cacheURL
-                               errorBlock:errorBlock
-                            completeBlock:completeBlock];
+            if (images.count) {
+                if (images.count == 1) {
+                    [self cropPictureWithImage:images.firstObject
+                                     maskImage:maskImage
+                                     configure:configure
+                                 compressScale:1
+                                      cacheURL:cacheURL
+                                    errorBlock:errorBlock
+                                 completeBlock:completeBlock];
+                } else {
+                    [self cropGIFWithGifImage:[UIImage animatedImageWithImages:images duration:duration]
+                               isReverseOrder:NO
+                                         rate:1
+                                    maskImage:maskImage
+                                    configure:configure
+                                compressScale:1
+                                     cacheURL:cacheURL
+                                   errorBlock:errorBlock
+                                completeBlock:completeBlock];
+                }
             } else {
                 [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
             }
