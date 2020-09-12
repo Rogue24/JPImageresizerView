@@ -454,7 +454,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     CGFloat quality;
     CFStringRef imageType = [self __contentTypeForSuffix:cacheURL.pathExtension quality:&quality];
-    NSDictionary *frameProperty = frameProperty = @{(id)kCGImageDestinationLossyCompressionQuality: @(quality)};
+    NSDictionary *frameProperty = @{(id)kCGImageDestinationLossyCompressionQuality: @(quality)};
     
     CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, imageType, 1, NULL);
     CGImageDestinationAddImage(destination, image.CGImage, (CFDictionaryRef)frameProperty);

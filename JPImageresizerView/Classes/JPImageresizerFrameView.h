@@ -115,7 +115,7 @@
 - (void)endedImageresizer;
 
 - (NSTimeInterval)willRotationWithDirection:(JPImageresizerRotationDirection)direction;
-- (void)rotating:(CGFloat)angle duration:(NSTimeInterval)duration;
+- (void)rotatingWithDuration:(NSTimeInterval)duration;
 - (void)rotationDone;
 
 - (NSTimeInterval)willMirror:(BOOL)isHorizontalMirror diffValue:(CGFloat)diffValue afterFrame:(CGRect *)afterFrame animated:(BOOL)isAnimated;

@@ -1447,7 +1447,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
     return delay;
 }
-- (void)rotating:(CGFloat)angle duration:(NSTimeInterval)duration {
+- (void)rotatingWithDuration:(NSTimeInterval)duration {
     [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 - (void)rotationDone {

@@ -913,7 +913,7 @@
         [UIView animateWithDuration:duration delay:0 options:self->_animationOption animations:^{
             self.scrollView.layer.transform = svTransform;
             self.frameView.layer.transform = fvTransform;
-            [self.frameView rotating:angle duration:duration];
+            [self.frameView rotatingWithDuration:duration];
         } completion:^(BOOL finished) {
             [self.frameView rotationDone];
         }];
