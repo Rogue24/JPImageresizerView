@@ -111,12 +111,22 @@
 
 - (UIView *)thumb {
     if (!_thumb && self.slider.subviews.count) {
-        for (UIView *subview in self.slider.subviews) {
-            if ([subview isKindOfClass:UIImageView.class]) {
-                _thumb = subview;
-                self.thumbView.center = _thumb.center;
+        BOOL (^setupThumb)(UIView *view) = ^(UIView *view){
+            if ([view isKindOfClass:UIImageView.class]) {
+                self->_thumb = view;
+                self.thumbView.center = view.center;
                 [self.slider addSubview:self.thumbView];
-                break;
+                return YES;
+            }
+            return NO;
+        };
+        for (UIView *subview in self.slider.subviews) {
+            if (@available(iOS 14.0, *)) {
+                for (UIView *subSubview in subview.subviews) {
+                    if (setupThumb(subSubview)) break;
+                }
+            } else {
+                if (setupThumb(subview)) break;
             }
         }
     }
