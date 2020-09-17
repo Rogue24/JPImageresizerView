@@ -989,6 +989,44 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     UIScrollView *scrollView = self.scrollView;
     UIImageView *imageView = self.imageView;
     
+    // 宽高比不相等，则是固定比例的旋转，将imageresizerFrame修正为旋转后的正确区域
+    CGFloat imageresizerWhScale = imageresizerFrame.size.width / imageresizerFrame.size.height;
+    CGFloat adjustResizeWhScale = adjustResizeFrame.size.width / adjustResizeFrame.size.height;
+    BOOL isSwitchWh = (imageresizerWhScale >= 1) != (adjustResizeWhScale >= 1);
+    if (isSwitchWh) {
+        CGFloat x = imageresizerFrame.origin.x;
+        CGFloat y = imageresizerFrame.origin.y;
+        CGFloat w = imageresizerFrame.size.width;
+        CGFloat h = imageresizerFrame.size.height;
+        if (imageresizerWhScale >= 1) {
+            CGFloat maxSide = w;
+            w = h;
+            h = maxSide;
+            CGFloat diff = (maxSide - w) * 0.5;
+            x += diff;
+            y -= diff;
+        } else {
+            CGFloat maxSide = h;
+            h = w;
+            w = maxSide;
+            CGFloat diff = (maxSide - h) * 0.5;
+            x -= diff;
+            y += diff;
+        }
+        CGRect imageViewFrame = [scrollView convertRect:imageView.frame toView:self];
+        if (x < imageViewFrame.origin.x) {
+            x = imageViewFrame.origin.x;
+        } else if ((x + w) > CGRectGetMaxX(imageViewFrame)) {
+            x = CGRectGetMaxX(imageViewFrame) - w;
+        }
+        if (y < imageViewFrame.origin.y) {
+            y = imageViewFrame.origin.y;
+        } else if ((y + h) > CGRectGetMaxY(imageViewFrame)) {
+            y = CGRectGetMaxY(imageViewFrame) - h;
+        }
+        imageresizerFrame = CGRectMake(x, y, w, h);
+    }
+    
     // zoomFrame
     // 根据裁剪的区域，因为需要有间距，所以拼接成self的尺寸获取缩放的区域zoomFrame
     // 宽高比不变，所以宽度高度的比例是一样，这里就用宽度比例吧

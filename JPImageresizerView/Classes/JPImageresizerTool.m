@@ -447,7 +447,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 }
 
 #pragma mark 缓存图片
-+ (BOOL)__cacheImage:(UIImage *)image hasAlpha:(BOOL)hasAlpha cacheURL:(NSURL *)cacheURL {
++ (BOOL)__cacheImage:(UIImage *)image cacheURL:(NSURL *)cacheURL {
     if (!cacheURL || !image) {
         return NO;
     }
@@ -616,7 +616,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                     if (delay < 0.02) delay = 0.1;
                     isCacheSuccess = [self __cacheGIF:image.images delays:@[@(delay)] cacheURL:cacheURL];
                 } else {
-                    isCacheSuccess = [self __cacheImage:image hasAlpha:hasAlpha cacheURL:cacheURL];
+                    isCacheSuccess = [self __cacheImage:image cacheURL:cacheURL];
                 }
             }
         }
@@ -747,7 +747,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGContextRelease(context);
     if (source != NULL) CFRelease(source);
     
-    isCacheSuccess = [self __cacheImage:finalImage hasAlpha:hasAlpha cacheURL:cacheURL];
+    isCacheSuccess = [self __cacheImage:finalImage cacheURL:cacheURL];
     [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
 }
 
