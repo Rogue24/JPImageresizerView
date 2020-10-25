@@ -1,16 +1,16 @@
 //
-//  JPImageViewController.m
+//  JPPreviewViewController.m
 //  JPImageresizerView_Example
 //
 //  Created by 周健平 on 2018/1/2.
 //  Copyright © 2018年 ZhouJianPing. All rights reserved.
 //
 
-#import "JPImageViewController.h"
+#import "JPPreviewViewController.h"
 #import "JPPhotoTool.h"
 #import "JPImageresizerSlider.h"
 
-@interface JPImageViewController ()
+@interface JPPreviewViewController ()
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) AVPlayer *player;
@@ -19,7 +19,7 @@
 @property (nonatomic, strong) id timeObserver;
 @end
 
-@implementation JPImageViewController
+@implementation JPPreviewViewController
 {
     BOOL _isDidAppear;
 }

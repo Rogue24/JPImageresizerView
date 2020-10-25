@@ -7,7 +7,7 @@
 //
 
 #import "ReplaceFaceViewController.h"
-#import "JPImageViewController.h"
+#import "JPPreviewViewController.h"
 
 @interface ReplaceFaceViewController ()
 
@@ -111,7 +111,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [JPProgressHUD dismiss];
-            JPImageViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+            JPPreviewViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
             vc.image = resultImage;
             [self.navigationController pushViewController:vc animated:YES];
         });

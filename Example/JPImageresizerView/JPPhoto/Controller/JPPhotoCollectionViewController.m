@@ -12,7 +12,7 @@
 #import "NoDataView.h"
 #import "JPPhotoCollectionViewFlowLayout.h"
 #import "JPBrowseImagesViewController.h"
-#import "JPViewController.h"
+#import "JPImageresizerViewController.h"
 #import "UIViewController+JPExtension.h"
 
 @interface JPPhotoCollectionViewController () <JPBrowseImagesDelegate>
@@ -429,7 +429,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         .jp_isArbitrarily(NO);
     }
     
-    JPViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPViewController"];
+    JPImageresizerViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
     vc.isBecomeDanielWu = self.isBecomeDanielWu;
     vc.configure = configure;
@@ -481,7 +481,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         }];
     }];
     
-    vc.backBlock = ^(JPViewController *kVC) {
+    vc.backBlock = ^(JPImageresizerViewController *kVC) {
         JPKeyWindow.userInteractionEnabled = NO;
         imageView.hidden = YES;
         

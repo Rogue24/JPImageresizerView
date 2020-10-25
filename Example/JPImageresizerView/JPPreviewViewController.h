@@ -1,5 +1,5 @@
 //
-//  JPImageViewController.h
+//  JPPreviewViewController.h
 //  JPImageresizerView_Example
 //
 //  Created by 周健平 on 2018/1/2.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JPImageViewController : UIViewController
+@interface JPPreviewViewController : UIViewController
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) NSURL *imageURL;
 @property (nonatomic, strong) NSURL *videoURL;

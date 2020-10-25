@@ -1,18 +1,18 @@
 //
-//  JPViewController.m
+//  JPImageresizerViewController.m
 //  JPImageresizerView
 //
 //  Created by ZhouJianPing on 12/21/2017.
 //  Copyright (c) 2017 ZhouJianPing. All rights reserved.
 //
 
-#import "JPViewController.h"
+#import "JPImageresizerViewController.h"
 #import "UIAlertController+JPImageresizer.h"
-#import "JPImageViewController.h"
+#import "JPPreviewViewController.h"
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
 
-@interface JPViewController ()
+@interface JPImageresizerViewController ()
 @property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
@@ -41,7 +41,7 @@
 @property (nonatomic, assign) BOOL isExporting;
 @end
 
-@implementation JPViewController
+@implementation JPImageresizerViewController
 
 + (UIImage *)stretchBorderImage {
     static UIImage *stretchBorderImage_;
@@ -472,7 +472,7 @@ static UIViewController *tmpVC_;
             @jp_weakify(self);
             [self.imageresizerView setVideoURL:videoURL animated:YES fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 weak_self.isExporting = NO;
-                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } fixStartBlock:^{
                 [JPProgressHUD show];
             } fixProgressBlock:^(float progress) {
@@ -498,7 +498,7 @@ static UIViewController *tmpVC_;
             [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -510,7 +510,7 @@ static UIViewController *tmpVC_;
             [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -532,7 +532,7 @@ static UIViewController *tmpVC_;
             [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
-                [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                 // 裁剪完成，finalImage为裁剪后的图片
                 // 注意循环引用
@@ -550,7 +550,7 @@ static UIViewController *tmpVC_;
                 [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                     @jp_strongify(self);
                     if (!self) return;
-                    [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                    [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
                 } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
                     // 裁剪完成，finalImage为裁剪后的图片
                     // 注意循环引用
@@ -573,7 +573,7 @@ static UIViewController *tmpVC_;
     [self.imageresizerView cropPictureWithCacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         @jp_strongify(self);
         if (!self) return;
-        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
     } completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
         // 裁剪完成，finalImage为裁剪后的图片
         // 注意循环引用
@@ -603,7 +603,7 @@ static UIViewController *tmpVC_;
         DanielWuViewController *vc = [DanielWuViewController DanielWuVC:finalImage];
         [self.navigationController pushViewController:vc animated:YES];
     } else {
-        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        JPPreviewViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
         if (cacheURL) {
             vc.imageURL = cacheURL;
         } else {
@@ -620,7 +620,7 @@ static UIViewController *tmpVC_;
     @jp_weakify(self);
     [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         weak_self.isExporting = NO;
-        [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
     } progressBlock:^(float progress) {
         // 监听进度
         weak_self.isExporting = YES;
@@ -633,7 +633,7 @@ static UIViewController *tmpVC_;
         if (!self) return;
         self.isExporting = NO;
         
-        JPImageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageViewController"];
+        JPPreviewViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
         vc.videoURL = cacheURL;
         [self.navigationController pushViewController:vc animated:YES];
     }];

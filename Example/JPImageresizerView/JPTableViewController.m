@@ -7,7 +7,7 @@
 //
 
 #import "JPTableViewController.h"
-#import "JPViewController.h"
+#import "JPImageresizerViewController.h"
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
 
@@ -41,8 +41,8 @@
     model4.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
-        .jp_borderImage([JPViewController stretchBorderImage])
-        .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
+        .jp_borderImage([JPImageresizerViewController stretchBorderImage])
+        .jp_borderImageRectInset([JPImageresizerViewController stretchBorderImageRectInset]);
     }];
     
     JPConfigureModel *model5 = [self new];
@@ -51,8 +51,8 @@
     model5.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
         configure
         .jp_frameType(JPClassicFrameType)
-        .jp_borderImage([JPViewController tileBorderImage])
-        .jp_borderImageRectInset([JPViewController tileBorderImageRectInset]);
+        .jp_borderImage([JPImageresizerViewController tileBorderImage])
+        .jp_borderImageRectInset([JPImageresizerViewController tileBorderImageRectInset]);
     }];
     
     JPConfigureModel *model6 = [self new];
@@ -186,8 +186,8 @@ static JPImageresizerConfigure *gifConfigure_;
             model.statusBarStyle = UIStatusBarStyleDefault;
             model.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
                 configure
-                .jp_borderImage([JPViewController stretchBorderImage])
-                .jp_borderImageRectInset([JPViewController stretchBorderImageRectInset]);
+                .jp_borderImage([JPImageresizerViewController stretchBorderImage])
+                .jp_borderImageRectInset([JPImageresizerViewController stretchBorderImageRectInset]);
             } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
         }
         [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
@@ -323,7 +323,7 @@ static JPImageresizerConfigure *gifConfigure_;
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"先进页面再修正" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         @jp_weakify(self);
         JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:nil fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-            [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            [JPImageresizerViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             @jp_strongify(self);
             if (!self) return;
             [self.navigationController popViewControllerAnimated:YES];
@@ -343,7 +343,7 @@ static JPImageresizerConfigure *gifConfigure_;
         @jp_weakify(self);
         [JPImageresizerTool fixOrientationVideoWithAsset:videoAsset fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
             
-            [JPViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            [JPImageresizerViewController showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
             
             @jp_strongify(self);
             if (!self) return;
@@ -393,7 +393,7 @@ static JPImageresizerConfigure *gifConfigure_;
 
 #pragma mark - 开始裁剪
 - (void)__startImageresizer:(JPImageresizerConfigure *)configure statusBarStyle:(UIStatusBarStyle)statusBarStyle {
-    JPViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPViewController"];
+    JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
     vc.statusBarStyle = statusBarStyle;
     vc.configure = configure;
     
