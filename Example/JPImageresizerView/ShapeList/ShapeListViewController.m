@@ -64,7 +64,7 @@ static NSArray<NSString *> *shapes_;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"蒙版列表";
+    self.title = @"蒙版素材列表";
     self.view.backgroundColor = UIColor.whiteColor;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(__back)];

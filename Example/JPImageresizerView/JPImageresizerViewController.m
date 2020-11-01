@@ -275,7 +275,7 @@ static UIViewController *tmpVC_;
 - (IBAction)replaceMaskImage:(UIButton *)sender {
     UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"蒙版列表" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"蒙版素材列表" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         @jp_weakify(self);
         UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:[ShapeListViewController shapeListViewController:^(UIImage *shapeImage) {
             @jp_strongify(self);

@@ -23,6 +23,10 @@
 		1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */; };
 		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
 		1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */; };
+		1A3CD5F9254EEB9400F7768B /* JPMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD5F8254EEB9400F7768B /* JPMainViewController.m */; };
+		1A3CD5FD254EF8B800F7768B /* JPDynamicPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD5FB254EF8B800F7768B /* JPDynamicPage.m */; };
+		1A3CD60F254F154900F7768B /* JPMainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD60E254F154900F7768B /* JPMainCell.m */; };
+		1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD612254F1B2B00F7768B /* JPBounceView.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */; };
 		1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A54DA74254583790053F75F /* JPExportCancelView.m */; };
 		1A54DA90254589A60053F75F /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7A254589A60053F75F /* Kobe.jpg */; };
@@ -130,6 +134,14 @@
 		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
 		1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPConfigureModel.h; sourceTree = "<group>"; };
 		1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPConfigureModel.m; sourceTree = "<group>"; };
+		1A3CD5F7254EEB9400F7768B /* JPMainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPMainViewController.h; sourceTree = "<group>"; };
+		1A3CD5F8254EEB9400F7768B /* JPMainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPMainViewController.m; sourceTree = "<group>"; };
+		1A3CD5FB254EF8B800F7768B /* JPDynamicPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPDynamicPage.m; sourceTree = "<group>"; };
+		1A3CD5FC254EF8B800F7768B /* JPDynamicPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPDynamicPage.h; sourceTree = "<group>"; };
+		1A3CD60D254F154900F7768B /* JPMainCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPMainCell.h; sourceTree = "<group>"; };
+		1A3CD60E254F154900F7768B /* JPMainCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPMainCell.m; sourceTree = "<group>"; };
+		1A3CD611254F1B2B00F7768B /* JPBounceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBounceView.h; sourceTree = "<group>"; };
+		1A3CD612254F1B2B00F7768B /* JPBounceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBounceView.m; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPPreviewViewController.h; sourceTree = "<group>"; };
 		1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPPreviewViewController.m; sourceTree = "<group>"; };
 		1A54DA73254583790053F75F /* JPExportCancelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPExportCancelView.h; sourceTree = "<group>"; };
@@ -322,6 +334,8 @@
 		1A10433623A495AD00D1B2DF /* JPHelper */ = {
 			isa = PBXGroup;
 			children = (
+				1A3CD611254F1B2B00F7768B /* JPBounceView.h */,
+				1A3CD612254F1B2B00F7768B /* JPBounceView.m */,
 				1A87AF97247B8C5900123EC6 /* JPSolveTool.h */,
 				1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */,
 				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
@@ -450,6 +464,12 @@
 		6003F593195388D20070C39A /* Example for JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
+				1A3CD5F7254EEB9400F7768B /* JPMainViewController.h */,
+				1A3CD5F8254EEB9400F7768B /* JPMainViewController.m */,
+				1A3CD60D254F154900F7768B /* JPMainCell.h */,
+				1A3CD60E254F154900F7768B /* JPMainCell.m */,
+				1A3CD5FC254EF8B800F7768B /* JPDynamicPage.h */,
+				1A3CD5FB254EF8B800F7768B /* JPDynamicPage.m */,
 				1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */,
 				1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */,
 				1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */,
@@ -698,6 +718,7 @@
 				1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */,
 				1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */,
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
+				1A3CD60F254F154900F7768B /* JPMainCell.m in Sources */,
 				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
@@ -705,12 +726,15 @@
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
+				1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
+				1A3CD5F9254EEB9400F7768B /* JPMainViewController.m in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
+				1A3CD5FD254EF8B800F7768B /* JPDynamicPage.m in Sources */,
 				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
