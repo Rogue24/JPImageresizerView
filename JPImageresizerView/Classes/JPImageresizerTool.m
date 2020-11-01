@@ -511,7 +511,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                 isGIF:(BOOL)isGIF
        isReverseOrder:(BOOL)isReverseOrder
                  rate:(float)rate
-                index:(NSInteger)index
+                index:(NSInteger)index // -1 代表裁剪整个Gif全部
             maskImage:(UIImage *)maskImage
             configure:(JPCropConfigure)configure
         compressScale:(CGFloat)compressScale
@@ -668,87 +668,106 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
     
     UIImage *finalImage;
-    NSMutableArray *images;
-    NSMutableArray *delays;
     if (isGIF && index < 0) {
-        __block NSTimeInterval duration = 0;
-        images = [NSMutableArray array];
-        delays = [NSMutableArray array];
-        
-        CGImageRef (^getCurrentImageRef)(size_t i);
-        if (imageData) {
-            getCurrentImageRef = ^(size_t i) {
-                CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
-                NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i) / rate;
-                duration += delay;
-                [delays addObject:@(delay)];
-                return imageRef;
-            };
-        } else {
-            duration = image.duration / rate;
-            NSTimeInterval delay = duration / (NSTimeInterval)count;
-            if (delay < 0.02) delay = 0.1;
-            [delays addObject:@(delay)];
-            getCurrentImageRef = ^(size_t i){
-                return image.images[i].CGImage;
-            };
-        }
-        
-        void (^createNewImageRef)(size_t i) = ^(size_t i) {
-            @autoreleasepool {
-                // 将当前图形状态推入堆栈
-                CGContextSaveGState(context);
-                
-                // 绘制裁剪后的图片
-                CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i),
-                                                            context,
-                                                            maskImage,
-                                                            isRoundClip,
-                                                            renderRect,
-                                                            transform,
-                                                            imageSize);
-                [images addObject:[UIImage imageWithCGImage:newImageRef]];
-                CGImageRelease(newImageRef);
-                
-                // 清空画布
-                CGContextClearRect(context, renderRect);
-                
-                // 把堆栈顶部的状态弹出，返回到之前的图形状态
-                CGContextRestoreGState(context);
-            }
-        };
-        
-        if (isReverseOrder) {
-            for (NSInteger i = (count - 1); i >= 0; i--) {
-                createNewImageRef(i);
-            }
-        } else {
-            for (NSInteger i = 0; i < count; i++) {
-                createNewImageRef(i);
-            }
-        }
-        
-        finalImage = images.count > 1 ? [UIImage animatedImageWithImages:images duration:duration] : images.firstObject;
-        
-        CGColorSpaceRelease(colorSpace);
-        CGContextRelease(context);
-        if (source != NULL) CFRelease(source);
-        
-        isCacheSuccess = [self __cacheGIF:images delays:delays cacheURL:cacheURL];
-        [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
-        return;
+        [self __cropGIFWithGifImage:image
+                             source:source
+                            context:context
+                               rate:rate
+                              count:count
+                          maskImage:maskImage
+                        isRoundClip:isRoundClip
+                         renderRect:renderRect
+                          transform:transform
+                          imageSize:imageSize
+                     isReverseOrder:isReverseOrder
+                           cacheURL:cacheURL
+                     isCacheSuccess:&isCacheSuccess
+                         finalImage:&finalImage];
+    } else {
+        CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+        finalImage = [UIImage imageWithCGImage:newImageRef];
+        CGImageRelease(newImageRef);
+        isCacheSuccess = [self __cacheImage:finalImage cacheURL:cacheURL];
     }
     
-    CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
-    finalImage = [UIImage imageWithCGImage:newImageRef];
-    CGImageRelease(newImageRef);
-    
+    if (source != NULL) CFRelease(source);
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
-    if (source != NULL) CFRelease(source);
     
-    isCacheSuccess = [self __cacheImage:finalImage cacheURL:cacheURL];
     [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+}
+
+#pragma mark 裁剪GIF
++ (void)__cropGIFWithGifImage:(UIImage *)image
+                       source:(CGImageSourceRef)source
+                      context:(CGContextRef)context
+                         rate:(float)rate
+                        count:(size_t)count
+                    maskImage:(UIImage *)maskImage
+                  isRoundClip:(BOOL)isRoundClip
+                   renderRect:(CGRect)renderRect
+                    transform:(CGAffineTransform)transform
+                    imageSize:(CGSize)imageSize
+               isReverseOrder:(BOOL)isReverseOrder
+                     cacheURL:(NSURL *)cacheURL
+               isCacheSuccess:(BOOL *)isCacheSuccess
+                   finalImage:(UIImage **)finalImage {
+    
+    __block NSTimeInterval duration = 0;
+    NSMutableArray *delays = [NSMutableArray array];
+    CGImageRef (^getCurrentImageRef)(size_t i);
+    
+    if (source != NULL) {
+        getCurrentImageRef = ^(size_t i) {
+            CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
+            
+            NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i) / rate;
+            duration += delay;
+            [delays addObject:@(delay)];
+            
+            return imageRef;
+        };
+    } else {
+        duration = image.duration / rate;
+        
+        NSTimeInterval delay = duration / (NSTimeInterval)count;
+        if (delay < 0.02) delay = 0.1;
+        [delays addObject:@(delay)];
+        
+        getCurrentImageRef = ^(size_t i){
+            return image.images[i].CGImage;
+        };
+    }
+    
+    NSMutableArray *images = [NSMutableArray array];
+    void (^createNewImageRef)(size_t i) = ^(size_t i) {
+        @autoreleasepool {
+            // 将当前图形状态推入堆栈
+            CGContextSaveGState(context);
+            // 绘制裁剪后的图片
+            CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i), context, maskImage, isRoundClip, renderRect, transform, imageSize);
+            [images addObject:[UIImage imageWithCGImage:newImageRef]];
+            CGImageRelease(newImageRef);
+            // 清空画布
+            CGContextClearRect(context, renderRect);
+            // 把堆栈顶部的状态弹出，返回到之前的图形状态
+            CGContextRestoreGState(context);
+        }
+    };
+    
+    if (isReverseOrder) {
+        for (NSInteger i = (count - 1); i >= 0; i--) {
+            createNewImageRef(i);
+        }
+    } else {
+        for (NSInteger i = 0; i < count; i++) {
+            createNewImageRef(i);
+        }
+    }
+    
+    BOOL result = [self __cacheGIF:images delays:delays cacheURL:cacheURL];
+    if (isCacheSuccess) *isCacheSuccess = result;
+    if (finalImage) *finalImage = images.count > 1 ? [UIImage animatedImageWithImages:images duration:duration] : images.firstObject;
 }
 
 #pragma mark - 公开方法

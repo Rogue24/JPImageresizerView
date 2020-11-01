@@ -43,38 +43,6 @@
 
 @implementation JPImageresizerViewController
 
-+ (UIImage *)stretchBorderImage {
-    static UIImage *stretchBorderImage_;
-    if (!stretchBorderImage_) {
-        UIImage *stretchBorderImage = [UIImage imageNamed:@"real_line"];
-        // 裁剪掉上下多余的空白部分
-        CGFloat inset = 1.5 * stretchBorderImage.scale;
-        CGImageRef sbImageRef = stretchBorderImage.CGImage;
-        sbImageRef = CGImageCreateWithImageInRect(sbImageRef, CGRectMake(0, inset, CGImageGetWidth(sbImageRef), CGImageGetHeight(sbImageRef) - 2 * inset));
-        stretchBorderImage = [UIImage imageWithCGImage:sbImageRef scale:stretchBorderImage.scale orientation:stretchBorderImage.imageOrientation];
-        CGImageRelease(sbImageRef);
-        // 设定拉伸区域
-        stretchBorderImage_ = [stretchBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(20, 20, 20, 20) resizingMode:UIImageResizingModeStretch];
-    }
-    return stretchBorderImage_;
-}
-+ (CGPoint)stretchBorderImageRectInset {
-    return CGPointMake(-2, -2);
-}
-
-+ (UIImage *)tileBorderImage {
-    static UIImage *tileBorderImage_;
-    if (!tileBorderImage_) {
-        UIImage *tileBorderImage = [UIImage imageNamed:@"dotted_line"];
-        // 设定平铺区域
-        tileBorderImage_ = [tileBorderImage resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
-    }
-    return tileBorderImage_;
-}
-+ (CGPoint)tileBorderImageRectInset {
-    return CGPointMake(-1.75, -1.75);
-}
-
 #pragma mark - 生命周期
 
 - (void)viewDidLoad {
@@ -386,11 +354,11 @@ static UIViewController *tmpVC_;
         self.imageresizerView.frameType = JPClassicFrameType;
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"拉伸的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.borderImageRectInset = [self.class stretchBorderImageRectInset];
+        self.imageresizerView.borderImageRectInset = JPConfigureModel.stretchBorderImageRectInset;
         self.imageresizerView.borderImage = [self.class stretchBorderImage];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"平铺的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.borderImageRectInset = [self.class tileBorderImageRectInset];
+        self.imageresizerView.borderImageRectInset = JPConfigureModel.tileBorderImageRectInset;
         self.imageresizerView.borderImage = [self.class tileBorderImage];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];

@@ -11,79 +11,7 @@
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
 
-@interface JPConfigureModel : NSObject
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
-@property (nonatomic, strong) JPImageresizerConfigure *configure;
-+ (NSArray<JPConfigureModel *> *)testModels;
-@end
-
-@implementation JPConfigureModel
-+ (NSArray<JPConfigureModel *> *)testModels {
-    JPConfigureModel *model1 = [self new];
-    model1.title = @"默认样式";
-    model1.statusBarStyle = UIStatusBarStyleLightContent;
-    model1.configure = [JPImageresizerConfigure defaultConfigureWithImage:nil make:nil];
-    
-    JPConfigureModel *model2 = [self new];
-    model2.title = @"深色毛玻璃遮罩";
-    model2.statusBarStyle = UIStatusBarStyleLightContent;
-    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:nil];
-    
-    JPConfigureModel *model3 = [self new];
-    model3.title = @"浅色毛玻璃遮罩";
-    model3.statusBarStyle = UIStatusBarStyleDefault;
-    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:nil];
-    
-    JPConfigureModel *model4 = [self new];
-    model4.title = @"拉伸样式的边框图片";
-    model4.statusBarStyle = UIStatusBarStyleDefault;
-    model4.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
-        .jp_borderImage([JPImageresizerViewController stretchBorderImage])
-        .jp_borderImageRectInset([JPImageresizerViewController stretchBorderImageRectInset]);
-    }];
-    
-    JPConfigureModel *model5 = [self new];
-    model5.title = @"平铺样式的边框图片";
-    model5.statusBarStyle = UIStatusBarStyleLightContent;
-    model5.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_frameType(JPClassicFrameType)
-        .jp_borderImage([JPImageresizerViewController tileBorderImage])
-        .jp_borderImageRectInset([JPImageresizerViewController tileBorderImageRectInset]);
-    }];
-    
-    JPConfigureModel *model6 = [self new];
-    model6.title = @"圆切样式";
-    model6.statusBarStyle = UIStatusBarStyleDefault;
-    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_strokeColor(JPRGBColor(250, 250, 250))
-        .jp_frameType(JPClassicFrameType)
-        .jp_isClockwiseRotation(YES)
-        .jp_animationCurve(JPAnimationCurveEaseOut)
-        .jp_isRoundResize(YES)
-        .jp_isArbitrarily(NO);
-    }];
-    
-    JPConfigureModel *model7 = [self new];
-    model7.title = @"蒙版样式";
-    model7.statusBarStyle = UIStatusBarStyleLightContent;
-    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
-        .jp_frameType(JPClassicFrameType)
-        .jp_maskImage([UIImage imageNamed:@"love.png"])
-        .jp_isArbitrarily(NO);
-    }];
-    
-    return @[model1, model2, model3, model4, model5, model6, model7];
-}
-@end
-
 @interface JPTableViewController ()
-@property (nonatomic, copy) NSArray<JPConfigureModel *> *models;
 @property (nonatomic, strong) NSURL *tmpURL;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
@@ -96,7 +24,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Example";
-    self.models = [JPConfigureModel testModels];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
 
@@ -129,7 +56,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return self.models.count;
+        return JPConfigureModel.examplesModels.count;
     } else if (section == 1 || section == 2) {
         return 2;
     } else {
@@ -140,7 +67,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     if (indexPath.section == 0) {
-        JPConfigureModel *model = self.models[indexPath.row];
+        JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
         cell.textLabel.text = model.title;
     } else if (indexPath.section == 1) {
         if (indexPath.item == 0) {
@@ -166,7 +93,7 @@ static JPImageresizerConfigure *gifConfigure_;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
-        JPConfigureModel *model = self.models[indexPath.row];
+        JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
         model.configure.image = [self __randomImage];
         [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
     } else if (indexPath.section == 1) {
@@ -186,8 +113,8 @@ static JPImageresizerConfigure *gifConfigure_;
             model.statusBarStyle = UIStatusBarStyleDefault;
             model.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
                 configure
-                .jp_borderImage([JPImageresizerViewController stretchBorderImage])
-                .jp_borderImageRectInset([JPImageresizerViewController stretchBorderImageRectInset]);
+                .jp_borderImage(JPConfigureModel.stretchBorderImage)
+                .jp_borderImageRectInset(JPConfigureModel.stretchBorderImageRectInset);
             } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
         }
         [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];

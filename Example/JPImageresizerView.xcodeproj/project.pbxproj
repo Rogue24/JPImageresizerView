@@ -22,6 +22,7 @@
 		1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35C22B25B7300B6B6AB /* NoDataView.m */; };
 		1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */; };
 		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
+		1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */; };
 		1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A54DA74254583790053F75F /* JPExportCancelView.m */; };
 		1A54DA90254589A60053F75F /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7A254589A60053F75F /* Kobe.jpg */; };
@@ -127,6 +128,8 @@
 		1A0AB36022B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
 		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
+		1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPConfigureModel.h; sourceTree = "<group>"; };
+		1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPConfigureModel.m; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPPreviewViewController.h; sourceTree = "<group>"; };
 		1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPPreviewViewController.m; sourceTree = "<group>"; };
 		1A54DA73254583790053F75F /* JPExportCancelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPExportCancelView.h; sourceTree = "<group>"; };
@@ -447,6 +450,8 @@
 		6003F593195388D20070C39A /* Example for JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
+				1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */,
+				1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */,
 				1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */,
 				1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */,
 				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
@@ -706,6 +711,7 @@
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
+				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
