@@ -14,7 +14,7 @@
 + (NSString *)cellID;
 + (UIFont *)titleFont;
 + (UIColor *)titleColor;
-@property (nonatomic, weak) JPBounceView *bouceView;
+@property (nonatomic, weak) JPBounceView *bounceView;
 @property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) UILabel *titleLabel;
 @end

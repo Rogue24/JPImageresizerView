@@ -103,7 +103,7 @@
         anim.springBounciness = self.recoverBounciness;
         [self.layer pop_addAnimation:anim forKey:kPOPLayerScaleXY];
     }
-    !self.touchingDidChanged ? : self.touchingDidChanged(isTouching);
+    !self.touchingDidChanged ? : self.touchingDidChanged(self, isTouching);
 }
 
 - (void)setIsCanTouchesBegan:(BOOL)isCanTouchesBegan {
@@ -158,7 +158,7 @@
     anim.toValue = @(CGPointMake(1.0, 1.0));
     anim.duration = self.scaleDuration;
     [self.layer pop_addAnimation:anim forKey:kPOPLayerScaleXY];
-    !self.touchingDidChanged ? : self.touchingDidChanged(_isTouching);
+    !self.touchingDidChanged ? : self.touchingDidChanged(self, _isTouching);
 }
 
 @end

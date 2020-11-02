@@ -11,12 +11,11 @@
 #import "JPMainCell.h"
 #import "UIViewController+JPExtension.h"
 #import "UIImage+JPExtension.h"
+#import "JPConfigureModel.h"
+#import "JPImageresizerViewController.h"
 
 @interface JPCellModel : NSObject
-@property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) NSURL *imageURL;
-@property (nonatomic, copy) NSString *title;
-
+@property (nonatomic, strong) JPConfigureModel *model;
 @property (nonatomic, assign) BOOL isTopImage;
 @property (nonatomic, assign) CGRect imageFrame;
 @property (nonatomic, assign) CGPoint imageAnchorPoint;
@@ -37,12 +36,12 @@ static CGSize cellSize_;
 }
 
 - (void)updateLayout:(BOOL)isVer {
-    CGFloat x = 0;
-    CGFloat y = 0;
-    CGFloat w = cellSize_.width;
-    CGFloat h = w * (self.image.size.height / self.image.size.width);
+    CGFloat x = -JPMargin;
+    CGFloat y = -JPMargin;
+    CGFloat w = cellSize_.width + 2 * JPMargin;
+    CGFloat h = w * (self.model.configure.image.size.height / self.model.configure.image.size.width);
     if (self.isTopImage) {
-        self.imageAnchorPoint = CGPointMake(0.5, (cellSize_.height * 0.5) / h);
+        self.imageAnchorPoint = CGPointMake(0.5, (JPMargin + cellSize_.height * 0.5) / h);
     } else {
         y = JPHalfOfDiff(cellSize_.height, h);
         self.imageAnchorPoint = CGPointMake(0.5, 0.5);
@@ -51,29 +50,29 @@ static CGSize cellSize_;
     self.imageFrame = CGRectMake(x, y, w, h);
     
     CGFloat titleMaxWidth = cellSize_.width - 2 * JP10Margin;
-    CGFloat titleH = [self.title boundingRectWithSize:CGSizeMake(titleMaxWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: JPMainCell.titleFont, NSForegroundColorAttributeName: JPMainCell.titleColor} context:nil].size.height;
+    CGFloat titleH = [self.model.title boundingRectWithSize:CGSizeMake(titleMaxWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: JPMainCell.titleFont, NSForegroundColorAttributeName: JPMainCell.titleColor} context:nil].size.height;
     self.titleFrame = CGRectMake(JP10Margin, cellSize_.height - JP10Margin - titleH, titleMaxWidth, titleH);
 }
 
 - (void)setupCellUI:(JPMainCell *)cell {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
+    cell.imageView.image = self.model.configure.image;
     cell.imageView.frame = self.imageFrame;
-    cell.imageView.image = self.image;
     cell.imageView.layer.anchorPoint = self.imageAnchorPoint;
     cell.imageView.layer.position = self.imagePosition;
-    cell.titleLabel.text = self.title;
+    cell.titleLabel.text = self.model.title;
     cell.titleLabel.frame = self.titleFrame;
     [CATransaction commit];
 }
 
 + (NSArray<JPCellModel *> *)examplesCellModels {
-    NSArray *titles = @[@"默认样式", @"深色毛玻璃遮罩", @"浅色毛玻璃遮罩", @"拉伸样式的边框图片", @"平铺样式的边框图片", @"圆切样式", @"蒙版样式"];
+    NSArray *configureModels = JPConfigureModel.examplesModels;
     NSMutableArray *imageNames = @[@"Girl1", @"Girl2", @"Girl3", @"Girl4", @"Girl5", @"Girl6", @"Girl7", @"Girl8"].mutableCopy;
     
     BOOL isVer = JPScreenWidth < JPScreenHeight;
     NSMutableArray *cellModels = [NSMutableArray array];
-    for (NSInteger i = 0; i < titles.count; i++) {
+    for (NSInteger i = 0; i < configureModels.count; i++) {
         NSInteger index = JPRandomNumber(0, imageNames.count - 1);
         NSString *imageName = imageNames[index];
         NSString *imagePath = JPMainBundleResourcePath(imageName, @"jpg");
@@ -87,11 +86,11 @@ static CGSize cellSize_;
             isTopImage = NO;
         }
         
-        NSString *title = titles[i];
+        JPConfigureModel *model = configureModels[i];
+        model.configure.image = image;
         
         JPCellModel *cellModel = [JPCellModel new];
-        cellModel.image = image;
-        cellModel.title = title;
+        cellModel.model = model;
         cellModel.isTopImage = isTopImage;
         [cellModel updateLayout:isVer];
         [cellModels addObject:cellModel];
@@ -144,7 +143,6 @@ static CGSize cellSize_;
     [self.view addSubview:collectionView];
     self.collectionView = collectionView;
     
-    
     JPObserveNotification(self, @selector(didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
 }
 
@@ -158,6 +156,7 @@ static CGSize cellSize_;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    if (self.cellModels.count) return;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSArray<JPCellModel *> *cellModels = [JPCellModel examplesCellModels];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -188,15 +187,34 @@ static CGSize cellSize_;
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     JPMainCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"JPMainCell" forIndexPath:indexPath];
+    cell.bounceView.tag = indexPath.item;
     JPCellModel *cellModel = self.cellModels[indexPath.item];
     [cellModel setupCellUI:cell];
+    
+    if (!cell.bounceView.viewTouchUpInside) {
+        @jp_weakify(self);
+        cell.bounceView.viewTouchUpInside = ^(JPBounceView *kBounceView) {
+            @jp_strongify(self);
+            if (!self) return;
+            JPCellModel *cm = self.cellModels[kBounceView.tag];
+            
+            JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
+            vc.statusBarStyle = cm.model.statusBarStyle;
+            vc.configure = cm.model.configure;
+            
+            CATransition *cubeAnim = [CATransition animation];
+            cubeAnim.duration = 0.45;
+            cubeAnim.type = @"cube";
+            cubeAnim.subtype = kCATransitionFromRight;
+            cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+            [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
+            
+            [self.navigationController pushViewController:vc animated:NO];
+        };
+    }
+    
     return cell;
 }
-
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-//    JPCellModel *cellVM = self.cellVMs[indexPath.item];
-//    return cellVM.jp_itemFrame.size;
-//}
 
 #pragma mark - 监听屏幕旋转
 

@@ -29,9 +29,9 @@
 /** 默认YES */
 @property (nonatomic, assign) BOOL isCanTouchesBegan;
 
-@property (nonatomic, copy) void (^viewTouchUpInside)(JPBounceView *bounceView);
+@property (nonatomic, copy) void (^viewTouchUpInside)(JPBounceView *kBounceView);
 
 - (void)recover;
 @property (nonatomic, assign) BOOL isTouching;
-@property (nonatomic, copy) void (^touchingDidChanged)(BOOL isTouching);
+@property (nonatomic, copy) void (^touchingDidChanged)(JPBounceView *kBounceView, BOOL isTouching);
 @end
