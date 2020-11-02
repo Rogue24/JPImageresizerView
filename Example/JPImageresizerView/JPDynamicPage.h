@@ -25,4 +25,5 @@ typedef NS_ENUM(NSUInteger, JPDynamicPageState) {
 @property (nonatomic, assign) JPDynamicPageState state;
 @property (nonatomic, assign) NSTimeInterval duration;
 
+- (void)updateFrame:(CGRect)frame;
 @end

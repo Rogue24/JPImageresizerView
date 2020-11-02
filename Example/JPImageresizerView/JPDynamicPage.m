@@ -11,6 +11,7 @@
 #define JPDPAnimationKey @"JPPositionAnimate"
 
 @interface JPDynamicPage ()
+@property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) CALayer *contentLayer;
 @end
 
@@ -49,6 +50,7 @@
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:frame];
         imageView.image = [UIImage imageNamed:@"radial-gradien-bg"];
         [self addSubview:imageView];
+        self.imageView = imageView;
         
         [self setupBase];
         
@@ -66,6 +68,18 @@
     return self;
 }
 
+- (void)updateFrame:(CGRect)frame {
+    self.frame = frame;
+    
+    self.imageView.frame = frame;
+    [self setupBase];
+    
+    CGFloat w = _bigIconW * 2 + _smallIconW * 4 + 5 * _smallIconMargin;
+    CGFloat h = _bigIconH * _rowTotal;
+    CGSize size = CGSizeMake(w, h);
+    self.contentLayer.frame = CGRectMake(0, _screenH - size.height, size.width, size.height);
+}
+
 - (void)enterForeground {
     [self startAnimation];
 }
@@ -79,8 +93,8 @@
     _state = JPDynamicPageIdle;
     
     _rowTotal = JPis_iphoneX ? 15 : 13; // 13，适配X->15
-    _bigColTotal = 3; // 3
-    _smallColTotal = 5; // 5
+    _bigColTotal = 6; // 3
+    _smallColTotal = 10; // 5
     _targetResetIndex = ((_rowTotal - 1) - 5) * _bigColTotal + 1;
     
     _screenW = [UIScreen mainScreen].bounds.size.width;

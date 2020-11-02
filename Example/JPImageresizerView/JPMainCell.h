@@ -12,10 +12,6 @@
 
 @interface JPMainCell : UICollectionViewCell
 + (NSString *)cellID;
-+ (CGFloat)cellMargin;
-+ (CGSize)cellMaxSize;
-+ (CGFloat)titleMargin;
-+ (CGFloat)titleMaxWidth;
 + (UIFont *)titleFont;
 + (UIColor *)titleColor;
 @property (nonatomic, weak) JPBounceView *bouceView;

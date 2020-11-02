@@ -133,4 +133,5 @@
 
 + (NSString *)digit2ThousandStr:(NSInteger)number;
 
++ (UIEdgeInsets)screenInsets:(UIInterfaceOrientation)statusBarOrientation;
 @end

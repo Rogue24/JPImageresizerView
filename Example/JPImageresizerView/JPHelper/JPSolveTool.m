@@ -379,4 +379,30 @@
     }
 }
 
++ (UIEdgeInsets)screenInsets:(UIInterfaceOrientation)statusBarOrientation {
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
+    
+    if (statusBarOrientation == UIInterfaceOrientationLandscapeLeft ||
+        statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+        if (statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+            contentInsets.left += JPStatusBarH;
+            contentInsets.right += JPDiffTabBarH;
+        } else {
+            contentInsets.left += JPDiffTabBarH;
+            contentInsets.right += JPStatusBarH;
+        }
+        contentInsets.bottom = JPDiffTabBarH;
+    } else {
+        if (statusBarOrientation == UIInterfaceOrientationPortrait) {
+            contentInsets.top += JPStatusBarH;
+            contentInsets.bottom += JPDiffTabBarH;
+        } else {
+            contentInsets.top = JPDiffTabBarH;
+            contentInsets.bottom += JPStatusBarH;
+        }
+    }
+    
+    return contentInsets;
+}
+
 @end

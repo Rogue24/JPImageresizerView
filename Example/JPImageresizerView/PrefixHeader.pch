@@ -11,7 +11,6 @@
 
 #define GirlCount 8
 
-#define JPMargin 16.0
 #define LandscapeVerBtnSpace 10.0
 #define PortraitHorBtnSpace 20.0
 #define ButtonHeight 30.0
@@ -33,5 +32,7 @@
 CG_INLINE UIFont * JPShapeFont(CGFloat fontSize)  {
     return [UIFont fontWithName:@"shape" size:JPScaleValue(fontSize)];
 }
+
+#define JPMargin 16.0//JPScaleValue(16)
 
 #endif /* PrefixHeader_pch */
