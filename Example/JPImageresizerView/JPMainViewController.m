@@ -231,9 +231,7 @@ static CGSize cellSize_;
             [self.dp updateFrame:JPScreenBounds];
             self.collectionView.frame = JPScreenBounds;
             [self.collectionView setCollectionViewLayout:flowLayout animated:NO];
-        } completion:^(BOOL finished) {
-            
-        }];
+        } completion:nil];
     } else {
         [self.dp updateFrame:JPScreenBounds];
         self.collectionView.frame = JPScreenBounds;
@@ -241,6 +239,6 @@ static CGSize cellSize_;
     }
     
     self.collectionView.showsVerticalScrollIndicator = isVer;
-    
 }
+
 @end
