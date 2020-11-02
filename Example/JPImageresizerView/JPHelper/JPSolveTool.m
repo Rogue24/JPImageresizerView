@@ -397,7 +397,7 @@
             contentInsets.top += JPStatusBarH;
             contentInsets.bottom += JPDiffTabBarH;
         } else {
-            contentInsets.top = JPDiffTabBarH;
+            contentInsets.top += JPDiffTabBarH;
             contentInsets.bottom += JPStatusBarH;
         }
     }

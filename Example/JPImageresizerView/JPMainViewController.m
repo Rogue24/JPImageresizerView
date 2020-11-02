@@ -125,14 +125,16 @@ static CGSize cellSize_;
     [self.view addSubview:dp];
     self.dp = dp;
     
+    CGFloat wh = JPPortraitScreenHeight;
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    flowLayout.sectionInset = screenInsets;
     flowLayout.minimumLineSpacing = JPMargin;
     flowLayout.minimumInteritemSpacing = JPMargin;
+    flowLayout.sectionInset = UIEdgeInsetsMake(screenInsets.top, screenInsets.left, screenInsets.bottom + (wh - JPScreenHeight), screenInsets.right + (wh - JPScreenWidth));
     flowLayout.itemSize = JPCellModel.cellSize;
     
-    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:JPScreenBounds collectionViewLayout:flowLayout];
+    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, wh, wh) collectionViewLayout:flowLayout];
     [self jp_contentInsetAdjustmentNever:collectionView];
+    collectionView.autoresizingMask = UIViewAutoresizingNone;
     collectionView.backgroundColor = UIColor.clearColor;
     collectionView.alwaysBounceVertical = YES;
     collectionView.delaysContentTouches = NO;
@@ -240,23 +242,24 @@ static CGSize cellSize_;
         [cellModel updateLayout:isVer];
     }
     
-    UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-    flowLayout.sectionInset = screenInsets;
-    flowLayout.itemSize = JPCellModel.cellSize;
+    self.collectionView.showsVerticalScrollIndicator = isVer;
     
+    CGFloat wh = self.collectionView.jp_width;
+    UIEdgeInsets sectionInset = UIEdgeInsetsMake(screenInsets.top, screenInsets.left, screenInsets.bottom + (wh - JPScreenHeight), screenInsets.right + (wh - JPScreenWidth));
+    CGSize itemSize = JPCellModel.cellSize;
+    
+    UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
     if (duration) {
-        [UIView animateWithDuration:duration delay:0 options:kNilOptions animations:^{
+        [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
             [self.dp updateFrame:JPScreenBounds];
-            self.collectionView.frame = JPScreenBounds;
-            [self.collectionView setCollectionViewLayout:flowLayout animated:NO];
+            flowLayout.sectionInset = sectionInset;
+            flowLayout.itemSize = itemSize;
         } completion:nil];
     } else {
         [self.dp updateFrame:JPScreenBounds];
-        self.collectionView.frame = JPScreenBounds;
-        [self.collectionView setCollectionViewLayout:flowLayout animated:NO];
+        flowLayout.sectionInset = sectionInset;
+        flowLayout.itemSize = itemSize;
     }
-    
-    self.collectionView.showsVerticalScrollIndicator = isVer;
 }
 
 @end
