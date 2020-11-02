@@ -80,8 +80,12 @@ static UIColor *titleColor_;
         self.imageView = imageView;
         
         UIImage *shadow = [UIImage imageNamed:@"rect_shadow"];
-        UIImageView *shadowView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, bouceView.jp_width, bouceView.jp_width * (shadow.size.height / shadow.size.width))];
+        CGFloat w = bouceView.jp_width;
+        CGFloat h = bouceView.jp_width * (shadow.size.height / shadow.size.width);
+        CGFloat y = bouceView.jp_height - h;
+        UIImageView *shadowView = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, w, h)];
         shadowView.image = shadow;
+        shadowView.transform = CGAffineTransformMakeRotation(M_PI);
         [bouceView addSubview:shadowView];
         self.shadowView = shadowView;
         
@@ -99,9 +103,14 @@ static UIColor *titleColor_;
     [super layoutSubviews];
     if (self.bouceView.bounds.size.width == self.bounds.size.width) return;
     
-    self.bouceView.frame = self.bounds;
     self.shadowLayer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:JP8Margin].CGPath;
-    self.shadowView.jp_size = CGSizeMake(self.bouceView.jp_width, self.bouceView.jp_width * (self.shadowView.image.size.height / self.shadowView.image.size.width));
+    self.bouceView.bounds = self.bounds;
+    self.bouceView.frame = self.bounds;
+    
+    CGFloat w = self.bouceView.bounds.size.width;
+    CGFloat h = w * (self.shadowView.image.size.height / self.shadowView.image.size.width);
+    CGFloat y = self.bouceView.bounds.size.height - h;
+    self.shadowView.frame = CGRectMake(0, y, w, h);
 }
 
 @end

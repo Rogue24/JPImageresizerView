@@ -52,7 +52,7 @@ static CGSize cellSize_;
     
     CGFloat titleMaxWidth = cellSize_.width - 2 * JP10Margin;
     CGFloat titleH = [self.title boundingRectWithSize:CGSizeMake(titleMaxWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: JPMainCell.titleFont, NSForegroundColorAttributeName: JPMainCell.titleColor} context:nil].size.height;
-    self.titleFrame = CGRectMake(JP10Margin, JP10Margin, titleMaxWidth, titleH);
+    self.titleFrame = CGRectMake(JP10Margin, cellSize_.height - JP10Margin - titleH, titleMaxWidth, titleH);
 }
 
 - (void)setupCellUI:(JPMainCell *)cell {
