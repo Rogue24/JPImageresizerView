@@ -8,99 +8,10 @@
 
 #import "JPMainViewController.h"
 #import "JPDynamicPage.h"
-#import "JPMainCell.h"
+#import "JPMainViewModel.h"
 #import "UIViewController+JPExtension.h"
-#import "UIImage+JPExtension.h"
-#import "JPConfigureModel.h"
+
 #import "JPImageresizerViewController.h"
-
-@interface JPCellModel : NSObject
-@property (nonatomic, strong) JPConfigureModel *model;
-@property (nonatomic, assign) BOOL isTopImage;
-@property (nonatomic, assign) CGRect imageFrame;
-@property (nonatomic, assign) CGPoint imageAnchorPoint;
-@property (nonatomic, assign) CGPoint imagePosition;
-@property (nonatomic, assign) CGRect titleFrame;
-@end
-
-@implementation JPCellModel
-
-static CGSize cellSize_;
-+ (void)setupCellSize:(UIEdgeInsets)screenInsets isVer:(BOOL)isVer {
-    NSInteger colCount = isVer ? 1 : 2;
-    CGFloat w = ((JPScreenWidth - screenInsets.left - screenInsets.right) - (colCount - 1) * JPMargin) / (CGFloat)colCount;
-    cellSize_ = CGSizeMake(w, w * JPWideVideoHWScale);
-}
-+ (CGSize)cellSize {
-    return cellSize_;
-}
-
-- (void)updateLayout:(BOOL)isVer {
-    CGFloat x = -JPMargin;
-    CGFloat y = -JPMargin;
-    CGFloat w = cellSize_.width + 2 * JPMargin;
-    CGFloat h = w * (self.model.configure.image.size.height / self.model.configure.image.size.width);
-    if (self.isTopImage) {
-        self.imageAnchorPoint = CGPointMake(0.5, (JPMargin + cellSize_.height * 0.5) / h);
-    } else {
-        y = JPHalfOfDiff(cellSize_.height, h);
-        self.imageAnchorPoint = CGPointMake(0.5, 0.5);
-    }
-    self.imagePosition = CGPointMake(cellSize_.width * 0.5, cellSize_.height * 0.5);
-    self.imageFrame = CGRectMake(x, y, w, h);
-    
-    CGFloat titleMaxWidth = cellSize_.width - 2 * JP10Margin;
-    CGFloat titleH = [self.model.title boundingRectWithSize:CGSizeMake(titleMaxWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: JPMainCell.titleFont, NSForegroundColorAttributeName: JPMainCell.titleColor} context:nil].size.height;
-    self.titleFrame = CGRectMake(JP10Margin, cellSize_.height - JP10Margin - titleH, titleMaxWidth, titleH);
-}
-
-- (void)setupCellUI:(JPMainCell *)cell {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    cell.imageView.image = self.model.configure.image;
-    cell.imageView.frame = self.imageFrame;
-    cell.imageView.layer.anchorPoint = self.imageAnchorPoint;
-    cell.imageView.layer.position = self.imagePosition;
-    cell.titleLabel.text = self.model.title;
-    cell.titleLabel.frame = self.titleFrame;
-    [CATransaction commit];
-}
-
-+ (NSArray<JPCellModel *> *)examplesCellModels {
-    NSArray *configureModels = JPConfigureModel.examplesModels;
-    NSMutableArray *imageNames = @[@"Girl1", @"Girl2", @"Girl3", @"Girl4", @"Girl5", @"Girl6", @"Girl7", @"Girl8"].mutableCopy;
-    
-    BOOL isVer = JPScreenWidth < JPScreenHeight;
-    NSMutableArray *cellModels = [NSMutableArray array];
-    for (NSInteger i = 0; i < configureModels.count; i++) {
-        NSInteger index = JPRandomNumber(0, imageNames.count - 1);
-        NSString *imageName = imageNames[index];
-        NSString *imagePath = JPMainBundleResourcePath(imageName, @"jpg");
-        
-        UIImage *image = [[UIImage imageWithContentsOfFile:imagePath] jp_cgResizeImageWithScale:1];
-        BOOL isTopImage = YES;
-        if ([imageName isEqualToString:@"Girl1"] ||
-            [imageName isEqualToString:@"Girl2"] ||
-            [imageName isEqualToString:@"Girl4"] ||
-            [imageName isEqualToString:@"Girl8"]) {
-            isTopImage = NO;
-        }
-        
-        JPConfigureModel *model = configureModels[i];
-        model.configure.image = image;
-        
-        JPCellModel *cellModel = [JPCellModel new];
-        cellModel.model = model;
-        cellModel.isTopImage = isTopImage;
-        [cellModel updateLayout:isVer];
-        [cellModels addObject:cellModel];
-        
-        [imageNames removeObjectAtIndex:index];
-    }
-    return cellModels.copy;
-}
-
-@end
 
 @interface JPMainViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, weak) JPDynamicPage *dp;
@@ -127,8 +38,8 @@ static CGSize cellSize_;
     
     CGFloat wh = JPPortraitScreenHeight;
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    flowLayout.minimumLineSpacing = JPMargin;
-    flowLayout.minimumInteritemSpacing = JPMargin;
+    flowLayout.minimumLineSpacing = JPSpace;
+    flowLayout.minimumInteritemSpacing = JPSpace;
     flowLayout.sectionInset = UIEdgeInsetsMake(screenInsets.top, screenInsets.left, screenInsets.bottom + (wh - JPScreenHeight), screenInsets.right + (wh - JPScreenWidth));
     flowLayout.itemSize = JPCellModel.cellSize;
     
@@ -139,6 +50,7 @@ static CGSize cellSize_;
     collectionView.alwaysBounceVertical = YES;
     collectionView.delaysContentTouches = NO;
     [collectionView registerClass:JPMainCell.class forCellWithReuseIdentifier:@"JPMainCell"];
+    [collectionView registerClass:JPMainHeader.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"JPMainHeader"];
     collectionView.dataSource = self;
     collectionView.delegate = self;
     collectionView.showsVerticalScrollIndicator = isVer;
@@ -216,6 +128,13 @@ static CGSize cellSize_;
     }
     
     return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        return [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"JPMainHeader" forIndexPath:indexPath];
+    }
+    return nil;
 }
 
 #pragma mark - 监听屏幕旋转

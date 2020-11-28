@@ -22,7 +22,7 @@ static UIColor *titleColor_;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         cellID_ = @"JPMainCell";
-        titleFont_ = JPScaleBoldFont(18);
+        titleFont_ = JPScaleBoldFont(14);
         titleColor_ = UIColor.whiteColor;
     });
 }

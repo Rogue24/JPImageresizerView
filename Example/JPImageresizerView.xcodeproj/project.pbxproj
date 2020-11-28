@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0092E020257229D700F13E60 /* JPMainHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E01F257229D700F13E60 /* JPMainHeader.m */; };
+		0092E02425722A7300F13E60 /* JPMainViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02325722A7300F13E60 /* JPMainViewModel.m */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -101,6 +103,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0092E01E257229D700F13E60 /* JPMainHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPMainHeader.h; sourceTree = "<group>"; };
+		0092E01F257229D700F13E60 /* JPMainHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPMainHeader.m; sourceTree = "<group>"; };
+		0092E02225722A7300F13E60 /* JPMainViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPMainViewModel.h; sourceTree = "<group>"; };
+		0092E02325722A7300F13E60 /* JPMainViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPMainViewModel.m; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -466,6 +472,10 @@
 			children = (
 				1A3CD5F7254EEB9400F7768B /* JPMainViewController.h */,
 				1A3CD5F8254EEB9400F7768B /* JPMainViewController.m */,
+				0092E02225722A7300F13E60 /* JPMainViewModel.h */,
+				0092E02325722A7300F13E60 /* JPMainViewModel.m */,
+				0092E01E257229D700F13E60 /* JPMainHeader.h */,
+				0092E01F257229D700F13E60 /* JPMainHeader.m */,
 				1A3CD60D254F154900F7768B /* JPMainCell.h */,
 				1A3CD60E254F154900F7768B /* JPMainCell.m */,
 				1A3CD5FC254EF8B800F7768B /* JPDynamicPage.h */,
@@ -726,6 +736,7 @@
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
+				0092E02425722A7300F13E60 /* JPMainViewModel.m in Sources */,
 				1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
@@ -733,6 +744,7 @@
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
+				0092E020257229D700F13E60 /* JPMainHeader.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A3CD5FD254EF8B800F7768B /* JPDynamicPage.m in Sources */,
 				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,

@@ -33,6 +33,7 @@ CG_INLINE UIFont * JPShapeFont(CGFloat fontSize)  {
     return [UIFont fontWithName:@"shape" size:JPScaleValue(fontSize)];
 }
 
-#define JPMargin 16.0//JPScaleValue(16)
+#define JPMargin 16.0 //JPScaleValue(16)
+#define JPSpace 10.0
 
 #endif /* PrefixHeader_pch */
