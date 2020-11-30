@@ -136,4 +136,5 @@
 
 - (JPCropConfigure)currentCropConfigure;
 
+- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame;
 @end

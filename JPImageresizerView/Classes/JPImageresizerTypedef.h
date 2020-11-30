@@ -149,3 +149,46 @@ CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection di
     configure.cropFrame = cropFrame;
     return configure;
 }
+
+#pragma mark - 额外用于保存的属性
+
+struct JPSavedConfigure {
+    JPImageresizerRotationDirection direction;
+    CATransform3D contentViewTransform;
+    CATransform3D containerViewTransform;
+    CGRect imageresizerFrame;
+    BOOL isVerMirror;
+    BOOL isHorMirror;
+    UIEdgeInsets scrollViewContentInsets;
+    CGPoint scrollViewContentOffset;
+    CGFloat scrollViewMinimumZoomScale;
+    CGFloat scrollViewCurrentZoomScale;
+};
+typedef struct CG_BOXABLE JPSavedConfigure JPSavedConfigure;
+
+CG_INLINE JPSavedConfigure JPSavedConfigureMake(JPImageresizerRotationDirection direction,
+                                                CATransform3D contentViewTransform,
+                                                CATransform3D containerViewTransform,
+                                                CGRect imageresizerFrame,
+                                                BOOL isVerMirror,
+                                                BOOL isHorMirror,
+                                                UIEdgeInsets scrollViewContentInsets,
+                                                CGPoint scrollViewContentOffset,
+                                                CGFloat scrollViewMinimumZoomScale,
+                                                CGFloat scrollViewCurrentZoomScale) {
+    JPSavedConfigure configure;
+    configure.contentViewTransform = contentViewTransform;
+    configure.containerViewTransform = containerViewTransform;
+    configure.imageresizerFrame = imageresizerFrame;
+    configure.isVerMirror = isVerMirror;
+    configure.isHorMirror = isHorMirror;
+    configure.scrollViewContentInsets = scrollViewContentInsets;
+    configure.scrollViewContentOffset = scrollViewContentOffset;
+    configure.scrollViewMinimumZoomScale = scrollViewMinimumZoomScale;
+    configure.scrollViewCurrentZoomScale = scrollViewCurrentZoomScale;
+    return configure;
+}
+
+CG_INLINE BOOL JPSavedConfigureIsNull(JPSavedConfigure configure) {
+    return CGRectIsNull(configure.imageresizerFrame) || CGRectIsEmpty(configure.imageresizerFrame);
+}

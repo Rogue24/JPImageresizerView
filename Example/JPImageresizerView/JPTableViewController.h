@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface JPTableViewController : UITableViewController
-
+@property (nonatomic, class) JPImageresizerConfigure *savedConfigure;
 @end

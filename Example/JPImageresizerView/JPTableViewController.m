@@ -17,13 +17,30 @@
 @property (nonatomic, strong) NSTimer *progressTimer;
 @property (nonatomic, copy) JPExportVideoProgressBlock progressBlock;
 @property (nonatomic, assign) BOOL isExporting;
+@property (nonatomic, weak) UIButton *openCacheBtn;
 @end
 
 @implementation JPTableViewController
 
+static JPImageresizerConfigure *savedConfigure_ = nil;
++ (void)setSavedConfigure:(JPImageresizerConfigure *)savedConfigure {
+    savedConfigure_ = savedConfigure;
+}
++ (JPImageresizerConfigure *)savedConfigure {
+    return savedConfigure_;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Example";
+    
+    UIButton *openCacheBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    openCacheBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    [openCacheBtn setTitle:@"打开缓存" forState:UIControlStateNormal];
+    [openCacheBtn addTarget:self action:@selector(__openCache) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:openCacheBtn];
+    self.openCacheBtn = openCacheBtn;
+    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
 
@@ -31,6 +48,7 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+    self.openCacheBtn.hidden = self.class.savedConfigure == nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -354,6 +372,14 @@ static JPImageresizerConfigure *gifConfigure_;
 
 - (void)__progressTimerHandle {
     if (self.progressBlock && self.exporterSession) self.progressBlock(self.exporterSession.progress);
+}
+
+#pragma mark - 打开缓存
+
+- (void)__openCache {
+    JPImageresizerConfigure *savedConfigure = self.class.savedConfigure;
+    if (!savedConfigure) return;
+    [self __startImageresizer:savedConfigure statusBarStyle:UIStatusBarStyleDefault];
 }
 
 @end

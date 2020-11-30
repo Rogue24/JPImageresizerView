@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
 
-@interface JPImageresizerConfigure : NSObject
+@interface JPImageresizerConfigure : NSObject <NSCoding>
 /* 默认参数值：
     - viewFrame = [UIScreen mainScreen].bounds;
     - frameType = JPConciseFrameType;
@@ -241,4 +241,7 @@
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
+
+@property (nonatomic, assign) JPSavedConfigure savedConfigure;
+@property (readonly) BOOL isSaved;
 @end

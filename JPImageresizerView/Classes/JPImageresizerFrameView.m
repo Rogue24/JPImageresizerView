@@ -2345,12 +2345,12 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 }
 #endif
 
-- (void)didMoveToSuperview {
-    [super didMoveToSuperview];
-    if (self.superview) {
-        [self __updateImageOriginFrameWithDirection:_rotationDirection duration:-1.0];
-    }
-}
+//- (void)didMoveToSuperview {
+//    [super didMoveToSuperview];
+//    if (self.superview) {
+//        [self __updateImageOriginFrameWithDirection:_rotationDirection duration:-1.0];
+//    }
+//}
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     if (![super pointInside:point withEvent:event]) {
@@ -2449,6 +2449,12 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     _pointInside = YES;
     return YES;
+}
+
+- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame {
+    [self __updateImageOriginFrameWithDirection:direction duration:-1];
+    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
+    [self __checkIsCanRecovery];
 }
 
 @end

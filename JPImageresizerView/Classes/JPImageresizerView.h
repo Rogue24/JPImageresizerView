@@ -688,4 +688,6 @@
  */
 - (void)videoCancelExport;
 
+- (JPImageresizerConfigure *)saveCurrentConfigure;
+
 @end

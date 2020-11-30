@@ -382,4 +382,57 @@
     };
 }
 
+- (BOOL)isSaved {
+    return !JPSavedConfigureIsNull(self.savedConfigure);
+}
+//- (void)encodeWithCoder:(NSCoder *)aCoder {
+//    
+//    configure.image = self.image;
+//    configure.imageData = self.imageData;
+//    configure.videoURL = self.videoURL;
+//    configure.videoAsset = self.videoAsset;
+//
+//    configure.fixErrorBlock = self.configure.fixErrorBlock;
+//    configure.fixStartBlock = self.configure.fixStartBlock;
+//    configure.fixProgressBlock = self.configure.fixProgressBlock;
+//    configure.fixCompleteBlock = self.configure.fixCompleteBlock;
+//
+//    configure.viewFrame = self.frame;
+//    configure.frameType = self.frameType;
+//    configure.animationCurve = self.animationCurve;
+//    configure.blurEffect = self.blurEffect;
+//    configure.bgColor = self.bgColor;
+//    configure.maskAlpha = self.maskAlpha;
+//    configure.strokeColor = self.strokeColor;
+//    configure.resizeWHScale = self.resizeWHScale;
+//    configure.isRoundResize = self.isRoundResize;
+//    configure.maskImage = self.maskImage;
+//    configure.isArbitrarily = self.isArbitrarily;
+//    configure.edgeLineIsEnabled = self.edgeLineIsEnabled;
+//    configure.contentInsets = _contentInsets;
+//    configure.isClockwiseRotation = self.isClockwiseRotation;
+//    configure.borderImage = self.borderImage;
+//    configure.borderImageRectInset = self.borderImageRectInset;
+//    configure.maximumZoomScale = self.configure.maximumZoomScale;
+//    configure.isShowMidDots = self.isShowMidDots;
+//    configure.isBlurWhenDragging = self.isBlurWhenDragging;
+//    configure.isShowGridlinesWhenIdle = self.isShowGridlinesWhenIdle;
+//    configure.isShowGridlinesWhenDragging = self.isShowGridlinesWhenDragging;
+//    configure.gridCount = self.gridCount;
+//    configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
+//    
+//    [aCoder encodeObject:@(self.style) forKey:@"style"];
+//    [aCoder encodeObject:self.width forKey:@"width"];
+//    [aCoder encodeObject:self.color forKey:@"color"];
+//}
+//
+//- (id)initWithCoder:(NSCoder *)aDecoder {
+//    self = [super init];
+//    self.style = ((NSNumber *)[aDecoder decodeObjectForKey:@"style"]).unsignedIntegerValue;
+//    self.width = [aDecoder decodeObjectForKey:@"width"];
+//    self.color = [aDecoder decodeObjectForKey:@"color"];
+//    return self;
+//}
+
+
 @end
