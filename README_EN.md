@@ -570,8 +570,10 @@ self.imageresizerView = imageresizerView;
 // 3.You can set the isCleanHistoryAfterInitial property of JPImageresizerConfigure to YES, and automatically clear the history after initialization (yes by default)
 // Or call the cleanHistory method directly to clear the history
 ```
-PS1：If preserved savedConfigure.history.viewFrame If it is inconsistent with the current viewframe, the interface will be disordered, and you need to judge whether it is consistent before reopening;
-PS2：In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
+![save](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/save.gif)
+
+- PS1：If preserved savedConfigure.history.viewFrame If it is inconsistent with the current viewframe, the interface will be disordered, and you need to judge whether it is consistent before reopening;
+- PS2：In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
 
 ### Other
 ```objc
