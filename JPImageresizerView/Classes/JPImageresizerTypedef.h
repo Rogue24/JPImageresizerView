@@ -153,6 +153,8 @@ CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection di
 #pragma mark - 额外用于保存的属性
 
 struct JPSavedConfigure {
+    CGRect viewFrame;
+    UIEdgeInsets contentInsets;
     JPImageresizerRotationDirection direction;
     CATransform3D contentViewTransform;
     CATransform3D containerViewTransform;
@@ -166,7 +168,9 @@ struct JPSavedConfigure {
 };
 typedef struct CG_BOXABLE JPSavedConfigure JPSavedConfigure;
 
-CG_INLINE JPSavedConfigure JPSavedConfigureMake(JPImageresizerRotationDirection direction,
+CG_INLINE JPSavedConfigure JPSavedConfigureMake(CGRect viewFrame,
+                                                UIEdgeInsets contentInsets,
+                                                JPImageresizerRotationDirection direction,
                                                 CATransform3D contentViewTransform,
                                                 CATransform3D containerViewTransform,
                                                 CGRect imageresizerFrame,
@@ -177,6 +181,9 @@ CG_INLINE JPSavedConfigure JPSavedConfigureMake(JPImageresizerRotationDirection 
                                                 CGFloat scrollViewMinimumZoomScale,
                                                 CGFloat scrollViewCurrentZoomScale) {
     JPSavedConfigure configure;
+    configure.viewFrame = viewFrame;
+    configure.contentInsets = contentInsets;
+    configure.direction = direction;
     configure.contentViewTransform = contentViewTransform;
     configure.containerViewTransform = containerViewTransform;
     configure.imageresizerFrame = imageresizerFrame;
@@ -190,5 +197,5 @@ CG_INLINE JPSavedConfigure JPSavedConfigureMake(JPImageresizerRotationDirection 
 }
 
 CG_INLINE BOOL JPSavedConfigureIsNull(JPSavedConfigure configure) {
-    return CGRectIsNull(configure.imageresizerFrame) || CGRectIsEmpty(configure.imageresizerFrame);
+    return CGRectIsNull(configure.viewFrame) || CGRectIsEmpty(configure.viewFrame);
 }

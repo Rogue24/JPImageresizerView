@@ -129,12 +129,12 @@
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone:(BOOL)isUpdateMaskImage;
 
+- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
 @property (nonatomic, weak) UIView *playerView;
 @property (nonatomic, weak) JPImageresizerSlider *slider;
 
 - (JPCropConfigure)currentCropConfigure;
-
-- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame;
 @end

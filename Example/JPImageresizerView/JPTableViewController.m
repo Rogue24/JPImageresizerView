@@ -48,7 +48,7 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    self.openCacheBtn.hidden = self.class.savedConfigure == nil;
+    self.openCacheBtn.hidden = self.class.savedConfigure == nil || !self.class.savedConfigure.isSaved;
 }
 
 - (void)viewDidAppear:(BOOL)animated {

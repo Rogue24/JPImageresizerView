@@ -930,8 +930,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
-- (void)__updateImageOriginFrameWithDirection:(JPImageresizerRotationDirection)rotationDirection duration:(NSTimeInterval)duration {
-    [self __removeTimer];
+- (void)__updateImageOriginFrameWithDirection:(JPImageresizerRotationDirection)rotationDirection {
     _baseImageW = self.imageView.bounds.size.width;
     _baseImageH = self.imageView.bounds.size.height;
     CGFloat x = (self.bounds.size.width - _baseImageW) * 0.5;
@@ -944,8 +943,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [self __updateMaskViewTransform];
         [CATransaction commit];
     }
-    _imageresizerFrame = [self __baseImageresizerFrame];
-    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 
 - (void)__updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
@@ -1381,7 +1378,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         }
         updateBlock(resizeWHScale);
     } else {
-        resizeWHScale = _resizeWHScale;
+        resizeWHScale = _resizeWHScale = 0; // 0：以当前的宽高比恢复
         [self __removeMaskBlurView:isAnimated completeBlock:^{
             updateBlock(resizeWHScale);
         }];
@@ -1441,8 +1438,11 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark 刷新裁剪图片尺寸
 - (void)updateImageOriginFrameWithDuration:(NSTimeInterval)duration {
+    [self __removeTimer];
     self.layer.transform = CATransform3DIdentity;
-    [self __updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection duration:duration];
+    [self __updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection];
+    _imageresizerFrame = [self __baseImageresizerFrame];
+    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 
 #pragma mark 开始/结束拖拽
@@ -1628,6 +1628,16 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
     self.superview.userInteractionEnabled = YES;
     self.isPrepareToScale = NO;
+}
+
+- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+    [self __updateImageOriginFrameWithDirection:direction];
+    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
+    if (isToBeArbitrarily) {
+        _isArbitrarily = YES;
+        _resizeWHScale = 0;
+    }
+    [self __checkIsCanRecovery];
 }
 
 #pragma mark 更新UI布局
@@ -2345,13 +2355,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 }
 #endif
 
-//- (void)didMoveToSuperview {
-//    [super didMoveToSuperview];
-//    if (self.superview) {
-//        [self __updateImageOriginFrameWithDirection:_rotationDirection duration:-1.0];
-//    }
-//}
-
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     if (![super pointInside:point withEvent:event]) {
         _pointInside = NO;
@@ -2449,12 +2452,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     _pointInside = YES;
     return YES;
-}
-
-- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame {
-    [self __updateImageOriginFrameWithDirection:direction duration:-1];
-    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
-    [self __checkIsCanRecovery];
 }
 
 @end

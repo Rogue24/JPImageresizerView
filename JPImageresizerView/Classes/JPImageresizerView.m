@@ -728,7 +728,7 @@
 }
 
 - (void)setMaskImage:(UIImage *)maskImage {
-    [self setMaskImage:maskImage isToBeArbitrarily:(maskImage ? NO : self.isArbitrarily) animated:YES];
+    [self setMaskImage:maskImage isToBeArbitrarily:(maskImage ? NO : YES) animated:YES];
 }
 - (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
@@ -1511,95 +1511,6 @@
     [self.exporterSession cancelExport];
 }
 
-- (JPImageresizerConfigure *)saveCurrentConfigure {
-    JPImageresizerConfigure *configure = [[JPImageresizerConfigure alloc] init];
-    configure.image = self.image;
-    configure.imageData = self.imageData;
-    configure.videoURL = self.videoURL;
-    configure.videoAsset = self.videoAsset;
-
-    configure.fixErrorBlock = self.configure.fixErrorBlock;
-    configure.fixStartBlock = self.configure.fixStartBlock;
-    configure.fixProgressBlock = self.configure.fixProgressBlock;
-    configure.fixCompleteBlock = self.configure.fixCompleteBlock;
-
-    configure.viewFrame = self.frame;
-    configure.frameType = self.frameType;
-    configure.animationCurve = self.animationCurve;
-    configure.blurEffect = self.blurEffect;
-    configure.bgColor = self.bgColor;
-    configure.maskAlpha = self.maskAlpha;
-    configure.strokeColor = self.strokeColor;
-    configure.resizeWHScale = self.resizeWHScale;
-    configure.isRoundResize = self.isRoundResize;
-    configure.maskImage = self.maskImage;
-    configure.isArbitrarily = self.isArbitrarily;
-    configure.edgeLineIsEnabled = self.edgeLineIsEnabled;
-    configure.contentInsets = _contentInsets;
-    configure.isClockwiseRotation = self.isClockwiseRotation;
-    configure.borderImage = self.borderImage;
-    configure.borderImageRectInset = self.borderImageRectInset;
-    configure.maximumZoomScale = self.configure.maximumZoomScale;
-    configure.isShowMidDots = self.isShowMidDots;
-    configure.isBlurWhenDragging = self.isBlurWhenDragging;
-    configure.isShowGridlinesWhenIdle = self.isShowGridlinesWhenIdle;
-    configure.isShowGridlinesWhenDragging = self.isShowGridlinesWhenDragging;
-    configure.gridCount = self.gridCount;
-    configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
-    
-    configure.savedConfigure = JPSavedConfigureMake(self.frameView.rotationDirection,
-                                                    self.frameView.layer.transform,
-                                                    self.containerView.layer.transform,
-                                                    self.frameView.imageresizerFrame,
-                                                    _verticalityMirror,
-                                                    _horizontalMirror,
-                                                    self.scrollView.contentInset,
-                                                    self.scrollView.contentOffset,
-                                                    self.scrollView.minimumZoomScale,
-                                                    self.scrollView.zoomScale);
-    return configure;
-}
-
-#pragma mark - override method
-
-- (void)didMoveToSuperview {
-    [super didMoveToSuperview];
-    if (self.superview) {
-        if (self.configure.isSaved) {
-            JPSavedConfigure savedConfigure = self.configure.savedConfigure;
-            
-            JPImageresizerRotationDirection direction = savedConfigure.direction;
-            for (NSInteger i = 0; i < self.allDirections.count; i++) {
-                JPImageresizerRotationDirection kDirection = [self.allDirections[i] integerValue];
-                if (kDirection == direction) {
-                    self.directionIndex = i;
-                    break;
-                }
-            }
-//            [self.frameView __updateImageOriginFrameWithDirection:direction duration:-1];
-            
-            _verticalityMirror = savedConfigure.isVerMirror;
-            _horizontalMirror = savedConfigure.isHorMirror;
-            
-            self.containerView.layer.transform = savedConfigure.containerViewTransform;
-            self.scrollView.layer.transform = savedConfigure.contentViewTransform;
-            self.frameView.layer.transform = savedConfigure.contentViewTransform;
-            
-//            [self.frameView __updateImageresizerFrame:self.configure.imageresizerFrame animateDuration:-1];
-            
-            [self.frameView recoveryToSavedStateWithDirection:direction imageresizerFrame:savedConfigure.imageresizerFrame];
-            
-            self.scrollView.minimumZoomScale = savedConfigure.scrollViewMinimumZoomScale;
-            self.scrollView.zoomScale = savedConfigure.scrollViewCurrentZoomScale;
-            self.scrollView.contentInset = savedConfigure.scrollViewContentInsets;
-            self.scrollView.contentOffset = savedConfigure.scrollViewContentOffset;
-            
-        } else {
-            [self.frameView updateImageOriginFrameWithDuration:-1.0];
-        }
-    }
-}
-
 #pragma mark - <UIScrollViewDelegate>
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -1624,6 +1535,100 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
     [self.frameView endedImageresizer];
+}
+
+#pragma mark - 获取当前的配置属性
+
+- (JPImageresizerConfigure *)saveCurrentConfigure {
+    JPImageresizerConfigure *configure = [[JPImageresizerConfigure alloc] init];
+    configure.viewFrame = self.configure.viewFrame;
+    configure.contentInsets = self.configure.contentInsets;
+    configure.fixErrorBlock = self.configure.fixErrorBlock;
+    configure.fixStartBlock = self.configure.fixStartBlock;
+    configure.fixProgressBlock = self.configure.fixProgressBlock;
+    configure.fixCompleteBlock = self.configure.fixCompleteBlock;
+    
+    configure.image = self.image;
+    configure.imageData = self.imageData;
+    configure.videoURL = self.videoURL;
+    configure.videoAsset = self.videoAsset;
+    configure.frameType = self.frameType;
+    configure.animationCurve = self.animationCurve;
+    configure.blurEffect = self.blurEffect;
+    configure.bgColor = self.bgColor;
+    configure.maskAlpha = self.maskAlpha;
+    configure.strokeColor = self.strokeColor;
+    configure.resizeWHScale = self.resizeWHScale;
+    configure.isRoundResize = self.isRoundResize;
+    configure.maskImage = self.maskImage;
+    configure.isArbitrarily = self.isArbitrarily;
+    configure.edgeLineIsEnabled = self.edgeLineIsEnabled;
+    configure.isClockwiseRotation = self.isClockwiseRotation;
+    configure.borderImage = self.borderImage;
+    configure.borderImageRectInset = self.borderImageRectInset;
+    configure.maximumZoomScale = self.configure.maximumZoomScale;
+    configure.isShowMidDots = self.isShowMidDots;
+    configure.isBlurWhenDragging = self.isBlurWhenDragging;
+    configure.isShowGridlinesWhenIdle = self.isShowGridlinesWhenIdle;
+    configure.isShowGridlinesWhenDragging = self.isShowGridlinesWhenDragging;
+    configure.gridCount = self.gridCount;
+    configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
+    
+    configure.savedConfigure = JPSavedConfigureMake(self.frame,
+                                                    _contentInsets,
+                                                    self.frameView.rotationDirection,
+                                                    self.frameView.layer.transform,
+                                                    self.containerView.layer.transform,
+                                                    self.frameView.imageresizerFrame,
+                                                    _verticalityMirror,
+                                                    _horizontalMirror,
+                                                    self.scrollView.contentInset,
+                                                    self.scrollView.contentOffset,
+                                                    self.scrollView.minimumZoomScale,
+                                                    self.scrollView.zoomScale);
+    return configure;
+}
+
+#pragma mark - override method
+
+- (void)didMoveToSuperview {
+    [super didMoveToSuperview];
+    if (self.superview) {
+        JPSavedConfigure savedConfigure = self.configure.savedConfigure;
+        if (JPSavedConfigureIsNull(savedConfigure) ||
+            !CGRectEqualToRect(self.configure.viewFrame, savedConfigure.viewFrame)) {
+            [self.frameView updateImageOriginFrameWithDuration:-1.0];
+        } else {
+            JPImageresizerRotationDirection direction = savedConfigure.direction;
+            for (NSInteger i = 0; i < self.allDirections.count; i++) {
+                JPImageresizerRotationDirection kDirection = [self.allDirections[i] integerValue];
+                if (kDirection == direction) {
+                    self.directionIndex = i;
+                    break;
+                }
+            }
+            _verticalityMirror = savedConfigure.isVerMirror;
+            _horizontalMirror = savedConfigure.isHorMirror;
+            
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            self.containerView.layer.transform = savedConfigure.containerViewTransform;
+            self.scrollView.layer.transform = savedConfigure.contentViewTransform;
+            self.frameView.layer.transform = savedConfigure.contentViewTransform;
+            [CATransaction commit];
+            
+            self.scrollView.minimumZoomScale = savedConfigure.scrollViewMinimumZoomScale;
+            self.scrollView.zoomScale = savedConfigure.scrollViewCurrentZoomScale;
+            self.scrollView.contentInset = savedConfigure.scrollViewContentInsets;
+            self.scrollView.contentOffset = savedConfigure.scrollViewContentOffset;
+            
+            [self.frameView recoveryToSavedStateWithDirection:direction
+                                            imageresizerFrame:savedConfigure.imageresizerFrame
+                                            isToBeArbitrarily:self.configure.isArbitrarily];
+        }
+        savedConfigure.viewFrame = CGRectNull;
+        self.configure.savedConfigure = savedConfigure;
+    }
 }
 
 @end

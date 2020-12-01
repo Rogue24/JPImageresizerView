@@ -218,6 +218,9 @@
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
+@property (nonatomic, assign) JPSavedConfigure savedConfigure;
+@property (readonly) BOOL isSaved;
+
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
 @property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
@@ -241,7 +244,4 @@
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
-
-@property (nonatomic, assign) JPSavedConfigure savedConfigure;
-@property (readonly) BOOL isSaved;
 @end

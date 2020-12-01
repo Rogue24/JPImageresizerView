@@ -64,7 +64,6 @@
 }
 
 - (void)dealloc {
-    JPLog(@"00x0 %zd", JPTableViewController.savedConfigure.hash);
     JPLog(@"viewController is dead");
     JPRemoveNotification(self);
 }
@@ -83,7 +82,7 @@
     
     self.frameType = self.configure.frameType;
     self.maskImage = self.configure.maskImage;
-    self.recoveryBtn.enabled = self.configure.isSaved;
+    self.recoveryBtn.enabled = NO;
 }
 
 - (void)__setupConstraints {
@@ -136,7 +135,6 @@
     }];
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
-    self.configure = nil;
     
     // initialResizeWHScale默认为初始化时的resizeWHScale，此后可自行修改initialResizeWHScale的值
     // self.imageresizerView.initialResizeWHScale = 16.0 / 9.0; // 可随意修改该参数
@@ -256,6 +254,9 @@ static UIViewController *tmpVC_;
         [self goback];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"直接退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        if (JPTableViewController.savedConfigure == self.configure) {
+            JPTableViewController.savedConfigure = nil;
+        }
         [self goback];
     }]];
     [self presentViewController:alertCtr animated:YES completion:nil];
