@@ -248,15 +248,15 @@
 #pragma mark 返回
 static UIViewController *tmpVC_;
 - (IBAction)pop:(id)sender {
-    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:@"骚等" message:@"要不要保存这次编辑再退出？" preferredStyle:UIAlertControllerStyleAlert];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"保存吧" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        JPTableViewController.savedConfigure = [self.imageresizerView saveCurrentConfigure];
-        [self goback];
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"直接退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:@"将此次裁剪保留？" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"不保留" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (JPTableViewController.savedConfigure == self.configure) {
             JPTableViewController.savedConfigure = nil;
         }
+        [self goback];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"保留" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        JPTableViewController.savedConfigure = [self.imageresizerView saveCurrentConfigure];
         [self goback];
     }]];
     [self presentViewController:alertCtr animated:YES completion:nil];

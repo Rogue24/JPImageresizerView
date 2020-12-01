@@ -705,8 +705,8 @@
 - (CGFloat)resizeWHScale {
     CGFloat resizeWHScale = _frameView.resizeWHScale;
     if (resizeWHScale > 0) {
-        if (_frameView.rotationDirection == JPImageresizerHorizontalLeftDirection ||
-            _frameView.rotationDirection == JPImageresizerHorizontalRightDirection) {
+        if (_frameView.direction == JPImageresizerHorizontalLeftDirection ||
+            _frameView.direction == JPImageresizerHorizontalRightDirection) {
             resizeWHScale = 1.0 / resizeWHScale;
         }
     }
@@ -1542,6 +1542,7 @@
 - (JPImageresizerConfigure *)saveCurrentConfigure {
     JPImageresizerConfigure *configure = [[JPImageresizerConfigure alloc] init];
     configure.viewFrame = self.configure.viewFrame;
+    configure.maximumZoomScale = self.configure.maximumZoomScale;
     configure.contentInsets = self.configure.contentInsets;
     configure.fixErrorBlock = self.configure.fixErrorBlock;
     configure.fixStartBlock = self.configure.fixStartBlock;
@@ -1566,7 +1567,6 @@
     configure.isClockwiseRotation = self.isClockwiseRotation;
     configure.borderImage = self.borderImage;
     configure.borderImageRectInset = self.borderImageRectInset;
-    configure.maximumZoomScale = self.configure.maximumZoomScale;
     configure.isShowMidDots = self.isShowMidDots;
     configure.isBlurWhenDragging = self.isBlurWhenDragging;
     configure.isShowGridlinesWhenIdle = self.isShowGridlinesWhenIdle;
@@ -1574,18 +1574,18 @@
     configure.gridCount = self.gridCount;
     configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
     
-    configure.savedConfigure = JPSavedConfigureMake(self.frame,
-                                                    _contentInsets,
-                                                    self.frameView.rotationDirection,
-                                                    self.frameView.layer.transform,
-                                                    self.containerView.layer.transform,
-                                                    self.frameView.imageresizerFrame,
-                                                    _verticalityMirror,
-                                                    _horizontalMirror,
-                                                    self.scrollView.contentInset,
-                                                    self.scrollView.contentOffset,
-                                                    self.scrollView.minimumZoomScale,
-                                                    self.scrollView.zoomScale);
+    configure.history = JPCropHistoryMake(self.frame,
+                                          _contentInsets,
+                                          self.frameView.direction,
+                                          self.frameView.layer.transform,
+                                          self.containerView.layer.transform,
+                                          self.frameView.imageresizerFrame,
+                                          _verticalityMirror,
+                                          _horizontalMirror,
+                                          self.scrollView.contentInset,
+                                          self.scrollView.contentOffset,
+                                          self.scrollView.minimumZoomScale,
+                                          self.scrollView.zoomScale);
     return configure;
 }
 
@@ -1594,12 +1594,12 @@
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
     if (self.superview) {
-        JPSavedConfigure savedConfigure = self.configure.savedConfigure;
-        if (JPSavedConfigureIsNull(savedConfigure) ||
-            !CGRectEqualToRect(self.configure.viewFrame, savedConfigure.viewFrame)) {
+        JPCropHistory history = self.configure.history;
+        // 没有保存过，则按以前的方式初始化
+        if (JPCropHistoryIsNull(history)) {
             [self.frameView updateImageOriginFrameWithDuration:-1.0];
         } else {
-            JPImageresizerRotationDirection direction = savedConfigure.direction;
+            JPImageresizerRotationDirection direction = history.direction;
             for (NSInteger i = 0; i < self.allDirections.count; i++) {
                 JPImageresizerRotationDirection kDirection = [self.allDirections[i] integerValue];
                 if (kDirection == direction) {
@@ -1607,27 +1607,26 @@
                     break;
                 }
             }
-            _verticalityMirror = savedConfigure.isVerMirror;
-            _horizontalMirror = savedConfigure.isHorMirror;
+            _verticalityMirror = history.isVerMirror;
+            _horizontalMirror = history.isHorMirror;
             
             [CATransaction begin];
             [CATransaction setDisableActions:YES];
-            self.containerView.layer.transform = savedConfigure.containerViewTransform;
-            self.scrollView.layer.transform = savedConfigure.contentViewTransform;
-            self.frameView.layer.transform = savedConfigure.contentViewTransform;
+            self.containerView.layer.transform = history.containerViewTransform;
+            self.scrollView.layer.transform = history.contentViewTransform;
+            self.frameView.layer.transform = history.contentViewTransform;
             [CATransaction commit];
             
-            self.scrollView.minimumZoomScale = savedConfigure.scrollViewMinimumZoomScale;
-            self.scrollView.zoomScale = savedConfigure.scrollViewCurrentZoomScale;
-            self.scrollView.contentInset = savedConfigure.scrollViewContentInsets;
-            self.scrollView.contentOffset = savedConfigure.scrollViewContentOffset;
+            self.scrollView.minimumZoomScale = history.scrollViewMinimumZoomScale;
+            self.scrollView.zoomScale = history.scrollViewCurrentZoomScale;
+            self.scrollView.contentInset = history.scrollViewContentInsets;
+            self.scrollView.contentOffset = history.scrollViewContentOffset;
             
-            [self.frameView recoveryToSavedStateWithDirection:direction
-                                            imageresizerFrame:savedConfigure.imageresizerFrame
-                                            isToBeArbitrarily:self.configure.isArbitrarily];
+            [self.frameView recoveryToSavedHistoryWithDirection:direction
+                                              imageresizerFrame:history.imageresizerFrame
+                                              isToBeArbitrarily:self.configure.isArbitrarily];
         }
-        savedConfigure.viewFrame = CGRectNull;
-        self.configure.savedConfigure = savedConfigure;
+        if (self.configure.isCleanHistoryAfterInitial) [self.configure cleanHistory];
     }
 }
 

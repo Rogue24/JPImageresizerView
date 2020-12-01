@@ -162,7 +162,8 @@
     .jp_isShowGridlinesWhenIdle(NO)
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
-    .jp_isLoopPlaybackGIF(NO);
+    .jp_isLoopPlaybackGIF(NO)
+    .jp_isCleanHistoryAfterInitial(YES);
     return configure;
 }
 
@@ -221,8 +222,15 @@
     }
 }
 
-- (BOOL)isSaved {
-    return !JPSavedConfigureIsNull(self.savedConfigure);
+- (BOOL)isSavedHistory {
+    return !JPCropHistoryIsNull(self.history);
+}
+
+- (void)cleanHistory {
+    JPCropHistory history = self.history;
+    if (JPCropHistoryIsNull(history)) return;
+    history.viewFrame = CGRectNull;
+    self.history = history;
 }
 
 - (JPImageresizerConfigure *(^)(CGRect))jp_viewFrame {
@@ -382,6 +390,13 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_isLoopPlaybackGIF {
     return ^(BOOL isLoopPlaybackGIF) {
         self.isLoopPlaybackGIF = isLoopPlaybackGIF;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_isCleanHistoryAfterInitial {
+    return ^(BOOL isCleanHistoryAfterInitial) {
+        self.isCleanHistoryAfterInitial = isCleanHistoryAfterInitial;
         return self;
     };
 }

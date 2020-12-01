@@ -345,7 +345,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (CGSize)imageViewSzie {
     CGFloat w = ((NSInteger)(self.imageView.frame.size.width)) * 1.0;
     CGFloat h = ((NSInteger)(self.imageView.frame.size.height)) * 1.0;
-    return [self __isHorizontalDirection:_rotationDirection] ? CGSizeMake(h, w) : CGSizeMake(w, h);
+    return [self __isHorizontalDirection:_direction] ? CGSizeMake(h, w) : CGSizeMake(w, h);
 }
 
 - (CGFloat)imageresizerWHScale {
@@ -456,7 +456,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _minImageWH = 70.0;
         
         _edgeLineIsEnabled = YES;
-        _rotationDirection = JPImageresizerVerticalUpDirection;
+        _direction = JPImageresizerVerticalUpDirection;
         _baseContentMaxSize = baseContentMaxSize;
         _strokeColor = strokeColor;
         _isShowMidDots = isShowMidDots;
@@ -705,7 +705,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (BOOL)__imageresizerFrameIsEqualImageViewFrame {
     CGSize imageresizerSize = self.imageresizerSize;
     CGSize imageViewSzie = self.imageViewSzie;
-    CGFloat resizeWHScale = [self __isHorizontalDirection:_rotationDirection] ? (1.0 / _resizeWHScale) : _resizeWHScale;
+    CGFloat resizeWHScale = [self __isHorizontalDirection:_direction] ? (1.0 / _resizeWHScale) : _resizeWHScale;
     if (_isArbitrarily || (resizeWHScale == self.resizeObjWhScale())) {
         return (fabs(imageresizerSize.width - imageViewSzie.width) <= 1 &&
                 fabs(imageresizerSize.height - imageViewSzie.height) <= 1);
@@ -721,7 +721,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     } else {
         CGFloat w = 0;
         CGFloat h = 0;
-        if ([self __isHorizontalDirection:_rotationDirection]) {
+        if ([self __isHorizontalDirection:_direction]) {
             h = _baseImageW;
             w = h * _resizeWHScale;
             if (w > self.maxResizeW) {
@@ -945,13 +945,13 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
-- (void)__updateRotationDirection:(JPImageresizerRotationDirection)rotationDirection {
-    [self __updateMaxResizeFrameWithDirection:rotationDirection];
+- (void)__updateRotationDirection:(JPImageresizerRotationDirection)direction {
+    [self __updateMaxResizeFrameWithDirection:direction];
     if (!_isArbitrarily) {
-        BOOL isSwitchVerHor = [self __isHorizontalDirection:_rotationDirection] != [self __isHorizontalDirection:rotationDirection];
+        BOOL isSwitchVerHor = [self __isHorizontalDirection:_direction] != [self __isHorizontalDirection:direction];
         if (isSwitchVerHor) _resizeWHScale = 1.0 / _resizeWHScale;
     }
-    _rotationDirection = rotationDirection;
+    _direction = direction;
 }
 
 - (void)__updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
@@ -965,7 +965,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGFloat y = (self.bounds.size.height - h) * 0.5;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
     
-    if (_rotationDirection == direction) return;
+    if (_direction == direction) return;
     
     self.frameLayer.lineWidth = _frameLayerLineW;
     
@@ -1157,13 +1157,13 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGPoint convertCenter = [self convertPoint:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds)) toView:self.imageView];
     CGPoint imageViewCenter = CGPointMake(CGRectGetMidX(self.imageView.bounds), CGRectGetMidY(self.imageView.bounds));
     BOOL isSameCenter = labs((NSInteger)convertCenter.x - (NSInteger)imageViewCenter.x) <= 1 && labs((NSInteger)convertCenter.y - (NSInteger)imageViewCenter.y) <= 1;
-    BOOL isOriginFrame = self.rotationDirection == JPImageresizerVerticalUpDirection && [self __imageresizerFrameIsEqualImageViewFrame];
+    BOOL isOriginFrame = self.direction == JPImageresizerVerticalUpDirection && [self __imageresizerFrameIsEqualImageViewFrame];
     self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
 - (void)__setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (resizeWHScale < 0) resizeWHScale = 0;
-    if (resizeWHScale > 0 && [self __isHorizontalDirection:_rotationDirection]) resizeWHScale = 1.0 / resizeWHScale;
+    if (resizeWHScale > 0 && [self __isHorizontalDirection:_direction]) resizeWHScale = 1.0 / resizeWHScale;
     if (_resizeWHScale == resizeWHScale && _isArbitrarily == isToBeArbitrarily) return;
     if (self.superview) {
         _isToBeArbitrarily = isToBeArbitrarily;
@@ -1250,7 +1250,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         transform = CGAffineTransformScale(transform, 1.0, -1.0);
     }
     
-    switch (_rotationDirection) {
+    switch (_direction) {
         case JPImageresizerVerticalUpDirection:
             break;
         case JPImageresizerHorizontalLeftDirection:
@@ -1512,11 +1512,11 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (afterFrame) {
         CGRect frame = self.frame;
         if (isHorizontalMirror) {
-            CGFloat h = [self __isHorizontalDirection:_rotationDirection] ? self.bounds.size.width : self.bounds.size.height;
+            CGFloat h = [self __isHorizontalDirection:_direction] ? self.bounds.size.width : self.bounds.size.height;
             CGFloat y = (_baseContentMaxSize.height - h) * 0.5 + diffValue;
             frame.origin.y = y;
         } else {
-            CGFloat w = [self __isHorizontalDirection:_rotationDirection] ? self.bounds.size.height : self.bounds.size.width;
+            CGFloat w = [self __isHorizontalDirection:_direction] ? self.bounds.size.height : self.bounds.size.width;
             CGFloat x = (_baseContentMaxSize.width - w) * 0.5 + diffValue;
             frame.origin.x = x;
         }
@@ -1630,12 +1630,14 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.isPrepareToScale = NO;
 }
 
-- (void)recoveryToSavedStateWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+- (void)recoveryToSavedHistoryWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily {
     [self __updateImageOriginFrameWithDirection:direction];
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
     if (isToBeArbitrarily) {
         _isArbitrarily = YES;
         _resizeWHScale = 0;
+    } else {
+        _isArbitrarily = _resizeWHScale == 0;
     }
     [self __checkIsCanRecovery];
 }
@@ -1681,7 +1683,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     _baseImageW = imgViewW;
     _baseImageH = imgViewH;
     self.originImageFrame = CGRectMake(imgViewX, imgViewY, imgViewW, imgViewH);
-    [self __updateMaxResizeFrameWithDirection:self.rotationDirection];
+    [self __updateMaxResizeFrameWithDirection:self.direction];
     contentWidth = self.maxResizeW;
     contentHeight = self.maxResizeH;
     
@@ -1773,7 +1775,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark 获取裁剪属性
 - (JPCropConfigure)currentCropConfigure {
-    JPImageresizerRotationDirection direction = self.rotationDirection;
+    JPImageresizerRotationDirection direction = self.direction;
     
     BOOL isVerMirror = self.isVerticalityMirror();
     BOOL isHorMirror = self.isHorizontalMirror();

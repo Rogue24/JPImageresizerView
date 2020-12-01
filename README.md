@@ -7,7 +7,7 @@
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.im/post/5e67cf33f265da5749475935)
 
-## 简介（当前版本：1.7.7）
+## 简介（当前版本：1.7.8）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -34,6 +34,8 @@
         ☑️ 固定不缩放裁剪区域；
         ☑️ 视频不再需要修正方向再裁剪；
         ☑️ 裁剪远程视频；
+        ☑️ 持久化缓存裁剪历史；
+        ☑️ 将视频裁剪部分（AVFoundation模块）分离出来；
         ☑️ 实现苹果相册裁剪功能中的自由拖拽旋转、翻转角度的效果。
         
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
@@ -554,6 +556,26 @@ self.imageresizerView.isPreview = YES;
 [self.imageresizerView setIsPreview:YES animated:YES];
 ```
 
+### 保存当前裁剪状态
+```objc
+// 1.很Easy，直接调用saveCurrentConfigure方法获取当前裁剪的状态，可用一个全局变量来保存该对象
+JPImageresizerConfigure *savedConfigure = [self.imageresizerView saveCurrentConfigure];
+
+// 2.重新打开裁剪历史
+JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:savedConfigure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+    ......
+} imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+    ......
+}];
+[self.view addSubview:imageresizerView];
+self.imageresizerView = imageresizerView;
+
+// 3.可以设置JPImageresizerConfigure的isCleanHistoryAfterInitial属性为YES，当初始化结束后自动清空历史（默认为YES）
+// 或者直接调用cleanHistory方法清空历史
+```
+PS1：若保存的savedConfigure.history.viewFrame跟当前的viewFrame不一致，界面会导致错乱，需要自行判断是否一致才可重新打开；
+PS2：另外目前只能在App使用期间进行保存，暂未实现持久化缓存。
+
 ### 其他
 ```objc
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
@@ -568,6 +590,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.7.8 | 1. 新增可保存当前历史状态的功能。
 1.7.6~1.7.7 | 1. 修复了固定比例旋转时无故放大的问题；<br>2. 修复iOS14版本下自定义进度条的拖动块消失的问题。
 1.7.3~1.7.5 | 1. 修复了初始化无法固定裁剪比例的问题；<br>2. 现在圆切和蒙版均可设置是否自由拖拽；<br>3. 优化了设置裁剪宽高比和重置的接口；<br>4. 优化了图片缓存逻辑；<br>5. 修复了GIF时长过短导致截取错误的问题。
 1.7.1~1.7.2 | 1. 新增修正视频方向的功能（有待改进）；<br>2. 裁剪视频可以以AVURLAsset形式传入；<br>3. 优化切换裁剪元素的过渡。

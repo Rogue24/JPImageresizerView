@@ -17,7 +17,7 @@
 @property (nonatomic, strong) NSTimer *progressTimer;
 @property (nonatomic, copy) JPExportVideoProgressBlock progressBlock;
 @property (nonatomic, assign) BOOL isExporting;
-@property (nonatomic, weak) UIButton *openCacheBtn;
+@property (nonatomic, weak) UIButton *openHistoryBtn;
 @end
 
 @implementation JPTableViewController
@@ -34,12 +34,12 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
     [super viewDidLoad];
     self.title = @"Example";
     
-    UIButton *openCacheBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    openCacheBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    [openCacheBtn setTitle:@"打开缓存" forState:UIControlStateNormal];
-    [openCacheBtn addTarget:self action:@selector(__openCache) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:openCacheBtn];
-    self.openCacheBtn = openCacheBtn;
+    UIButton *openHistoryBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    openHistoryBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    [openHistoryBtn setTitle:@"继续上次裁剪" forState:UIControlStateNormal];
+    [openHistoryBtn addTarget:self action:@selector(__openHistory) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:openHistoryBtn];
+    self.openHistoryBtn = openHistoryBtn;
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
@@ -48,7 +48,7 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    self.openCacheBtn.hidden = self.class.savedConfigure == nil || !self.class.savedConfigure.isSaved;
+    self.openHistoryBtn.hidden = self.class.savedConfigure == nil || !self.class.savedConfigure.isSavedHistory;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -376,9 +376,17 @@ static JPImageresizerConfigure *gifConfigure_;
 
 #pragma mark - 打开缓存
 
-- (void)__openCache {
+- (void)__openHistory {
     JPImageresizerConfigure *savedConfigure = self.class.savedConfigure;
-    if (!savedConfigure) return;
+    if (!savedConfigure || !savedConfigure.isSavedHistory) {
+        self.class.savedConfigure = nil;
+        self.openHistoryBtn.hidden = YES;
+        return;
+    }
+    if (!CGRectEqualToRect(savedConfigure.history.viewFrame, [UIScreen mainScreen].bounds)) {
+        [JPProgressHUD showInfoWithStatus:@"保存的界面尺寸跟当前不一致" userInteractionEnabled:YES];
+        return;
+    }
     [self __startImageresizer:savedConfigure statusBarStyle:UIStatusBarStyleDefault];
 }
 

@@ -9,7 +9,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.7.7)
+## Brief introduction (Current version: 1.7.8)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -36,6 +36,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ☑️ Fix the clipping region without scaling;
         ☑️ The video does not need to fix the orientation before clipping;
         ☑️ Crop remote video;
+        ☑️ Persistent cache pruning history;
+        ☑️ The video clipping part (AVFoundation module) is separated;
         ☑️ To achieve the effect of free drag rotation and flip angle.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
@@ -550,6 +552,26 @@ self.imageresizerView.isPreview = YES;
 // 2.Customize whether to with animation effect or not
 [self.imageresizerView setIsPreview:YES animated:NO]
 ```
+
+### Save current crop state
+```objc
+// 1.It is easy to directly call the savecurrentconfigure method to obtain the current clipping state. A global variable can be used to save the object
+JPImageresizerConfigure *savedConfigure = [self.imageresizerView saveCurrentConfigure];
+
+// 2.Reopen crop history
+JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:savedConfigure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
+    ......
+} imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
+    ......
+}];
+[self.view addSubview:imageresizerView];
+self.imageresizerView = imageresizerView;
+
+// 3.You can set the isCleanHistoryAfterInitial property of JPImageresizerConfigure to YES, and automatically clear the history after initialization (yes by default)
+// Or call the cleanHistory method directly to clear the history
+```
+PS1：If preserved savedConfigure.history.viewFrame If it is inconsistent with the current viewframe, the interface will be disordered, and you need to judge whether it is consistent before reopening;
+PS2：In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
 
 ### Other
 ```objc

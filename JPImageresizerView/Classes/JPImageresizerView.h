@@ -459,6 +459,14 @@
  */
 - (void)recoveryToMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
+#pragma mark - 获取当前裁剪状态
+/*!
+ @method
+ @brief 获取当前裁剪状态
+ @discussion 可用于保存，下次重新打开
+ */
+- (JPImageresizerConfigure *)saveCurrentConfigure;
+
 #pragma mark - 裁剪
 
 #pragma mark 裁剪图片
@@ -687,7 +695,5 @@
  @discussion 当视频正在导出时（裁剪、修正方向）调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
  */
 - (void)videoCancelExport;
-
-- (JPImageresizerConfigure *)saveCurrentConfigure;
 
 @end
