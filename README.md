@@ -574,8 +574,10 @@ self.imageresizerView = imageresizerView;
 // 3.可以设置JPImageresizerConfigure的isCleanHistoryAfterInitial属性为YES，当初始化结束后自动清空历史（默认为YES）
 // 或者直接调用cleanHistory方法清空历史
 ```
-PS1：若保存的savedConfigure.history.viewFrame跟当前的viewFrame不一致，界面会导致错乱，需要自行判断是否一致才可重新打开；
-PS2：另外目前只能在App使用期间进行保存，暂未实现持久化缓存。
+![save](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/save.gif)
+
+- PS1：若保存的`savedConfigure.history.viewFrame`跟当前的`viewFrame`不一致，界面会导致错乱，需要自行判断是否一致才可重新打开；
+- PS2：另外目前只能在App使用期间进行保存，暂未实现持久化缓存。
 
 ### 其他
 ```objc
