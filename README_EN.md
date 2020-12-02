@@ -31,14 +31,14 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF.
 
-    What I'm trying to achieve:
-        ☑️ Swift version;
-        ☑️ Fix the clipping region without scaling;
-        ☑️ The video does not need to fix the orientation before clipping;
-        ☑️ Crop remote video;
-        ☑️ Persistent cache pruning history;
-        ☑️ The video clipping part (AVFoundation module) is separated;
-        ☑️ To achieve the effect of free drag rotation and flip angle.
+    TODO:
+        🔘 Swift version;
+        🔘 Fix the clipping region without scaling;
+        🔘 The video does not need to fix the orientation before clipping;
+        🔘 Crop remote video;
+        🔘 Persistent cache pruning history;
+        🔘 The video clipping part (AVFoundation module) is separated;
+        🔘 To achieve the effect of free drag rotation and flip angle.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
 
