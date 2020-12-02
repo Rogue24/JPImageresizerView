@@ -29,7 +29,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ Can customize the mask image clipping;
         ✅ It can cut the whole picture or a frame of local video;
         ✅ A local video can be intercepted, cut and transferred to GIF;
-        ✅ Can crop GIF.
+        ✅ Can crop GIF;
+        ✅ The current clipping state can be saved.
 
     TODO:
         🔘 Swift version;
