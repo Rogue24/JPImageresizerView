@@ -11,7 +11,7 @@
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
 
-@interface JPTableViewController ()
+@interface JPTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) NSURL *tmpURL;
 @property (nonatomic, weak) AVAssetExportSession *exporterSession;
 @property (nonatomic, strong) NSTimer *progressTimer;
@@ -33,6 +33,11 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Example";
+    
+    UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    [cameraBtn setImage:[UIImage imageNamed:@"photograph_icon"] forState:UIControlStateNormal];
+    [cameraBtn addTarget:self action:@selector(__camera) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:cameraBtn];
     
     UIButton *openHistoryBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     openHistoryBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
@@ -389,5 +394,69 @@ static JPImageresizerConfigure *gifConfigure_;
     }
     [self __startImageresizer:savedConfigure statusBarStyle:UIStatusBarStyleDefault];
 }
+
+#pragma mark - 拍照
+- (void)__camera {
+    @jp_weakify(self);
+    [JPPhotoToolSI cameraAuthorityWithAllowAccessAuthorityHandler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [self __photograph];
+    } refuseAccessAuthorityHandler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [self __photograph];
+    } alreadyRefuseAccessAuthorityHandler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [self __photograph];
+    } canNotAccessAuthorityHandler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [self __photograph];
+    }];
+}
+
+- (void)__photograph {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+#pragma mark - UIImagePickerController相关逻辑
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    if (picker.sourceType != UIImagePickerControllerSourceTypeCamera) return;
+    
+    // 获取选择的图片
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
+    if (!image) {
+        if (@available(iOS 13.0, *)) {
+            NSURL *url = info[UIImagePickerControllerImageURL];
+            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        }
+    }
+    
+    if (!image) {
+        [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
+        [picker dismissViewControllerAnimated:YES completion:nil];
+        return;
+    }
+    
+    @jp_weakify(self);
+    [JPPhotoToolSI savePhotoToAppAlbumWithImage:image successHandle:^(NSString *assetID) {
+        @jp_strongify(self);
+        if (!self) return;
+        [picker dismissViewControllerAnimated:YES completion:^{
+            JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:nil];
+            [self __startImageresizer:configure statusBarStyle:UIStatusBarStyleLightContent];
+        }];
+    } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+        [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }];
+}
+
 
 @end
