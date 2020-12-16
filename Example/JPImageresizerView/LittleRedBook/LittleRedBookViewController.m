@@ -99,17 +99,21 @@
     line2.transform = CATransform3DMakeRotation(-maxRadian, 0, 0, 1);
     line3.transform = CATransform3DMakeRotation(-maxRadian, 0, 0, 1);
     
-    self.maxRadian = atan(baseFrame.size.height / baseFrame.size.width);
+    self.maxRadian = M_PI_2 * 0.5;// atan(baseFrame.size.height / baseFrame.size.width);
     
-    CGAffineTransform transform = CGAffineTransformMakeRotation(self.maxRadian);
-    
-    self.maxFrame = CGRectApplyAffineTransform(baseFrame, transform);
-    self.maxScale = self.maxFrame.size.width / baseFrame.size.width;
-    
-    
-    CGFloat maxHeight = baseFrame.size.height * self.maxScale;
-    
-    self.maxVerInset = (maxHeight - maxSide) * 0.5 / self.maxScale;
+//    CGAffineTransform transform = CGAffineTransformMakeRotation(self.maxRadian);
+//
+//    self.maxFrame = CGRectApplyAffineTransform(baseFrame, transform);
+//    self.maxScale = self.maxFrame.size.width / baseFrame.size.width;
+//
+//
+//    CGFloat maxSide1 = baseFrame.size.width * sqrt(2);
+//    CGFloat maxSide2 = (baseFrame.size.height - baseFrame.size.width) / sqrt(2);
+//
+//
+//    CGFloat maxHeight = baseFrame.size.height * self.maxScale;
+//
+//    self.maxVerInset = (maxHeight - (maxSide1 + maxSide2)) * 0.5 / self.maxScale;
     
     
 }
@@ -121,7 +125,7 @@
     CGRect baseFrame = CGRectMake(0, 0, self.baseFrame.size.width, self.baseFrame.size.height);
     
     
-    CGFloat radian = M_PI * 2 * value;
+    CGFloat radian = self.maxRadian * value;
     
     JPLog(@"多少度 %.1lf", JPRadian2Angle(radian));
     
@@ -132,36 +136,14 @@
     CGFloat scale = frame.size.width / baseFrame.size.width;
     transform = CGAffineTransformScale(transform, scale, scale);
     
-    CGFloat sss = (scale - 1) / (self.maxScale - 1);
-    CGFloat verInset = self.maxVerInset * sss;
     
-    JPLog(@"比例 %lf", sss);
+    CGFloat aaa = fabs(radian);
+    CGFloat s1 = cos(aaa) * baseFrame.size.height;
+    CGFloat s2 = sin(aaa) * baseFrame.size.width;
+    CGFloat verInset = (baseFrame.size.height * scale - (s1 + s2)) * 0.5 / scale;
     
     self.scrollView.transform = transform;
     self.scrollView.contentInset = UIEdgeInsetsMake(verInset, 0, verInset, 0);
-    
-    
-    return;
-    
-    
-    
-    
-    
-    frame = CGRectMake(0, 0, frame.size.width * self.scrollView.zoomScale, frame.size.height * self.scrollView.zoomScale);
-    
-    
-    
-    self.contentView.frame = frame;
-    
-    
-    
-//    self.scrollView.zoomScale = scale;
-//    self.scrollView.contentSize = frame.size;
-//    self.scrollView.contentInset = UIEdgeInsetsMake(verInset, horInset, verInset, horInset);
-//
-//    self.rotateView.transform = transform;
-//    self.rotateView.center = CGPointMake(self.contentView.frame.size.width / self.scrollView.zoomScale * 0.5, self.contentView.frame.size.height / self.scrollView.zoomScale * 0.5);
-    
 }
 
 - (void)showInfo {
