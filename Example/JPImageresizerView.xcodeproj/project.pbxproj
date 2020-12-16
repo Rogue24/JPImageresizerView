@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00842C5B2587A25B0007F36E /* LittleRedBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00842C5A2587A25B0007F36E /* LittleRedBookViewController.m */; };
 		0092E03225722F4600F13E60 /* JPDynamicPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02925722F4600F13E60 /* JPDynamicPage.m */; };
 		0092E03325722F4600F13E60 /* JPMainViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02A25722F4600F13E60 /* JPMainViewModel.m */; };
 		0092E03425722F4600F13E60 /* JPMainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02E25722F4600F13E60 /* JPMainCell.m */; };
@@ -103,6 +104,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00842C592587A25B0007F36E /* LittleRedBookViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LittleRedBookViewController.h; sourceTree = "<group>"; };
+		00842C5A2587A25B0007F36E /* LittleRedBookViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LittleRedBookViewController.m; sourceTree = "<group>"; };
 		0092E02825722F4600F13E60 /* JPMainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMainCell.h; sourceTree = "<group>"; };
 		0092E02925722F4600F13E60 /* JPDynamicPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPDynamicPage.m; sourceTree = "<group>"; };
 		0092E02A25722F4600F13E60 /* JPMainViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPMainViewModel.m; sourceTree = "<group>"; };
@@ -242,6 +245,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00842C582587A21A0007F36E /* LittleRedBook */ = {
+			isa = PBXGroup;
+			children = (
+				00842C592587A25B0007F36E /* LittleRedBookViewController.h */,
+				00842C5A2587A25B0007F36E /* LittleRedBookViewController.m */,
+			);
+			path = LittleRedBook;
+			sourceTree = "<group>";
+		};
 		0092E02725722F4600F13E60 /* NewHomePage */ = {
 			isa = PBXGroup;
 			children = (
@@ -501,6 +513,7 @@
 				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
 				1A10433623A495AD00D1B2DF /* JPHelper */,
 				1A0AB36522B2854A00B6B6AB /* Resource */,
+				00842C582587A21A0007F36E /* LittleRedBook */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
 			name = "Example for JPImageresizerView";
@@ -749,6 +762,7 @@
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
+				00842C5B2587A25B0007F36E /* LittleRedBookViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,

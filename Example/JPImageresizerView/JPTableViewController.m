@@ -10,6 +10,7 @@
 #import "JPImageresizerViewController.h"
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
+#import "LittleRedBookViewController.h"
 
 @interface JPTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) NSURL *tmpURL;
@@ -74,7 +75,7 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4;
+    return 4 + 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -104,8 +105,10 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
         } else {
             cell.textLabel.text = @"暂停选老婆";
         }
-    } else {
+    } else if (indexPath.section == 3) {
         cell.textLabel.text = @"从系统相册选择";
+    } else {
+        cell.textLabel.text = @"小红书";
     }
     return cell;
 }
@@ -160,8 +163,11 @@ static JPImageresizerConfigure *gifConfigure_;
             }
             [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
         }
-    } else {
+    } else if (indexPath.section == 3) {
         [self __openAlbum:NO];
+    } else {
+        LittleRedBookViewController *lrbVC = [self.storyboard instantiateViewControllerWithIdentifier:@"LittleRedBookViewController"];
+        [self.navigationController pushViewController:lrbVC animated:YES];
     }
 }
 
