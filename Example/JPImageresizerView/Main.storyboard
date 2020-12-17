@@ -42,7 +42,7 @@
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="vkr-0U-JIF">
                                 <rect key="frame" x="28" y="822" width="358" height="31"/>
                                 <connections>
-                                    <action selector="valueDidChanged:" destination="Ai8-WK-bNE" eventType="valueChanged" id="7Oh-wd-wsj"/>
+                                    <action selector="valueDidChanged:" destination="Ai8-WK-bNE" eventType="valueChanged" id="Yqy-nK-BAm"/>
                                 </connections>
                             </slider>
                         </subviews>
