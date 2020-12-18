@@ -32,84 +32,6 @@
 
 @implementation LittleRedBookViewController
 
-- (void)__crop {
-    UIImage *image = self.contentView.image;
-    
-    CGImageRef imageRef = image.CGImage;
-    
-    CGFloat compressScale = 1;
-    
-    
-    
-    // 是否带透明度
-    BOOL hasAlpha = NO;
-    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-        alphaInfo == kCGImageAlphaPremultipliedFirst ||
-        alphaInfo == kCGImageAlphaLast ||
-        alphaInfo == kCGImageAlphaFirst) hasAlpha = YES;
-    
-    // 获取裁剪尺寸和裁剪区域
-    CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef) * compressScale, CGImageGetHeight(imageRef) * compressScale);
-    
-//    CGAffineTransform transform = JPConfirmTransform(imageSize, direction, isVerMirror, isHorMirror, YES);
-//    CGPoint translate = JPConfirmTranslate(cropFrame, imageSize, direction, isVerMirror, isHorMirror, YES);
-//    transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
-    bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
-    
-    CGContextRef context = CGBitmapContextCreate(NULL, imageSize.width, imageSize.height, 8, 0, colorSpace, bitmapInfo);
-    CGContextSetShouldAntialias(context, true);
-    CGContextSetAllowsAntialiasing(context, true);
-    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    
-    CGAffineTransform transform = CGAffineTransformMakeRotation(-self.radian);
-//    CGRect frame = CGRectApplyAffineTransform(self.baseFrame, transform);
-    
-    CGAffineTransform t = self.scrollView.transform;
-    CGFloat scale = sqrt(t.a * t.a + t.c * t.c);
-    scale *= self.scrollView.zoomScale;
-    transform = CGAffineTransformScale(transform, scale, scale);
-    
-    CGPoint point1 = CGPointMake(self.boardView.jp_x, self.boardView.jp_maxY);
-    point1 = [self.contentView convertPoint:point1 fromView:self.boardView];
-    if (point1.x < 0) {
-        point1.x = 0;
-    }
-    point1.y = self.contentView.jp_height - point1.y;
-    JPLog(@"point1 %@", NSStringFromCGPoint(point1));
-    
-    CGPoint point2 = CGPointMake(0, self.boardView.jp_height);
-    point2 = [self.contentView convertPoint:point2 fromView:self.boardView];
-    if (point2.x < 0) {
-        point2.x = 0;
-    }
-    point2.y = self.contentView.jp_height - point2.y;
-    JPLog(@"point2 %@", NSStringFromCGPoint(point2));
-    
-    CGFloat iScale = imageSize.height / self.contentView.jp_height;
-    transform = CGAffineTransformTranslate(transform, -point2.x * iScale, -point2.y * iScale);
-    
-//    transform = CGAffineTransformTranslate(transform, -point.x, -point.y);
-//    transform = CGAffineTransformTranslate(transform, 100, 100);
-    
-    CGContextConcatCTM(context, transform);
-    CGContextDrawImage(context, (CGRect){CGPointZero, imageSize}, imageRef);
-    CGImageRef newImageRef =  CGBitmapContextCreateImage(context);
-    
-    UIImage *finalImage = [UIImage imageWithCGImage:newImageRef];
-    CGImageRelease(newImageRef);
-    
-    CGColorSpaceRelease(colorSpace);
-    CGContextRelease(context);
-    
-    JPPreviewViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
-    vc.image = finalImage;
-    [self.navigationController pushViewController:vc animated:YES];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -238,6 +160,85 @@
     
     self.scrollView.transform = transform;
     self.scrollView.contentInset = UIEdgeInsetsMake(verInset, 0, verInset, 0);
+}
+
+- (void)__crop {
+    UIImage *image = self.contentView.image;
+    
+    CGImageRef imageRef = image.CGImage;
+    
+    CGFloat compressScale = 1;
+    
+    // 是否带透明度
+    BOOL hasAlpha = NO;
+    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+        alphaInfo == kCGImageAlphaPremultipliedFirst ||
+        alphaInfo == kCGImageAlphaLast ||
+        alphaInfo == kCGImageAlphaFirst) hasAlpha = YES;
+    
+    // 获取裁剪尺寸和裁剪区域
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef) * compressScale, CGImageGetHeight(imageRef) * compressScale);
+    
+//    CGAffineTransform transform = JPConfirmTransform(imageSize, direction, isVerMirror, isHorMirror, YES);
+//    CGPoint translate = JPConfirmTranslate(cropFrame, imageSize, direction, isVerMirror, isHorMirror, YES);
+//    transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+    bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+    
+    CGContextRef context = CGBitmapContextCreate(NULL, imageSize.width, imageSize.height, 8, 0, colorSpace, bitmapInfo);
+    CGContextSetShouldAntialias(context, true);
+    CGContextSetAllowsAntialiasing(context, true);
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    
+    
+    CGAffineTransform t = self.scrollView.transform;
+    CGFloat scale = sqrt(t.a * t.a + t.c * t.c);
+    scale *= self.scrollView.zoomScale;
+    
+    CGPoint point1 = CGPointMake(self.boardView.jp_x, self.boardView.jp_maxY);
+    point1 = [self.contentView convertPoint:point1 fromView:self.boardView];
+    if (point1.x < 0) {
+        point1.x = 0;
+    }
+    point1.y = self.contentView.jp_height - point1.y;
+    JPLog(@"point1 %@", NSStringFromCGPoint(point1));
+    
+    CGPoint point2 = CGPointMake(0, self.boardView.jp_height);
+    point2 = [self.contentView convertPoint:point2 fromView:self.boardView];
+    if (point2.x < 0) {
+        point2.x = 0;
+    }
+    point2.y = self.contentView.bounds.size.height - point2.y;
+    JPLog(@"point2 %@", NSStringFromCGPoint(point2));
+    
+    CGFloat iScale = 1;// imageSize.height / self.contentView.frame.size.height;
+    CGPoint translate = CGPointMake(-point2.x * iScale, -point2.y * iScale);
+    
+    CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
+    transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
+    transform = CGAffineTransformRotate(transform, -self.radian);
+    
+//    transform = CGAffineTransformScale(transform, scale, scale);
+    
+//    transform = CGAffineTransformTranslate(transform, -point.x, -point.y);
+//    transform = CGAffineTransformTranslate(transform, 100, 100);
+    
+    CGContextConcatCTM(context, transform);
+    CGContextDrawImage(context, (CGRect){CGPointZero, imageSize}, imageRef);
+    CGImageRef newImageRef =  CGBitmapContextCreateImage(context);
+    
+    UIImage *finalImage = [UIImage imageWithCGImage:newImageRef];
+    CGImageRelease(newImageRef);
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    JPPreviewViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
+    vc.image = finalImage;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)showInfo {
