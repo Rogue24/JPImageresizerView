@@ -30,6 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = JPRandomColor;
+    self.view.clipsToBounds = YES;
     
     UIButton *cropBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     cropBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
@@ -200,7 +201,6 @@
     
     
     CGFloat iScale = imageSize.height / (self.contentFrame.size.height * scale);
-//    CGFloat iScale = imageSize.height / (self.contentFrame.size.height * scale);
     
     CGPoint translate = [self.boardView convertPoint:CGPointMake(0, self.boardView.jp_height) toView:self.contentView];
     translate.y = self.contentView.bounds.size.height - translate.y;
