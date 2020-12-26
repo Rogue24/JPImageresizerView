@@ -42,7 +42,7 @@
 //    UIImage *image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Flowers.jpg" ofType:nil]];
     
     CGFloat w = 200;
-    CGFloat h = w;// * (3.0 / 4.0);
+    CGFloat h = w * (3.0 / 4.0);
     CGFloat x = JPHalfOfDiff(JPPortraitScreenWidth, w);
     CGFloat y = JPHalfOfDiff(JPPortraitScreenHeight - JPNavTopMargin - JPDiffTabBarH, h);
     self.boardFrame = CGRectMake(x, y, w, h);
@@ -227,6 +227,8 @@
 }
 
 - (void)showInfo {
+    JPLog(@"contentView bounds %@", NSStringFromCGRect(self.contentView.bounds));
+    JPLog(@"contentView frame %@", NSStringFromCGRect(self.contentView.frame));
     JPLog(@"contentSize %@", NSStringFromCGSize(self.scrollView.contentSize));
     JPLog(@"contentInset %@", NSStringFromUIEdgeInsets(self.scrollView.contentInset));
     JPLog(@"contentOffset %@", NSStringFromCGPoint(self.scrollView.contentOffset));

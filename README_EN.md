@@ -6,6 +6,7 @@
 [![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.im/post/5ecd0cddf265da7711699e0d)
+[Little Red Book App Crop](https://github.com/Rogue24/JPCrop)
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
