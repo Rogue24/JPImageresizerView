@@ -10,7 +10,6 @@
 #import "JPImageresizerViewController.h"
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
-//#import "LittleRedBookViewController.h"
 
 @interface JPTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) NSURL *tmpURL;
@@ -165,9 +164,6 @@ static JPImageresizerConfigure *gifConfigure_;
         }
     } else if (indexPath.section == 3) {
         [self __openAlbum:NO];
-    } else {
-//        LittleRedBookViewController *lrbVC = [self.storyboard instantiateViewControllerWithIdentifier:@"LittleRedBookViewController"];
-//        [self.navigationController pushViewController:lrbVC animated:YES];
     }
 }
 
