@@ -14,11 +14,11 @@
 #import "JPImageresizerBlurView.h"
 #import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
+#import "JPImageresizerSlider.h"
 #import "JPImageresizerTool.h"
 #import "JPImageresizerTypedef.h"
-#import "JPImageresizerView.h"
-#import "JPImageresizerSlider.h"
 #import "JPImageresizerVideoObject.h"
+#import "JPImageresizerView.h"
 
 FOUNDATION_EXPORT double JPImageresizerViewVersionNumber;
 FOUNDATION_EXPORT const unsigned char JPImageresizerViewVersionString[];
