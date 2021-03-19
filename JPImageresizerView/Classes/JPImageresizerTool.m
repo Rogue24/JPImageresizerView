@@ -575,7 +575,19 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     if (cacheURL) {
         NSString *pathExtension = cacheURL.pathExtension;
-        NSString *extension = isGIF ? @"gif" : (hasAlpha ? @"png" : (imageData ? [self __contentTypeSuffixForImageData:imageData] : @"jpeg"));
+        
+        NSString *extension;
+        if (isGIF && index < 0) {
+            extension = @"gif";
+        } else if (hasAlpha) {
+            extension = @"png";
+        } else if (imageData != nil) {
+            extension = [self __contentTypeSuffixForImageData:imageData];
+            if ([extension isEqualToString:@"gif"]) extension = hasAlpha ? @"png" : @"jpeg";
+        } else {
+            extension = @"jpeg";
+        }
+        
         if (!extension.length) {
             cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.absoluteString, extension]];
         } else if (![extension isEqualToString:pathExtension]) {
@@ -588,6 +600,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             }
             cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", absoluteString, extension]];
         }
+        
         if ([[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path]) {
             [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_CacheURLAlreadyExists];
             return;
