@@ -75,7 +75,7 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4 + 1;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -107,8 +107,6 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
         }
     } else if (indexPath.section == 3) {
         cell.textLabel.text = @"从系统相册选择";
-    } else {
-        cell.textLabel.text = @"小红书";
     }
     return cell;
 }
