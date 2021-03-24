@@ -458,5 +458,4 @@ static JPImageresizerConfigure *gifConfigure_;
     }];
 }
 
-
 @end

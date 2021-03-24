@@ -1137,6 +1137,11 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 }
 
 - (void)__checkIsCanRecovery {
+    if (self.scrollView.zoomScale != self.scrollView.minimumZoomScale) {
+        self.isCanRecovery = YES;
+        return;
+    }
+    
     if (_maskImage != nil) {
         if (self.resizeWHScale != _maskImage.size.width / _maskImage.size.height) {
             self.isCanRecovery = YES;
@@ -1459,7 +1464,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 - (void)endedImageresizer {
-    if (!_pointInside) return;
+    if (!_pointInside) {
+        [self __checkIsCanRecovery];
+        return;
+    }
     _pointInside = NO;
     UIEdgeInsets contentInset = [self __scrollViewContentInsetWithAdjustResizeFrame:self.imageresizerFrame];
     self.scrollView.contentInset = contentInset;
