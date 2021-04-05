@@ -122,7 +122,7 @@ static JPImageresizerConfigure *gifConfigure_;
     } else if (indexPath.section == 1) {
         JPConfigureModel *model = [JPConfigureModel new];
         if (indexPath.item == 0) {
-            NSString *gifPath =(arc4random() % 2) ? JPMainBundleResourcePath(@"Gem.gif", nil) : JPMainBundleResourcePath(@"Dilraba.gif", nil);
+            NSString *gifPath = (arc4random() % 2) ? JPMainBundleResourcePath(@"Gem.gif", nil) : JPMainBundleResourcePath(@"Dilraba.gif", nil);
             BOOL isLoopPlaybackGIF = arc4random() % 2;
             model.title = @"裁剪本地GIF";
             model.statusBarStyle = UIStatusBarStyleLightContent;

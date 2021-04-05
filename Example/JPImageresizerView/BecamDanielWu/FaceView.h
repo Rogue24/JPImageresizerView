@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface FaceView : UIView
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image;
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void(^)(void))longPressAction;
 - (UIImage *)faceImage;
 - (CGRect)faceBounds;
 - (CGPoint)faceOrigin;

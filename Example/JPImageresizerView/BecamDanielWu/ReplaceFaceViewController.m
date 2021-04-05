@@ -8,10 +8,7 @@
 
 #import "ReplaceFaceViewController.h"
 #import "JPPreviewViewController.h"
-
-@interface ReplaceFaceViewController ()
-
-@end
+#import "JPPhotoTool.h"
 
 @implementation ReplaceFaceViewController
 
@@ -73,11 +70,30 @@
             h = w * (300.0 / 263.0);
             x = JPHalfOfDiff(self.personView.jp_width, w);
             y = JPHalfOfDiff(self.personView.jp_height, h);
-            FaceView *faceView = [[FaceView alloc] initWithFrame:CGRectMake(x, y, w, h) image:self.faceImage];
+            __weak typeof(self) weakSelf = self;
+            FaceView *faceView = [[FaceView alloc] initWithFrame:CGRectMake(x, y, w, h) image:self.faceImage longPressAction:^{
+                [weakSelf __saveFaceImage];
+            }];
             [self.personView addSubview:faceView];
             self.faceView = faceView;
         }
     }
+}
+
+#pragma mark - 保存脸模图片
+
+- (void)__saveFaceImage {
+    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:@"是否保存脸模到相册" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [JPProgressHUD show];
+        [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.faceImage successHandle:^(NSString *assetID) {
+            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+        }];
+    }]];
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertCtr animated:YES completion:nil];
 }
 
 #pragma mark - 合成图片

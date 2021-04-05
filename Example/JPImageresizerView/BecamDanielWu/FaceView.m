@@ -25,6 +25,8 @@
 @property (nonatomic, assign) CGFloat minRadius;
 @property (nonatomic, assign) CGFloat maxRadius;
 @property (nonatomic, assign) CGFloat currentRadius;
+
+@property (nonatomic, copy) void (^longPressAction)(void);
 @end
 
 @implementation FaceView
@@ -52,7 +54,7 @@
 
 #pragma mark - 生命周期
 
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image {
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void (^)(void))longPressAction {
     if (self = [super initWithFrame:frame]) {
         self.userInteractionEnabled = YES;
         _isShowingOther = YES;
@@ -94,6 +96,12 @@
 
         UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
         [self addGestureRecognizer:tapGR];
+        
+        self.longPressAction = longPressAction;
+        UILongPressGestureRecognizer *lpGR = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPress:)];
+        lpGR.minimumPressDuration = 1;
+        lpGR.delegate = self;
+        [self addGestureRecognizer:lpGR];
 
         UIPanGestureRecognizer *panGR = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
         panGR.delegate = self;
@@ -121,6 +129,11 @@
     } else {
         [self __showOther:YES];
     }
+}
+
+- (void)longPress:(UILongPressGestureRecognizer *)lpGR {
+    if (!self.longPressAction || lpGR.state != UIGestureRecognizerStateBegan) return;
+    self.longPressAction();
 }
 
 - (void)pan:(UIPanGestureRecognizer *)panGR {
