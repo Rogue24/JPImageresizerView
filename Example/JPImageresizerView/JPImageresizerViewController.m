@@ -56,11 +56,14 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (@available(iOS 13.0, *)) {
         [[UIApplication sharedApplication] setStatusBarStyle:(self.statusBarStyle == UIStatusBarStyleDefault ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent) animated:YES];
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
     }
+#pragma clang diagnostic pop
 }
 
 - (void)dealloc {
@@ -77,7 +80,10 @@
     if (@available(iOS 11.0, *)) {
         
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         self.automaticallyAdjustsScrollViewInsets = NO;
+#pragma clang diagnostic pop
     }
     
     self.frameType = self.configure.frameType;

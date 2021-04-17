@@ -106,6 +106,10 @@ static CGSize headerSize_;
     return nil;
 }
 
+- (void)updateLayout:(BOOL)isVer {
+    
+}
+
 @end
 
 @implementation JPMainViewModel

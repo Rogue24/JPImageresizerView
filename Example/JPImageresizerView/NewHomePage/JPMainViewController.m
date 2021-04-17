@@ -62,7 +62,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
+#pragma clang diagnostic pop
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     [self.dp startAnimation];
 }

@@ -52,7 +52,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+#pragma clang diagnostic pop
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
@@ -65,7 +68,10 @@
 - (void)setupBase {
     self.title = @"用户相册";
     self.view.backgroundColor = UIColor.whiteColor;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.automaticallyAdjustsScrollViewInsets = NO;
+#pragma clang diagnostic pop
 }
 
 - (void)setupCategoryTitleView {

@@ -10,6 +10,7 @@
 #import "JPImageresizerViewController.h"
 #import "JPPhotoViewController.h"
 #import "UIAlertController+JPImageresizer.h"
+#import "JPImageresizerView_Example-Swift.h"
 
 @interface JPTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) NSURL *tmpURL;
@@ -51,7 +52,10 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+#pragma clang diagnostic pop
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     self.openHistoryBtn.hidden = self.class.savedConfigure == nil || !self.class.savedConfigure.isSavedHistory;
 }
@@ -74,38 +78,50 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0) {
-        return JPConfigureModel.examplesModels.count;
-    } else if (section == 1 || section == 2) {
-        return 2;
-    } else {
-        return 1;
-    }
+    return section == 0 ? JPConfigureModel.examplesModels.count : 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    if (indexPath.section == 0) {
-        JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
-        cell.textLabel.text = model.title;
-    } else if (indexPath.section == 1) {
-        if (indexPath.item == 0) {
-            cell.textLabel.text = @"裁剪本地GIF";
-        } else {
-            cell.textLabel.text = @"裁剪本地视频";
+    switch (indexPath.section) {
+        case 0:
+        {
+            JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
+            cell.textLabel.text = model.title;
+            break;
         }
-    } else if (indexPath.section == 2) {
-        if (indexPath.item == 0) {
-            cell.textLabel.text = @"成为吴彦祖";
-        } else {
-            cell.textLabel.text = @"暂停选老婆";
-        }
-    } else if (indexPath.section == 3) {
-        cell.textLabel.text = @"从系统相册选择";
+            
+        case 1:
+            switch (indexPath.item) {
+                case 0:
+                    cell.textLabel.text = @"裁剪本地GIF";
+                    break;
+                case 1:
+                    cell.textLabel.text = @"裁剪本地视频";
+                    break;
+                default:
+                    cell.textLabel.text = @"从系统相册选择";
+                    break;
+            }
+            break;
+            
+        default:
+            switch (indexPath.item) {
+                case 0:
+                    cell.textLabel.text = @"成为吴彦祖";
+                    break;
+                case 1:
+                    cell.textLabel.text = @"暂停选老婆";
+                    break;
+                default:
+                    cell.textLabel.text = @"高仿小红书";
+                    break;
+            }
+            break;
     }
     return cell;
 }
@@ -115,54 +131,99 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 static JPImageresizerConfigure *gifConfigure_;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == 0) {
-        JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
-        model.configure.image = [self __randomImage];
-        [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
-    } else if (indexPath.section == 1) {
-        JPConfigureModel *model = [JPConfigureModel new];
-        if (indexPath.item == 0) {
-            NSString *gifPath = (arc4random() % 2) ? JPMainBundleResourcePath(@"Gem.gif", nil) : JPMainBundleResourcePath(@"Dilraba.gif", nil);
-            BOOL isLoopPlaybackGIF = arc4random() % 2;
-            model.title = @"裁剪本地GIF";
-            model.statusBarStyle = UIStatusBarStyleLightContent;
-            model.configure = [JPImageresizerConfigure defaultConfigureWithImageData:[NSData dataWithContentsOfFile:gifPath] make:^(JPImageresizerConfigure *configure) {
-                configure.jp_frameType(JPClassicFrameType);
-                configure.jp_isLoopPlaybackGIF(isLoopPlaybackGIF);
-            }];
-        } else {
-            NSString *videoPath = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
-            model.title = @"裁剪本地视频";
-            model.statusBarStyle = UIStatusBarStyleDefault;
-            model.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
-                configure
-                .jp_borderImage(JPConfigureModel.stretchBorderImage)
-                .jp_borderImageRectInset(JPConfigureModel.stretchBorderImageRectInset);
-            } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+    switch (indexPath.section) {
+        case 0:
+        {
+            JPConfigureModel *model = JPConfigureModel.examplesModels[indexPath.row];
+            model.configure.image = [self __randomImage];
+            [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
+            break;
         }
-        [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
-    } else if (indexPath.section == 2) {
-        if (indexPath.item == 0) {
-            [self __openAlbum:YES];
-        } else {
-            if (!gifConfigure_) {
-                [JPProgressHUD show];
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:^(JPImageresizerConfigure *configure) {
-                        configure.jp_isLoopPlaybackGIF(YES);
+            
+        case 1:
+        {
+            switch (indexPath.item) {
+                case 0:
+                {
+                    NSString *gifPath = (arc4random() % 2) ? JPMainBundleResourcePath(@"Gem.gif", nil) : JPMainBundleResourcePath(@"Dilraba.gif", nil);
+                    BOOL isLoopPlaybackGIF = arc4random() % 2;
+                    JPConfigureModel *model = [JPConfigureModel new];
+                    model.title = @"裁剪本地GIF";
+                    model.statusBarStyle = UIStatusBarStyleLightContent;
+                    model.configure = [JPImageresizerConfigure defaultConfigureWithImageData:[NSData dataWithContentsOfFile:gifPath] make:^(JPImageresizerConfigure *configure) {
+                        configure.jp_frameType(JPClassicFrameType);
+                        configure.jp_isLoopPlaybackGIF(isLoopPlaybackGIF);
                     }];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [JPProgressHUD dismiss];
-                        [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
-                    });
-                });
-                return;
+                    [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
+                    break;
+                }
+                    
+                case 1:
+                {
+                    NSString *videoPath = JPMainBundleResourcePath(@"yaorenmao.mov", nil);
+                    JPConfigureModel *model = [JPConfigureModel new];
+                    model.title = @"裁剪本地视频";
+                    model.statusBarStyle = UIStatusBarStyleDefault;
+                    model.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithVideoURL:[NSURL fileURLWithPath:videoPath] make:^(JPImageresizerConfigure *configure) {
+                        configure
+                        .jp_borderImage(JPConfigureModel.stretchBorderImage)
+                        .jp_borderImageRectInset(JPConfigureModel.stretchBorderImageRectInset);
+                    } fixErrorBlock:nil fixStartBlock:nil fixProgressBlock:nil fixCompleteBlock:nil];
+                    [self __startImageresizer:model.configure statusBarStyle:model.statusBarStyle];
+                    break;
+                }
+                    
+                default:
+                    [self __openAlbum:NO];
+                    break;
             }
-            [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
+            break;
         }
-    } else if (indexPath.section == 3) {
-        [self __openAlbum:NO];
+            
+        default:
+            switch (indexPath.item) {
+                case 0:
+                    [self __openAlbum:YES];
+                    break;
+                    
+                case 1:
+                    if (gifConfigure_) {
+                        [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
+                    } else {
+                        [JPProgressHUD show];
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                            gifConfigure_ = [JPImageresizerConfigure defaultConfigureWithImage:[self __createGIFImage] make:^(JPImageresizerConfigure *configure) {
+                                configure.jp_isLoopPlaybackGIF(YES);
+                            }];
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [JPProgressHUD dismiss];
+                                [self __startImageresizer:gifConfigure_ statusBarStyle:UIStatusBarStyleLightContent];
+                            });
+                        });
+                    }
+                    break;
+                    
+                default:
+                {
+                    JPCropViewController *cropVC = [self.storyboard instantiateViewControllerWithIdentifier:@"JPCropViewController"];
+                    [self cubePushViewController:cropVC];
+                    break;
+                }
+            }
+            break;
     }
+}
+
+#pragma mark - 随机图片
+- (void)cubePushViewController:(UIViewController *)vc {
+    CATransition *cubeAnim = [CATransition animation];
+    cubeAnim.duration = 0.45;
+    cubeAnim.type = @"cube";
+    cubeAnim.subtype = kCATransitionFromRight;
+    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
+    
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 #pragma mark - 随机图片
@@ -346,15 +407,7 @@ static JPImageresizerConfigure *gifConfigure_;
     JPImageresizerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
     vc.statusBarStyle = statusBarStyle;
     vc.configure = configure;
-    
-    CATransition *cubeAnim = [CATransition animation];
-    cubeAnim.duration = 0.45;
-    cubeAnim.type = @"cube";
-    cubeAnim.subtype = kCATransitionFromRight;
-    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
-    
-    [self.navigationController pushViewController:vc animated:NO];
+    [self cubePushViewController:vc];
 }
 
 #pragma mark - 监听视频导出进度的定时器
