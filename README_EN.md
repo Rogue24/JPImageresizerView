@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
 
-[Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.im/post/5ecd0cddf265da7711699e0d) |
+[Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.cn/post/6958803759073853447) |
 [Little Red Book App Crop](https://github.com/Rogue24/JPCrop)
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
@@ -16,7 +16,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
 
 ![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
-    Current functions:
+    Feature:
         ✅ Zooming of area that can be tailored adaptively;
         ✅ The parameters are set with high degrees of freedom, include spacing of clipping area, cutting aspect ratio, whether to scale adaptively;
         ✅ Supports up to eight drag and drop direction;
