@@ -474,7 +474,14 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     size_t count = images.count;
     CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, kUTTypeGIF, count, NULL);
     
-    NSDictionary *gifProperty = @{(__bridge id)kCGImagePropertyGIFDictionary: @{(__bridge id)kCGImagePropertyGIFLoopCount: @0}};
+    NSDictionary *gifProperty =
+    @{
+        (__bridge id)kCGImagePropertyGIFDictionary:
+          @{(__bridge id)kCGImagePropertyGIFHasGlobalColorMap: @YES,
+            (__bridge id)kCGImagePropertyColorModel: (NSString *)kCGImagePropertyColorModelRGB,
+            (__bridge id)kCGImagePropertyDepth: @8,
+            (__bridge id)kCGImagePropertyGIFLoopCount: @0}
+    };
     CGImageDestinationSetProperties(destination, (CFDictionaryRef)gifProperty);
     
     void (^cacheBlock)(NSInteger i);
@@ -1401,6 +1408,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_VideoAlreadyDamage];
         return;
     }
+    // 获取视频修正方向（默认为摄像头方向）
+    // preferredTransform：摄像头方向 -需要修改-> 屏幕方向 的transform
     CGAffineTransform preferredTransform = videoTrack.preferredTransform;
     if (CGAffineTransformEqualToTransform(preferredTransform, CGAffineTransformIdentity)) {
         [self __executeExportVideoCompleteBlock:fixCompleteBlock cacheURL:videoURL];
@@ -1433,7 +1442,27 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     session.shouldOptimizeForNetworkUse = YES;
     
     AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
-    [layerInstruciton setTransform:preferredTransform atTime:kCMTimeZero];
+    
+    // 直接使用 preferredTransform 只能旋转角度，视频画面旋转后会在裁剪区域外面，因此旋转后还得进行位移
+    CGFloat radian = atan2f(preferredTransform.b, preferredTransform.a);
+    CGFloat angle = (radian * 180.0) / M_PI;
+    // 获取旋转方向，换算成CGFloat会有些许误差，这里做范围差值判断：-0.1 ~ +0.1
+    JPImageresizerRotationDirection dircetion = JPImageresizerVerticalUpDirection;
+    if ((angle >= 89.9 && angle <= 90.1) ||
+        (angle <= -269.9 && angle >= -270.1)) {
+        dircetion = JPImageresizerHorizontalRightDirection;
+    }
+    else if ((angle >= 179.9 && angle <= 180.1) ||
+             (angle <= -179.9 && angle >= -180.1)) {
+        dircetion = JPImageresizerVerticalDownDirection;
+    }
+    else if ((angle >= 269.9 && angle <= 270.1) ||
+             (angle <= -89.9 && angle >= -90.1)) {
+        dircetion = JPImageresizerHorizontalLeftDirection;
+    }
+    // 获取完整的transform
+    CGAffineTransform transform = JPConfirmTransform(videoTrack.naturalSize, dircetion, NO, NO, NO);
+    [layerInstruciton setTransform:transform atTime:kCMTimeZero];
     
     AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
     compositionInstruction.timeRange = timeRange;

@@ -198,7 +198,7 @@ static JPObject *obj_;
 //        [mediaTypes addObject:(NSString *)kUTTypeLivePhoto];
 //    }
     picker.mediaTypes = mediaTypes;
-    picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
+    picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
     [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
 }
 
