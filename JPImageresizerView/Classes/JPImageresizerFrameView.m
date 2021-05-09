@@ -968,19 +968,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGFloat x = (self.bounds.size.width - w) * 0.5;
     CGFloat y = (self.bounds.size.height - h) * 0.5;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
-    
-    if (_direction == direction) return;
-    
-    self.frameLayer.lineWidth = _frameLayerLineW;
-    
-    if (_borderImage) return;
-    
-    if (_frameType == JPClassicFrameType) {
-        _gridlinesLayer.lineWidth = 0.5;
-        _dotsLayer.lineWidth = _arrLineW;
-    } else {
-        _dotsLayer.lineWidth = 0;
-    }
 }
 
 #pragma mark 边框变化后缩放调整
