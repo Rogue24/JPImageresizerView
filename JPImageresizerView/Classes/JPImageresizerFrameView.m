@@ -166,6 +166,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [UIView animateWithDuration:duration delay:0 options:[self animationOptions] animations:^{
             [self.blurView setIsMaskAlpha:!isPreview duration:0];
             [self.maskBlurView setIsMaskAlpha:!isPreview duration:0];
+            self.slider.alpha = opacity;
         } completion:nil];
         if (_borderImage) {
             BOOL isRound = _isRoundResize;
@@ -180,12 +181,16 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             };
             layerOpacityAnimate(_frameLayer, @(opacity));
             layerOpacityAnimate(_dotsLayer, @(otherOpacity));
-            if (_frameType == JPClassicFrameType && _maskImage == nil) layerOpacityAnimate(_gridlinesLayer, @(otherOpacity));
+            if (_frameType == JPClassicFrameType && _maskImage == nil) {
+                CGFloat gridlinesOpacity = (!self.isShowGridlinesWhenIdle || self.slider) ? 0 : otherOpacity;
+                layerOpacityAnimate(_gridlinesLayer, @(gridlinesOpacity));
+            }
         }
     } else {
         [self.blurView setIsMaskAlpha:!isPreview duration:0];
         [self.maskBlurView setIsMaskAlpha:!isPreview duration:0];
         _borderImageView.alpha = _isRoundResize ? 0 : opacity;
+        self.slider.alpha = opacity;
     }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
