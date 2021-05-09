@@ -792,7 +792,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 
 #pragma mark - 公开方法
 
-#pragma mark 转换成黑色轮廓的图片
+#pragma mark 转换成黑色轮廓的图片（镂空图片区域：透明->黑色+不透明->透明）
 + (UIImage *)convertBlackImage:(UIImage *)image {
     if (!image) return nil;
     CGRect rect = (CGRect){CGPointZero, image.size};

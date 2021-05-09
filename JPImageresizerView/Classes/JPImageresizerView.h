@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JPImageresizerConfigure.h"
-#import "JPImageresizerFrameView.h"
+#import <JPImageresizerConfigure.h>
+#import <JPImageresizerFrameView.h>
 
 @interface JPImageresizerView : UIView
 

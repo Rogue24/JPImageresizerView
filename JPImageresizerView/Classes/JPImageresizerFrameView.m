@@ -789,6 +789,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:_defaultDuration];
 }
 
+#pragma mark 边框UI
+
 - (void)__updateShapeLayersStrokeColor {
     CGColorRef strokeCGColor = _strokeColor.CGColor;
     _frameLayer.strokeColor = strokeCGColor;
@@ -930,6 +932,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
+#pragma mark 更新图片尺寸和方向
+
 - (void)__updateImageOriginFrameWithDirection:(JPImageresizerRotationDirection)rotationDirection {
     _baseImageW = self.imageView.bounds.size.width;
     _baseImageH = self.imageView.bounds.size.height;
@@ -978,6 +982,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _dotsLayer.lineWidth = 0;
     }
 }
+
+#pragma mark 边框变化后缩放调整
 
 - (void)__adjustImageresizerFrame:(CGRect)adjustResizeFrame
             isAdvanceUpdateOffset:(BOOL)isAdvanceUpdateOffset
@@ -1136,6 +1142,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return minZoomScale;
 }
 
+#pragma mark 检查是否可重置
+
 - (void)__checkIsCanRecovery {
     if (self.scrollView.zoomScale != self.scrollView.minimumZoomScale) {
         self.isCanRecovery = YES;
@@ -1166,6 +1174,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.isCanRecovery = !isOriginFrame || !isSameCenter;
 }
 
+#pragma mark 设置裁剪宽高比
+
 - (void)__setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (resizeWHScale < 0) resizeWHScale = 0;
     if (resizeWHScale > 0 && [self __isHorizontalDirection:_direction]) resizeWHScale = 1.0 / resizeWHScale;
@@ -1184,6 +1194,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _resizeWHScale = isToBeArbitrarily ? 0 : (resizeWHScale == 0 ? self.imageresizerWHScale : resizeWHScale);
     }
 }
+
+#pragma mark 设置是否圆切
 
 - (void)__setIsRound:(BOOL)isRound animated:(BOOL)isAnimated {
     if (isRound) {
@@ -1219,6 +1231,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [self __updateShapeLayersOpacity];
     }
 }
+
+#pragma mark 蒙版
 
 - (void)__createMaskBlurView:(BOOL)isBlur {
     if (self.maskBlurView != nil || _maskImage == nil) return;

@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JPImageresizerTypedef.h"
+#import <JPImageresizerTypedef.h>
 
 @interface JPImageresizerTool : NSObject
 /**

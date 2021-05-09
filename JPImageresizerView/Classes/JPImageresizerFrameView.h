@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JPImageresizerTypedef.h"
+#import <JPImageresizerTypedef.h>
 @class JPImageresizerSlider;
 
 @interface JPImageresizerProxy : NSProxy
