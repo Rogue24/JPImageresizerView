@@ -112,7 +112,7 @@
 - (UIView *)thumb {
     if (!_thumb && self.slider.subviews.count) {
         // 获取 UISlider 的拖动块，没有公开的属性，只能在 subviews 中寻找
-        // 拖动块是 UIImageView，另外除了拖动块，进度条也是 UIImageView，防止拿错，并且要判断其是否有 size 大小（其他的宽度为0）
+        // 拖动块是 UIImageView，另外除了拖动块，进度条也是 UIImageView，防止拿错，并且要判断其是否有 size 大小（另一个的宽度为0）
         BOOL (^setupThumb)(UIView *view) = ^(UIView *view){
             if ([view isKindOfClass:UIImageView.class] &&
                 view.frame.size.width > 0 && view.frame.size.height > 0) {

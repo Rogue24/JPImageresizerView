@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.8.2）
+## 简介（当前版本：1.8.3）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
