@@ -95,7 +95,7 @@
 }
 
 - (UIImage *)jp_convertToImage {
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(floor(self.frame.size.width), floor(self.frame.size.height)), NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(self.jp_size, NO, [UIScreen mainScreen].scale);
     [self.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -319,7 +319,7 @@
 }
 
 - (void)jp_resumeAnimate {
-    CFTimeInterval pausedTime = [self timeOffset];
+    CFTimeInterval pausedTime = self.timeOffset;
     self.speed = 1.0;
     self.timeOffset = 0.0;
     self.beginTime = 0.0;
@@ -328,7 +328,7 @@
 }
 
 - (UIImage *)jp_convertToImage {
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(floor(self.frame.size.width), floor(self.frame.size.height)), NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(self.jp_size, NO, [UIScreen mainScreen].scale);
     [self renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

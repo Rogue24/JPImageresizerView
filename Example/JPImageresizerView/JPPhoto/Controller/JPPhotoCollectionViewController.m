@@ -226,32 +226,32 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     [UIView animateWithDuration:0.25 animations:^{
         noDataView.alpha = 1;
     } completion:^(BOOL finished) {
-        __weak typeof(self) wSelf = self;
+        @jp_weakify(self);
         [JPPhotoToolSI getAssetsInAssetCollection:self.albumVM.assetCollection fastEnumeration:^(PHAsset *asset, NSUInteger index, NSUInteger totalCount) {
-            __strong typeof(wSelf) sSelf = wSelf;
-            if (!sSelf) return;
+            @jp_strongify(self);
+            if (!self) return;
             JPPhotoViewModel *photoVM = [[JPPhotoViewModel alloc] initWithAsset:asset];
-            [sSelf.photoVMs addObject:photoVM];
+            [self.photoVMs addObject:photoVM];
         } completion:^{
-            __strong typeof(wSelf) sSelf = wSelf;
-            if (!sSelf) return;
-            [JPLiquidLayoutTool calculateItemFrames:sSelf.photoVMs
+            @jp_strongify(self);
+            if (!self) return;
+            [JPLiquidLayoutTool calculateItemFrames:self.photoVMs
                                           targetRow:0
                                          flowLayout:flowLayout
-                                           maxWidth:sSelf->_photoMaxW
-                                         baseHeight:sSelf->_photoBaseH
-                                     itemMaxWhScale:sSelf->_photoMaxWhScale
-                                             maxCol:sSelf->_photoMaxCol];
+                                           maxWidth:self->_photoMaxW
+                                         baseHeight:self->_photoBaseH
+                                     itemMaxWhScale:self->_photoMaxWhScale
+                                             maxCol:self->_photoMaxCol];
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSInteger photoTotal = sSelf.photoVMs.count;
+                NSInteger photoTotal = self.photoVMs.count;
                 if (photoTotal > 0) {
                     [UIView animateWithDuration:0.2 animations:^{
                         noDataView.alpha = 0;
                     } completion:^(BOOL finished) {
                         [noDataView removeFromSuperview];
                     }];
-                    [sSelf.collectionView performBatchUpdates:^{
-                        [sSelf.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+                    [self.collectionView performBatchUpdates:^{
+                        [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
                     } completion:nil];
                 } else {
                     noDataView.title = @"该相册没有照片";
@@ -380,12 +380,12 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
            progressBlock:(void (^)(NSInteger, JPBrowseImageModel *, float))progressBlock
            completeBlock:(void (^)(NSInteger, JPBrowseImageModel *, UIImage *))completeBlock {
     JPPhotoViewModel *photoVM = self.photoVMs[index];
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     __weak JPBrowseImageModel *wModel = cell.model;
     __weak typeof(photoVM) wPhotoVM = photoVM;
     [JPPhotoToolSI requestOriginalPhotoImageForAsset:photoVM.asset isFastMode:NO isFixOrientation:NO isJustGetFinalPhoto:YES resultHandler:^(PHAsset *requestAsset, UIImage *resultImage, BOOL isFinalImage) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf || !wModel || !wPhotoVM) return;
+        @jp_strongify(self);
+        if (!self || !wModel || !wPhotoVM) return;
         !completeBlock ? : completeBlock(index, wModel, resultImage);
     }];
 }

@@ -79,40 +79,40 @@
     [self.view addSubview:titleView];
     self.titleView = titleView;
     
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     
     titleView.selectedIndexPathDidChange = ^(NSIndexPath *selectedIndexPath) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        NSInteger diffIndex = sSelf.pageCtr.selectIndex - selectedIndexPath.item;
-        if (diffIndex == 0 || sSelf.pageCtr.scrollView.dragging) {
+        @jp_strongify(self);
+        if (!self) return;
+        NSInteger diffIndex = self.pageCtr.selectIndex - selectedIndexPath.item;
+        if (diffIndex == 0 || self.pageCtr.scrollView.dragging) {
             return;
         } else if (labs(diffIndex) == 1) {
-            [sSelf.pageCtr.scrollView setContentOffset:CGPointMake(sSelf.pageCtr.scrollView.frame.size.width * selectedIndexPath.item, 0) animated:YES];
+            [self.pageCtr.scrollView setContentOffset:CGPointMake(self.pageCtr.scrollView.frame.size.width * selectedIndexPath.item, 0) animated:YES];
         } else {
-            UIView *snapshotView = [sSelf.pageCtr.scrollView.superview snapshotViewAfterScreenUpdates:NO];
-            [sSelf.pageCtr.scrollView.superview insertSubview:snapshotView aboveSubview:sSelf.pageCtr.scrollView];
+            UIView *snapshotView = [self.pageCtr.scrollView.superview snapshotViewAfterScreenUpdates:NO];
+            [self.pageCtr.scrollView.superview insertSubview:snapshotView aboveSubview:self.pageCtr.scrollView];
             
             BOOL isTurnLeft = diffIndex > 0;
-            CGFloat width = sSelf.pageCtr.scrollView.frame.size.width;
+            CGFloat width = self.pageCtr.scrollView.frame.size.width;
             
-            sSelf.pageCtr.scrollView.transform = CGAffineTransformMakeTranslation((isTurnLeft ? -1.0 : 1.0) * width, 0);
-            [sSelf.pageCtr.scrollView setContentOffset:CGPointMake(width * selectedIndexPath.item, 0)];
+            self.pageCtr.scrollView.transform = CGAffineTransformMakeTranslation((isTurnLeft ? -1.0 : 1.0) * width, 0);
+            [self.pageCtr.scrollView setContentOffset:CGPointMake(width * selectedIndexPath.item, 0)];
             
             [UIView animateWithDuration:0.35 animations:^{
-                sSelf.pageCtr.scrollView.transform = CGAffineTransformIdentity;
+                self.pageCtr.scrollView.transform = CGAffineTransformIdentity;
                 snapshotView.transform = CGAffineTransformMakeTranslation((isTurnLeft ? 1.0 : -1.0) * width, 0);
             } completion:^(BOOL finished) {
                 [snapshotView removeFromSuperview];
-                [sSelf.pageCtr scrollViewDidEndDecelerating:sSelf.pageCtr.scrollView];
+                [self.pageCtr scrollViewDidEndDecelerating:self.pageCtr.scrollView];
             }];
         }
     };
     
     titleView.isNeedAnimatedDidChange = ^(BOOL isNeedAnimated) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        sSelf.view.userInteractionEnabled = !isNeedAnimated;
+        @jp_strongify(self);
+        if (!self) return;
+        self.view.userInteractionEnabled = !isNeedAnimated;
     };
 }
 
@@ -145,25 +145,31 @@
 - (void)setupDataSource {
     self.pageContentViewFrames = [NSMutableDictionary dictionary];
     [JPProgressHUD show];
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     [JPPhotoToolSI getAllAssetCollectionWithFastEnumeration:^(PHAssetCollection *collection, NSInteger index, NSInteger totalCount) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
+        @jp_strongify(self);
+        if (!self) return;
         JPAlbumViewModel *albumVM = [JPAlbumViewModel albumViewModelWithAssetCollection:collection assetTotalCount:totalCount];
-        [sSelf.titleView.titleVMs addObject:albumVM];
+        [self.titleView.titleVMs addObject:albumVM];
         
-        CGFloat w = sSelf.pageCtr.viewFrame.size.width;
+        CGFloat w = self.pageCtr.viewFrame.size.width;
         CGFloat x = index * w;
         CGFloat y = 0;
-        CGFloat h = sSelf.pageCtr.viewFrame.size.height;
+        CGFloat h = self.pageCtr.viewFrame.size.height;
         CGRect frame = CGRectMake(x, y, w, h);
-        sSelf.pageContentViewFrames[@(index)] = @(frame);
+        self.pageContentViewFrames[@(index)] = @(frame);
     } completion:^{
         [JPProgressHUD dismiss];
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
-        [sSelf.titleView reloadDataWithAnimated:YES];
-        [sSelf.pageCtr reloadData];
+        @jp_strongify(self);
+        if (!self) return;
+        [self.titleView reloadDataWithAnimated:YES];
+        [self.pageCtr reloadData];
+        
+        if (self.isBecomeDanielWu) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [JPProgressHUD showImage:nil status:@"请选择脸模" userInteractionEnabled:YES];
+            });
+        }
     }];
 }
 

@@ -72,7 +72,7 @@ extension Croper {
         return .init(width: imageW, height: imageH)
     }
     
-    func fitFactor() -> (transform: CGAffineTransform, contentInset: UIEdgeInsets) {
+    func fitFactor() -> (scale: CGFloat, transform: CGAffineTransform, contentInset: UIEdgeInsets) {
         let absRadian = fabs(Double(radian))
         let cosValue = CGFloat(cos(absRadian))
         let sinValue = CGFloat(sin(absRadian))
@@ -96,7 +96,8 @@ extension Croper {
             horMargin = minHorMargin
         }
         
-        return (CGAffineTransform(rotationAngle: radian).scaledBy(x: scale, y: scale),
+        return (scale,
+                CGAffineTransform(rotationAngle: radian).scaledBy(x: scale, y: scale),
                 UIEdgeInsets(top: verMargin, left: horMargin, bottom: verMargin, right: horMargin))
     }
     

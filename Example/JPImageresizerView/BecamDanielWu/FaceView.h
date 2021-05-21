@@ -11,8 +11,4 @@
 @interface FaceView : UIView
 - (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void(^)(void))longPressAction;
 - (UIImage *)faceImage;
-- (CGRect)faceBounds;
-- (CGPoint)faceOrigin;
-- (CGFloat)faceScale;
-- (CGFloat)faceRadian;
 @end

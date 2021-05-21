@@ -13,6 +13,8 @@
 @implementation UINavigationBar (JPExtension)
 
 - (void)setJp_navBgView:(UIView *)jp_navBgView {
+    // 使用 OBJC_ASSOCIATION_ASSIGN 要注意：
+    // 虽然不会强引用对象，但是对象被释放后并不会自动置nil，还是指向那个地址，之后再访问就会造成【坏内存访问】。
     objc_setAssociatedObject(self, @selector(jp_navBgView), jp_navBgView, OBJC_ASSOCIATION_ASSIGN);
 }
 - (UIView *)jp_navBgView {
@@ -22,21 +24,23 @@
 - (UIView *)jp_setupCustomNavigationBgView:(UIView *)customBgView {
     if (self.jp_navBgView) [self.jp_navBgView removeFromSuperview];
     
-    [self setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-    [self setShadowImage:[UIImage new]];
-    
-    UIView *navBgView = [self valueForKey:@"backgroundView"];
-    [navBgView addSubview:customBgView];
-    [customBgView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(navBgView);
-    }];
+    if (customBgView) {
+        [self setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+        [self setShadowImage:[UIImage new]];
+        
+        UIView *navBgView = [self valueForKey:@"backgroundView"];
+        [navBgView addSubview:customBgView];
+        [customBgView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(navBgView);
+        }];
+    }
     self.jp_navBgView = customBgView;
     
     return customBgView;
 }
 
 - (UIView *)jp_setupNavigationBgView {
-    UIView *navBgView = [UIView new];
+    UIView *navBgView = [[UIView alloc] init];
     navBgView.backgroundColor = UIColor.whiteColor;
     return [self jp_setupCustomNavigationBgView:navBgView];
 }

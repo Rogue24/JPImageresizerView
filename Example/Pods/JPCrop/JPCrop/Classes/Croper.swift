@@ -103,7 +103,8 @@ public class Croper: UIView {
 // MARK:- API
 extension Croper {
     
-    /// 获取同步的Configure（可用于保存上一次裁剪状态，接着继续）
+    // MARK: 获取同步的Configure（当前的裁剪元素、状态）
+    /// 获取同步的Configure，可用于保存当前的裁剪状态，下一次打开恢复状态
     public func syncConfigure() -> Configure {
         Configure(image,
                   cropWHRatio: cropWHRatio,
@@ -112,14 +113,29 @@ extension Croper {
                   contentOffset: scrollView.contentOffset)
     }
     
-    /// 刷新旋转角度（弧度）
+    // MARK: 旋转
+    /// 刷新旋转角度（单位：弧度）
     public func updateRadian(_ radian: CGFloat) {
         self.radian = checkRadian(radian)
+        
         let factor = fitFactor()
+        
+        var zoomScale = scrollView.zoomScale
+        let minZoomScale = scrollView.minimumZoomScale
+        
+        let oldScale = scaleValue(scrollView.transform)
+        let newScale = factor.scale
+        // scrollView 变大/变小多少，zoomScale 则变小/变大多少（反向缩放）
+        // 否则在旋转过程中，裁剪区域在图片上即便有足够空间进行旋转（不超出图片区域），也会跟随 scrollView 变大变小
+        zoomScale *= oldScale / newScale
+        if zoomScale <= minZoomScale { zoomScale = minZoomScale }
+        
         scrollView.transform = factor.transform
         scrollView.contentInset = factor.contentInset
+        scrollView.zoomScale = zoomScale
     }
     
+    // MARK: 切换裁剪框的宽高比
     /// 刷新裁剪比例（idleGridCount：闲置时的网格数；rotateGridCount：旋转时的网格数）
     public func updateCropWHRatio(_ cropWHRatio: CGFloat,
                                   idleGridCount: GridCount? = nil,
@@ -132,9 +148,10 @@ extension Croper {
         minHorMargin = (bounds.width - cropFrame.width) * 0.5
         minVerMargin = (bounds.height - cropFrame.height) * 0.5
         
-        let factor = fitFactor()
+        // 1.算出改变后的UI数值，和改变前后的差值
         
-        let imageBoundsSize = fitImageSize()
+        let factor = fitFactor() // 获取 scrollView 最合适（不会超出） cropFrame 和 radian 的 transform 和 contentInset
+        let imageBoundsSize = fitImageSize() // 获取 imageView 适配了 cropFrame 的原始 Size
         
         let zoomScale: CGFloat
         let xScale: CGFloat
@@ -154,6 +171,8 @@ extension Croper {
         
         let imageFrameSize = CGSize(width: imageBoundsSize.width * zoomScale, height: imageBoundsSize.height * zoomScale)
         
+        // 2.立马设置 scrollView 改变后的 transform，和其他的一些差值，让 scrollView 形变后相对于之前的 UI 状态“看上去”没有变化一样
+        
         imageView.bounds = .init(origin: .zero, size: imageBoundsSize)
         
         scrollView.transform = factor.transform
@@ -165,6 +184,8 @@ extension Croper {
         
         scrollView.contentOffset = fitOffset(xScale, yScale, contentSize: imageFrameSize)
         
+        // 3.再通过动画适配当前窗口，也就是把差值还原回去
+        
         let updateScrollView = {
             if zoomScale < 1 {
                 self.scrollView.minimumZoomScale = 1
@@ -174,14 +195,15 @@ extension Croper {
             self.scrollView.contentOffset = self.fitOffset(xScale, yScale, contentInset: factor.contentInset)
         }
         
+        // 边框路径
         let borderPath = UIBezierPath(rect: cropFrame)
-        
+        // 阴影路径
         let shadePath = UIBezierPath(rect: bounds)
         shadePath.append(borderPath)
-        
+        // 闲置网格路径
         if let obIdleGridCount = idleGridCount { self.idleGridCount = obIdleGridCount }
         let idleGridPath = buildGridPath(self.idleGridCount)
-        
+        // 旋转网格路径
         if let obRotateGridCount = rotateGridCount { self.rotateGridCount = obRotateGridCount }
         let rotateGridPath = buildGridPath(self.rotateGridCount)
         
@@ -194,7 +216,7 @@ extension Croper {
         } else {
             updateScrollView()
         }
-    
+        
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         borderLayer.path = borderPath.cgPath
@@ -204,11 +226,13 @@ extension Croper {
         CATransaction.commit()
     }
     
+    // MARK: 显示旋转网格
     /// 显示旋转时的网格数
     public func showRotateGrid(animated: Bool = false) {
         updateGrid(0, 1, animated: animated)
     }
     
+    // MARK: 隐藏旋转网格
     /// 隐藏旋转时的网格数
     public func hideRotateGrid(animated: Bool = false) {
         updateGrid(1, 0, animated: animated)
@@ -226,7 +250,8 @@ extension Croper {
         CATransaction.commit()
     }
     
-    /// 恢复 -> 角度0+缩放比例1
+    // MARK: 恢复
+    /// 恢复 --> 角度0 + 缩放比例1 + 中心点
     public func recover(animated: Bool = false) {
         radian = 0
         let factor = fitFactor()
@@ -243,7 +268,8 @@ extension Croper {
         }
     }
     
-    /// 裁剪（同步）compressScale：压缩比例，默认为1，即原图尺寸
+    // MARK: 同步裁剪
+    /// 裁剪：compressScale：压缩比例，默认为1，即原图尺寸
     public func crop(_ compressScale: CGFloat = 1) -> UIImage? {
         guard let imageRef = image.cgImage else { return nil }
         
@@ -258,7 +284,8 @@ extension Croper {
                          imageView.bounds.height)
     }
     
-    /// 裁剪（异步）compressScale：压缩比例，默认为1，即原图尺寸
+    // MARK: 异步裁剪
+    /// 裁剪：compressScale：压缩比例，默认为1，即原图尺寸
     public func asyncCrop(_ compressScale: CGFloat = 1, _ cropDone: @escaping (UIImage?) -> ()) {
         guard let imageRef = image.cgImage else {
             cropDone(nil)

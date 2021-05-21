@@ -174,8 +174,10 @@ static NSInteger const JPViewMargin = 10;
     self.transitionImgView = nil;
     self.originImgView = nil;
     self.presentComplete = nil;
-    self.collectionView.hidden = NO;
-    self.currCell.isDisplaying = YES;
+    if (isPresent) {
+        self.collectionView.hidden = NO;
+        self.currCell.isDisplaying = YES;
+    }
     if (!transitionImgView || (!isPresent && !originImgView)) {
         !complete ? : complete();
         return;

@@ -10,6 +10,9 @@
 #import "JPPreviewViewController.h"
 #import "JPPhotoTool.h"
 
+@interface ReplaceFaceViewController() <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@end
+
 @implementation ReplaceFaceViewController
 
 - (instancetype)initWithPersonImage:(UIImage *)personImage faceImage:(UIImage *)faceImage {
@@ -37,9 +40,15 @@
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
+- (void)dealloc {
+    JPLog(@"%@ is dead", self.class);
+}
+
 #pragma mark - 初始布局
 
 - (void)__setupNavigationBar {
+    UIBarButtonItem *replaceImgBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(__replacePersonImage)];
+    
     UIButton *synthesizeBtn = ({
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
         btn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
@@ -47,7 +56,8 @@
         [btn addTarget:self action:@selector(__synthesizeImages) forControlEvents:UIControlEventTouchUpInside];
         btn;
     });
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:synthesizeBtn];
+    
+    self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithCustomView:synthesizeBtn], replaceImgBtn];
 }
 
 - (void)__setupSubviews {
@@ -63,7 +73,6 @@
             aImgView.image = self.personImage;
             aImgView;
         });
-        personView.userInteractionEnabled = YES;
         [self.view addSubview:personView];
         self.personView = personView;
         
@@ -71,13 +80,15 @@
             CGFloat scale = JPPortraitScreenWidth / self.personImage.size.width;
             w = (567.0 - 152.0 - 166.0) * scale;
             h = w * (300.0 / 263.0);
-            x = JPHalfOfDiff(self.personView.jp_width, w);
-            y = JPHalfOfDiff(self.personView.jp_height, h);
-            __weak typeof(self) weakSelf = self;
+            x = self.personView.jp_x + JPHalfOfDiff(self.personView.jp_width, w);
+            y = self.personView.jp_y + JPHalfOfDiff(self.personView.jp_height, h);
+            @jp_weakify(self);
             FaceView *faceView = [[FaceView alloc] initWithFrame:CGRectMake(x, y, w, h) image:self.faceImage longPressAction:^{
-                [weakSelf __saveFaceImage];
+                @jp_strongify(self);
+                if (!self) return;
+                [self __saveFaceImage];
             }];
-            [self.personView addSubview:faceView];
+            [self.view addSubview:faceView];
             self.faceView = faceView;
         }
     }
@@ -108,10 +119,10 @@
     CGRect rect = CGRectMake(0, 0, floorl(self.personView.frame.size.width), floorl(self.personView.frame.size.height));
     
     UIImage *faceImage = self.faceView.faceImage;
-    CGRect faceBounds = self.faceView.faceBounds;
-    CGPoint faceOrigin = self.faceView.faceOrigin;
-    CGFloat faceRadian = self.faceView.faceRadian;
-    CGFloat faceScale = self.faceView.faceScale;
+    CGFloat faceRadian = self.faceView.layer.jp_radian;
+    CGFloat faceScale = self.faceView.layer.jp_scaleX;
+    CGRect faceBounds = self.faceView.layer.bounds;
+    CGPoint faceOrigin = [self.faceView convertPoint:CGPointZero toView:self.personView];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         UIGraphicsBeginImageContextWithOptions(rect.size, NO, JPScreenScale);
@@ -159,4 +170,48 @@
     
     return newImage;
 }
+
+- (void)__replacePersonImage {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [self presentViewController:picker animated:YES completion:^{
+        [JPProgressHUD showImage:nil status:@"替换人物图片" userInteractionEnabled:YES];
+    }];
+}
+
+#pragma mark - UIImagePickerController
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
+    if (!image) {
+        if (@available(iOS 13.0, *)) {
+            NSURL *url = info[UIImagePickerControllerImageURL];
+            image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        }
+    }
+    
+    if (!image) {
+        [JPProgressHUD showErrorWithStatus:@"照片获取失败" userInteractionEnabled:YES];
+        return;
+    }
+    
+    self.personImage = image;
+    
+    CGFloat w = JPPortraitScreenWidth;
+    CGFloat h = w * (image.size.height / image.size.width);
+    CGFloat x = 0;
+    CGFloat y = JPHalfOfDiff(JPPortraitScreenHeight, h);
+    
+    [UIView transitionWithView:self.personView duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        self.personView.image = image;
+    } completion:nil];
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        self.personView.frame = CGRectMake(x, y, w, h);
+    }];
+}
+
 @end

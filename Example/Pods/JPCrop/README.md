@@ -2,17 +2,18 @@
 
 [![Language](http://img.shields.io/badge/language-Swift-brightgreen.svg?style=flat)](https://developer.apple.com/Swift)
 
-![effect](https://github.com/Rogue24/JPCover/raw/master/JPCrop/cover.jpg)
+![effect](https://github.com/Rogue24/JPCover/raw/master/JPCrop/cover.png)
 
 ## Example
 
 Tool class with high imitation of cutting function of little red book app.
+[Juejin Blog](https://juejin.cn/post/6910627272215150600)
 
     高仿小红书App裁剪功能的工具：
         1.集成类似小红书基本的裁剪功能；
         2.API简单易用；
         3.切换裁剪比例时可设置带有动画过渡，不会那么生硬；
-        4.可异步可同步裁剪，并且可压缩。
+        4.可异步可同步裁剪，并且可压缩。
         
 ![example](https://github.com/Rogue24/JPCover/raw/master/JPCrop/example.gif)
 
@@ -26,7 +27,9 @@ Is so easy:
 import JPCrop
 
 // 2.Initialize
-let croper = Croper(frame: croperFrame, configure)
+let frame = CGRect(...
+let configure = Configure(image)
+let croper = Croper(frame: frame, configure)
 
 // 3.Add to superview, done!
 view.insertSubview(croper, at: 0)
@@ -48,7 +51,7 @@ croper.hideRotateGrid(animated: true)
 
 ### Switch the crop width to height ratio
 ```swift
-// rotateGridCount: Number of grid in rotation
+// rotateGridCount: Number of grid in rotation. (ver, hor)
 // animated: with animation or not
 croper.updateCropWHRatio(3.0 / 4.0, rotateGridCount: (6, 5), animated: true)
 ```
@@ -65,7 +68,7 @@ let configure = croper.syncConfigure()
 
 // 1.Sync crop
 let image = croper.crop() 
-cropDone?(image, configure)
+cropDone(image, configure)
 
 // 2.Async crop: crop in DispatchQueue.global, result back to DispatchQueue.main 
 croper.asyncCrop {

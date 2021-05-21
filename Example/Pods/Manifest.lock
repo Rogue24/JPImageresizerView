@@ -1,15 +1,15 @@
 PODS:
-  - JPBasic/JPBrowseImages (0.1.5):
+  - JPBasic/JPBrowseImages (0.1.7):
     - JPBasic/JPConst
-  - JPBasic/JPCategory (0.1.5):
+  - JPBasic/JPCategory (0.1.7):
     - JPBasic/JPConst
     - Masonry
     - pop
-  - JPBasic/JPConst (0.1.5)
-  - JPBasic/JPProgressHUD (0.1.5):
+  - JPBasic/JPConst (0.1.7)
+  - JPBasic/JPProgressHUD (0.1.7):
     - SVProgressHUD
-  - JPCrop (0.1.0)
-  - JPImageresizerView (1.8.0)
+  - JPCrop (0.1.1)
+  - JPImageresizerView (1.8.3)
   - JPLiquidLayout (0.1.1)
   - Masonry (1.1.0)
   - pop (1.0.12)
@@ -38,9 +38,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JPBasic: ca0efddba629796165a98334f1977216d9b1837f
-  JPCrop: 6a6c3da7ff299becf0593e603cc12752f5d97061
-  JPImageresizerView: 815e5f836f4029afaa5d855afa4976df6cc64a33
+  JPBasic: 1c303ec9b01da483e86cc748f77db5c318f3e6da
+  JPCrop: fb8abca3af846bf9dfd069e4063b16be818d2c7e
+  JPImageresizerView: 1eb5934ddf786dd8b26a83465599f1abb06112ab
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a

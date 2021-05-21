@@ -109,8 +109,8 @@
         
         CGPoint diagonalPoint = CGPointMake(frame.size.width, frame.size.height);
         self.currentRadius = [JPSolveTool radiusFromCenter:CGPointMake(frame.size.width * 0.5, frame.size.height * 0.5) point:diagonalPoint];
-        self.maxRadius = self.currentRadius * 1.3;
-        self.minRadius = self.currentRadius * 0.8;
+        self.maxRadius = self.currentRadius * 1.5;
+        self.minRadius = self.currentRadius * 0.3;
         UIPanGestureRecognizer *scaleRotationGR = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(scaleRotation:)];
         [self.scaleBtn addGestureRecognizer:scaleRotationGR];
     }
@@ -320,18 +320,6 @@
 
 - (UIImage *)faceImage {
     return self.imageView.image;
-}
-- (CGRect)faceBounds {
-    return self.layer.bounds;
-}
-- (CGPoint)faceOrigin {
-    return [self convertPoint:CGPointZero toView:self.superview];
-}
-- (CGFloat)faceScale {
-    return self.layer.jp_scaleX;
-}
-- (CGFloat)faceRadian {
-    return self.layer.jp_radian;
 }
 
 #pragma mark - 私有方法

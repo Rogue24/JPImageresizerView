@@ -19,6 +19,7 @@
 #import "NSDate+JPExtension.h"
 #import "NSObject+JPExtension.h"
 #import "NSString+JPExtension.h"
+#import "NSURL+JPExtension.h"
 #import "UIColor+JPExtension.h"
 #import "UIImage+JPExtension.h"
 #import "UINavigationBar+JPExtension.h"

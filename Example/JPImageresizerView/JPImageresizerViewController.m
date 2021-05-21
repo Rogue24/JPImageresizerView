@@ -123,21 +123,21 @@
     self.configure.contentInsets = contentInsets;
     self.configure.viewFrame = [UIScreen mainScreen].bounds;
     
-    __weak typeof(self) wSelf = self;
+    @jp_weakify(self);
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
+        @jp_strongify(self);
+        if (!self) return;
         // 当不需要重置设置按钮不可点
-        sSelf.recoveryBtn.enabled = isCanRecovery;
+        self.recoveryBtn.enabled = isCanRecovery;
     } imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
-        __strong typeof(wSelf) sSelf = wSelf;
-        if (!sSelf) return;
+        @jp_strongify(self);
+        if (!self) return;
         // 当预备缩放设置按钮不可点，结束后可点击
         BOOL enabled = !isPrepareToScale;
-        sSelf.rotateBtn.enabled = enabled;
-        sSelf.resizeBtn.enabled = enabled;
-        sSelf.horMirrorBtn.enabled = enabled;
-        sSelf.verMirrorBtn.enabled = enabled;
+        self.rotateBtn.enabled = enabled;
+        self.resizeBtn.enabled = enabled;
+        self.horMirrorBtn.enabled = enabled;
+        self.verMirrorBtn.enabled = enabled;
     }];
     [self.view insertSubview:imageresizerView atIndex:0];
     self.imageresizerView = imageresizerView;
