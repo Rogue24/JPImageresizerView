@@ -1,6 +1,0 @@
-framework module JPBasic {
-  umbrella header "JPBasic-umbrella.h"
-
-  export *
-  module * { export * }
-}

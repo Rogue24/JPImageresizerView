@@ -1,6 +1,0 @@
-framework module JPCrop {
-  umbrella header "JPCrop-umbrella.h"
-
-  export *
-  module * { export * }
-}
