@@ -240,7 +240,9 @@ if (@available(iOS 11.0, *)) {
 ```
 
 **裁剪N宫格图片**
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
+
 ```objc
 // 1.自定义N宫格裁剪
 // columnCount：N宫格的列数（最小1列）

@@ -231,7 +231,9 @@ if (@available(iOS 11.0, *)) {
 ```
 
 **Crop N-grid pictures**
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
+
 ```objc
 // 1.Custom n-grid crop picture
 // columnCount --- The number of columns of n-grid (minimum 1 column)
