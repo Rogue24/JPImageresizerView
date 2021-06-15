@@ -1170,7 +1170,7 @@
 // 原图尺寸裁剪图片
 - (void)cropPictureWithCacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
-                  completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                  completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropPictureWithCompressScale:1
                               cacheURL:cacheURL
                             errorBlock:errorBlock
@@ -1180,34 +1180,88 @@
 // 自定义压缩比例裁剪图片
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                          errorBlock:(JPImageresizerErrorBlock)errorBlock
+                       completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.videoObj || self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非图片");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.imageData) {
-        [JPImageresizerTool cropPictureWithImageData:self.imageData maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropPictureWithImageData:self.imageData
+                                           maskImage:self.frameView.maskImage
+                                           configure:self.frameView.currentCropConfigure
+                                       compressScale:compressScale
+                                            cacheURL:cacheURL
+                                          errorBlock:errorBlock
+                                       completeBlock:completeBlock];
     } else {
-        [JPImageresizerTool cropPictureWithImage:self.image maskImage:self.frameView.maskImage configure:self.frameView.currentCropConfigure compressScale:compressScale cacheURL:cacheURL errorBlock:errorBlock completeBlock:completeBlock];
+        [JPImageresizerTool cropPictureWithImage:self.image
+                                       maskImage:self.frameView.maskImage
+                                       configure:self.frameView.currentCropConfigure
+                                   compressScale:compressScale
+                                        cacheURL:cacheURL
+                                      errorBlock:errorBlock
+                                   completeBlock:completeBlock];
+    }
+}
+
+// 裁剪九宫格图片
+- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
+                                      bgColor:(UIColor *)bgColor
+                                     cacheURL:(NSURL *)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+    if (self.frameView.isPrepareToScale) {
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
+        !completeBlock ? : completeBlock(nil, nil);
+        return;
+    }
+    if (compressScale <= 0) {
+        JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
+        !completeBlock ? : completeBlock(nil, nil);
+        return;
+    }
+    if (self.videoObj || self.isGIF) {
+        JPIRLog(@"jp_tip: 九宫格目前只能作用于图片");
+        !completeBlock ? : completeBlock(nil, nil);
+        return;
+    }
+    if (self.imageData) {
+        [JPImageresizerTool cropNineGirdPicturesWithImageData:self.imageData
+                                                      bgColor:bgColor
+                                                    maskImage:self.frameView.maskImage
+                                                    configure:self.frameView.currentCropConfigure
+                                                compressScale:compressScale
+                                                     cacheURL:cacheURL
+                                                   errorBlock:errorBlock
+                                                completeBlock:completeBlock];
+    } else {
+        [JPImageresizerTool cropNineGirdPicturesWithImage:self.image
+                                                  bgColor:bgColor
+                                                maskImage:self.frameView.maskImage
+                                                configure:self.frameView.currentCropConfigure
+                                            compressScale:compressScale
+                                                 cacheURL:cacheURL
+                                               errorBlock:errorBlock
+                                            completeBlock:completeBlock];
     }
 }
 
 #pragma mark 裁剪GIF
 - (void)cropGIFWithCacheURL:(NSURL *)cacheURL
-                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                 errorBlock:(JPImageresizerErrorBlock)errorBlock
+              completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropGIFWithCompressScale:1
                     isReverseOrder:NO
                               rate:1
@@ -1219,7 +1273,7 @@
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                   completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropGIFWithCompressScale:compressScale
                     isReverseOrder:NO
                               rate:1
@@ -1233,20 +1287,20 @@
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                   completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.videoObj || !self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非GIF");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.imageData) {
@@ -1273,8 +1327,8 @@
 }
 
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPImageresizerErrorBlock)errorBlock
-                          completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                             errorBlock:(JPImageresizerErrorBlock)errorBlock
+                          completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropGIFCurrentIndexWithCompressScale:1
                                       cacheURL:cacheURL
                                     errorBlock:errorBlock
@@ -1282,9 +1336,9 @@
 }
 
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
-                                     cacheURL:(NSURL *)cacheURL
-                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
-                               completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                                    cacheURL:(NSURL *)cacheURL
+                                  errorBlock:(JPImageresizerErrorBlock)errorBlock
+                               completeBlock:(JPCropDoneBlock)completeBlock {
     NSUInteger index = 0;
     if (self.isLoopPlaybackGIF == NO) {
         NSInteger maxIndex = self.image.images.count - 1;
@@ -1301,23 +1355,23 @@
 }
 
 - (void)cropGIFWithIndex:(NSUInteger)index
-            compressScale:(CGFloat)compressScale
+           compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
               errorBlock:(JPImageresizerErrorBlock)errorBlock
-           completeBlock:(JPCropPictureDoneBlock)completeBlock {
+           completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.videoObj || !self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非GIF");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (self.imageData) {
@@ -1344,7 +1398,7 @@
 // 原图尺寸裁剪视频当前帧画面
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
                                errorBlock:(JPImageresizerErrorBlock)errorBlock
-                             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                            completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropVideoOneFrameWithSecond:self.slider.second
                         compressScale:1
                              cacheURL:cacheURL
@@ -1354,9 +1408,9 @@
 
 // 自定义压缩比例裁剪视频当前帧画面
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
-                                     cacheURL:(NSURL *)cacheURL
+                                      cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                 completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                                 completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropVideoOneFrameWithSecond:self.slider.second
                         compressScale:compressScale
                              cacheURL:cacheURL
@@ -1369,20 +1423,20 @@
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                      completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                      completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (!self.videoObj) {
         JPIRLog(@"jp_tip: 当前裁剪元素非视频");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (second < 0) {
@@ -1404,7 +1458,7 @@
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                      completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                                      completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropVideoToGIFFromStartSecond:self.slider.second
                                duration:duration
                                     fps:10
@@ -1421,22 +1475,22 @@
                           maximumSize:(CGSize)maximumSize
                              cacheURL:(NSURL *)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
-                        completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                        completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (!self.videoObj) {
         JPIRLog(@"jp_tip: 当前裁剪元素非视频");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     if (startSecond < 0) {
         startSecond = 0;
     } else if (startSecond > self.slider.seconds) {
         JPIRLog(@"jp_tip: 请设置正确的初始时间");
-        !completeBlock ? : completeBlock(nil, nil, NO);
+        !completeBlock ? : completeBlock(nil);
         return;
     }
     [JPImageresizerTool cropVideoToGIFWithAsset:self.videoObj.asset
@@ -1456,7 +1510,7 @@
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                 progressBlock:(JPExportVideoProgressBlock)progressBlock
-                completeBlock:(JPExportVideoCompleteBlock)completeBlock {
+                completeBlock:(JPCropDoneBlock)completeBlock {
     [self cropVideoWithPresetName:AVAssetExportPresetHighestQuality
                          cacheURL:cacheURL
                        errorBlock:errorBlock
@@ -1469,7 +1523,7 @@
                        cacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                  progressBlock:(JPExportVideoProgressBlock)progressBlock
-                 completeBlock:(JPExportVideoCompleteBlock)completeBlock {
+                 completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !completeBlock ? : completeBlock(nil);
@@ -1497,12 +1551,12 @@
         if (!wSelf) return;
         __strong typeof(wSelf) sSelf = wSelf;
         [sSelf __addProgressTimer:progressBlock exporterSession:exportSession];
-    } completeBlock:^(NSURL *cacheURL) {
+    } completeBlock:^(JPImageresizerResult *result) {
         if (wSelf) {
             __strong typeof(wSelf) sSelf = wSelf;
             [sSelf __removeProgressTimer];
         }
-        !completeBlock ? : completeBlock(cacheURL);
+        !completeBlock ? : completeBlock(result);
     }];
 }
 

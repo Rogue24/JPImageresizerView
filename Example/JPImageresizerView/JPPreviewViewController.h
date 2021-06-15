@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+@class JPImageresizerResult;
 
 @interface JPPreviewViewController : UIViewController
-@property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) NSURL *imageURL;
-@property (nonatomic, strong) NSURL *videoURL;
++ (instancetype)buildWithResult:(JPImageresizerResult *)result;
++ (instancetype)buildWithResults:(NSArray<JPImageresizerResult *> *)results;
 @end

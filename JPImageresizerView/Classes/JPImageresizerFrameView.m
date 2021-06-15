@@ -7,8 +7,8 @@
 //
 
 #import "JPImageresizerFrameView.h"
+#import "JPImageresizer+Extension.h"
 #import "JPImageresizerBlurView.h"
-#import "CALayer+JPImageresizer.h"
 #import "JPImageresizerSlider.h"
 #import "JPImageresizerTool.h"
 

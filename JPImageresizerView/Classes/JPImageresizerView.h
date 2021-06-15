@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <JPImageresizerConfigure.h>
 #import <JPImageresizerFrameView.h>
+#import <JPImageresizerResult.h>
 
 @interface JPImageresizerView : UIView
 
@@ -475,12 +476,12 @@
  @brief 原图尺寸裁剪图片
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropPictureWithCacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -488,13 +489,29 @@
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
                           errorBlock:(JPImageresizerErrorBlock)errorBlock
-                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                       completeBlock:(JPCropDoneBlock)completeBlock;
+
+/*!
+ @method
+ @brief 裁剪九宫格图片
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @param bgColor --- 九宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
+ @param cacheURL --- 缓存路径（可设置为nil）
+ @param errorBlock --- 错误回调
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的原图结果和九张碎片图片结果集合，包含已解码好的图片、缓存路径）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
+                                      bgColor:(UIColor *)bgColor
+                                     cacheURL:(NSURL *)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
 
 #pragma mark 裁剪GIF
 /*!
@@ -502,12 +519,12 @@
  @brief 原图尺寸裁剪GIF
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的GIF，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithCacheURL:(NSURL *)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock;
+              completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -515,13 +532,13 @@
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的GIF，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -531,7 +548,7 @@
  @param rate --- 速率
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的GIF，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
@@ -539,19 +556,19 @@
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 原图尺寸裁剪GIF当前帧画面
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
                              errorBlock:(JPImageresizerErrorBlock)errorBlock
-                          completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                          completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -559,13 +576,13 @@
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                     cacheURL:(NSURL *)cacheURL
                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-                               completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                               completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -574,39 +591,39 @@
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片，缓存路径，是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithIndex:(NSUInteger)index
            compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
               errorBlock:(JPImageresizerErrorBlock)errorBlock
-           completeBlock:(JPCropPictureDoneBlock)completeBlock;
+           completeBlock:(JPCropDoneBlock)completeBlock;
 
 #pragma mark 裁剪视频
 /*!
  @method
  @brief 原图尺寸裁剪视频当前帧画面
  @param cacheURL --- 缓存路径（可设置为nil）
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
                                errorBlock:(JPImageresizerErrorBlock)errorBlock
-                            completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                            completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
  @brief 自定义压缩比例裁剪视频当前帧画面
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                       cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                 completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -614,14 +631,14 @@
  @param second --- 第几秒画面
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param cacheURL --- 缓存路径（可设置为nil）
- @param completeBlock --- 裁剪完成的回调（返回已解码好的图片、缓存路径、是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                      completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -629,13 +646,13 @@
  @param duration --- 截取多少秒
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的GIF、缓存路径、是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                                      completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -647,7 +664,7 @@
  @param maximumSize --- 截取的尺寸（设置为0则以视频真身尺寸）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回已解码好的GIF、缓存路径、是否缓存成功）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
@@ -657,7 +674,7 @@
                           maximumSize:(CGSize)maximumSize
                              cacheURL:(NSURL *)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
-                        completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                        completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -665,13 +682,13 @@
  @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回缓存路径）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
  */
 - (void)cropVideoWithCacheURL:(NSURL *)cacheURL
                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                 progressBlock:(JPExportVideoProgressBlock)progressBlock
-                completeBlock:(JPExportVideoCompleteBlock)completeBlock;
+                completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method
@@ -680,14 +697,14 @@
  @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
  @param errorBlock --- 错误回调
  @param progressBlock --- 进度回调
- @param completeBlock --- 裁剪完成的回调（返回缓存路径）
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   progressBlock:(JPExportVideoProgressBlock)progressBlock
-                  completeBlock:(JPExportVideoCompleteBlock)completeBlock;
+                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method

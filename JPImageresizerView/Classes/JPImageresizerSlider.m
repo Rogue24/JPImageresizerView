@@ -6,7 +6,7 @@
 //
 
 #import "JPImageresizerSlider.h"
-#import "CALayer+JPImageresizer.h"
+#import "JPImageresizer+Extension.h"
 
 @interface JPImageresizerSlider ()
 @property (nonatomic, weak) UISlider *slider;

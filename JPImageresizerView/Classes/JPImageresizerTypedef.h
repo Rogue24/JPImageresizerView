@@ -7,6 +7,7 @@
 //  公共类型定义
 
 #import <AVFoundation/AVFoundation.h>
+@class JPImageresizerResult;
 
 #pragma mark - 枚举
 
@@ -92,14 +93,6 @@ typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 typedef void(^JPImageresizerErrorBlock)(NSURL *cacheURL, JPImageresizerErrorReason reason);
 
 /**
- * 图片裁剪完成的回调
-    - finalImage：裁剪后的图片/GIF
-    - cacheURL：目标存放路径
-    - isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
- */
-typedef void(^JPCropPictureDoneBlock)(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess);
-
-/**
  * 视频裁剪导出的进度
     - progress：进度，单位 0~1
  */
@@ -118,6 +111,23 @@ typedef void(^JPExportVideoStartBlock)(AVAssetExportSession *exportSession);
         - 如果是裁剪的视频，裁剪后自定义的路径转移失败，cacheURL返回的是也是在NSTemporaryDirectory里
  */
 typedef void(^JPExportVideoCompleteBlock)(NSURL *cacheURL);
+
+/**
+ * 图片裁剪完成的回调
+    - result：裁剪后的结果（JPImageresizerResult）
+        - result.type：裁剪结果类型（图片/GIF/视频）
+        - result.image：裁剪后的图片/GIF（已解码好的，若为视频类型则该属性为nil）
+        - result.cacheURL：目标存放路径
+        - result.isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
+ */
+typedef void(^JPCropDoneBlock)(JPImageresizerResult *result);
+
+/**
+ * 九宫格图片裁剪完成的回调
+    - originResult：裁剪后的原图结果（九宫格之前）
+    - fragmentResults：裁剪后的原图被裁剪成九宫格图片的结果集合（共9个）
+ */
+typedef void(^JPNineGirdCropDoneBlock)(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults);
 
 #pragma mark - 裁剪属性
 

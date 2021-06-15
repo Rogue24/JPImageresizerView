@@ -7,10 +7,21 @@
 
 #import "JPImageresizerTool.h"
 #import <MobileCoreServices/UTCoreTypes.h>
+#import <JPImageresizer+Extension.h>
+#import <JPImageresizerResult.h>
 
 @implementation JPImageresizerTool
 
 #pragma mark - 计算函数
+
+static BOOL JPIsHasAlpha(CGImageRef imageRef) {
+    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+        alphaInfo == kCGImageAlphaPremultipliedFirst ||
+        alphaInfo == kCGImageAlphaLast ||
+        alphaInfo == kCGImageAlphaFirst) return YES;
+    return NO;
+}
 
 static BOOL JPIsSameSize(CGSize size1, CGSize size2) {
     return (fabs(size1.width - size2.width) < 0.5 && fabs(size1.height - size2.height) < 0.5);
@@ -359,10 +370,25 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         block(cacheURL, reason);
     });
 }
-+ (void)__executeCropPictureDoneBlock:(JPCropPictureDoneBlock)block finalImage:(UIImage *)finalImage cacheURL:(NSURL *)cacheURL isCacheSuccess:(BOOL)isCacheSuccess {
++ (void)__executeCropDoneBlock:(JPCropDoneBlock)block image:(UIImage *)image cacheURL:(NSURL *)cacheURL {
     if (!block) return;
+    JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:image cacheURL:cacheURL];
     dispatch_async(dispatch_get_main_queue(), ^{
-        block(finalImage, isCacheSuccess ? cacheURL : nil, isCacheSuccess);
+        block(result);
+    });
+}
++ (void)__executeCropDoneBlock:(JPCropDoneBlock)block gifImage:(UIImage *)gifImage cacheURL:(NSURL *)cacheURL {
+    if (!block) return;
+    JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithGifImage:gifImage cacheURL:cacheURL];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(result);
+    });
+}
++ (void)__executeCropDoneBlock:(JPCropDoneBlock)block videoCacheURL:(NSURL *)videoCacheURL {
+    if (!block) return;
+    JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithVideoCacheURL:videoCacheURL];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(result);
     });
 }
 + (void)__executeExportVideoStart:(JPExportVideoStartBlock)block exportSession:(AVAssetExportSession *)exportSession {
@@ -446,22 +472,57 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     return fileType;
 }
 
+#pragma mark 修正图片/GIF缓存路径的后缀名
++ (NSURL *)__fixExtensionForImageCacheURL:(NSURL *)cacheURL
+                                    isGIF:(BOOL)isGIF
+                                 hasAlpha:(BOOL)hasAlpha
+                                imageData:(NSData *)imageData {
+    NSString *extension;
+    if (isGIF && index < 0) {
+        extension = @"gif";
+    } else if (hasAlpha) {
+        extension = @"png";
+    } else if (imageData != nil) {
+        extension = [self __contentTypeSuffixForImageData:imageData];
+        if ([extension isEqualToString:@"gif"]) extension = hasAlpha ? @"png" : @"jpeg";
+    } else {
+        extension = @"jpeg";
+    }
+    
+    NSString *pathExtension = cacheURL.pathExtension;
+    if (!pathExtension.length) {
+        cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.absoluteString, extension]];
+    }
+    else if (![extension isEqualToString:pathExtension]) {
+        cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.jpir_filePathWithoutExtension, extension]];
+    }
+    
+    return cacheURL;
+}
+
 #pragma mark 缓存图片
 + (BOOL)__cacheImage:(UIImage *)image cacheURL:(NSURL *)cacheURL {
     if (!cacheURL || !image) {
         return NO;
     }
     
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:cacheURL.path]) {
+        [fileManager removeItemAtURL:cacheURL error:nil];
+    }
+    
     CGFloat quality;
     CFStringRef imageType = [self __contentTypeForSuffix:cacheURL.pathExtension quality:&quality];
-    NSDictionary *frameProperty = @{(id)kCGImageDestinationLossyCompressionQuality: @(quality)};
     
     CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, imageType, 1, NULL);
+    if (destination == NULL) return NO;
+    
+    NSDictionary *frameProperty = @{(id)kCGImageDestinationLossyCompressionQuality: @(quality)};
     CGImageDestinationAddImage(destination, image.CGImage, (CFDictionaryRef)frameProperty);
     
     BOOL isCacheSuccess = CGImageDestinationFinalize(destination);
     CFRelease(destination);
-    if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+    if (!isCacheSuccess) [fileManager removeItemAtURL:cacheURL error:nil];
     return isCacheSuccess;
 }
 
@@ -471,8 +532,14 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         return NO;
     }
     
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:cacheURL.path]) {
+        [fileManager removeItemAtURL:cacheURL error:nil];
+    }
+    
     size_t count = images.count;
     CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, kUTTypeGIF, count, NULL);
+    if (destination == NULL) return NO;
     
     NSDictionary *gifProperty =
     @{
@@ -508,13 +575,14 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     BOOL isCacheSuccess = CGImageDestinationFinalize(destination);
     CFRelease(destination);
-    if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
+    if (!isCacheSuccess) [fileManager removeItemAtURL:cacheURL error:nil];
     return isCacheSuccess;
 }
 
 #pragma mark 裁剪图片&GIF
 + (void)__cropPicture:(UIImage *)image
             imageData:(NSData *)imageData
+           isNineGird:(BOOL)isNineGird
                 isGIF:(BOOL)isGIF
        isReverseOrder:(BOOL)isReverseOrder
                  rate:(float)rate
@@ -524,7 +592,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         compressScale:(CGFloat)compressScale
              cacheURL:(NSURL *)cacheURL
            errorBlock:(JPImageresizerErrorBlock)errorBlock
-        completeBlock:(JPCropPictureDoneBlock)completeBlock {
+        completeBlock:(JPCropDoneBlock)completeBlock {
     
     if ((!image && !imageData) || compressScale <= 0) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
@@ -535,6 +603,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self __cropPicture:image
                       imageData:imageData
+                     isNineGird:isNineGird
                           isGIF:isGIF
                  isReverseOrder:isReverseOrder
                            rate:rate
@@ -564,8 +633,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGRect cropFrame = configure.cropFrame;
     if (compressScale > 1) compressScale = 1;
     
-    BOOL isCacheSuccess = NO;
-    
     CGImageRef imageRef = image.CGImage;
     
     // 是否带透明度
@@ -573,41 +640,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     if (maskImage || isRoundClip) {
         hasAlpha = YES;
     } else {
-        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-            alphaInfo == kCGImageAlphaPremultipliedFirst ||
-            alphaInfo == kCGImageAlphaLast ||
-            alphaInfo == kCGImageAlphaFirst) hasAlpha = YES;
+        hasAlpha = JPIsHasAlpha(imageRef);
     }
     
     if (cacheURL) {
-        NSString *pathExtension = cacheURL.pathExtension;
-        
-        NSString *extension;
-        if (isGIF && index < 0) {
-            extension = @"gif";
-        } else if (hasAlpha) {
-            extension = @"png";
-        } else if (imageData != nil) {
-            extension = [self __contentTypeSuffixForImageData:imageData];
-            if ([extension isEqualToString:@"gif"]) extension = hasAlpha ? @"png" : @"jpeg";
-        } else {
-            extension = @"jpeg";
-        }
-        
-        if (!extension.length) {
-            cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", cacheURL.absoluteString, extension]];
-        } else if (![extension isEqualToString:pathExtension]) {
-            NSString *absoluteString = cacheURL.absoluteString;
-            if (pathExtension.length) {
-                NSString *lastPathComponent = cacheURL.lastPathComponent;
-                NSRange lastPathComponentRange = NSMakeRange(absoluteString.length - lastPathComponent.length, lastPathComponent.length);
-                lastPathComponent = [lastPathComponent componentsSeparatedByString:@"."].firstObject;
-                absoluteString = [absoluteString stringByReplacingCharactersInRange:lastPathComponentRange withString:lastPathComponent];
-            }
-            cacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@.%@", absoluteString, extension]];
-        }
-        
+        cacheURL = [self __fixExtensionForImageCacheURL:cacheURL isGIF:isGIF hasAlpha:hasAlpha imageData:imageData];
         if ([[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path]) {
             [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_CacheURLAlreadyExists];
             return;
@@ -626,7 +663,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         compressScale == 1) {
         if (cacheURL) {
             if (imageData) {
-                isCacheSuccess = [imageData writeToURL:cacheURL atomically:YES];
+                BOOL isCacheSuccess = [imageData writeToURL:cacheURL atomically:YES];
                 if (!isCacheSuccess) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
             } else {
                 if (isGIF) {
@@ -634,13 +671,23 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                     NSTimeInterval duration = image.duration;
                     NSTimeInterval delay = duration / (NSTimeInterval)count;
                     if (delay < 0.02) delay = 0.1;
-                    isCacheSuccess = [self __cacheGIF:image.images delays:@[@(delay)] cacheURL:cacheURL];
+                    [self __cacheGIF:image.images delays:@[@(delay)] cacheURL:cacheURL];
                 } else {
-                    isCacheSuccess = [self __cacheImage:image cacheURL:cacheURL];
+                    [self __cacheImage:image cacheURL:cacheURL];
                 }
             }
         }
-        [self __executeCropPictureDoneBlock:completeBlock finalImage:image cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+        if (isGIF) {
+            [self __executeCropDoneBlock:completeBlock gifImage:image cacheURL:cacheURL];
+        } else {
+            if (isNineGird) {
+                if (!completeBlock) return;
+                JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:image cacheURL:cacheURL];
+                completeBlock(result);
+            } else {
+                [self __executeCropDoneBlock:completeBlock image:image cacheURL:cacheURL];
+            }
+        }
         return;
     }
     
@@ -687,8 +734,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGContextSetAllowsAntialiasing(context, true);
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
     
+    isGIF = isGIF && index < 0;
+    
     UIImage *finalImage;
-    if (isGIF && index < 0) {
+    if (isGIF) {
         [self __cropGIFWithGifImage:image
                              source:source
                             context:context
@@ -701,20 +750,121 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                           imageSize:imageSize
                      isReverseOrder:isReverseOrder
                            cacheURL:cacheURL
-                     isCacheSuccess:&isCacheSuccess
                          finalImage:&finalImage];
     } else {
         CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
         finalImage = [UIImage imageWithCGImage:newImageRef];
         CGImageRelease(newImageRef);
-        isCacheSuccess = [self __cacheImage:finalImage cacheURL:cacheURL];
+        [self __cacheImage:finalImage cacheURL:cacheURL];
     }
     
     if (source != NULL) CFRelease(source);
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
     
-    [self __executeCropPictureDoneBlock:completeBlock finalImage:finalImage cacheURL:cacheURL isCacheSuccess:isCacheSuccess];
+    if (isGIF) {
+        [self __executeCropDoneBlock:completeBlock gifImage:finalImage cacheURL:cacheURL];
+    } else {
+        if (isNineGird) {
+            if (!completeBlock) return;
+            JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:finalImage cacheURL:cacheURL];
+            completeBlock(result);
+        } else {
+            [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
+        }
+    }
+}
+
+#pragma mark 裁剪九宫格图片（在子线程调起）
++ (void)__cropNineGirdPicturesWithOriginResult:(JPImageresizerResult *)originResult
+                                       bgColor:(UIColor *)bgColor
+                                 completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+    if (!originResult) {
+        if (completeBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completeBlock(nil, nil);
+            });
+        }
+        return;
+    }
+    
+    CGImageRef imageRef = originResult.image.CGImage;
+    CGFloat imageWidth = CGImageGetWidth(imageRef);
+    CGFloat imageHeight = CGImageGetHeight(imageRef);
+    CGFloat renderWidth = imageWidth / 3.0;
+    CGFloat renderHeight = imageHeight / 3.0;
+    CGRect renderRect = CGRectMake(0, 0, renderWidth, renderHeight);
+    
+    BOOL hasAlpha = NO;
+    if (bgColor && ![bgColor isEqual:UIColor.clearColor]) {
+        hasAlpha = NO;
+    } else {
+        hasAlpha = JPIsHasAlpha(imageRef);
+    }
+    if (!bgColor && hasAlpha) {
+        bgColor = UIColor.clearColor;
+    }
+    
+    NSString *cacheFilePath;
+    NSString *cacheExtension;
+    if (originResult.isCacheSuccess) {
+        NSURL *fixedCacheURL = [self __fixExtensionForImageCacheURL:originResult.cacheURL isGIF:NO hasAlpha:hasAlpha imageData:nil];
+        cacheFilePath = fixedCacheURL.jpir_filePathWithoutExtension;
+        cacheExtension = fixedCacheURL.pathExtension;
+    }
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+    bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+    
+    CGContextRef context = CGBitmapContextCreate(NULL, renderWidth, renderHeight, 8, 0, colorSpace, bitmapInfo);
+    CGContextSetShouldAntialias(context, true);
+    CGContextSetAllowsAntialiasing(context, true);
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    
+    NSMutableArray<JPImageresizerResult *> *fragmentsResults = [NSMutableArray array];
+    for (NSInteger i = 0; i < 9; i++) {
+        @autoreleasepool {
+            CGContextSaveGState(context);
+            
+            if (bgColor) {
+                CGContextSetFillColorWithColor(context, bgColor.CGColor);
+                CGContextFillRect(context, renderRect);
+            }
+            
+            // 从左上角开始裁剪：从左往右，从上而下
+            CGFloat x = -renderWidth * (i % 3);
+            CGFloat y = -renderHeight * ((8 - i) / 3);
+            
+            CGContextDrawImage(context, CGRectMake(x, y, imageWidth, imageHeight), imageRef);
+            CGImageRef singleCGImage = CGBitmapContextCreateImage(context);
+            UIImage *singleImage = [UIImage imageWithCGImage:singleCGImage];
+            
+            NSURL *singleCacheURL;
+            if (originResult.isCacheSuccess) {
+                singleCacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@_%zd.%@", cacheFilePath, i, cacheExtension]];
+                [self __cacheImage:singleImage cacheURL:singleCacheURL];
+            }
+            
+            JPImageresizerResult *singleResult = [[JPImageresizerResult alloc] initWithImage:singleImage cacheURL:singleCacheURL];
+            [fragmentsResults addObject:singleResult];
+            
+            CGImageRelease(singleCGImage);
+            CGContextClearRect(context, renderRect);
+            
+            CGContextRestoreGState(context);
+        }
+    }
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    if (completeBlock) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completeBlock(originResult, fragmentsResults);
+        });
+    }
 }
 
 #pragma mark 裁剪GIF
@@ -730,7 +880,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                     imageSize:(CGSize)imageSize
                isReverseOrder:(BOOL)isReverseOrder
                      cacheURL:(NSURL *)cacheURL
-               isCacheSuccess:(BOOL *)isCacheSuccess
                    finalImage:(UIImage **)finalImage {
     
     __block NSTimeInterval duration = 0;
@@ -785,8 +934,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         }
     }
     
-    BOOL result = [self __cacheGIF:images delays:delays cacheURL:cacheURL];
-    if (isCacheSuccess) *isCacheSuccess = result;
+    [self __cacheGIF:images delays:delays cacheURL:cacheURL];
     if (finalImage) *finalImage = images.count > 1 ? [UIImage animatedImageWithImages:images duration:duration] : images.firstObject;
 }
 
@@ -857,14 +1005,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             return nil;
         }
         
-        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-        BOOL hasAlpha = NO;
-        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-            alphaInfo == kCGImageAlphaPremultipliedFirst ||
-            alphaInfo == kCGImageAlphaLast ||
-            alphaInfo == kCGImageAlphaFirst) {
-            hasAlpha = YES;
-        }
+        BOOL hasAlpha = JPIsHasAlpha(imageRef);
         // BGRA8888 (premultiplied) or BGRX8888
         // same as UIGraphicsBeginImageContext() and -[UIView drawRect:]
         CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
@@ -918,9 +1059,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                compressScale:(CGFloat)compressScale
                     cacheURL:(NSURL *)cacheURL
                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-               completeBlock:(JPCropPictureDoneBlock)completeBlock {
+               completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:image
               imageData:nil
+             isNineGird:NO
                   isGIF:NO
          isReverseOrder:NO
                    rate:1
@@ -933,7 +1075,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
           completeBlock:completeBlock];
 }
 
-
 #pragma mark 裁剪图片（NSData）
 + (void)cropPictureWithImageData:(NSData *)imageData
                        maskImage:(UIImage *)maskImage
@@ -941,9 +1082,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                    compressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                   completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:imageData
+             isNineGird:NO
                   isGIF:NO
          isReverseOrder:NO
                    rate:1
@@ -954,6 +1096,62 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                cacheURL:cacheURL
              errorBlock:errorBlock
           completeBlock:completeBlock];
+}
+
+#pragma mark 裁剪九宫格图片（UIImage）
++ (void)cropNineGirdPicturesWithImage:(UIImage *)image
+                              bgColor:(UIColor *)bgColor
+                            maskImage:(UIImage *)maskImage
+                            configure:(JPCropConfigure)configure
+                        compressScale:(CGFloat)compressScale
+                             cacheURL:(NSURL *)cacheURL
+                           errorBlock:(JPImageresizerErrorBlock)errorBlock
+                        completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+    [self __cropPicture:image
+              imageData:nil
+             isNineGird:YES
+                  isGIF:NO
+         isReverseOrder:NO
+                   rate:1
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:^(JPImageresizerResult *result) {
+        [self __cropNineGirdPicturesWithOriginResult:result
+                                             bgColor:bgColor
+                                       completeBlock:completeBlock];
+    }];
+}
+
+#pragma mark 裁剪九宫格图片（NSData）
++ (void)cropNineGirdPicturesWithImageData:(NSData *)imageData
+                                  bgColor:(UIColor *)bgColor
+                                maskImage:(UIImage *)maskImage
+                                configure:(JPCropConfigure)configure
+                            compressScale:(CGFloat)compressScale
+                                 cacheURL:(NSURL *)cacheURL
+                               errorBlock:(JPImageresizerErrorBlock)errorBlock
+                            completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+    [self __cropPicture:nil
+              imageData:imageData
+             isNineGird:YES
+                  isGIF:NO
+         isReverseOrder:NO
+                   rate:1
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:^(JPImageresizerResult *result) {
+        [self __cropNineGirdPicturesWithOriginResult:result
+                                             bgColor:bgColor
+                                       completeBlock:completeBlock];
+    }];
 }
 
 #pragma mark - 裁剪GIF
@@ -967,9 +1165,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock {
+              completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
+             isNineGird:NO
                   isGIF:YES
          isReverseOrder:isReverseOrder
                    rate:rate
@@ -990,9 +1189,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock {
+              completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
+             isNineGird:NO
                   isGIF:YES
          isReverseOrder:NO
                    rate:1
@@ -1014,9 +1214,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+             completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
+             isNineGird:NO
                   isGIF:YES
          isReverseOrder:isReverseOrder
                    rate:rate
@@ -1037,9 +1238,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+             completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
+             isNineGird:NO
                   isGIF:YES
          isReverseOrder:NO
                    rate:1
@@ -1064,7 +1266,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock {
+             completeBlock:(JPCropDoneBlock)completeBlock {
     if (!asset || compressScale <= 0) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
@@ -1082,6 +1284,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         UIImage *image = [UIImage imageWithCGImage:imageRef];
         [self __cropPicture:image
                   imageData:nil
+                 isNineGird:NO
                       isGIF:NO
              isReverseOrder:NO
                        rate:1
@@ -1106,7 +1309,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                       configure:(JPCropConfigure)configure
                        cacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
-                  completeBlock:(JPCropPictureDoneBlock)completeBlock {
+                  completeBlock:(JPCropDoneBlock)completeBlock {
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self cropVideoToGIFWithAsset:asset
@@ -1139,7 +1342,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     NSTimeInterval seconds = CMTimeGetSeconds(asset.duration);
     
     if (startSecond >= seconds) {
-        [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NilObject];
         return;
     }
     
@@ -1152,7 +1355,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     NSUInteger frameTotal = duration * fps;
     if (frameTotal <= 0) {
-        [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NilObject];
         return;
     }
     
@@ -1200,7 +1403,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                                 completeBlock:completeBlock];
                 }
             } else {
-                [self __executeCropPictureDoneBlock:completeBlock finalImage:nil cacheURL:nil isCacheSuccess:NO];
+                [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NilObject];
             }
         }
     }];
@@ -1215,7 +1418,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
                 startBlock:(JPExportVideoStartBlock)startBlock
-             completeBlock:(JPExportVideoCompleteBlock)completeBlock {
+             completeBlock:(JPCropDoneBlock)completeBlock {
     if (!asset) {
         [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_NilObject];
         return;
@@ -1349,12 +1552,12 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         AVAssetExportSessionStatus status = session.status;
         if (status == AVAssetExportSessionStatusCompleted) {
             if ([tmpURL isEqual:cacheURL]) {
-                [self __executeExportVideoCompleteBlock:completeBlock cacheURL:cacheURL];
+                [self __executeCropDoneBlock:completeBlock videoCacheURL:cacheURL];
             } else {
                 NSError *error;
                 [[NSFileManager defaultManager] moveItemAtURL:tmpURL toURL:cacheURL error:&error];
                 if (error) [[NSFileManager defaultManager] removeItemAtURL:cacheURL error:nil];
-                [self __executeExportVideoCompleteBlock:completeBlock cacheURL:(error ? tmpURL : cacheURL)];
+                [self __executeCropDoneBlock:completeBlock videoCacheURL:(error ? tmpURL : cacheURL)];
             }
         } else {
             [[NSFileManager defaultManager] removeItemAtURL:tmpURL error:nil];
@@ -1489,4 +1692,5 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         }
     }];
 }
+
 @end

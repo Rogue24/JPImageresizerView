@@ -108,8 +108,7 @@ extension JPCropViewController {
             }
             JPProgressHUD.dismiss()
             guard let navCtr = self?.navigationController,
-                  let previewVC = self?.storyboard?.instantiateViewController(withIdentifier: "JPPreviewViewController") as? JPPreviewViewController else { return }
-            previewVC.image = image
+                  let previewVC = JPPreviewViewController.build(with: JPImageresizerResult(image: image, cacheURL: nil)) else { return }
             navCtr.pushViewController(previewVC, animated: true)
         }
     }

@@ -1,5 +1,5 @@
 //
-//  CALayer+JPImageresizer.h
+//  JPImageresizer+Extension.h
 //  JPImageresizerView
 //
 //  Created by 周健平 on 2019/8/2.
@@ -24,5 +24,11 @@
                                       toValue:(id)toValue
                            timingFunctionName:(CAMediaTimingFunctionName)timingFunctionName
                                      duration:(NSTimeInterval)duration;
+
+@end
+
+@interface NSURL (JPImageresizer)
+
+- (NSString *)jpir_filePathWithoutExtension;
 
 @end

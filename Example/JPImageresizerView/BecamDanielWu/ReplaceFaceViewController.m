@@ -141,8 +141,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [JPProgressHUD dismiss];
-            JPPreviewViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
-            vc.image = resultImage;
+            JPPreviewViewController *vc = [JPPreviewViewController buildWithResult:[[JPImageresizerResult alloc] initWithImage:resultImage cacheURL:nil]];
             [self.navigationController pushViewController:vc animated:YES];
         });
     });

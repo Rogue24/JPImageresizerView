@@ -1,11 +1,11 @@
 //
-//  CALayer+JPImageresizer.m
+//  JPImageresizer+Extension.m
 //  JPImageresizerView
 //
 //  Created by 周健平 on 2019/8/2.
 //
 
-#import "CALayer+JPImageresizer.h"
+#import "JPImageresizer+Extension.h"
 
 @implementation CABasicAnimation (JPImageresizer)
 
@@ -39,4 +39,18 @@
 
 @end
 
+@implementation NSURL (JPImageresizer)
+
+- (NSString *)jpir_filePathWithoutExtension {
+    NSString *absoluteString = self.absoluteString;
+    NSString *lastPathComponent = self.lastPathComponent;
+    
+    NSRange lastPathComponentRange = NSMakeRange(absoluteString.length - lastPathComponent.length, lastPathComponent.length);
+    
+    lastPathComponent = [lastPathComponent componentsSeparatedByString:@"."].firstObject;
+    
+    return [absoluteString stringByReplacingCharactersInRange:lastPathComponentRange withString:lastPathComponent];
+}
+
+@end
 

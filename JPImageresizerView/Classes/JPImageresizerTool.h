@@ -34,7 +34,7 @@
                compressScale:(CGFloat)compressScale
                     cacheURL:(NSURL *)cacheURL
                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-               completeBlock:(JPCropPictureDoneBlock)completeBlock;
+               completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 裁剪图片（NSData）
@@ -45,7 +45,31 @@
                    compressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                   completeBlock:(JPCropDoneBlock)completeBlock;
+
+/**
+ * 裁剪九宫格图片（UIImage）
+ */
++ (void)cropNineGirdPicturesWithImage:(UIImage *)image
+                              bgColor:(UIColor *)bgColor
+                            maskImage:(UIImage *)maskImage
+                            configure:(JPCropConfigure)configure
+                        compressScale:(CGFloat)compressScale
+                             cacheURL:(NSURL *)cacheURL
+                           errorBlock:(JPImageresizerErrorBlock)errorBlock
+                        completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
+
+/**
+ * 裁剪九宫格图片（NSData）
+ */
++ (void)cropNineGirdPicturesWithImageData:(NSData *)imageData
+                                  bgColor:(UIColor *)bgColor
+                                maskImage:(UIImage *)maskImage
+                                configure:(JPCropConfigure)configure
+                            compressScale:(CGFloat)compressScale
+                                 cacheURL:(NSURL *)cacheURL
+                               errorBlock:(JPImageresizerErrorBlock)errorBlock
+                            completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
 
 #pragma mark - 裁剪GIF
 /**
@@ -59,7 +83,7 @@
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock;
+              completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 裁剪GIF其中一帧（UIImage）
@@ -71,7 +95,7 @@
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-              completeBlock:(JPCropPictureDoneBlock)completeBlock;
+              completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 裁剪GIF（NSData）
@@ -84,7 +108,7 @@
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock;
+             completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 裁剪GIF其中一帧（NSData）
@@ -96,7 +120,7 @@
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock;
+             completeBlock:(JPCropDoneBlock)completeBlock;
 
 
 #pragma mark - 裁剪视频
@@ -111,7 +135,7 @@
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-             completeBlock:(JPCropPictureDoneBlock)completeBlock;
+             completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 截取视频一小段并裁剪成GIF
@@ -126,7 +150,7 @@
                       configure:(JPCropConfigure)configure
                        cacheURL:(NSURL *)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
-                  completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
  * 裁剪视频
@@ -139,7 +163,7 @@
                   cacheURL:(NSURL *)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
                 startBlock:(JPExportVideoStartBlock)startBlock
-             completeBlock:(JPExportVideoCompleteBlock)completeBlock;
+             completeBlock:(JPCropDoneBlock)completeBlock;
 
 #pragma mark - 修正视频方向
 + (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset

@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.8.3)
+## Brief introduction (Current version: 1.9.0)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -31,7 +31,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ It can cut the whole picture or a frame of local video;
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
-        ✅ The current clipping state can be saved.
+        ✅ The current clipping state can be saved;
+        ✅ The picture can be cropped for nine gird.
 
     TODO:
         🔘 Swift version;
@@ -210,21 +211,40 @@ if (@available(iOS 11.0, *)) {
     // error callback
     // reason: JPImageresizerErrorReason
     // Pay attention to circular references
-} completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
+} completeBlock:^(JPImageresizerResult *result) {
     // Crop complete
-    // finalImage: Image that has been decoded after clipping
-    // cacheURL: Cache path
-    // isCacheSuccess: Whether the cache is successful, NO means unsuccessful, and the cacheurl is nil
+    // result: JPImageresizerResult
+    // result.image: Image that has been decoded after clipping
+    // result.cacheURL: Cache path
+    // result.isCacheSuccess: Whether the cache is successful, NO means unsuccessful, and the cacheurl is nil
     // Pay attention to circular references
 }];
 
 
 // 2.Custom compression ratio crop picture
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// compressScale --- If it is greater than or equal to 1, it will be cropped according to the size of the original image; if it is less than or equal to 0, it will return nil (for example: compressscale = 0.51000 x 500 -- > 500 x 250)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
                           errorBlock:(JPImageresizerErrorBlock)errorBlock
-                       completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                       completeBlock:(JPCropDoneBlock)completeBlock;
+```
+
+**Crop nine gird pictures**
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropninegird.gif)
+```objc
+// compressScale --- If it is greater than or equal to 1, it will be cropped according to the size of the original image; if it is less than or equal to 0, it will return nil (for example: compressscale = 0.51000 x 500 -- > 500 x 250)
+// bgColor --- Background color of nine grid (set the background color of hidden (transparent) area if the picture has transparent area or mask is set)
+[self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    // error callback
+    // reason: JPImageresizerErrorReason
+    // Pay attention to circular references
+} completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults) {
+    // Crop complete
+    // originResult: JPImageresizerResult (The result before the nine grid)
+    // fragmentResults: The originResult.image is cropped into the result set of nine gird pictures (9 in total)
+    // Pay attention to circular references
+}];
 ```
 
 #### Crop GIF
@@ -236,54 +256,56 @@ if (@available(iOS 11.0, *)) {
     // error callback
     // reason: JPImageresizerErrorReason
     // Pay attention to circular references
-} completeBlock:^(UIImage *finalImage, NSURL *cacheURL, BOOL isCacheSuccess) {
+} completeBlock:^(JPImageresizerResult *result) {
     // Crop complete
-    // finalImage: GIF that has been decoded after clipping
-    // cacheURL: Cache path
-    // isCacheSuccess: Whether the cache is successful, NO means unsuccessful, and the cacheurl is nil
+    // result: JPImageresizerResult
+    // result.image: GIF that has been decoded after clipping
+    // result.cacheURL: Cache path
+    // result.isCacheSuccess: Whether the cache is successful, NO means unsuccessful, and the cacheurl is nil
     // Pay attention to circular references
 }];
 
 // 2.Custom compression scale clipping GIF
-// completeBlock --- Clipping completed callback (return decoded GIF, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded GIF and cache path)
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.Custom crop GIF
 // isReverseOrder --- Inverted or not
-// completeBlock --- Clipping completed callback (return decoded GIF, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded GIF and cache path)
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                   completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
 **Crop one of the GIF frames**
 ```objc
 // 1.The size of the original image cuts the current frame of GIF
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
                              errorBlock:(JPImageresizerErrorBlock)errorBlock
-                          completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                          completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.Customize the compression ratio to crop the current frame of GIF
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                     cacheURL:(NSURL *)cacheURL
                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-                               completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                               completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.Custom compression ratio clipping GIF specified frame
 // index --- What frame
+// compressScale --- If it is greater than or equal to 1, it will be cropped according to the size of the original image; if it is less than or equal to 0, it will return nil (for example: compressscale = 0.51000 x 500 -- > 500 x 250)
 - (void)cropGIFWithIndex:(NSUInteger)index
            compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
               errorBlock:(JPImageresizerErrorBlock)errorBlock
-           completeBlock:(JPCropPictureDoneBlock)completeBlock;
+           completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 - PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is NO, if YES is set, GIF will be played automatically)
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
@@ -304,9 +326,10 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
     // Monitor progress
     // progress：0~1
     // Pay attention to circular references
-} completeBlock:^(NSURL *cacheURL) {
+} completeBlock:^(JPImageresizerResult *result) {
     // Tailoring complete
-    // cacheURL: If the cacheurl is set to nil, it will be cached in the NSTemporaryDirectory folder of the system by default. The video name is the current timestamp, and the format is MP4
+    // result: JPImageresizerResult
+    // result.cacheURL: If the cacheurl is set to nil, it will be cached in the NSTemporaryDirectory folder of the system by default. The video name is the current timestamp, and the format is MP4
     // Pay attention to circular references
 }];
 
@@ -314,9 +337,9 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 // presetName --- The video export quality of the system, such as: AVAssetExportPresetLowQuality, AVAssetExportPresetMediumQuality, AVAssetExportPresetHighestQuality, etc
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *)cacheURL 
-                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                 progressBlock:(JPExportVideoProgressBlock)progressBlock
-                 completeBlock:(JPExportVideoCompleteBlock)completeBlock;
+                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                  progressBlock:(JPExportVideoProgressBlock)progressBlock
+                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 // Cancel video export
 // When the video is being exported, the call can cancel the export and trigger the errorblock callback (JPIEReason_ExportCancelled)
@@ -328,28 +351,28 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ```ojbc
 // 1.The size of the original image cuts the current frame of the video
 // cacheURL --- Cache path (can be set to nil, it will not be cached)
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
                                errorBlock:(JPImageresizerErrorBlock)errorBlock
-                            completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                            completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.Clipping the current frame of video with custom compression ratio
 // cacheURL --- Cache path (can be set to nil, it will not be cached)
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                       cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                 completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.Custom compression ratio clipping video frame
 // second --- Second screen
 // cacheURL --- Cache path (can be set to nil, it will not be cached)
-// completeBlock --- Clipping completed callback (return decoded image, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                      completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
 **Cut a video segment and transfer it to GIF**
@@ -357,17 +380,17 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ```objc
 // 1.Video from the current time to capture a specified number of seconds screen to GIF (fps = 10, rate = 1, maximumSize = 500 * 500)
 // duration --- How many seconds are intercepted
-// completeBlock --- Clipping completed callback (return decoded GIF, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded GIF and cache path)
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                      completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                                      completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.Video custom capture the specified number of seconds to GIF
 // duration --- How many seconds are intercepted
 // fps --- Frame rate (set to 0 to use the real frame rate of the video)
 // maximumSize --- Intercepted size (set to 0 to take the real size of the video)
-// completeBlock --- Clipping completed callback (return decoded GIF, cache path, whether cache succeeded)
+// completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded GIF and cache path)
 - (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
                              duration:(NSTimeInterval)duration
                                   fps:(float)fps
@@ -375,7 +398,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                           maximumSize:(CGSize)maximumSize
                              cacheURL:(NSURL *)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
-                        completeBlock:(JPCropPictureDoneBlock)completeBlock;
+                        completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 - PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
 
