@@ -499,19 +499,39 @@
 
 /*!
  @method
- @brief 裁剪九宫格图片
+ @brief 裁剪N宫格图片
+ @param columnCount --- N宫格的列数（最小1列）
+ @param rowCount --- N宫格的行数（最小1行）
+ @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+ @param bgColor --- N宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
+ @param cacheURL --- 缓存路径（可设置为nil）
+ @param errorBlock --- 错误回调
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的原图结果和N张碎片图片结果集合，包含已解码好的图片、缓存路径、列数和行数）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropGirdPicturesWithColumnCount:(NSInteger)columnCount
+                               rowCount:(NSInteger)rowCount
+                          compressScale:(CGFloat)compressScale
+                                bgColor:(UIColor *)bgColor
+                               cacheURL:(NSURL *)cacheURL
+                             errorBlock:(JPImageresizerErrorBlock)errorBlock
+                          completeBlock:(JPCropNGirdDoneBlock)completeBlock;
+
+/*!
+ @method
+ @brief 裁剪九宫格图片（3行3列）
  @param compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
  @param bgColor --- 九宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
- @param completeBlock --- 裁剪完成的回调（返回裁剪后的原图结果和九张碎片图片结果集合，包含已解码好的图片、缓存路径）
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的原图结果和九张碎片图片结果集合，包含已解码好的图片、缓存路径、列数和行数）
+ @discussion 实则调用的是3行3列的N宫格方法，裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
                                       bgColor:(UIColor *)bgColor
                                      cacheURL:(NSURL *)cacheURL
                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
+                                completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
 #pragma mark 裁剪GIF
 /*!

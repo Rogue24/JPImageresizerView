@@ -13,6 +13,8 @@
 
 @interface JPPreviewViewController ()
 @property (nonatomic, copy) NSArray<JPImageresizerResult *> *results;
+@property (nonatomic, assign) NSInteger columnCount;
+@property (nonatomic, assign) NSInteger rowCount;
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, copy) NSArray<UIImageView *> *fragmentImageViews;
@@ -28,15 +30,27 @@
     NSInteger _changeOrientationTag;
 }
 
+- (void)setColumnCount:(NSInteger)columnCount {
+    _columnCount = columnCount <= 0 ? 1 : columnCount;
+}
+
+- (void)setRowCount:(NSInteger)rowCount {
+    _rowCount = rowCount <= 0 ? 1 : rowCount;
+}
+
 #pragma mark - 工厂
 
 + (instancetype)buildWithResult:(JPImageresizerResult *)result {
-    return [self buildWithResults:@[result]];
+    return [self buildWithResults:@[result] columnCount:1 rowCount:1];
 }
 
-+ (instancetype)buildWithResults:(NSArray<JPImageresizerResult *> *)results {
++ (instancetype)buildWithResults:(NSArray<JPImageresizerResult *> *)results
+                     columnCount:(NSInteger)columnCount
+                        rowCount:(NSInteger)rowCount {
     JPPreviewViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPPreviewViewController"];
     vc.results = results;
+    vc.columnCount = columnCount;
+    vc.rowCount = rowCount;
     return vc;
 }
 
@@ -183,6 +197,8 @@
 - (void)__setupImageView {
     self.toolbar.hidden = YES;
     
+    if (self.results.count == 0) return;
+    
     if (self.results.count == 1) {
         JPImageresizerResult *result = self.results.firstObject;
         
@@ -206,8 +222,6 @@
         }
         return;
     }
-    
-    if (self.results.count != 10) return;
     
     NSMutableArray<UIImageView *> *fragmentImageViews = [NSMutableArray array];
     for (NSInteger i = 1; i < self.results.count; i++) {
@@ -291,12 +305,12 @@
         }
     }
     
-    imgViewW /= 3.0;
-    imgViewH /= 3.0;
+    imgViewW /= (CGFloat)self.columnCount;
+    imgViewH /= (CGFloat)self.rowCount;
     
     for (NSInteger i = 0; i < self.fragmentImageViews.count; i++) {
-        CGFloat x = imgViewX + (i % 3) * imgViewW;
-        CGFloat y = imgViewY + (i / 3) * imgViewH;
+        CGFloat x = imgViewX + (i % self.columnCount) * imgViewW;
+        CGFloat y = imgViewY + (i / self.columnCount) * imgViewH;
         UIImageView *imageView = self.fragmentImageViews[i];
         imageView.frame = CGRectMake(x, y, imgViewW, imgViewH);
     }

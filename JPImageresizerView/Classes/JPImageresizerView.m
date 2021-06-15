@@ -1216,38 +1216,38 @@
     }
 }
 
-// 裁剪九宫格图片
-- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
-                                      bgColor:(UIColor *)bgColor
-                                     cacheURL:(NSURL *)cacheURL
-                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+// 裁剪N宫格图片
+- (void)cropGirdPicturesWithColumnCount:(NSInteger)columnCount
+                               rowCount:(NSInteger)rowCount
+                          compressScale:(CGFloat)compressScale
+                                bgColor:(UIColor *)bgColor
+                               cacheURL:(NSURL *)cacheURL
+                             errorBlock:(JPImageresizerErrorBlock)errorBlock
+                          completeBlock:(JPCropNGirdDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
-        !completeBlock ? : completeBlock(nil, nil);
+        !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
+        return;
+    }
+    if (columnCount == 0 || rowCount == 0) {
+        JPIRLog(@"jp_tip: %@要大于0", columnCount == 0 ? @"列数" : @"行数");
+        !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
-        !completeBlock ? : completeBlock(nil, nil);
+        !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
     if (self.videoObj || self.isGIF) {
         JPIRLog(@"jp_tip: 九宫格目前只能作用于图片");
-        !completeBlock ? : completeBlock(nil, nil);
+        !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
     if (self.imageData) {
-        [JPImageresizerTool cropNineGirdPicturesWithImageData:self.imageData
-                                                      bgColor:bgColor
-                                                    maskImage:self.frameView.maskImage
-                                                    configure:self.frameView.currentCropConfigure
-                                                compressScale:compressScale
-                                                     cacheURL:cacheURL
-                                                   errorBlock:errorBlock
-                                                completeBlock:completeBlock];
-    } else {
-        [JPImageresizerTool cropNineGirdPicturesWithImage:self.image
+        [JPImageresizerTool cropGirdPicturesWithImageData:self.imageData
+                                              columnCount:columnCount
+                                                 rowCount:rowCount
                                                   bgColor:bgColor
                                                 maskImage:self.frameView.maskImage
                                                 configure:self.frameView.currentCropConfigure
@@ -1255,7 +1255,33 @@
                                                  cacheURL:cacheURL
                                                errorBlock:errorBlock
                                             completeBlock:completeBlock];
+    } else {
+        [JPImageresizerTool cropGirdPicturesWithImage:self.image
+                                          columnCount:columnCount
+                                             rowCount:rowCount
+                                              bgColor:bgColor
+                                            maskImage:self.frameView.maskImage
+                                            configure:self.frameView.currentCropConfigure
+                                        compressScale:compressScale
+                                             cacheURL:cacheURL
+                                           errorBlock:errorBlock
+                                        completeBlock:completeBlock];
     }
+}
+
+// 裁剪九宫格图片
+- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
+                                      bgColor:(UIColor *)bgColor
+                                     cacheURL:(NSURL *)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPCropNGirdDoneBlock)completeBlock {
+    [self cropGirdPicturesWithColumnCount:3
+                                 rowCount:3
+                            compressScale:compressScale
+                                  bgColor:bgColor
+                                 cacheURL:cacheURL
+                               errorBlock:errorBlock
+                            completeBlock:completeBlock];
 }
 
 #pragma mark 裁剪GIF

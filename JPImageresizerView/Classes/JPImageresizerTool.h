@@ -48,28 +48,32 @@
                    completeBlock:(JPCropDoneBlock)completeBlock;
 
 /**
- * 裁剪九宫格图片（UIImage）
+ * 裁剪N宫格图片（UIImage）
  */
-+ (void)cropNineGirdPicturesWithImage:(UIImage *)image
++ (void)cropGirdPicturesWithImage:(UIImage *)image
+                      columnCount:(NSInteger)columnCount
+                         rowCount:(NSInteger)rowCount
+                          bgColor:(UIColor *)bgColor
+                        maskImage:(UIImage *)maskImage
+                        configure:(JPCropConfigure)configure
+                    compressScale:(CGFloat)compressScale
+                         cacheURL:(NSURL *)cacheURL
+                       errorBlock:(JPImageresizerErrorBlock)errorBlock
+                    completeBlock:(JPCropNGirdDoneBlock)completeBlock;
+
+/**
+ * 裁剪N宫格图片（NSData）
+ */
++ (void)cropGirdPicturesWithImageData:(NSData *)imageData
+                          columnCount:(NSInteger)columnCount
+                             rowCount:(NSInteger)rowCount
                               bgColor:(UIColor *)bgColor
                             maskImage:(UIImage *)maskImage
                             configure:(JPCropConfigure)configure
                         compressScale:(CGFloat)compressScale
                              cacheURL:(NSURL *)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
-                        completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
-
-/**
- * 裁剪九宫格图片（NSData）
- */
-+ (void)cropNineGirdPicturesWithImageData:(NSData *)imageData
-                                  bgColor:(UIColor *)bgColor
-                                maskImage:(UIImage *)maskImage
-                                configure:(JPCropConfigure)configure
-                            compressScale:(CGFloat)compressScale
-                                 cacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPImageresizerErrorBlock)errorBlock
-                            completeBlock:(JPNineGirdCropDoneBlock)completeBlock;
+                        completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
 #pragma mark - 裁剪GIF
 /**

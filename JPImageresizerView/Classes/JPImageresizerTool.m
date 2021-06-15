@@ -582,7 +582,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 #pragma mark 裁剪图片&GIF
 + (void)__cropPicture:(UIImage *)image
             imageData:(NSData *)imageData
-           isNineGird:(BOOL)isNineGird
+           isCropGird:(BOOL)isCropGird
                 isGIF:(BOOL)isGIF
        isReverseOrder:(BOOL)isReverseOrder
                  rate:(float)rate
@@ -603,7 +603,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self __cropPicture:image
                       imageData:imageData
-                     isNineGird:isNineGird
+                     isCropGird:isCropGird
                           isGIF:isGIF
                  isReverseOrder:isReverseOrder
                            rate:rate
@@ -680,7 +680,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         if (isGIF) {
             [self __executeCropDoneBlock:completeBlock gifImage:image cacheURL:cacheURL];
         } else {
-            if (isNineGird) {
+            if (isCropGird) {
                 if (!completeBlock) return;
                 JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:image cacheURL:cacheURL];
                 completeBlock(result);
@@ -765,7 +765,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     if (isGIF) {
         [self __executeCropDoneBlock:completeBlock gifImage:finalImage cacheURL:cacheURL];
     } else {
-        if (isNineGird) {
+        if (isCropGird) {
             if (!completeBlock) return;
             JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:finalImage cacheURL:cacheURL];
             completeBlock(result);
@@ -775,14 +775,29 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }
 }
 
-#pragma mark 裁剪九宫格图片（在子线程调起）
-+ (void)__cropNineGirdPicturesWithOriginResult:(JPImageresizerResult *)originResult
-                                       bgColor:(UIColor *)bgColor
-                                 completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+#pragma mark 裁剪N宫格图片（在子线程调起）
++ (void)__cropGirdPicturesWithOriginResult:(JPImageresizerResult *)originResult
+                               columnCount:(NSInteger)columnCount
+                                  rowCount:(NSInteger)rowCount
+                                   bgColor:(UIColor *)bgColor
+                             completeBlock:(JPCropNGirdDoneBlock)completeBlock {
+    if (columnCount <= 0) columnCount = 1;
+    if (rowCount <= 0) rowCount = 1;
+    
     if (!originResult) {
         if (completeBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                completeBlock(nil, nil);
+                completeBlock(nil, nil, columnCount, rowCount);
+            });
+        }
+        return;
+    }
+    
+    NSInteger total = columnCount * rowCount;
+    if (total == 1) {
+        if (completeBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completeBlock(originResult, @[], columnCount, rowCount);
             });
         }
         return;
@@ -791,8 +806,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGImageRef imageRef = originResult.image.CGImage;
     CGFloat imageWidth = CGImageGetWidth(imageRef);
     CGFloat imageHeight = CGImageGetHeight(imageRef);
-    CGFloat renderWidth = imageWidth / 3.0;
-    CGFloat renderHeight = imageHeight / 3.0;
+    CGFloat renderWidth = imageWidth / (CGFloat)columnCount;
+    CGFloat renderHeight = imageHeight / (CGFloat)rowCount;
     CGRect renderRect = CGRectMake(0, 0, renderWidth, renderHeight);
     
     BOOL hasAlpha = NO;
@@ -824,7 +839,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
     
     NSMutableArray<JPImageresizerResult *> *fragmentsResults = [NSMutableArray array];
-    for (NSInteger i = 0; i < 9; i++) {
+    NSInteger lastIndex = total - 1;
+    for (NSInteger i = 0; i < total; i++) {
         @autoreleasepool {
             CGContextSaveGState(context);
             
@@ -834,8 +850,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             }
             
             // 从左上角开始裁剪：从左往右，从上而下
-            CGFloat x = -renderWidth * (i % 3);
-            CGFloat y = -renderHeight * ((8 - i) / 3);
+            CGFloat x = -renderWidth * (i % columnCount);
+            CGFloat y = -renderHeight * ((lastIndex - i) / columnCount); // CoreGraphics的坐标系y轴是从底部开始的，所以y从最后一个开始算起
             
             CGContextDrawImage(context, CGRectMake(x, y, imageWidth, imageHeight), imageRef);
             CGImageRef singleCGImage = CGBitmapContextCreateImage(context);
@@ -862,7 +878,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     if (completeBlock) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            completeBlock(originResult, fragmentsResults);
+            completeBlock(originResult, fragmentsResults, columnCount, rowCount);
         });
     }
 }
@@ -1062,7 +1078,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:image
               imageData:nil
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:NO
          isReverseOrder:NO
                    rate:1
@@ -1085,7 +1101,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                    completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:imageData
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:NO
          isReverseOrder:NO
                    rate:1
@@ -1098,46 +1114,52 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
           completeBlock:completeBlock];
 }
 
-#pragma mark 裁剪九宫格图片（UIImage）
-+ (void)cropNineGirdPicturesWithImage:(UIImage *)image
+#pragma mark 裁剪N宫格图片（UIImage）
++ (void)cropGirdPicturesWithImage:(UIImage *)image
+                      columnCount:(NSInteger)columnCount
+                         rowCount:(NSInteger)rowCount
+                          bgColor:(UIColor *)bgColor
+                        maskImage:(UIImage *)maskImage
+                        configure:(JPCropConfigure)configure
+                    compressScale:(CGFloat)compressScale
+                         cacheURL:(NSURL *)cacheURL
+                       errorBlock:(JPImageresizerErrorBlock)errorBlock
+                    completeBlock:(JPCropNGirdDoneBlock)completeBlock {
+    [self __cropPicture:image
+              imageData:nil
+             isCropGird:YES
+                  isGIF:NO
+         isReverseOrder:NO
+                   rate:1
+                  index:-1
+              maskImage:maskImage
+              configure:configure
+          compressScale:compressScale
+               cacheURL:cacheURL
+             errorBlock:errorBlock
+          completeBlock:^(JPImageresizerResult *result) {
+        [self __cropGirdPicturesWithOriginResult:result
+                                     columnCount:columnCount
+                                        rowCount:rowCount
+                                         bgColor:bgColor
+                                   completeBlock:completeBlock];
+    }];
+}
+
+#pragma mark 裁剪N宫格图片（NSData）
++ (void)cropGirdPicturesWithImageData:(NSData *)imageData
+                          columnCount:(NSInteger)columnCount
+                             rowCount:(NSInteger)rowCount
                               bgColor:(UIColor *)bgColor
                             maskImage:(UIImage *)maskImage
                             configure:(JPCropConfigure)configure
                         compressScale:(CGFloat)compressScale
                              cacheURL:(NSURL *)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
-                        completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
-    [self __cropPicture:image
-              imageData:nil
-             isNineGird:YES
-                  isGIF:NO
-         isReverseOrder:NO
-                   rate:1
-                  index:-1
-              maskImage:maskImage
-              configure:configure
-          compressScale:compressScale
-               cacheURL:cacheURL
-             errorBlock:errorBlock
-          completeBlock:^(JPImageresizerResult *result) {
-        [self __cropNineGirdPicturesWithOriginResult:result
-                                             bgColor:bgColor
-                                       completeBlock:completeBlock];
-    }];
-}
-
-#pragma mark 裁剪九宫格图片（NSData）
-+ (void)cropNineGirdPicturesWithImageData:(NSData *)imageData
-                                  bgColor:(UIColor *)bgColor
-                                maskImage:(UIImage *)maskImage
-                                configure:(JPCropConfigure)configure
-                            compressScale:(CGFloat)compressScale
-                                 cacheURL:(NSURL *)cacheURL
-                               errorBlock:(JPImageresizerErrorBlock)errorBlock
-                            completeBlock:(JPNineGirdCropDoneBlock)completeBlock {
+                        completeBlock:(JPCropNGirdDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:imageData
-             isNineGird:YES
+             isCropGird:YES
                   isGIF:NO
          isReverseOrder:NO
                    rate:1
@@ -1148,9 +1170,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                cacheURL:cacheURL
              errorBlock:errorBlock
           completeBlock:^(JPImageresizerResult *result) {
-        [self __cropNineGirdPicturesWithOriginResult:result
-                                             bgColor:bgColor
-                                       completeBlock:completeBlock];
+        [self __cropGirdPicturesWithOriginResult:result
+                                     columnCount:columnCount
+                                        rowCount:rowCount
+                                         bgColor:bgColor
+                                   completeBlock:completeBlock];
     }];
 }
 
@@ -1168,7 +1192,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
               completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:YES
          isReverseOrder:isReverseOrder
                    rate:rate
@@ -1192,7 +1216,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
               completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:gifImage
               imageData:nil
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:YES
          isReverseOrder:NO
                    rate:1
@@ -1217,7 +1241,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
              completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:YES
          isReverseOrder:isReverseOrder
                    rate:rate
@@ -1241,7 +1265,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
              completeBlock:(JPCropDoneBlock)completeBlock {
     [self __cropPicture:nil
               imageData:gifData
-             isNineGird:NO
+             isCropGird:NO
                   isGIF:YES
          isReverseOrder:NO
                    rate:1
@@ -1284,7 +1308,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         UIImage *image = [UIImage imageWithCGImage:imageRef];
         [self __cropPicture:image
                   imageData:nil
-                 isNineGird:NO
+                 isCropGird:NO
                       isGIF:NO
              isReverseOrder:NO
                        rate:1

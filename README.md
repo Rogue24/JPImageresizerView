@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.9.0）
+## 简介（当前版本：1.9.1）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -30,7 +30,7 @@
         ✅ 可截取某一段本地视频，裁剪后并转成GIF；
         ✅ 可裁剪GIF；
         ✅ 可保存当前裁剪状态；
-        ✅ 图片可裁剪九宫格。
+        ✅ 图片支持N宫格裁剪。
 
     TODO：
         🔘 Swift版本；
@@ -44,7 +44,7 @@
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
     
 ## 最新改动
-    1.图片新增【九宫格裁剪】；
+    1.图片新增【N宫格裁剪】；
     2.所有的裁剪完成回调统一返回JPImageresizerResult实例
         ...completeBlock:^(JPImageresizerResult *result) {
             // result：裁剪后的结果（JPImageresizerResult）
@@ -239,21 +239,33 @@ if (@available(iOS 11.0, *)) {
                        completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**裁剪九宫格图片**
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropninegird.gif)
+**裁剪N宫格图片**
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
 ```objc
+// 1.自定义N宫格裁剪
+// columnCount：N宫格的列数（最小1列）
+// rowCount：N宫格的行数（最小1行）
 // compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-// bgColor --- 九宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
-[self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+// bgColor --- N宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
+[self.imageresizerView cropGirdPicturesWithColumnCount:4 rowCount:2 compressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
     // 错误的回调
     // reason：错误原因
     // 注意循环引用
-} completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults) {
+} completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
     // 裁剪完成
-    // originResult：裁剪后的原图结果（九宫格之前）
-    // fragmentResults：裁剪后的原图被裁剪成九宫格图片的结果集合（共9个）
+    // originResult：裁剪后的原图结果（开始N宫格之前）
+    // fragmentResults：裁剪后的原图被裁剪成N宫格图片的结果集合（共 columnCount * rowCount 个）
+    // columnCount：调用该方法时传入的列数
+    // rowCount：调用该方法时传入的行数
     // 注意循环引用
 }];
+
+// 2.九宫格裁剪（3行3列）
+- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
+                                      bgColor:(UIColor *)bgColor
+                                     cacheURL:(NSURL *)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 ```
 
 #### 裁剪GIF
@@ -629,7 +641,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.9.0 | 1. 图片新增九宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例。
+1.9.0~1.9.1 | 1. 图片新增N宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例。
 1.7.8~1.8.3 | 1. 新增可保存当前历史状态的功能；<br>2. 修复GIF裁剪某一帧画面时的后缀名误设问题；<br>3. 修复仅放大而无法裁剪的问题；<br>4. 修复从系统相册选择的视频没有画面的问题；<br>5. 修复预览模式下进度条没有隐藏的问题。
 1.7.6~1.7.7 | 1. 修复了固定比例旋转时无故放大的问题；<br>2. 修复iOS14版本下自定义进度条的拖动块消失的问题。
 1.7.3~1.7.5 | 1. 修复了初始化无法固定裁剪比例的问题；<br>2. 现在圆切和蒙版均可设置是否自由拖拽；<br>3. 优化了设置裁剪宽高比和重置的接口；<br>4. 优化了图片缓存逻辑；<br>5. 修复了GIF时长过短导致截取错误的问题。

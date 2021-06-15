@@ -602,10 +602,10 @@ static UIViewController *tmpVC_;
             @jp_strongify(self);
             if (!self) return;
             [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-        } completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults) {
+        } completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
             @jp_strongify(self);
             if (!self) return;
-            [self __nineGirdImageresizerDoneWithOriginResult:originResult fragmentResults:fragmentResults];
+            [self __girdImageresizerDoneWithOriginResult:originResult fragmentResults:fragmentResults columnCount:columnCount rowCount:rowCount];
         }];
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
@@ -644,13 +644,13 @@ static UIViewController *tmpVC_;
     }
 }
 
-- (void)__nineGirdImageresizerDoneWithOriginResult:(JPImageresizerResult *)originResult fragmentResults:(NSArray<JPImageresizerResult *> *)fragmentResults {
+- (void)__girdImageresizerDoneWithOriginResult:(JPImageresizerResult *)originResult fragmentResults:(NSArray<JPImageresizerResult *> *)fragmentResults columnCount:(NSInteger)columnCount rowCount:(NSInteger)rowCount {
     if (!originResult || fragmentResults.count == 0) {
         [JPProgressHUD showErrorWithStatus:@"裁剪失败" userInteractionEnabled:YES];
         return;
     }
     [JPProgressHUD dismiss];
-    JPPreviewViewController *vc = [JPPreviewViewController buildWithResults:[@[originResult] arrayByAddingObjectsFromArray:fragmentResults]];
+    JPPreviewViewController *vc = [JPPreviewViewController buildWithResults:[@[originResult] arrayByAddingObjectsFromArray:fragmentResults] columnCount:columnCount rowCount:rowCount];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

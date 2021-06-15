@@ -123,11 +123,13 @@ typedef void(^JPExportVideoCompleteBlock)(NSURL *cacheURL);
 typedef void(^JPCropDoneBlock)(JPImageresizerResult *result);
 
 /**
- * 九宫格图片裁剪完成的回调
-    - originResult：裁剪后的原图结果（九宫格之前）
-    - fragmentResults：裁剪后的原图被裁剪成九宫格图片的结果集合（共9个）
+ * N宫格图片裁剪完成的回调
+    - originResult：裁剪后的原图结果（开始N宫格之前）
+    - fragmentResults：裁剪后的原图被裁剪成N宫格图片的结果集合（共 columnCount * rowCount 个）
+    - columnCount：N宫格的列数
+    - rowCount：N宫格的行数
  */
-typedef void(^JPNineGirdCropDoneBlock)(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults);
+typedef void(^JPCropNGirdDoneBlock)(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount);
 
 #pragma mark - 裁剪属性
 

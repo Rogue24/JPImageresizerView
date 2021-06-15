@@ -11,5 +11,7 @@
 
 @interface JPPreviewViewController : UIViewController
 + (instancetype)buildWithResult:(JPImageresizerResult *)result;
-+ (instancetype)buildWithResults:(NSArray<JPImageresizerResult *> *)results;
++ (instancetype)buildWithResults:(NSArray<JPImageresizerResult *> *)results
+                     columnCount:(NSInteger)columnCount
+                        rowCount:(NSInteger)rowCount;
 @end

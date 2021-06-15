@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.9.0)
+## Brief introduction (Current version: 1.9.1)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -32,7 +32,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
         ✅ The current clipping state can be saved;
-        ✅ The picture can be cropped for nine gird.
+        ✅ Images support n-grid clipping.
 
     TODO:
         🔘 Swift version;
@@ -230,21 +230,33 @@ if (@available(iOS 11.0, *)) {
                        completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**Crop nine gird pictures**
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropninegird.gif)
+**Crop N-grid pictures**
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
 ```objc
+// 1.Custom n-grid crop picture
+// columnCount --- The number of columns of n-grid (minimum 1 column)
+// rowCount --- The number of rows of n-grid (minimum 1 row)
 // compressScale --- If it is greater than or equal to 1, it will be cropped according to the size of the original image; if it is less than or equal to 0, it will return nil (for example: compressscale = 0.51000 x 500 -- > 500 x 250)
 // bgColor --- Background color of nine grid (set the background color of hidden (transparent) area if the picture has transparent area or mask is set)
-[self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+[self.imageresizerView cropGirdPicturesWithColumnCount:4 rowCount:2 compressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
     // error callback
     // reason: JPImageresizerErrorReason
     // Pay attention to circular references
-} completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults) {
+} completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
     // Crop complete
-    // originResult: JPImageresizerResult (The result before the nine grid)
-    // fragmentResults: The originResult.image is cropped into the result set of nine gird pictures (9 in total)
+    // originResult: JPImageresizerResult (The result before the n-grid)
+    // fragmentResults: The originResult.image is cropped into the result set of n-grid pictures (total = columnCount * rowCount)
+    // columnCount: The number of columns passed in when the method is called
+    // rowCount: The number of rows passed in when the method is called
     // Pay attention to circular references
 }];
+
+// 2.Nine grid crop picture (3 rows and 3 columns)
+- (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
+                                      bgColor:(UIColor *)bgColor
+                                     cacheURL:(NSURL *)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 ```
 
 #### Crop GIF
@@ -324,7 +336,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
     // Pay attention to circular references
 } progressBlock:^(float progress) {
     // Monitor progress
-    // progress：0~1
+    // progress: 0~1
     // Pay attention to circular references
 } completeBlock:^(JPImageresizerResult *result) {
     // Tailoring complete
@@ -436,8 +448,8 @@ self.imageresizerView.resizeWHScale = 0.0;
 ```objc
 // This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
 // 1.updateFrame: Refresh frame (e.g. horizontal and vertical screen switching, incoming self.view.bounds Just).
-// 2.contentInsets：The inner margin between the crop region and the main view.
-// 3.duration：Animation Duration (< 0, No animation).
+// 2.contentInsets: The inner margin between the crop region and the main view.
+// 3.duration: Animation Duration (< 0, No animation).
 //【Specific operation can refer to Demo】
 [self.imageresizerView updateFrame:self.view.bounds contentInsets:contentInsets duration:duration];
 ```
@@ -597,8 +609,8 @@ self.imageresizerView = imageresizerView;
 ```
 ![save](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/save.gif)
 
-- PS1：If preserved `savedConfigure.history.viewFrame` If it is inconsistent with the current `viewFrame`, the interface will be disordered, and you need to judge whether it is consistent before reopening;
-- PS2：In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
+- PS1: If preserved `savedConfigure.history.viewFrame` If it is inconsistent with the current `viewFrame`, the interface will be disordered, and you need to judge whether it is consistent before reopening;
+- PS2: In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
 
 ### Other
 ```objc
