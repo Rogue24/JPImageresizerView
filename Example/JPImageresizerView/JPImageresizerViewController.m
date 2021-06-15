@@ -369,25 +369,25 @@ static UIViewController *tmpVC_;
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPConciseFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
-        self.imageresizerView.isShowGridlinesWhenDragging = NO;
+        self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"经典样式" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPClassicFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
-        self.imageresizerView.isShowGridlinesWhenDragging = NO;
+        self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"拉伸的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.borderImageRectInset = JPConfigureModel.stretchBorderImageRectInset;
         self.imageresizerView.borderImage = [JPConfigureModel stretchBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
-        self.imageresizerView.isShowGridlinesWhenDragging = NO;
+        self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"平铺的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         self.imageresizerView.borderImageRectInset = JPConfigureModel.tileBorderImageRectInset;
         self.imageresizerView.borderImage = [JPConfigureModel tileBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
-        self.imageresizerView.isShowGridlinesWhenDragging = NO;
+        self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     if (!self.isBecomeDanielWu) {
         [alertCtr addAction:[UIAlertAction actionWithTitle:@"九宫格风格" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
