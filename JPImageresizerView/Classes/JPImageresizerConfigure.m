@@ -9,22 +9,22 @@
 
 @implementation JPImageresizerConfigure
 
-+ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __defaultConfigure];
     configure.image = image;
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __defaultConfigure];
     configure.imageData = imageData;
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL
-                                        make:(void (^)(JPImageresizerConfigure *))make
+                                        make:(JPImageresizerConfigureMakeBlock)make
                                fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                               fixStartBlock:(void(^)(void))fixStartBlock
+                               fixStartBlock:(JPVoidBlock)fixStartBlock
                             fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                             fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __defaultConfigure];
@@ -37,9 +37,9 @@
     return configure;
 }
 + (instancetype)defaultConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                          make:(void (^)(JPImageresizerConfigure *))make
+                                          make:(JPImageresizerConfigureMakeBlock)make
                                  fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                 fixStartBlock:(void(^)(void))fixStartBlock
+                                 fixStartBlock:(JPVoidBlock)fixStartBlock
                               fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                               fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __defaultConfigure];
@@ -52,22 +52,22 @@
     return configure;
 }
 
-+ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
     configure.image = image;
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
     configure.imageData = imageData;
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
-                                                  make:(void (^)(JPImageresizerConfigure *))make
+                                                  make:(JPImageresizerConfigureMakeBlock)make
                                          fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                         fixStartBlock:(void(^)(void))fixStartBlock
+                                         fixStartBlock:(JPVoidBlock)fixStartBlock
                                       fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                       fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
@@ -80,9 +80,9 @@
     return configure;
 }
 + (instancetype)lightBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                                    make:(void (^)(JPImageresizerConfigure *))make
+                                                    make:(JPImageresizerConfigureMakeBlock)make
                                            fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                           fixStartBlock:(void(^)(void))fixStartBlock
+                                           fixStartBlock:(JPVoidBlock)fixStartBlock
                                         fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                         fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __lightBlurMaskTypeConfigure];
@@ -95,22 +95,22 @@
     return configure;
 }
 
-+ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
     configure.image = image;
     !make ? : make(configure);
     return configure;
 }
-+ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void (^)(JPImageresizerConfigure *))make {
++ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make {
     JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
     configure.imageData = imageData;
     !make ? : make(configure);
     return configure;
 }
 + (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
-                                                 make:(void (^)(JPImageresizerConfigure *))make
+                                                 make:(JPImageresizerConfigureMakeBlock)make
                                         fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                        fixStartBlock:(void(^)(void))fixStartBlock
+                                        fixStartBlock:(JPVoidBlock)fixStartBlock
                                      fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                      fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
@@ -123,9 +123,9 @@
     return configure;
 }
 + (instancetype)darkBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                                   make:(void (^)(JPImageresizerConfigure *))make
+                                                   make:(JPImageresizerConfigureMakeBlock)make
                                           fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                          fixStartBlock:(void(^)(void))fixStartBlock
+                                          fixStartBlock:(JPVoidBlock)fixStartBlock
                                        fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                        fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     JPImageresizerConfigure *configure = [self __darkBlurMaskTypeConfigure];
@@ -153,7 +153,7 @@
     .jp_maskImage(nil)
     .jp_isArbitrarily(YES)
     .jp_edgeLineIsEnabled(YES)
-    .jp_contentInsets(UIEdgeInsetsZero)
+    .jp_contentInsets(UIEdgeInsetsMake(16, 16, 16, 16))
     .jp_borderImage(nil)
     .jp_borderImageRectInset(CGPointZero)
     .jp_maximumZoomScale(10.0)

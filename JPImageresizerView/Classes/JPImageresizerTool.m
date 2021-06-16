@@ -478,7 +478,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                                  hasAlpha:(BOOL)hasAlpha
                                 imageData:(NSData *)imageData {
     NSString *extension;
-    if (isGIF && index < 0) {
+    if (isGIF) {
         extension = @"gif";
     } else if (hasAlpha) {
         extension = @"png";
@@ -644,7 +644,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }
     
     if (cacheURL) {
-        cacheURL = [self __fixExtensionForImageCacheURL:cacheURL isGIF:isGIF hasAlpha:hasAlpha imageData:imageData];
+        cacheURL = [self __fixExtensionForImageCacheURL:cacheURL
+                                                  isGIF:(isGIF && index < 0)
+                                               hasAlpha:hasAlpha
+                                              imageData:imageData];
         if ([[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path]) {
             [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_CacheURLAlreadyExists];
             return;
@@ -694,6 +697,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGImageSourceRef source = NULL;
     size_t count = 1;
     if (isGIF) {
+        isGIF = index < 0;
         if (imageData) {
             source = CGImageSourceCreateWithData((__bridge CFTypeRef)(imageData), NULL);
             count = CGImageSourceGetCount(source);
@@ -733,8 +737,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGContextSetShouldAntialias(context, true);
     CGContextSetAllowsAntialiasing(context, true);
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    
-    isGIF = isGIF && index < 0;
     
     UIImage *finalImage;
     if (isGIF) {

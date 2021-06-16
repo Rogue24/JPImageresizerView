@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JPImageresizerSlider : UIView
 + (CGFloat)viewHeight;
 + (instancetype)imageresizerSlider:(float)seconds second:(float)second;
@@ -18,3 +20,5 @@
 @property (nonatomic, copy) void (^sliderDragingBlock)(float second, float totalSecond);
 @property (nonatomic, copy) void (^sliderEndBlock)(float second, float totalSecond);
 @end
+
+NS_ASSUME_NONNULL_END

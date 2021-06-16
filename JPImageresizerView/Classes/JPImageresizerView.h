@@ -11,6 +11,8 @@
 #import <JPImageresizerFrameView.h>
 #import <JPImageresizerResult.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JPImageresizerView : UIView
 
 #pragma mark - UI控件
@@ -90,7 +92,7 @@
  * 裁剪的图片/GIF（UIImage）
  * 设置该值会调用 -setImage: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
  */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *_Nullable image;
 /*!
  @method
  @brief 更换裁剪的图片/GIF（UIImage）
@@ -104,7 +106,7 @@
  * 裁剪的图片/GIF（NSData）
  * 设置该值会调用 -setImageData: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
  */
-@property (nonatomic, strong) NSData *imageData;
+@property (nonatomic, strong) NSData *_Nullable imageData;
 /*!
  @method
  @brief 更换裁剪的图片/GIF（NSData）
@@ -118,7 +120,7 @@
  * 裁剪的视频（NSURL）
  * 设置该值需调用 -setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
  */
-@property (readonly) NSURL *videoURL;
+@property (readonly) NSURL *_Nullable videoURL;
 /*!
  @method
  @brief 更换裁剪的视频
@@ -133,7 +135,7 @@
 - (void)setVideoURL:(NSURL *)videoURL
            animated:(BOOL)isAnimated
       fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-      fixStartBlock:(void(^)(void))fixStartBlock
+      fixStartBlock:(JPVoidBlock)fixStartBlock
    fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
    fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
@@ -141,7 +143,7 @@
  * 裁剪的视频（AVURLAsset）
  * 设置该值需调用 -setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock: 方法
  */
-@property (readonly) AVURLAsset *videoAsset;
+@property (readonly) AVURLAsset *_Nullable videoAsset;
 /*!
  @method
  @brief 更换裁剪的视频
@@ -156,7 +158,7 @@
 - (void)setVideoAsset:(AVURLAsset *)videoAsset
              animated:(BOOL)isAnimated
         fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-        fixStartBlock:(void(^)(void))fixStartBlock
+        fixStartBlock:(JPVoidBlock)fixStartBlock
      fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
      fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
@@ -209,7 +211,7 @@
  * 蒙版图片（直接设置：不为空 --> self.isArbitrarily = NO，固定以蒙版图片的宽高比例拖拽）
  * 设置该值会调用 -setMaskImage: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (maskImage ? NO : self.isArbitrarily)，isAnimated = YES）
  */
-@property (nonatomic) UIImage *maskImage;
+@property (nonatomic) UIImage *_Nullable maskImage;
 /*!
  @method
  @brief 设置蒙版图片
@@ -217,7 +219,7 @@
  @param isAnimated --- 是否带动画效果
  @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
  */
-- (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+- (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
 /**
  * 是否可以任意比例拖拽
@@ -240,7 +242,7 @@
 @property (nonatomic) JPImageresizerFrameType frameType;
 
 /** 边框图片（若为nil则使用frameType的边框） */
-@property (nonatomic) UIImage *borderImage;
+@property (nonatomic) UIImage *_Nullable borderImage;
 
 /** 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距） */
 @property (nonatomic) CGPoint borderImageRectInset;
@@ -271,17 +273,17 @@
  * 裁剪线颜色
  * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-@property (nonatomic) UIColor *strokeColor;
+@property (nonatomic) UIColor *_Nullable strokeColor;
 /**
  * 模糊效果
  * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-@property (nonatomic) UIBlurEffect *blurEffect;
+@property (nonatomic) UIBlurEffect *_Nullable blurEffect;
 /**
  * 背景颜色
  * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-@property (nonatomic) UIColor *bgColor;
+@property (nonatomic) UIColor *_Nullable bgColor;
 /**
  * 遮罩颜色的透明度（背景颜色 * 透明度）
  * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
@@ -297,9 +299,9 @@
  @param isAnimated --- 是否带动画效果
  @discussion 同时修改UI元素
  */
-- (void)setupStrokeColor:(UIColor *)strokeColor
-              blurEffect:(UIBlurEffect *)blurEffect
-                 bgColor:(UIColor *)bgColor
+- (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
+              blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                 bgColor:(UIColor *_Nullable)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated;
 
@@ -458,7 +460,7 @@
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0，否则为蒙版图片的宽高比 resizeWHScale = maskImage.size.width / maskImage.size.height）
  @discussion 重置指定蒙版图片，并以蒙版图片的宽高比作为裁剪宽高比回到最初状态
  */
-- (void)recoveryToMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+- (void)recoveryToMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 #pragma mark - 获取当前裁剪状态
 /*!
@@ -479,7 +481,7 @@
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropPictureWithCacheURL:(NSURL *)cacheURL
+- (void)cropPictureWithCacheURL:(NSURL *_Nullable)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -493,7 +495,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
-                            cacheURL:(NSURL *)cacheURL
+                            cacheURL:(NSURL *_Nullable)cacheURL
                           errorBlock:(JPImageresizerErrorBlock)errorBlock
                        completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -512,8 +514,8 @@
 - (void)cropGirdPicturesWithColumnCount:(NSInteger)columnCount
                                rowCount:(NSInteger)rowCount
                           compressScale:(CGFloat)compressScale
-                                bgColor:(UIColor *)bgColor
-                               cacheURL:(NSURL *)cacheURL
+                                bgColor:(UIColor *_Nullable)bgColor
+                               cacheURL:(NSURL *_Nullable)cacheURL
                              errorBlock:(JPImageresizerErrorBlock)errorBlock
                           completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
@@ -528,8 +530,8 @@
  @discussion 实则调用的是3行3列的N宫格方法，裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropNineGirdPicturesWithCompressScale:(CGFloat)compressScale
-                                      bgColor:(UIColor *)bgColor
-                                     cacheURL:(NSURL *)cacheURL
+                                      bgColor:(UIColor *_Nullable)bgColor
+                                     cacheURL:(NSURL *_Nullable)cacheURL
                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                                 completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
@@ -542,7 +544,7 @@
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropGIFWithCacheURL:(NSURL *)cacheURL
+- (void)cropGIFWithCacheURL:(NSURL *_Nullable)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -556,7 +558,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
-                        cacheURL:(NSURL *)cacheURL
+                        cacheURL:(NSURL *_Nullable)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -574,7 +576,7 @@
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
-                        cacheURL:(NSURL *)cacheURL
+                        cacheURL:(NSURL *_Nullable)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -586,7 +588,7 @@
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
+- (void)cropGIFCurrentIndexWithCacheURL:(NSURL *_Nullable)cacheURL
                              errorBlock:(JPImageresizerErrorBlock)errorBlock
                           completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -600,7 +602,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
-                                    cacheURL:(NSURL *)cacheURL
+                                    cacheURL:(NSURL *_Nullable)cacheURL
                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
                                completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -616,7 +618,7 @@
  */
 - (void)cropGIFWithIndex:(NSUInteger)index
            compressScale:(CGFloat)compressScale
-                cacheURL:(NSURL *)cacheURL
+                cacheURL:(NSURL *_Nullable)cacheURL
               errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -628,7 +630,7 @@
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
-- (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
+- (void)cropVideoCurrentFrameWithCacheURL:(NSURL *_Nullable)cacheURL
                                errorBlock:(JPImageresizerErrorBlock)errorBlock
                             completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -641,7 +643,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
-                                      cacheURL:(NSURL *)cacheURL
+                                      cacheURL:(NSURL *_Nullable)cacheURL
                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                                  completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -656,7 +658,7 @@
  */
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
-                           cacheURL:(NSURL *)cacheURL
+                           cacheURL:(NSURL *_Nullable)cacheURL
                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                       completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -670,7 +672,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
-                                           cacheURL:(NSURL *)cacheURL
+                                           cacheURL:(NSURL *_Nullable)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -692,7 +694,7 @@
                                   fps:(float)fps
                                  rate:(float)rate
                           maximumSize:(CGSize)maximumSize
-                             cacheURL:(NSURL *)cacheURL
+                             cacheURL:(NSURL *_Nullable)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -703,9 +705,9 @@
  @param progressBlock --- 进度回调
  @param errorBlock --- 错误回调
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
- @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，默认使用AVAssetExportPresetHighestQuality的导出质量
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示，使用 AVAssetExportPresetHighestQuality 的导出质量
  */
-- (void)cropVideoWithCacheURL:(NSURL *)cacheURL
+- (void)cropVideoWithCacheURL:(NSURL *_Nullable)cacheURL
                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                 progressBlock:(JPExportVideoProgressBlock)progressBlock
                 completeBlock:(JPCropDoneBlock)completeBlock;
@@ -721,7 +723,7 @@
  @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
  */
 - (void)cropVideoWithPresetName:(NSString *)presetName
-                       cacheURL:(NSURL *)cacheURL
+                       cacheURL:(NSURL *_Nullable)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   progressBlock:(JPExportVideoProgressBlock)progressBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
@@ -734,3 +736,5 @@
 - (void)videoCancelExport;
 
 @end
+
+NS_ASSUME_NONNULL_END

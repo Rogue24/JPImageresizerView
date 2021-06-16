@@ -494,7 +494,7 @@
 - (void)__fixOrientationVideo:(AVURLAsset *)videoAsset
                      animated:(BOOL)isAnimated
                 fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                fixStartBlock:(void(^)(void))fixStartBlock
+                fixStartBlock:(JPVoidBlock)fixStartBlock
              fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
              fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     self.userInteractionEnabled = NO;
@@ -602,7 +602,7 @@
 - (void)setVideoURL:(NSURL *)videoURL
            animated:(BOOL)isAnimated
       fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-      fixStartBlock:(void(^)(void))fixStartBlock
+      fixStartBlock:(JPVoidBlock)fixStartBlock
    fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
    fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     NSAssert(videoURL != nil, @"videoURL cannot be nil.");
@@ -622,7 +622,7 @@
 - (void)setVideoAsset:(AVURLAsset *)videoAsset
              animated:(BOOL)isAnimated
         fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-        fixStartBlock:(void(^)(void))fixStartBlock
+        fixStartBlock:(JPVoidBlock)fixStartBlock
      fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
      fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock {
     NSAssert(videoAsset != nil, @"videoAsset cannot be nil.");

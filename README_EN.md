@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.9.1)
+## Brief introduction (Current version: 1.9.2)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -32,7 +32,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
         ✅ The current clipping state can be saved;
-        ✅ Images support n-grid clipping.
+        ✅ Images support n-grid clipping;
+        ✅ Compatible with Swift environment.
 
     TODO:
         🔘 Swift version;
@@ -190,6 +191,33 @@ if (@available(iOS 11.0, *)) {
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
 ```
+
+#### Using in Swift
+```swift
+// 1.Initial configuration
+let configure = JPImageresizerConfigure.defaultConfigure(with: image) { c in
+    _ = c
+        .jp_viewFrame(frame)
+        .jp_bgColor(.black)
+        .jp_frameType(.classicFrameType)
+        .jp_contentInsets(.init(top: 16, left: 16, bottom: 16, right: 16))
+        .jp_animationCurve(.easeInOut)
+}
+
+// 2.Create imagesizerView
+let imageresizerView = JPImageresizerView(configure: configure) { [weak self] isCanRecovery in
+    // 当不需要重置设置按钮不可点
+    self?.recoveryBtn.isEnabled = isCanRecovery
+} imageresizerIsPrepareToScale: { [weak self] isPrepareToScale in
+    // 当预备缩放设置按钮不可点，结束后可点击
+    self?.operationView.isUserInteractionEnabled = !isPrepareToScale
+}
+
+// 3.Add to view
+view.insertSubview(imageresizerView, at: 0)
+self.imageresizerView = imageresizerView
+```
+For specific use, refer to Demo (JPCropViewController).
 
 ### Crop
     Explain: 

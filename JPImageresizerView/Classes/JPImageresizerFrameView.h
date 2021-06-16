@@ -10,9 +10,11 @@
 #import <JPImageresizerTypedef.h>
 @class JPImageresizerSlider;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JPImageresizerProxy : NSProxy
-+ (instancetype)proxyWithTarget:(id)target;
-@property (nonatomic, weak) id target;
++ (instancetype)proxyWithTarget:(id _Nullable)target;
+@property (nonatomic, weak) id _Nullable target;
 @end
 
 @interface JPImageresizerFrameView : UIView
@@ -21,17 +23,17 @@
            baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                   blurEffect:(UIBlurEffect *)blurEffect
+                   blurEffect:(UIBlurEffect *_Nullable)blurEffect
                       bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
                 resizeWHScale:(CGFloat)resizeWHScale
                 isRoundResize:(BOOL)isRoundResize
-                    maskImage:(UIImage *)maskImage
+                    maskImage:(UIImage *_Nullable)maskImage
                 isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
-                  borderImage:(UIImage *)borderImage
+                  borderImage:(UIImage *_Nullable)borderImage
          borderImageRectInset:(CGPoint)borderImageRectInset
                 isShowMidDots:(BOOL)isShowMidDots
            isBlurWhenDragging:(BOOL)isBlurWhenDragging
@@ -58,13 +60,13 @@
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-@property (nonatomic, strong) UIColor *strokeColor;
-@property (nonatomic) UIBlurEffect *blurEffect;
-@property (nonatomic) UIColor *bgColor;
+@property (nonatomic, strong) UIColor *_Nullable strokeColor;
+@property (nonatomic) UIBlurEffect *_Nullable blurEffect;
+@property (nonatomic) UIColor *_Nullable bgColor;
 @property (nonatomic) CGFloat maskAlpha;
-- (void)setupStrokeColor:(UIColor *)strokeColor
-              blurEffect:(UIBlurEffect *)blurEffect
-                 bgColor:(UIColor *)bgColor
+- (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
+              blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                 bgColor:(UIColor *_Nullable)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated;
 
@@ -77,8 +79,8 @@
 @property (nonatomic, assign) BOOL isRoundResize;
 - (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
-@property (nonatomic, strong) UIImage *maskImage;
-- (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+@property (nonatomic, strong) UIImage *_Nullable maskImage;
+- (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign) BOOL isArbitrarily;
 - (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
@@ -98,7 +100,7 @@
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection direction;
 
-@property (nonatomic, strong) UIImage *borderImage;
+@property (nonatomic, strong) UIImage *_Nullable borderImage;
 @property (nonatomic, assign) CGPoint borderImageRectInset;
 
 @property (nonatomic, assign) BOOL isShowMidDots;
@@ -123,7 +125,7 @@
 
 - (NSTimeInterval)willRecoveryToResizeWHScale:(CGFloat)resizeWHScale
                               orToRoundResize:(BOOL)isRoundResize
-                                orToMaskImage:(UIImage *)maskImage
+                                orToMaskImage:(UIImage *_Nullable)maskImage
                             isToBeArbitrarily:(BOOL)isToBeArbitrarily
                                      animated:(BOOL)isAnimated;
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
@@ -133,8 +135,10 @@
 
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
-@property (nonatomic, weak) UIView *playerView;
-@property (nonatomic, weak) JPImageresizerSlider *slider;
+@property (nonatomic, weak) UIView *_Nullable playerView;
+@property (nonatomic, weak) JPImageresizerSlider *_Nullable slider;
 
 - (JPCropConfigure)currentCropConfigure;
 @end
+
+NS_ASSUME_NONNULL_END

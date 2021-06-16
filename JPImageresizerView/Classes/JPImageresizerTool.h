@@ -8,6 +8,8 @@
 #import <UIKit/UIKit.h>
 #import <JPImageresizerTypedef.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JPImageresizerTool : NSObject
 /**
  * 转换成黑色轮廓的图片
@@ -17,7 +19,7 @@
 /**
  * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
  */
-+ (UIImage *)decodeGIFData:(NSData *)data;
++ (UIImage *_Nullable)decodeGIFData:(NSData *)data;
 
 /**
  * 是否GIF
@@ -29,10 +31,10 @@
  * 裁剪图片（UIImage）
  */
 + (void)cropPictureWithImage:(UIImage *)image
-                   maskImage:(UIImage *)maskImage
+                   maskImage:(UIImage *_Nullable)maskImage
                    configure:(JPCropConfigure)configure
                compressScale:(CGFloat)compressScale
-                    cacheURL:(NSURL *)cacheURL
+                    cacheURL:(NSURL *_Nullable)cacheURL
                   errorBlock:(JPImageresizerErrorBlock)errorBlock
                completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -40,10 +42,10 @@
  * 裁剪图片（NSData）
  */
 + (void)cropPictureWithImageData:(NSData *)imageData
-                       maskImage:(UIImage *)maskImage
+                       maskImage:(UIImage *_Nullable)maskImage
                        configure:(JPCropConfigure)configure
                    compressScale:(CGFloat)compressScale
-                        cacheURL:(NSURL *)cacheURL
+                        cacheURL:(NSURL *_Nullable)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -53,11 +55,11 @@
 + (void)cropGirdPicturesWithImage:(UIImage *)image
                       columnCount:(NSInteger)columnCount
                          rowCount:(NSInteger)rowCount
-                          bgColor:(UIColor *)bgColor
-                        maskImage:(UIImage *)maskImage
+                          bgColor:(UIColor *_Nullable)bgColor
+                        maskImage:(UIImage *_Nullable)maskImage
                         configure:(JPCropConfigure)configure
                     compressScale:(CGFloat)compressScale
-                         cacheURL:(NSURL *)cacheURL
+                         cacheURL:(NSURL *_Nullable)cacheURL
                        errorBlock:(JPImageresizerErrorBlock)errorBlock
                     completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
@@ -67,11 +69,11 @@
 + (void)cropGirdPicturesWithImageData:(NSData *)imageData
                           columnCount:(NSInteger)columnCount
                              rowCount:(NSInteger)rowCount
-                              bgColor:(UIColor *)bgColor
-                            maskImage:(UIImage *)maskImage
+                              bgColor:(UIColor *_Nullable)bgColor
+                            maskImage:(UIImage *_Nullable)maskImage
                             configure:(JPCropConfigure)configure
                         compressScale:(CGFloat)compressScale
-                             cacheURL:(NSURL *)cacheURL
+                             cacheURL:(NSURL *_Nullable)cacheURL
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropNGirdDoneBlock)completeBlock;
 
@@ -82,10 +84,10 @@
 + (void)cropGIFWithGifImage:(UIImage *)gifImage
              isReverseOrder:(BOOL)isReverseOrder
                        rate:(float)rate
-                  maskImage:(UIImage *)maskImage
+                  maskImage:(UIImage *_Nullable)maskImage
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
-                   cacheURL:(NSURL *)cacheURL
+                   cacheURL:(NSURL *_Nullable)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -94,10 +96,10 @@
  */
 + (void)cropGIFWithGifImage:(UIImage *)gifImage
                       index:(NSInteger)index
-                  maskImage:(UIImage *)maskImage
+                  maskImage:(UIImage *_Nullable)maskImage
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
-                   cacheURL:(NSURL *)cacheURL
+                   cacheURL:(NSURL *_Nullable)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -107,10 +109,10 @@
 + (void)cropGIFWithGifData:(NSData *)gifData
             isReverseOrder:(BOOL)isReverseOrder
                       rate:(float)rate
-                 maskImage:(UIImage *)maskImage
+                 maskImage:(UIImage *_Nullable)maskImage
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
-                  cacheURL:(NSURL *)cacheURL
+                  cacheURL:(NSURL *_Nullable)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -119,10 +121,10 @@
  */
 + (void)cropGIFWithGifData:(NSData *)gifData
                      index:(NSInteger)index
-                 maskImage:(UIImage *)maskImage
+                 maskImage:(UIImage *_Nullable)maskImage
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
-                  cacheURL:(NSURL *)cacheURL
+                  cacheURL:(NSURL *_Nullable)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -134,10 +136,10 @@
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
                       time:(CMTime)time
                maximumSize:(CGSize)maximumSize
-                 maskImage:(UIImage *)maskImage
+                 maskImage:(UIImage *_Nullable)maskImage
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
-                  cacheURL:(NSURL *)cacheURL
+                  cacheURL:(NSURL *_Nullable)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -150,9 +152,9 @@
                             fps:(float)fps
                            rate:(float)rate
                     maximumSize:(CGSize)maximumSize
-                      maskImage:(UIImage *)maskImage
+                      maskImage:(UIImage *_Nullable)maskImage
                       configure:(JPCropConfigure)configure
-                       cacheURL:(NSURL *)cacheURL
+                       cacheURL:(NSURL *_Nullable)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
 
@@ -164,7 +166,7 @@
              frameDuration:(CMTime)frameDuration
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
-                  cacheURL:(NSURL *)cacheURL
+                  cacheURL:(NSURL *_Nullable)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
                 startBlock:(JPExportVideoStartBlock)startBlock
              completeBlock:(JPCropDoneBlock)completeBlock;
@@ -175,3 +177,5 @@
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
                     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 @end
+
+NS_ASSUME_NONNULL_END

@@ -8,8 +8,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 @class JPImageresizerResult;
+@class JPImageresizerConfigure;
 
-#pragma mark - 枚举
+#pragma mark - Enum
 
 /**
  * 边框样式
@@ -69,13 +70,26 @@ typedef NS_ENUM(NSUInteger, JPImageresizerErrorReason) {
 
 #pragma mark - Block
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * 无参数、无返回的Block
+ */
+typedef void(^_Nullable JPVoidBlock)(void);
+
+/**
+ * 用于 JPImageresizerConfigure 初始化时配置初始化参数的回调
+    - configure：初始化后的实例
+ */
+typedef void(^_Nullable JPImageresizerConfigureMakeBlock)(JPImageresizerConfigure *configure);
+
 /**
  * 是否可以重置的回调
  * 当裁剪区域缩放至适应范围后就会触发该回调
     - YES：可重置
     - NO：不需要重置，裁剪区域跟图片区域一致，并且没有旋转、镜像过
  */
-typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
+typedef void(^_Nullable JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 
 /**
  * 是否预备缩放裁剪区域至适应范围
@@ -83,26 +97,26 @@ typedef void(^JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
     - YES：预备缩放，此时裁剪、旋转、镜像功能不可用
     - NO：没有预备缩放
  */
-typedef void(^JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
+typedef void(^_Nullable JPImageresizerIsPrepareToScaleBlock)(BOOL isPrepareToScale);
 
 /**
  * 错误的回调
     - cacheURL：目标存放路径
     - reason：错误原因（JPImageresizerErrorReason）
  */
-typedef void(^JPImageresizerErrorBlock)(NSURL *cacheURL, JPImageresizerErrorReason reason);
+typedef void(^_Nullable JPImageresizerErrorBlock)(NSURL *_Nullable cacheURL, JPImageresizerErrorReason reason);
 
 /**
  * 视频裁剪导出的进度
     - progress：进度，单位 0~1
  */
-typedef void(^JPExportVideoProgressBlock)(float progress);
+typedef void(^_Nullable JPExportVideoProgressBlock)(float progress);
 
 /**
  * 视频导出开始的回调
     - exportSession：导出会话，可用于取消
  */
-typedef void(^JPExportVideoStartBlock)(AVAssetExportSession *exportSession);
+typedef void(^_Nullable JPExportVideoStartBlock)(AVAssetExportSession *exportSession);
 
 /**
  * 视频导出完成的回调
@@ -110,7 +124,7 @@ typedef void(^JPExportVideoStartBlock)(AVAssetExportSession *exportSession);
         - 如果是修正方向的视频，是无需修正的视频，cacheURL则以原路径返回
         - 如果是裁剪的视频，裁剪后自定义的路径转移失败，cacheURL返回的是也是在NSTemporaryDirectory里
  */
-typedef void(^JPExportVideoCompleteBlock)(NSURL *cacheURL);
+typedef void(^_Nullable JPExportVideoCompleteBlock)(NSURL *cacheURL);
 
 /**
  * 图片裁剪完成的回调
@@ -120,7 +134,7 @@ typedef void(^JPExportVideoCompleteBlock)(NSURL *cacheURL);
         - result.cacheURL：目标存放路径
         - result.isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
  */
-typedef void(^JPCropDoneBlock)(JPImageresizerResult *result);
+typedef void(^_Nullable JPCropDoneBlock)(JPImageresizerResult *_Nullable result);
 
 /**
  * N宫格图片裁剪完成的回调
@@ -129,10 +143,13 @@ typedef void(^JPCropDoneBlock)(JPImageresizerResult *result);
     - columnCount：N宫格的列数
     - rowCount：N宫格的行数
  */
-typedef void(^JPCropNGirdDoneBlock)(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount);
+typedef void(^_Nullable JPCropNGirdDoneBlock)(JPImageresizerResult *_Nullable originResult, NSArray<JPImageresizerResult *> *_Nullable fragmentResults, NSInteger columnCount, NSInteger rowCount);
 
-#pragma mark - 裁剪属性
+NS_ASSUME_NONNULL_END
 
+#pragma mark - Struct
+
+#pragma mark 裁剪属性
 struct JPCropConfigure {
     JPImageresizerRotationDirection direction;
     BOOL isVerMirror;
@@ -162,8 +179,7 @@ CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection di
     return configure;
 }
 
-#pragma mark - 额外用于保存的属性
-
+#pragma mark 额外用于保存的属性
 struct JPCropHistory {
     CGRect viewFrame;
     UIEdgeInsets contentInsets;

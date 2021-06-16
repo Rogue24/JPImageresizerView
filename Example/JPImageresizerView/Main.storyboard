@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U4U-Km-xrR">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -36,7 +36,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="gBv-Pc-tDB">
-                                <rect key="frame" x="20" y="55.5" width="374" height="43.5"/>
+                                <rect key="frame" x="20" y="49.5" width="374" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gBv-Pc-tDB" id="M8r-3I-ytL">
                                     <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -537,21 +537,39 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lct-bG-71f">
                                 <rect key="frame" x="0.0" y="762" width="414" height="100"/>
                                 <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k4i-OE-jsh">
+                                        <rect key="frame" x="20" y="47.5" width="35" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="OfR-8u-z40"/>
+                                            <constraint firstAttribute="width" constant="35" id="W5D-rr-Vnb"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" image="rotate.left.fill" catalog="system"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="767-hr-kjc">
+                                        <rect key="frame" x="75" y="47.5" width="35" height="35"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" image="rotate.right.fill" catalog="system"/>
+                                    </button>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Xoa-KA-THz">
                                         <rect key="frame" x="18" y="50" width="378" height="31"/>
                                         <color key="tintColor" systemColor="systemPinkColor"/>
                                     </slider>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Znh-bc-a9A">
-                                        <rect key="frame" x="20" y="10" width="52" height="30"/>
-                                        <state key="normal" title="🔙返回">
-                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <rect key="frame" x="20" y="10" width="43" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="kEB-XM-fZU"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="返回" image="chevron.backward" catalog="system">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                         <connections>
                                             <action selector="goBack" destination="gl1-ZO-2sU" eventType="touchUpInside" id="Cbp-J9-y11"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h2x-Ss-wBJ">
-                                        <rect key="frame" x="82" y="10" width="31" height="30"/>
+                                        <rect key="frame" x="73" y="10" width="31" height="40"/>
                                         <state key="normal" title="恢复">
                                             <color key="titleColor" systemColor="systemPurpleColor"/>
                                         </state>
@@ -560,7 +578,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vw4-FQ-aoi">
-                                        <rect key="frame" x="123" y="10" width="31" height="30"/>
+                                        <rect key="frame" x="114" y="10" width="31" height="40"/>
                                         <state key="normal" title="裁剪">
                                             <color key="titleColor" systemColor="systemGreenColor"/>
                                         </state>
@@ -569,7 +587,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E5e-oO-xhb">
-                                        <rect key="frame" x="284" y="10" width="30" height="30"/>
+                                        <rect key="frame" x="284" y="10" width="30" height="40"/>
                                         <state key="normal" title="3:4">
                                             <color key="titleColor" systemColor="systemTealColor"/>
                                         </state>
@@ -578,7 +596,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pFV-Ij-JZv">
-                                        <rect key="frame" x="324" y="10" width="30" height="30"/>
+                                        <rect key="frame" x="324" y="10" width="30" height="40"/>
                                         <state key="normal" title="1:1">
                                             <color key="titleColor" systemColor="systemTealColor"/>
                                         </state>
@@ -587,7 +605,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hOv-ZX-ZU3">
-                                        <rect key="frame" x="364" y="10" width="30" height="30"/>
+                                        <rect key="frame" x="364" y="10" width="30" height="40"/>
                                         <state key="normal" title="4:3">
                                             <color key="titleColor" systemColor="systemTealColor"/>
                                         </state>
@@ -596,7 +614,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fbi-uV-x7Z">
-                                        <rect key="frame" x="243" y="10" width="31" height="30"/>
+                                        <rect key="frame" x="243" y="10" width="31" height="40"/>
                                         <state key="normal" title="原始">
                                             <color key="titleColor" systemColor="systemTealColor"/>
                                         </state>
@@ -609,17 +627,29 @@
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="Xoa-KA-THz" secondAttribute="bottom" constant="20" id="04t-J0-vCO"/>
                                     <constraint firstItem="Vw4-FQ-aoi" firstAttribute="centerY" secondItem="Znh-bc-a9A" secondAttribute="centerY" id="0OW-0Z-ZrC"/>
+                                    <constraint firstItem="767-hr-kjc" firstAttribute="centerY" secondItem="k4i-OE-jsh" secondAttribute="centerY" id="58Y-d0-KqA"/>
+                                    <constraint firstItem="767-hr-kjc" firstAttribute="width" secondItem="k4i-OE-jsh" secondAttribute="width" id="6c0-z9-xm9"/>
                                     <constraint firstItem="E5e-oO-xhb" firstAttribute="centerY" secondItem="Fbi-uV-x7Z" secondAttribute="centerY" id="8ZK-NO-8di"/>
                                     <constraint firstItem="hOv-ZX-ZU3" firstAttribute="centerY" secondItem="Fbi-uV-x7Z" secondAttribute="centerY" id="C2G-mH-D9y"/>
+                                    <constraint firstItem="h2x-Ss-wBJ" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="C9M-5J-KlO"/>
                                     <constraint firstItem="hOv-ZX-ZU3" firstAttribute="centerY" secondItem="Znh-bc-a9A" secondAttribute="centerY" id="CDU-I1-VPa"/>
+                                    <constraint firstItem="767-hr-kjc" firstAttribute="height" secondItem="k4i-OE-jsh" secondAttribute="height" id="ENh-Mh-9M0"/>
                                     <constraint firstAttribute="trailing" secondItem="hOv-ZX-ZU3" secondAttribute="trailing" constant="20" id="Hmd-qF-DtB"/>
                                     <constraint firstItem="h2x-Ss-wBJ" firstAttribute="leading" secondItem="Znh-bc-a9A" secondAttribute="trailing" constant="10" id="JY4-Db-lz1"/>
                                     <constraint firstItem="Znh-bc-a9A" firstAttribute="top" secondItem="lct-bG-71f" secondAttribute="top" constant="10" id="JmT-pn-lBg"/>
                                     <constraint firstItem="Vw4-FQ-aoi" firstAttribute="leading" secondItem="h2x-Ss-wBJ" secondAttribute="trailing" constant="10" id="JxZ-LK-5Qp"/>
+                                    <constraint firstItem="hOv-ZX-ZU3" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="Pan-Jo-cie"/>
                                     <constraint firstItem="E5e-oO-xhb" firstAttribute="leading" secondItem="Fbi-uV-x7Z" secondAttribute="trailing" constant="10" id="Qp0-Ys-9uG"/>
                                     <constraint firstItem="Fbi-uV-x7Z" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Vw4-FQ-aoi" secondAttribute="trailing" constant="8" symbolic="YES" id="ULr-4p-MOI"/>
+                                    <constraint firstItem="767-hr-kjc" firstAttribute="leading" secondItem="k4i-OE-jsh" secondAttribute="trailing" constant="20" id="V10-J0-tE9"/>
                                     <constraint firstItem="Xoa-KA-THz" firstAttribute="leading" secondItem="lct-bG-71f" secondAttribute="leading" constant="20" id="W4O-Y9-xfM"/>
+                                    <constraint firstItem="k4i-OE-jsh" firstAttribute="leading" secondItem="Xoa-KA-THz" secondAttribute="leading" id="Yh2-KD-3F9"/>
+                                    <constraint firstItem="k4i-OE-jsh" firstAttribute="centerY" secondItem="Xoa-KA-THz" secondAttribute="centerY" id="cn5-HU-Kxi"/>
+                                    <constraint firstItem="Vw4-FQ-aoi" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="epd-yE-sFX"/>
+                                    <constraint firstItem="pFV-Ij-JZv" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="geU-h7-6S5"/>
                                     <constraint firstAttribute="height" constant="100" id="i1W-l1-pIr"/>
+                                    <constraint firstItem="Fbi-uV-x7Z" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="jRI-w8-Pst"/>
+                                    <constraint firstItem="E5e-oO-xhb" firstAttribute="height" secondItem="Znh-bc-a9A" secondAttribute="height" id="kpz-jB-anX"/>
                                     <constraint firstItem="Znh-bc-a9A" firstAttribute="leading" secondItem="lct-bG-71f" secondAttribute="leading" constant="20" id="leD-9W-qiC"/>
                                     <constraint firstItem="pFV-Ij-JZv" firstAttribute="leading" secondItem="E5e-oO-xhb" secondAttribute="trailing" constant="10" id="svG-kc-ixz"/>
                                     <constraint firstItem="hOv-ZX-ZU3" firstAttribute="leading" secondItem="pFV-Ij-JZv" secondAttribute="trailing" constant="10" id="uVp-i0-ZcV"/>
@@ -637,6 +667,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="operationView" destination="lct-bG-71f" id="7oI-fe-ddS"/>
+                        <outlet property="recoveryBtn" destination="h2x-Ss-wBJ" id="Jr9-iu-cqU"/>
+                        <outlet property="rotateLeftBtn" destination="k4i-OE-jsh" id="k9M-8p-ZcO"/>
+                        <outlet property="rotateRightBtn" destination="767-hr-kjc" id="Jq5-RI-3EE"/>
                         <outlet property="slider" destination="Xoa-KA-THz" id="88X-lB-u52"/>
                     </connections>
                 </viewController>
@@ -647,6 +681,9 @@
     </scenes>
     <resources>
         <image name="back" width="17" height="17"/>
+        <image name="chevron.backward" catalog="system" width="96" height="128"/>
+        <image name="rotate.left.fill" catalog="system" width="128" height="124"/>
+        <image name="rotate.right.fill" catalog="system" width="128" height="124"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

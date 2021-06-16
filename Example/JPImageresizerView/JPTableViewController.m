@@ -82,7 +82,16 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return section == 0 ? JPConfigureModel.examplesModels.count : 3;
+    switch (section) {
+        case 0:
+            return JPConfigureModel.examplesModels.count;
+        case 1:
+            return 3;
+        case 2:
+            return 4;
+        default:
+            return 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -109,7 +118,7 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
             }
             break;
             
-        default:
+        case 2:
             switch (indexPath.item) {
                 case 0:
                     cell.textLabel.text = @"成为吴彦祖";
@@ -117,10 +126,16 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
                 case 1:
                     cell.textLabel.text = @"暂停选老婆";
                     break;
+                case 2:
+                    cell.textLabel.text = @"适配Swift";
+                    break;
                 default:
-                    cell.textLabel.text = @"高仿小红书";
+                    cell.textLabel.text = @"JPCroper：高仿小红书";
                     break;
             }
+            break;
+            
+        default:
             break;
     }
     return cell;
@@ -205,7 +220,7 @@ static JPImageresizerConfigure *gifConfigure_;
                     
                 default:
                 {
-                    JPCropViewController *cropVC = [self.storyboard instantiateViewControllerWithIdentifier:@"JPCropViewController"];
+                    JPCropViewController *cropVC = [JPCropViewController buildForCroper:indexPath.item == 3];
                     [self cubePushViewController:cropVC];
                     break;
                 }

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <JPImageresizerTypedef.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JPImageresizerConfigure : NSObject
 /* 默认参数值：
     - viewFrame = [UIScreen mainScreen].bounds;
@@ -21,7 +23,7 @@
     - resizeWHScale = 0.0;
     - isRoundResize = NO;
     - isArbitrarily = YES;
-    - contentInsets = UIEdgeInsetsZero;
+    - contentInsets = UIEdgeInsetsMake(16, 16, 16, 16);
     - borderImage = nil;
     - borderImageRectInset = CGPointZero;
     - maximumZoomScale = 10.0;
@@ -39,27 +41,27 @@
 /**
  * 默认配置裁剪图片/GIF（UIImage）
  */
-+ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)defaultConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 默认配置裁剪图片/GIF（NSData）
  */
-+ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)defaultConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 默认配置裁剪视频（NSURL）
  */
 + (instancetype)defaultConfigureWithVideoURL:(NSURL *)videoURL
-                                        make:(void(^)(JPImageresizerConfigure *configure))make
+                                        make:(JPImageresizerConfigureMakeBlock)make
                                fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                               fixStartBlock:(void(^)(void))fixStartBlock
+                               fixStartBlock:(JPVoidBlock)fixStartBlock
                             fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                             fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 /**
  * 默认配置裁剪视频（AVURLAsset）
  */
 + (instancetype)defaultConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                          make:(void(^)(JPImageresizerConfigure *configure))make
+                                          make:(JPImageresizerConfigureMakeBlock)make
                                  fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                 fixStartBlock:(void(^)(void))fixStartBlock
+                                 fixStartBlock:(JPVoidBlock)fixStartBlock
                               fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                               fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
@@ -71,27 +73,27 @@
 /**
  * 浅色毛玻璃配置裁剪图片/GIF（UIImage）
  */
-+ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)lightBlurMaskTypeConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 浅色毛玻璃配置裁剪图片/GIF（NSData）
  */
-+ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)lightBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 浅色毛玻璃配置裁剪视频（NSURL）
  */
 + (instancetype)lightBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
-                                                  make:(void (^)(JPImageresizerConfigure *configure))make
+                                                  make:(JPImageresizerConfigureMakeBlock)make
                                          fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                         fixStartBlock:(void(^)(void))fixStartBlock
+                                         fixStartBlock:(JPVoidBlock)fixStartBlock
                                       fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                       fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 /**
  * 浅色毛玻璃配置裁剪视频（AVURLAsset）
  */
 + (instancetype)lightBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                                    make:(void (^)(JPImageresizerConfigure *configure))make
+                                                    make:(JPImageresizerConfigureMakeBlock)make
                                            fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                           fixStartBlock:(void(^)(void))fixStartBlock
+                                           fixStartBlock:(JPVoidBlock)fixStartBlock
                                         fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                         fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
@@ -102,47 +104,47 @@
 /**
  * 深色毛玻璃配置裁剪图片/GIF（UIImage）
  */
-+ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(void (^)(JPImageresizerConfigure *configure))make;
++ (instancetype)darkBlurMaskTypeConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 深色毛玻璃配置裁剪图片/GIF（NSData）
  */
-+ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(void(^)(JPImageresizerConfigure *configure))make;
++ (instancetype)darkBlurMaskTypeConfigureWithImageData:(NSData *)imageData make:(JPImageresizerConfigureMakeBlock)make;
 /**
  * 深色毛玻璃配置裁剪视频（NSURL）
  */
 + (instancetype)darkBlurMaskTypeConfigureWithVideoURL:(NSURL *)videoURL
-                                                 make:(void (^)(JPImageresizerConfigure *configure))make
+                                                 make:(JPImageresizerConfigureMakeBlock)make
                                         fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                        fixStartBlock:(void(^)(void))fixStartBlock
+                                        fixStartBlock:(JPVoidBlock)fixStartBlock
                                      fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                      fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 /**
  * 深色毛玻璃配置裁剪视频（AVURLAsset）
  */
 + (instancetype)darkBlurMaskTypeConfigureWithVideoAsset:(AVURLAsset *)videoAsset
-                                                   make:(void (^)(JPImageresizerConfigure *configure))make
+                                                   make:(JPImageresizerConfigureMakeBlock)make
                                           fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
-                                          fixStartBlock:(void(^)(void))fixStartBlock
+                                          fixStartBlock:(JPVoidBlock)fixStartBlock
                                        fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                        fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
 /** 裁剪的图片/GIF（UIImage） */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *_Nullable image;
 
 /** 裁剪的图片/GIF（NSData） */
-@property (nonatomic, strong) NSData *imageData;
+@property (nonatomic, strong) NSData *_Nullable imageData;
 
 /** 裁剪的视频（NSURL） */
-@property (nonatomic, strong) NSURL *videoURL;
+@property (nonatomic, strong) NSURL *_Nullable videoURL;
 
 /** 裁剪的视频（AVURLAsset） */
-@property (nonatomic, strong) AVURLAsset *videoAsset;
+@property (nonatomic, strong) AVURLAsset *_Nullable videoAsset;
 
 /** 修正视频方向的错误回调 */
 @property (nonatomic, copy) JPImageresizerErrorBlock fixErrorBlock;
 
 /** 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用） */
-@property (nonatomic, copy) void(^fixStartBlock)(void);
+@property (nonatomic, copy) void(^_Nullable fixStartBlock)(void);
 
 /** 修正视频方向的进度回调 */
 @property (nonatomic, copy) JPExportVideoProgressBlock fixProgressBlock;
@@ -160,16 +162,16 @@
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
 /** 模糊效果 */
-@property (nonatomic, strong) UIBlurEffect *blurEffect;
+@property (nonatomic, strong) UIBlurEffect *_Nullable blurEffect;
 
 /** 背景颜色 */
-@property (nonatomic, strong) UIColor *bgColor;
+@property (nonatomic, strong) UIColor *_Nullable bgColor;
 
 /** 遮罩颜色的透明度（背景颜色 * 透明度） */
 @property (nonatomic, assign) CGFloat maskAlpha;
 
 /** 裁剪线颜色 */
-@property (nonatomic, strong) UIColor *strokeColor;
+@property (nonatomic, strong) UIColor *_Nullable strokeColor;
 
 /** 初始化裁剪宽高比（0 为元素的宽高比，若 isRoundResize 为  YES，或 maskImage 不为空，该属性无效） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
@@ -178,7 +180,7 @@
 @property (nonatomic, assign) BOOL isRoundResize;
 
 /** 初始化蒙版图片 */
-@property (nonatomic, strong) UIImage *maskImage;
+@property (nonatomic, strong) UIImage *_Nullable maskImage;
 
 /** 初始化后是否可以任意比例拖拽 */
 @property (nonatomic, assign) BOOL isArbitrarily;
@@ -193,7 +195,7 @@
 @property (nonatomic, assign) BOOL isClockwiseRotation;
 
 /** 边框图片 */
-@property (nonatomic, strong) UIImage *borderImage;
+@property (nonatomic, strong) UIImage *_Nullable borderImage;
 
 /** 边框图片与边线的偏移量 */
 @property (nonatomic, assign) CGPoint borderImageRectInset;
@@ -234,18 +236,18 @@
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
 @property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
-@property (readonly) JPImageresizerConfigure *(^jp_blurEffect)(UIBlurEffect *blurEffect);
-@property (readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *bgColor);
+@property (readonly) JPImageresizerConfigure *(^jp_blurEffect)(UIBlurEffect *_Nullable blurEffect);
+@property (readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *_Nullable bgColor);
 @property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
-@property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *strokeColor);
+@property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *_Nullable strokeColor);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
-@property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *maskImage);
+@property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *_Nullable maskImage);
 @property (readonly) JPImageresizerConfigure *(^jp_isArbitrarily)(BOOL isArbitrarily);
 @property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
 @property (readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);
 @property (readonly) JPImageresizerConfigure *(^jp_isClockwiseRotation)(BOOL isClockwiseRotation);
-@property (readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *borderImage);
+@property (readonly) JPImageresizerConfigure *(^jp_borderImage)(UIImage *_Nullable borderImage);
 @property (readonly) JPImageresizerConfigure *(^jp_borderImageRectInset)(CGPoint borderImageRectInset);
 @property (readonly) JPImageresizerConfigure *(^jp_maximumZoomScale)(CGFloat maximumZoomScale);
 @property (readonly) JPImageresizerConfigure *(^jp_isShowMidDots)(BOOL isShowMidDots);
@@ -256,3 +258,5 @@
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
 @property (readonly) JPImageresizerConfigure *(^jp_isCleanHistoryAfterInitial)(BOOL isCleanHistoryAfterInitial);
 @end
+
+NS_ASSUME_NONNULL_END
