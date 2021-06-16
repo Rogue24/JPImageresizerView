@@ -11,7 +11,6 @@
 #define JPDPAnimationKey @"JPPositionAnimate"
 
 @interface JPDynamicPage ()
-@property (nonatomic, weak) UIImageView *imageView;
 @property (nonatomic, weak) CALayer *contentLayer;
 @end
 
@@ -45,13 +44,8 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.userInteractionEnabled = NO;
         self.clipsToBounds = YES;
-        
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:frame];
-        imageView.image = [UIImage imageNamed:@"radial-gradien-bg"];
-        [self addSubview:imageView];
-        self.imageView = imageView;
-        
         [self setupBase];
         
         CGFloat w = _bigIconW * 2 + _smallIconW * 4 + 5 * _smallIconMargin;
@@ -71,7 +65,6 @@
 - (void)updateFrame:(CGRect)frame {
     self.frame = frame;
     
-    self.imageView.frame = frame;
     [self setupBase];
     
     CGFloat w = _bigIconW * 2 + _smallIconW * 4 + 5 * _smallIconMargin;
@@ -85,6 +78,7 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.contentLayer removeAllAnimations];
 }
 
@@ -101,10 +95,10 @@
     _screenH = [UIScreen mainScreen].bounds.size.height;
     
     _bigIconW = 164.0; // 164.0
-    _bigIconH = 110.0; // 110.0
+    _bigIconH = 115.0; // 110.0
     
     _smallIconW = 66.0; // 66.0
-    _smallIconH = 44.0; // 44.0
+    _smallIconH = 49.0; // 44.0
     
     _smallIconMargin = 20.0; // 20.0
     _bigIconMargin = _smallIconMargin * 3 + _smallIconW * 2;
@@ -131,7 +125,7 @@
     CGFloat py = 0;
     
     NSString *text = @"";
-    UIColor *textColor = [UIColor colorWithWhite:1.0 alpha:0.1];
+    UIColor *textColor = [UIColor colorWithWhite:1.0 alpha:0.2];
     UIFont *font = [UIFont fontWithName:@"shape" size:164];
     
     BOOL isOdd = NO;

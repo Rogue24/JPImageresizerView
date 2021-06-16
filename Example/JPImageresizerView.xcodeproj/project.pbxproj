@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0092E03225722F4600F13E60 /* JPDynamicPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02925722F4600F13E60 /* JPDynamicPage.m */; };
-		0092E03325722F4600F13E60 /* JPMainViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02A25722F4600F13E60 /* JPMainViewModel.m */; };
-		0092E03425722F4600F13E60 /* JPMainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E02E25722F4600F13E60 /* JPMainCell.m */; };
-		0092E03525722F4600F13E60 /* JPMainHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E03025722F4600F13E60 /* JPMainHeader.m */; };
-		0092E03625722F4600F13E60 /* JPMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0092E03125722F4600F13E60 /* JPMainViewController.m */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -56,6 +51,7 @@
 		1A658769262AEE0C00846689 /* JPCropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A658768262AEE0C00846689 /* JPCropViewController.swift */; };
 		1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */; };
 		1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */; };
+		1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */; };
 		1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C3249A0CFE0081452F /* DanielWuViewController.m */; };
 		1AA468C7249A0CFE0081452F /* FaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C4249A0CFE0081452F /* FaceView.m */; };
 		1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468CB249A0D9B0081452F /* ShapeMergeCell.m */; };
@@ -104,16 +100,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0092E02825722F4600F13E60 /* JPMainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMainCell.h; sourceTree = "<group>"; };
-		0092E02925722F4600F13E60 /* JPDynamicPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPDynamicPage.m; sourceTree = "<group>"; };
-		0092E02A25722F4600F13E60 /* JPMainViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPMainViewModel.m; sourceTree = "<group>"; };
-		0092E02B25722F4600F13E60 /* JPMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMainViewController.h; sourceTree = "<group>"; };
-		0092E02C25722F4600F13E60 /* JPMainHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMainHeader.h; sourceTree = "<group>"; };
-		0092E02D25722F4600F13E60 /* JPDynamicPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPDynamicPage.h; sourceTree = "<group>"; };
-		0092E02E25722F4600F13E60 /* JPMainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPMainCell.m; sourceTree = "<group>"; };
-		0092E02F25722F4600F13E60 /* JPMainViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPMainViewModel.h; sourceTree = "<group>"; };
-		0092E03025722F4600F13E60 /* JPMainHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPMainHeader.m; sourceTree = "<group>"; };
-		0092E03125722F4600F13E60 /* JPMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPMainViewController.m; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -181,6 +167,8 @@
 		1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplaceFaceViewController.m; sourceTree = "<group>"; };
 		1A87AF97247B8C5900123EC6 /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPSolveTool.h; path = JPImageresizerView/JPHelper/JPSolveTool.h; sourceTree = SOURCE_ROOT; };
 		1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPSolveTool.m; path = JPImageresizerView/JPHelper/JPSolveTool.m; sourceTree = SOURCE_ROOT; };
+		1A9CBE99267A2A3400E4D0C6 /* JPDynamicPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPDynamicPage.h; sourceTree = "<group>"; };
+		1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPDynamicPage.m; sourceTree = "<group>"; };
 		1AA468C2249A0CFE0081452F /* FaceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceView.h; sourceTree = "<group>"; };
 		1AA468C3249A0CFE0081452F /* DanielWuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DanielWuViewController.m; sourceTree = "<group>"; };
 		1AA468C4249A0CFE0081452F /* FaceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceView.m; sourceTree = "<group>"; };
@@ -245,23 +233,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0092E02725722F4600F13E60 /* NewHomePage */ = {
-			isa = PBXGroup;
-			children = (
-				0092E02B25722F4600F13E60 /* JPMainViewController.h */,
-				0092E03125722F4600F13E60 /* JPMainViewController.m */,
-				0092E02F25722F4600F13E60 /* JPMainViewModel.h */,
-				0092E02A25722F4600F13E60 /* JPMainViewModel.m */,
-				0092E02C25722F4600F13E60 /* JPMainHeader.h */,
-				0092E03025722F4600F13E60 /* JPMainHeader.m */,
-				0092E02825722F4600F13E60 /* JPMainCell.h */,
-				0092E02E25722F4600F13E60 /* JPMainCell.m */,
-				0092E02D25722F4600F13E60 /* JPDynamicPage.h */,
-				0092E02925722F4600F13E60 /* JPDynamicPage.m */,
-			);
-			path = NewHomePage;
-			sourceTree = "<group>";
-		};
 		1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */ = {
 			isa = PBXGroup;
 			children = (
@@ -360,6 +331,8 @@
 		1A10433623A495AD00D1B2DF /* JPHelper */ = {
 			isa = PBXGroup;
 			children = (
+				1A9CBE99267A2A3400E4D0C6 /* JPDynamicPage.h */,
+				1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */,
 				1A3CD611254F1B2B00F7768B /* JPBounceView.h */,
 				1A3CD612254F1B2B00F7768B /* JPBounceView.m */,
 				1A87AF97247B8C5900123EC6 /* JPSolveTool.h */,
@@ -490,7 +463,6 @@
 		6003F593195388D20070C39A /* Example for JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
-				0092E02725722F4600F13E60 /* NewHomePage */,
 				1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */,
 				1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */,
 				1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */,
@@ -740,7 +712,6 @@
 			files = (
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */,
-				0092E03425722F4600F13E60 /* JPMainCell.m in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */,
 				1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */,
@@ -748,8 +719,8 @@
 				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
-				0092E03625722F4600F13E60 /* JPMainViewController.m in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
+				1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
@@ -760,11 +731,8 @@
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
-				0092E03525722F4600F13E60 /* JPMainHeader.m in Sources */,
-				0092E03225722F4600F13E60 /* JPDynamicPage.m in Sources */,
 				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
-				0092E03325722F4600F13E60 /* JPMainViewModel.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,

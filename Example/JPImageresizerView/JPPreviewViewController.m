@@ -10,18 +10,24 @@
 #import "JPImageresizerResult.h"
 #import "JPPhotoTool.h"
 #import "JPImageresizerSlider.h"
+#import "JPDynamicPage.h"
 
 @interface JPPreviewViewController ()
+@property (nonatomic, weak) JPDynamicPage *dp;
+
+@property (nonatomic, weak) UIImageView *imageView;
+@property (nonatomic, copy) NSArray<UIImageView *> *fragmentImageViews;
+
+@property (nonatomic, weak) AVPlayer *player;
+@property (nonatomic, weak) AVPlayerLayer *playerLayer;
+@property (nonatomic, strong) id timeObserver;
+
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (nonatomic, weak) JPImageresizerSlider *slider;
+
 @property (nonatomic, copy) NSArray<JPImageresizerResult *> *results;
 @property (nonatomic, assign) NSInteger columnCount;
 @property (nonatomic, assign) NSInteger rowCount;
-@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, weak) UIImageView *imageView;
-@property (nonatomic, copy) NSArray<UIImageView *> *fragmentImageViews;
-@property (nonatomic, weak) AVPlayer *player;
-@property (nonatomic, weak) AVPlayerLayer *playerLayer;
-@property (nonatomic, weak) JPImageresizerSlider *slider;
-@property (nonatomic, strong) id timeObserver;
 @end
 
 @implementation JPPreviewViewController
@@ -63,6 +69,7 @@
     self.view.backgroundColor = JPRandomColor;
     
     [self __setupNavigationBar];
+    [self __setupDynamicPage];
     [self __changBgColor];
     
     if (self.results.count > 0) {
@@ -86,6 +93,8 @@
 #pragma clang diagnostic pop
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     
+    [self.dp startAnimation];
+    
     if (_isDidAppear) return;
     _isDidAppear = YES;
     
@@ -99,6 +108,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self.dp stopAnimation];
     [self __removeFragmentAnimation];
 }
 
@@ -149,6 +159,12 @@
     [camceraBtn setTitle:@"保存相册" forState:UIControlStateNormal];
     [camceraBtn addTarget:self action:@selector(__savePhotoToAppAlbum) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:camceraBtn];
+}
+
+- (void)__setupDynamicPage {
+    JPDynamicPage *dp = [JPDynamicPage dynamicPage];
+    [self.view insertSubview:dp atIndex:0];
+    self.dp = dp;
 }
 
 - (void)__setupPlayerLayer {
@@ -241,6 +257,8 @@
 
 - (void)__didChangeStatusBarOrientation {
     _changeOrientationTag += 1;
+    
+    [self.dp updateFrame:JPScreenBounds];
     
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPNavBarH + JPMargin, JPMargin, JPDiffTabBarH + JPMargin, JPMargin);
     BOOL isLandscape = JPScreenWidth > JPScreenHeight;

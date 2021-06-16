@@ -683,6 +683,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         if (isGIF) {
             [self __executeCropDoneBlock:completeBlock gifImage:image cacheURL:cacheURL];
         } else {
+            // 修正方向再抛出
+            image = [self __imageFixOrientation:image];
             if (isCropGird) {
                 if (!completeBlock) return;
                 JPImageresizerResult *result = [[JPImageresizerResult alloc] initWithImage:image cacheURL:cacheURL];
