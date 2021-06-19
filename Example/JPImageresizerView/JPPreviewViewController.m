@@ -439,12 +439,21 @@
         JPImageresizerResult *result = self.results[i];
         dispatch_async(serialQueue, ^{
             if (result.cacheURL) {
-                [JPPhotoToolSI saveFileToAppAlbumWithFileURL:result.cacheURL successHandle:^(NSString *assetID) {
-                    successCount += 1;
-                    dispatch_semaphore_signal(lock);
-                } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
-                    dispatch_semaphore_signal(lock);
-                }];
+                if (result.type == JPImageresizerResult_Video) {
+                    [JPPhotoToolSI saveVideoToAppAlbumWithFileURL:result.cacheURL successHandle:^(NSString *assetID) {
+                        successCount += 1;
+                        dispatch_semaphore_signal(lock);
+                    } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+                        dispatch_semaphore_signal(lock);
+                    }];
+                } else {
+                    [JPPhotoToolSI saveFileToAppAlbumWithFileURL:result.cacheURL successHandle:^(NSString *assetID) {
+                        successCount += 1;
+                        dispatch_semaphore_signal(lock);
+                    } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+                        dispatch_semaphore_signal(lock);
+                    }];
+                }
                 dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
             } else if (result.image) {
                 [JPPhotoToolSI savePhotoToAppAlbumWithImage:result.image successHandle:^(NSString *assetID) {
