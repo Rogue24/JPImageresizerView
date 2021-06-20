@@ -258,7 +258,7 @@ For specific use, refer to Demo (JPCropViewController).
                        completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**Crop N-grid pictures**
+- **Crop N-grid pictures**
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
 

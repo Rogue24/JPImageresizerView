@@ -268,7 +268,7 @@ self.imageresizerView = imageresizerView
                        completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**裁剪N宫格图片**
+- **裁剪N宫格图片**
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropngird.gif)
 
