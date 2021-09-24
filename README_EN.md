@@ -231,7 +231,7 @@ For specific use, refer to Demo (JPCropViewController).
             - JPIEReason_VideoAlreadyDamage: The video file is corrupted
             - JPIEReason_VideoExportFailed: Video export failed
             - JPIEReason_VideoExportCancelled: Video export cancelled
-        5.Note: the image format of the cache path will be automatically corrected. For example, it was originally written as xxx/xxx.jpeg. Due to the use of mask, it will be corrected to xxx/xxx.png after clipping. The final cache path shall be subject to `result.cacheurl` in the callback(`completeBlock`).
+        5.Note: the image format of the cache path will be automatically corrected. For example, it was originally written as `xxx/xxx.jpeg`. Due to the use of mask, it will be corrected to `xxx/xxx.png` after clipping. The final cache path shall be subject to `result.cacheurl` in the callback(`completeBlock`).
     
 #### Crop image
 ```objc

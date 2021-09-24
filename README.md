@@ -241,7 +241,7 @@ self.imageresizerView = imageresizerView
             - JPIEReason_VideoAlreadyDamage：视频文件已损坏
             - JPIEReason_VideoExportFailed：视频导出失败
             - JPIEReason_VideoExportCancelled：视频导出取消
-        5.**注意**：缓存路径的图片格式会自动修正，例如原本写的是**xxx/xxx.jpeg**，由于使用了蒙版，裁剪后则会修正为**xxx/xxx.png**了，最终的缓存路径要以裁剪回调completeBlock中的**result.cacheURL**为准。
+        5.注意：缓存路径的图片格式会自动修正，例如原本写的是`xxx/xxx.jpeg`，由于使用了蒙版，裁剪后则会修正为`xxx/xxx.png`了，最终的缓存路径要以裁剪回调`completeBlock`中的`result.cacheURL`为准。
     
 #### 裁剪图片
 ```objc
