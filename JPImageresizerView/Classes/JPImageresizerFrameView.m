@@ -848,6 +848,13 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [CATransaction commit];
 }
 
+- (void)__hideOrShowSlider:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
+    if (!self.slider) return;
+    [UIView animateWithDuration:duration animations:^{
+        self.slider.alpha = isHide ? 0 : 1;
+    }];
+}
+
 - (void)__updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
@@ -1072,11 +1079,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     void (^completeBlock)(void) = ^{
         [self.blurView setIsBlur:YES duration:self->_blurDuration];
         [self __hideOrShowGridLines:((!self.isShowGridlinesWhenIdle || self.slider) ? YES : NO) animateDuration:self->_blurDuration];
-        if (self.slider) {
-            [UIView animateWithDuration:self->_blurDuration animations:^{
-                self.slider.alpha = 1;
-            }];
-        }
+        [self __hideOrShowSlider:NO animateDuration:self->_blurDuration];
         self.superview.userInteractionEnabled = YES;
         if (self->_isToBeArbitrarily) {
             self->_isToBeArbitrarily = NO;
@@ -1458,19 +1461,18 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark 开始/结束拖拽
 - (void)startImageresizer {
-    if (!_pointInside) return;
-    self.isPrepareToScale = YES;
-    [self __removeTimer];
-    if (!self.isBlurWhenDragging && _maskImage == nil) [self.blurView setIsBlur:NO duration:_blurDuration];
-    [self __hideOrShowGridLines:!self.isShowGridlinesWhenDragging animateDuration:_blurDuration];
-    if (self.slider) {
-        [UIView animateWithDuration:_blurDuration animations:^{
-            self.slider.alpha = 0;
-        }];
+    if (_pointInside) {
+        self.isPrepareToScale = YES;
+        [self __removeTimer];
+        if (!self.isBlurWhenDragging && _maskImage == nil) [self.blurView setIsBlur:NO duration:_blurDuration];
     }
+    [self __hideOrShowGridLines:!self.isShowGridlinesWhenDragging animateDuration:_blurDuration];
+    [self __hideOrShowSlider:YES animateDuration:_blurDuration];
 }
 - (void)endedImageresizer {
     if (!_pointInside) {
+        [self __hideOrShowGridLines:((!self.isShowGridlinesWhenIdle || self.slider) ? YES : NO) animateDuration:_blurDuration];
+        [self __hideOrShowSlider:NO animateDuration:_blurDuration];
         [self __checkIsCanRecovery];
         return;
     }
@@ -1491,11 +1493,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (self.maskBlurView || self.slider) {
         delay = 0.18;
         [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
-        if (self.slider) {
-            [UIView animateWithDuration:delay animations:^{
-                self.slider.alpha = 0;
-            }];
-        }
+        [self __hideOrShowSlider:YES animateDuration:_defaultDuration];
     }
     return delay;
 }
@@ -1510,11 +1508,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [CATransaction commit];
         [self.maskBlurView setIsBlur:YES duration:_defaultDuration];
     }
-    if (self.slider) {
-        [UIView animateWithDuration:_defaultDuration animations:^{
-            self.slider.alpha = 1;
-        }];
-    }
+    [self __hideOrShowSlider:NO animateDuration:_defaultDuration];
     self.superview.userInteractionEnabled = YES;
     self.isPrepareToScale = NO;
 }
@@ -1536,17 +1530,15 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         }
         *afterFrame = frame;
     }
+    
     NSTimeInterval delay = 0;
     if (isAnimated) {
         delay = 0.18;
         [self.blurView setIsBlur:NO duration:_defaultDuration];
         [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
-        if (self.slider) {
-            [UIView animateWithDuration:delay animations:^{
-                self.slider.alpha = 0;
-            }];
-        }
+        [self __hideOrShowSlider:YES animateDuration:_defaultDuration];
     }
+    
     return delay;
 }
 - (void)mirrorDone {
@@ -1557,12 +1549,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [CATransaction commit];
         [self.maskBlurView setIsBlur:YES duration:_defaultDuration];
     }
-    if (self.slider) {
-        [UIView animateWithDuration:_defaultDuration animations:^{
-            self.slider.alpha = 1;
-        }];
-    }
     [self.blurView setIsBlur:YES duration:_defaultDuration];
+    [self __hideOrShowSlider:NO animateDuration:_defaultDuration];
     
     [self __checkIsCanRecovery];
     self.superview.userInteractionEnabled = YES;
@@ -1598,10 +1586,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     if (self.slider && isAnimated) {
         delay = 0.18;
-        [UIView animateWithDuration:delay animations:^{
-            self.slider.alpha = 0;
-        }];
+        [self __hideOrShowSlider:YES animateDuration:delay];
     }
+    
     return delay;
 }
 - (void)recoveryWithDuration:(NSTimeInterval)duration {
@@ -1635,11 +1622,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     } else {
         [self __removeMaskBlurView:NO completeBlock:nil];
     }
-    if (self.slider) {
-        [UIView animateWithDuration:_defaultDuration animations:^{
-            self.slider.alpha = 1;
-        }];
-    }
+    [self __hideOrShowSlider:NO animateDuration:_defaultDuration];
     self.superview.userInteractionEnabled = YES;
     self.isPrepareToScale = NO;
 }

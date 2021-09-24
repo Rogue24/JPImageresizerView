@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.9.3)
+## Brief introduction (Current version: 1.9.4)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -231,6 +231,7 @@ For specific use, refer to Demo (JPCropViewController).
             - JPIEReason_VideoAlreadyDamage: The video file is corrupted
             - JPIEReason_VideoExportFailed: Video export failed
             - JPIEReason_VideoExportCancelled: Video export cancelled
+        5.**Note**: the image format of the cache path will be automatically corrected. For example, it was originally written as **xxx/xxx.jpeg**. Due to the use of mask, it will be corrected to **xxx/xxx.png** after clipping. The final cache path shall be subject to **result.cacheurl** in the callback(completeBlock).
     
 #### Crop image
 ```objc

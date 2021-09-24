@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.9.3）
+## 简介（当前版本：1.9.4）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -231,9 +231,9 @@ self.imageresizerView = imageresizerView
 
 ### 裁剪
     裁剪说明：
-        1.裁剪过程是在子线程中执行，进度、错误、完成的回调都会切回主线程执行，如果是高清图片，裁剪前可添加HUD提示
-        2.compressScale：图片和GIF的压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-        3.cacheURL：缓存路径，可设置为nil，图片和GIF则不缓存，而视频会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
+        1.裁剪过程是在子线程中执行，进度、错误、完成的回调都会切回主线程执行，如果是高清图片，裁剪前可添加HUD提示；
+        2.compressScale：图片和GIF的压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）；
+        3.cacheURL：缓存路径，可设置为nil，图片和GIF则不缓存，而视频会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4；
         4.错误原因 JPImageresizerErrorReason 说明：
             - JPIEReason_NilObject：裁剪元素为空
             - JPIEReason_CacheURLAlreadyExists：缓存路径已存在其他文件
@@ -241,6 +241,7 @@ self.imageresizerView = imageresizerView
             - JPIEReason_VideoAlreadyDamage：视频文件已损坏
             - JPIEReason_VideoExportFailed：视频导出失败
             - JPIEReason_VideoExportCancelled：视频导出取消
+        5.**注意**：缓存路径的图片格式会自动修正，例如原本写的是**xxx/xxx.jpeg**，由于使用了蒙版，裁剪后则会修正为**xxx/xxx.png**了，最终的缓存路径要以裁剪回调completeBlock中的**result.cacheURL**为准。
     
 #### 裁剪图片
 ```objc
@@ -672,7 +673,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.9.0~1.9.3 | 1. 图片新增N宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例；<br>3. 兼容Swift环境。
+1.9.0~1.9.4 | 1. 图片新增N宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例；<br>3. 兼容Swift环境；<br>4. 修复`isShowGridlinesWhenDragging`属性为YES时，拖动图片本身没有显示网格的问题。
 1.7.8~1.8.3 | 1. 新增可保存当前历史状态的功能；<br>2. 修复GIF裁剪某一帧画面时的后缀名误设问题；<br>3. 修复仅放大而无法裁剪的问题；<br>4. 修复从系统相册选择的视频没有画面的问题；<br>5. 修复预览模式下进度条没有隐藏的问题。
 1.7.6~1.7.7 | 1. 修复了固定比例旋转时无故放大的问题；<br>2. 修复iOS14版本下自定义进度条的拖动块消失的问题。
 1.7.3~1.7.5 | 1. 修复了初始化无法固定裁剪比例的问题；<br>2. 现在圆切和蒙版均可设置是否自由拖拽；<br>3. 优化了设置裁剪宽高比和重置的接口；<br>4. 优化了图片缓存逻辑；<br>5. 修复了GIF时长过短导致截取错误的问题。
