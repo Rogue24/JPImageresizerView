@@ -536,7 +536,10 @@ static UIViewController *tmpVC_;
     if (self.imageresizerView.isGIF) {
         void (^cropGIF)(void) = ^{
             [JPProgressHUD show];
-            [self.imageresizerView cropGIFWithCacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+            // compressScale：压缩比例
+            // isReverseOrder：是否倒放
+            // rate：速率
+            [self.imageresizerView cropGIFWithCompressScale:1 isReverseOrder:NO rate:1 cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 @jp_strongify(self);
                 if (!self) return;
                 [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
