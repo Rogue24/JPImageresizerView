@@ -47,7 +47,7 @@
 #pragma mark - 初始布局
 
 - (void)__setupNavigationBar {
-    UIBarButtonItem *replaceImgBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(__replacePersonImage)];
+    UIBarButtonItem *replaceImgBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(__replacePersonImage)];
     
     UIButton *synthesizeBtn = ({
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
