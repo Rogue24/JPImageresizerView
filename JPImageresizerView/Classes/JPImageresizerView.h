@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <JPImageresizerConfigure.h>
-#import <JPImageresizerFrameView.h>
-#import <JPImageresizerResult.h>
+#import "JPImageresizerConfigure.h"
+#import "JPImageresizerFrameView.h"
+#import "JPImageresizerResult.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
