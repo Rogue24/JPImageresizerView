@@ -134,8 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 裁剪视频其中一帧
  */
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
-                      time:(CMTime)time
-               maximumSize:(CGSize)maximumSize
+                  atSecond:(NSTimeInterval)second
                  maskImage:(UIImage *_Nullable)maskImage
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
@@ -162,8 +161,6 @@ NS_ASSUME_NONNULL_BEGIN
  * 裁剪视频
  */
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *_Nullable)cacheURL

@@ -1287,8 +1287,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 
 #pragma mark 裁剪视频其中一帧
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
-                      time:(CMTime)time
-               maximumSize:(CGSize)maximumSize
+                  atSecond:(NSTimeInterval)second
                  maskImage:(UIImage *)maskImage
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
@@ -1299,17 +1298,25 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
-    if (compressScale > 1) compressScale = 1;
-    maximumSize = CGSizeMake(maximumSize.width * compressScale, maximumSize.height * compressScale);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
+        CGSize videoSize = videoTrack.naturalSize;
+        
+        CGFloat scale = compressScale > 1 ? 1 : compressScale;
+        CGSize maximumSize = CGSizeMake(videoSize.width * scale, videoSize.height * scale);
+        CMTime toleranceTime = CMTimeMake(0, asset.duration.timescale);
+        
         AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
         generator.maximumSize = maximumSize;
         generator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
         generator.appliesPreferredTrackTransform = YES;
-        generator.requestedTimeToleranceAfter = kCMTimeZero;
-        generator.requestedTimeToleranceBefore = kCMTimeZero;
+        generator.requestedTimeToleranceAfter = toleranceTime;
+        generator.requestedTimeToleranceBefore = toleranceTime;
+        
+        CMTime time = CMTimeMakeWithSeconds(second, asset.duration.timescale);
         CGImageRef imageRef = [generator copyCGImageAtTime:time actualTime:nil error:nil];
         UIImage *image = [UIImage imageWithCGImage:imageRef];
+        
         [self __cropPicture:image
                   imageData:nil
                  isCropGird:NO
@@ -1389,6 +1396,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     float frameInterval = duration / (float)frameTotal;
     CMTimeScale timescale = asset.duration.timescale;
+    CMTime toleranceTime = CMTimeMake(0, timescale);
+    
     NSMutableArray *times = [NSMutableArray array];
     for (NSInteger i = 0; i < frameTotal; i++) {
         CMTime time = CMTimeMakeWithSeconds(startSecond + i * frameInterval, timescale);
@@ -1399,8 +1408,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     generator.maximumSize = maximumSize;
     generator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
     generator.appliesPreferredTrackTransform = YES;
-    generator.requestedTimeToleranceAfter = kCMTimeZero;
-    generator.requestedTimeToleranceBefore = kCMTimeZero;
+    generator.requestedTimeToleranceAfter = toleranceTime;
+    generator.requestedTimeToleranceBefore = toleranceTime;
     
     __block NSInteger index = 0;
     NSMutableArray *images = [NSMutableArray array];
@@ -1439,8 +1448,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
 
 #pragma mark 裁剪视频
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
-                 timeRange:(CMTimeRange)timeRange
-             frameDuration:(CMTime)frameDuration
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *)cacheURL
@@ -1455,8 +1462,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self cropVideoWithAsset:asset
-                           timeRange:timeRange
-                       frameDuration:frameDuration
                           presetName:presetName
                            configure:configure
                             cacheURL:cacheURL
@@ -1509,18 +1514,30 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         return;
     }
     
+    CMTimeScale timescale = asset.duration.timescale;
+    CMTime frameDuration = CMTimeMakeWithSeconds(1.0 / videoTrack.nominalFrameRate, timescale);
+    CMTime zeroTime = CMTimeMake(0, timescale);
+    CMTimeRange timeRange = CMTimeRangeMake(zeroTime, asset.duration);
+    
     AVMutableComposition *composition = [AVMutableComposition composition];
     
     // 插入音频轨道
     AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
+    AVMutableAudioMix *audioMix;
     if (audioTrack) {
         AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
+        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:zeroTime error:nil];
+        
+        AVMutableAudioMixInputParameters *inputParameter = [AVMutableAudioMixInputParameters audioMixInputParametersWithTrack: audioCompositionTrack];
+        [inputParameter setVolume:1 atTime:zeroTime];
+        
+        audioMix = [AVMutableAudioMix audioMix];
+        audioMix.inputParameters = @[inputParameter];
     }
     
     // 插入视频轨道
     AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
+    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:zeroTime error:nil];
     
     // 创建视频导出会话
     AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:presetName];
@@ -1531,6 +1548,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     session.outputFileType = fileType;
     session.outputURL = tmpURL;
     session.shouldOptimizeForNetworkUse = YES;
+    session.audioMix = audioMix;
     
     // 获取配置属性
     JPImageresizerRotationDirection direction = configure.direction;
@@ -1559,7 +1577,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     CGAffineTransform transform = JPConfirmTransform(videoSize, direction, isVerMirror, isHorMirror, NO);
     CGPoint translate = JPConfirmTranslate(cropFrame, videoSize, direction, isVerMirror, isHorMirror, NO);
     transform = CGAffineTransformTranslate(transform, translate.x, translate.y);
-    [layerInstruciton setTransform:transform atTime:kCMTimeZero];
+    [layerInstruciton setTransform:transform atTime:zeroTime];
     
     AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
     compositionInstruction.timeRange = timeRange;
@@ -1615,8 +1633,6 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }
     
     NSURL *videoURL = asset.URL;
-    CMTimeScale timescale = asset.duration.timescale;
-    CMTimeRange timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
     
     // 根据文件后缀名获取文件类型
     AVFileType fileType = [self __videoFileTypeForSuffix:videoURL.pathExtension];
@@ -1639,6 +1655,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         [self __executeErrorBlock:fixErrorBlock cacheURL:nil reason:JPIEReason_VideoAlreadyDamage];
         return;
     }
+    
+    CMTimeScale timescale = asset.duration.timescale;
+    CMTime zeroTime = CMTimeMake(0, timescale);
+    CMTimeRange timeRange = CMTimeRangeMake(zeroTime, asset.duration);
+    
     // 获取视频修正方向（默认为摄像头方向）
     // preferredTransform：摄像头方向 -需要修改-> 屏幕方向 的transform
     CGAffineTransform preferredTransform = videoTrack.preferredTransform;
@@ -1653,14 +1674,21 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     
     // 插入音频轨道
     AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
+    AVMutableAudioMix *audioMix;
     if (audioTrack) {
         AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:kCMTimeZero error:nil];
+        [audioCompositionTrack insertTimeRange:timeRange ofTrack:audioTrack atTime:zeroTime error:nil];
+        
+        AVMutableAudioMixInputParameters *inputParameter = [AVMutableAudioMixInputParameters audioMixInputParametersWithTrack: audioCompositionTrack];
+        [inputParameter setVolume:1 atTime:zeroTime];
+        
+        audioMix = [AVMutableAudioMix audioMix];
+        audioMix.inputParameters = @[inputParameter];
     }
     
     // 插入视频轨道
     AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:kCMTimeZero error:nil];
+    [videoCompositionTrack insertTimeRange:timeRange ofTrack:videoTrack atTime:zeroTime error:nil];
     
     // 创建视频导出会话
     AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetHighestQuality];
@@ -1671,6 +1699,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     session.outputFileType = fileType;
     session.outputURL = tmpURL;
     session.shouldOptimizeForNetworkUse = YES;
+    session.audioMix = audioMix;
     
     AVMutableVideoCompositionLayerInstruction *layerInstruciton = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
     
@@ -1693,7 +1722,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }
     // 获取完整的transform
     CGAffineTransform transform = JPConfirmTransform(videoTrack.naturalSize, dircetion, NO, NO, NO);
-    [layerInstruciton setTransform:transform atTime:kCMTimeZero];
+    [layerInstruciton setTransform:transform atTime:zeroTime];
     
     AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
     compositionInstruction.timeRange = timeRange;

@@ -22,8 +22,8 @@ static JPObject *obj_;
     UIImage *image;
     NSData *imageData;
     NSURL *videoURL;
-    NSURL *mediaURL = info[UIImagePickerControllerMediaURL];
-    if (!mediaURL) {
+    NSString *mediaType = info[UIImagePickerControllerMediaType];
+    if ([mediaType isEqualToString:(NSString *)kUTTypeImage]) {
         if (@available(iOS 11.0, *)) {
             NSURL *url = info[UIImagePickerControllerImageURL];
             imageData = [NSData dataWithContentsOfURL:url];
@@ -31,7 +31,13 @@ static JPObject *obj_;
             image = info[UIImagePickerControllerOriginalImage];
         }
     } else {
-        videoURL = mediaURL;
+        videoURL = info[UIImagePickerControllerMediaURL];
+        if (!videoURL) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            videoURL = info[UIImagePickerControllerReferenceURL];
+#pragma clang diagnostic pop
+        }
     }
     [picker dismissViewControllerAnimated:YES completion:^{
         if ((image || imageData || videoURL) && self.replaceHandler) self.replaceHandler(image, imageData, videoURL);

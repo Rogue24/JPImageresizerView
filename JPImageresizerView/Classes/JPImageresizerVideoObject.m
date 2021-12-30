@@ -17,17 +17,15 @@
     if (self = [super init]) {
         _asset = asset;
         _isFixedOrientation = isFixedOrientation;
-        
-        _seconds = CMTimeGetSeconds(_asset.duration);
-        _timescale = _asset.duration.timescale;
-        _timeRange = CMTimeRangeMake(kCMTimeZero, _asset.duration);
-        _toleranceTime = CMTimeMake(0, _timescale);
-        
-        AVAssetTrack *videoTrack = [_asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
-        _frameDuration = CMTimeMakeWithSeconds(1.0 / videoTrack.nominalFrameRate, _timescale);
+        _seconds = CMTimeGetSeconds(asset.duration);
+        AVAssetTrack *videoTrack = [asset tracksWithMediaType:AVMediaTypeVideo].firstObject;
         _videoSize = videoTrack.naturalSize;
     }
     return self;
+}
+
+- (CMTimeScale)timescale {
+    return _asset.duration.timescale;
 }
 
 - (void)dealloc {

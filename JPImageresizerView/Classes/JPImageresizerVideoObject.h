@@ -15,11 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithAsset:(AVURLAsset *)asset isFixedOrientation:(BOOL)isFixedOrientation;
 @property (nonatomic, strong, readonly) AVURLAsset *asset;
 @property (nonatomic, assign, readonly) NSTimeInterval seconds;
-@property (nonatomic, assign, readonly) CMTimeScale timescale;
-@property (nonatomic, assign, readonly) CMTimeRange timeRange;
-@property (nonatomic, assign, readonly) CMTime toleranceTime;
-@property (nonatomic, assign, readonly) CMTime frameDuration;
 @property (nonatomic, assign, readonly) CGSize videoSize;
+@property (readonly) CMTimeScale timescale;
 @end
 
 @interface JPPlayerView : UIView
