@@ -53,14 +53,14 @@ import JPImageresizerView
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
-    // MARK:- 工厂
+    // MARK: - 工厂
     class func build(forCroper isCroper: Bool) -> Self {
         let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "JPCropViewController") as! Self
         vc.isCroper = isCroper
         return vc
     }
     
-    // MARK:- 裁剪后跳转
+    // MARK: - 裁剪后跳转
     private func jumpToPreviewViewController(_ originResult: JPImageresizerResult, fragmentResults: [JPImageresizerResult]? = nil, columnCount: Int = 0, rowCount: Int = 0) {
         guard let navCtr = navigationController else { return }
         
@@ -75,7 +75,7 @@ import JPImageresizerView
 }
 
 extension JPCropViewController {
-    // MARK:- 使用JPCroper
+    // MARK: - 使用JPCroper
     func setupCroper(_ image: UIImage, frame: CGRect) {
         rotateLeftBtn.isHidden = true
         rotateRightBtn.isHidden = true
@@ -103,7 +103,7 @@ extension JPCropViewController {
         slider.value = Float(configure.radian / Croper.radianRange.upperBound)
     }
     
-    // MARK:- 使用JPImageresizerView
+    // MARK: - 使用JPImageresizerView
     func setupImageresizerView(_ image: UIImage, frame: CGRect) {
         slider.isHidden = true
         rotateLeftBtn.addTarget(self, action: #selector(rotateLeft), for: .touchUpInside)
@@ -134,7 +134,7 @@ extension JPCropViewController {
     }
 }
 
-// MARK:- 监听Slider（旋转）
+// MARK: - 监听Slider（旋转）
 extension JPCropViewController {
     @objc func beginSlider() {
         croper?.showRotateGrid(animated: true)
@@ -151,7 +151,7 @@ extension JPCropViewController {
     }
 }
 
-// MARK:- 监听Button（旋转）
+// MARK: - 监听Button（旋转）
 extension JPCropViewController {
     @objc func rotateLeft() {
         imageresizerView?.isClockwiseRotation = false
@@ -164,7 +164,7 @@ extension JPCropViewController {
     }
 }
 
-// MARK:- 监听返回/恢复/裁剪事件
+// MARK: - 监听返回/恢复/裁剪事件
 extension JPCropViewController {
     @IBAction func goBack() {
         guard let navCtr = navigationController else { return }
@@ -260,7 +260,7 @@ extension JPCropViewController {
     }
 }
 
-// MARK:- 监听比例切换事件
+// MARK: - 监听比例切换事件
 extension JPCropViewController {
     @IBAction func originWHRatio() {
         imageresizerView?.resizeWHScale = 0
