@@ -39,6 +39,30 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 /**
+ * 默认配置（空资源）
+ */
++ (instancetype)defaultConfigure;
+
+/* 默认参数的基础上：
+    - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    - bgColor = UIColor.whiteColor;
+    - maskAlpha = 0.3;
+    - strokeColor = R: 56, G: 121, B: 242 */
+/**
+ * 浅色毛玻璃默认配置（空资源）
+ */
++ (JPImageresizerConfigure *)lightBlurMaskTypeConfigure;
+
+/* 默认参数的基础上：
+    - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    - bgColor = UIColor.blackColor;
+    - maskAlpha = 0.3; */
+/**
+ * 深色毛玻璃默认配置（空资源）
+ */
++ (JPImageresizerConfigure *)darkBlurMaskTypeConfigure;
+
+/**
  * 默认配置裁剪图片/GIF（UIImage）
  */
 + (instancetype)defaultConfigureWithImage:(UIImage *)image make:(JPImageresizerConfigureMakeBlock)make;
@@ -65,11 +89,6 @@ NS_ASSUME_NONNULL_BEGIN
                               fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                               fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-/* 默认参数的基础上：
-    - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    - bgColor = UIColor.whiteColor;
-    - maskAlpha = 0.3;
-    - strokeColor = R: 56, G: 121, B: 242 */
 /**
  * 浅色毛玻璃配置裁剪图片/GIF（UIImage）
  */
@@ -97,10 +116,6 @@ NS_ASSUME_NONNULL_BEGIN
                                         fixProgressBlock:(JPExportVideoProgressBlock)fixProgressBlock
                                         fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-/* 默认参数的基础上：
-    - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    - bgColor = UIColor.blackColor;
-    - maskAlpha = 0.3; */
 /**
  * 深色毛玻璃配置裁剪图片/GIF（UIImage）
  */

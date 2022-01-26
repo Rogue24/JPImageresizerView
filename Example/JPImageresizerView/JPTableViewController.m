@@ -23,6 +23,8 @@
 
 @implementation JPTableViewController
 
+#pragma mark - Static variable
+
 static JPImageresizerConfigure *savedConfigure_ = nil;
 + (void)setSavedConfigure:(JPImageresizerConfigure *)savedConfigure {
     savedConfigure_ = savedConfigure;
@@ -30,6 +32,10 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 + (JPImageresizerConfigure *)savedConfigure {
     return savedConfigure_;
 }
+
+static JPImageresizerConfigure *gifConfigure_;
+
+#pragma mark - ViewController's life cycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -143,7 +149,6 @@ static JPImageresizerConfigure *savedConfigure_ = nil;
 
 #pragma mark - Table view delegate
 
-static JPImageresizerConfigure *gifConfigure_;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     switch (indexPath.section) {

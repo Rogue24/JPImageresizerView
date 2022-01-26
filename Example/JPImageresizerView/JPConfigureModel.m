@@ -17,60 +17,52 @@
     JPConfigureModel *model1 = [self new];
     model1.title = @"默认样式";
     model1.statusBarStyle = UIStatusBarStyleLightContent;
-    model1.configure = [JPImageresizerConfigure defaultConfigureWithImage:nil make:nil];
+    model1.configure = [JPImageresizerConfigure defaultConfigure];
     
     JPConfigureModel *model2 = [self new];
     model2.title = @"深色毛玻璃遮罩";
     model2.statusBarStyle = UIStatusBarStyleLightContent;
-    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:nil];
+    model2.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigure];
     
     JPConfigureModel *model3 = [self new];
     model3.title = @"浅色毛玻璃遮罩";
     model3.statusBarStyle = UIStatusBarStyleDefault;
-    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:nil];
+    model3.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigure];
     
     JPConfigureModel *model4 = [self new];
     model4.title = @"拉伸样式的边框图片";
     model4.statusBarStyle = UIStatusBarStyleDefault;
-    model4.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
+    model4.configure = [JPImageresizerConfigure lightBlurMaskTypeConfigure]
         .jp_strokeColor([UIColor colorWithRed:(205.0 / 255.0) green:(107.0 / 255.0) blue:(153.0 / 255.0) alpha:1.0])
         .jp_borderImage(self.class.stretchBorderImage)
         .jp_borderImageRectInset(self.class.stretchBorderImageRectInset);
-    }];
     
     JPConfigureModel *model5 = [self new];
     model5.title = @"平铺样式的边框图片";
     model5.statusBarStyle = UIStatusBarStyleLightContent;
-    model5.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
+    model5.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigure]
         .jp_frameType(JPClassicFrameType)
         .jp_borderImage(self.class.tileBorderImage)
         .jp_borderImageRectInset(self.class.tileBorderImageRectInset);
-    }];
     
     JPConfigureModel *model6 = [self new];
     model6.title = @"圆切样式";
     model6.statusBarStyle = UIStatusBarStyleDefault;
-    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
+    model6.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigure]
         .jp_strokeColor(JPRGBColor(250, 250, 250))
         .jp_frameType(JPClassicFrameType)
         .jp_isClockwiseRotation(YES)
         .jp_animationCurve(JPAnimationCurveEaseOut)
         .jp_isRoundResize(YES)
         .jp_isArbitrarily(NO);
-    }];
     
     JPConfigureModel *model7 = [self new];
     model7.title = @"蒙版样式";
     model7.statusBarStyle = UIStatusBarStyleLightContent;
-    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
-        configure
+    model7.configure = [JPImageresizerConfigure darkBlurMaskTypeConfigure]
         .jp_frameType(JPClassicFrameType)
         .jp_maskImage([UIImage imageNamed:@"love.png"])
         .jp_isArbitrarily(NO);
-    }];
     
     examplesModels_ = @[model1, model2, model3, model4, model5, model6, model7];
     return examplesModels_;
