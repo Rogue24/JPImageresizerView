@@ -406,7 +406,12 @@ static UIViewController *tmpVC_;
 
 #pragma mark 旋转
 - (IBAction)rotate:(id)sender {
-    [self.imageresizerView rotation];
+    [UIAlertController rotation:^(BOOL isClockwise) {
+        self.imageresizerView.isClockwiseRotation = isClockwise;
+        [self.imageresizerView rotation];
+    } toDirection:^(JPImageresizerRotationDirection direction) {
+        [self.imageresizerView rotationToDirection:direction];
+    } fromVC:self];
 }
 
 #pragma mark 重置

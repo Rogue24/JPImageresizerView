@@ -312,9 +312,16 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @method
  @brief 旋转图片
- @discussion 旋转90度，支持4个方向，分别是垂直向上、水平向左、垂直向下、水平向右
+ @discussion 顺/逆时针旋转90°（支持4个方向，分别是垂直向上、水平向左、垂直向下、水平向右）
  */
 - (void)rotation;
+
+/*!
+ @method
+ @brief 旋转图片
+ @discussion 旋转至目标方向（支持4个方向，分别是垂直向上、水平向左、垂直向下、水平向右）
+ */
+- (void)rotationToDirection:(JPImageresizerRotationDirection)direction;
 
 /**
  * 垂直镜像（沿着Y轴旋转180）

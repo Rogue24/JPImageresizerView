@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.9.5)
+## Brief introduction (Current version: 1.9.6)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -564,11 +564,14 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 
 ### Rotate
 ```objc
-// Default counterclockwise rotation, rotation angle is 90 degrees
+// 1.Rotate 90 ° clockwise / counterclockwise (default counterclockwise)
 [self.imageresizerView rotation];
 
 // Set the isClockwiseRotation property to YES if clockwise rotation is required
 self.imageresizerView.isClockwiseRotation = YES;
+
+// 2.Customize the rotation to the target direction (four directions are supported: vertical up, horizontal left, vertical down and horizontal right)
+[self.imageresizerView rotationToDirection:JPImageresizerVerticalDownDirection];
 ```
 
 ### Reset

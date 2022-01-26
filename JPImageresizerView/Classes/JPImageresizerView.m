@@ -889,19 +889,38 @@
 
 #pragma mark 旋转
 - (void)rotation {
+    NSInteger directionIndex = self.directionIndex;
+    BOOL isNormal = _verticalityMirror == _horizontalMirror;
+    directionIndex += (isNormal ? 1 : -1);
+    
+    NSInteger maxIndex = self.allDirections.count - 1;
+    NSInteger minIndex = 0;
+    if (directionIndex < minIndex) {
+        directionIndex = maxIndex;
+    } else if (directionIndex > maxIndex) {
+        directionIndex = minIndex;
+    }
+    
+    JPImageresizerRotationDirection direction = [self.allDirections[directionIndex] integerValue];
+    [self rotationToDirection:direction];
+}
+
+- (void)rotationToDirection:(JPImageresizerRotationDirection)direction {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
         return;
     }
     
+    NSInteger directionIndex = [self.allDirections indexOfObject:@(direction)];
+    NSInteger diffIndex = directionIndex - self.directionIndex;
+    if (diffIndex == 0) return;
+    self.directionIndex = directionIndex;
+    
     BOOL isNormal = _verticalityMirror == _horizontalMirror;
     
-    CGFloat angle = (self.isClockwiseRotation ? 1.0 : -1.0) * (isNormal ? 1.0 : -1.0) * M_PI_2;
+    CGFloat angle = (self.isClockwiseRotation ? diffIndex : -diffIndex) * (isNormal ? 1.0 : -1.0) * M_PI_2;
     CATransform3D svTransform = CATransform3DRotate(self.scrollView.layer.transform, angle, 0, 0, 1);
     CATransform3D fvTransform = CATransform3DRotate(self.frameView.layer.transform, angle, 0, 0, 1);
-    
-    self.directionIndex += (isNormal ? 1 : -1);
-    JPImageresizerRotationDirection direction = [self.allDirections[self.directionIndex] integerValue];
     
     NSTimeInterval delay = [self.frameView willRotationWithDirection:direction];
     

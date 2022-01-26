@@ -55,7 +55,10 @@ static JPObject *obj_;
 
 @implementation UIAlertController (JPImageresizer)
 
-+ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler isArbitrarily:(BOOL)isArbitrarily isRoundResize:(BOOL)isRoundResize fromVC:(UIViewController *)fromVC {
++ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler
+              isArbitrarily:(BOOL)isArbitrarily
+              isRoundResize:(BOOL)isRoundResize
+                     fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"使用%@", isArbitrarily ? @"固定比例" : @"任意比例"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -86,7 +89,8 @@ static JPObject *obj_;
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)changeBlurEffect:(void(^)(UIBlurEffect *blurEffect))handler fromVC:(UIViewController *)fromVC {
++ (void)changeBlurEffect:(void(^)(UIBlurEffect *blurEffect))handler
+                  fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除模糊效果" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -161,7 +165,8 @@ static JPObject *obj_;
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)replaceObj:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler fromVC:(UIViewController *)fromVC {
++ (void)replaceObj:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler
+            fromVC:(UIViewController *)fromVC {
     if (!handler) return;
     UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -191,7 +196,10 @@ static JPObject *obj_;
     [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)openAlbum:(void (^)(UIImage *, NSData *, NSURL *))handler fromVC:(UIViewController *)fromVC {
++ (void)openAlbum:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler
+           fromVC:(UIViewController *)fromVC {
+    if (!handler) return;
+    
     obj_ = [JPObject new];
     obj_.replaceHandler = handler;
     
@@ -206,6 +214,41 @@ static JPObject *obj_;
     picker.mediaTypes = mediaTypes;
     picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
     [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
+}
+
++ (void)rotation:(void(^)(BOOL isClockwise))handler1
+     toDirection:(void(^)(JPImageresizerRotationDirection direction))handler2
+          fromVC:(UIViewController *)fromVC {
+    if (!handler1 || !handler2) return;
+    
+    UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"顺时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler1(YES);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"逆时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler1(NO);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"垂直向上（0°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler2(JPImageresizerVerticalUpDirection);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"水平向右（90°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler2(JPImageresizerHorizontalRightDirection);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"垂直向下（180°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler2(JPImageresizerVerticalDownDirection);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"水平向左（270°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler2(JPImageresizerHorizontalLeftDirection);
+    }]];
+    
+    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [fromVC presentViewController:alertCtr animated:YES completion:nil];
 }
 
 @end
