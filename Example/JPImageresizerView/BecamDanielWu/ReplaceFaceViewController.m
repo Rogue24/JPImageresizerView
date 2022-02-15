@@ -97,17 +97,16 @@
 #pragma mark - 保存脸模图片
 
 - (void)__saveFaceImage {
-    UIAlertController *alertCtr = [UIAlertController alertControllerWithTitle:@"是否保存脸模到相册" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [JPProgressHUD show];
-        [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.faceImage successHandle:^(NSString *assetID) {
-            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
-        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
-            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
-        }];
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertCtr animated:YES completion:nil];
+    [UIAlertController sheetWithTitle:@"是否保存脸模到相册" message:nil actions:@[
+        [UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [JPProgressHUD show];
+            [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.faceImage successHandle:^(NSString *assetID) {
+                [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+            } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+                [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+            }];
+        }],
+    ]];
 }
 
 #pragma mark - 合成图片
