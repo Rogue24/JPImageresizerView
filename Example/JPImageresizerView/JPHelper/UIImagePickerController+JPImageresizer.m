@@ -60,7 +60,7 @@ static JPObject *obj_;
     obj_ = [JPObject new];
     obj_.replaceHandler = handler;
     
-    UIImagePickerController *picker = [self init];
+    UIImagePickerController *picker = [[self alloc] init];
     picker.delegate = obj_;
     NSMutableArray *mediaTypes = @[(NSString *)kUTTypeMovie,
                                    (NSString *)kUTTypeVideo,
