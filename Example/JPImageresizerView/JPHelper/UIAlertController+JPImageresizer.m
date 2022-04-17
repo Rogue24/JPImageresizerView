@@ -7,248 +7,311 @@
 //
 
 #import "UIAlertController+JPImageresizer.h"
-#import <MobileCoreServices/MobileCoreServices.h>
-#import <Photos/Photos.h>
-
-@interface JPObject : NSObject <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property (nonatomic, copy) void (^replaceHandler)(UIImage *image, NSData *imageData, NSURL *videoURL);
-@end
-
-static JPObject *obj_;
-
-@implementation JPObject
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    UIImage *image;
-    NSData *imageData;
-    NSURL *videoURL;
-    NSString *mediaType = info[UIImagePickerControllerMediaType];
-    if ([mediaType isEqualToString:(NSString *)kUTTypeImage]) {
-        if (@available(iOS 11.0, *)) {
-            NSURL *url = info[UIImagePickerControllerImageURL];
-            imageData = [NSData dataWithContentsOfURL:url];
-        } else {
-            image = info[UIImagePickerControllerOriginalImage];
-        }
-    } else {
-        videoURL = info[UIImagePickerControllerMediaURL];
-        if (!videoURL) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            videoURL = info[UIImagePickerControllerReferenceURL];
-#pragma clang diagnostic pop
-        }
-    }
-    [picker dismissViewControllerAnimated:YES completion:^{
-        if ((image || imageData || videoURL) && self.replaceHandler) self.replaceHandler(image, imageData, videoURL);
-        obj_ = nil;
-    }];
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:^{
-        obj_ = nil;
-    }];
-}
-
-@end
 
 @implementation UIAlertController (JPImageresizer)
 
-+ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler
-              isArbitrarily:(BOOL)isArbitrarily
-              isRoundResize:(BOOL)isRoundResize
-                     fromVC:(UIViewController *)fromVC {
-    if (!handler) return;
-    UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"使用%@", isArbitrarily ? @"固定比例" : @"任意比例"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(-1);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:@"%@圆切", isRoundResize ? @"取消" : @""] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"1 : 1" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(1);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"2 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(2.0 / 3.0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"3 : 5" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(3.0 / 5.0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"9 : 16" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(9.0 / 16.0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"7 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(7.0 / 3.0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"16 : 9" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(16.0 / 9.0);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [fromVC presentViewController:alertCtr animated:YES completion:nil];
++ (void)showWithPreferredStyle:(UIAlertControllerStyle)preferredStyle
+                         title:(NSString *)title
+                       message:(NSString *)message
+                       actions:(NSArray<UIAlertAction *> *)actions
+            isNeedCancelAction:(BOOL)isNeedCancelAction {
+    if (actions.count == 0) return;
+    
+    UIAlertController *alertCtr = [self alertControllerWithTitle:title message:message preferredStyle:preferredStyle];
+    
+    for (UIAlertAction *action in actions) {
+        [alertCtr addAction:action];
+    }
+    
+    if (isNeedCancelAction) {
+        [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    }
+    
+    [JPKeyWindow.jp_topViewController presentViewController:alertCtr animated:YES completion:nil];
 }
 
-+ (void)changeBlurEffect:(void(^)(UIBlurEffect *blurEffect))handler
-                  fromVC:(UIViewController *)fromVC {
+#pragma mark - Alert
+
++ (void)alertWithTitle:(NSString *)title
+               message:(NSString *)message
+               actions:(NSArray<UIAlertAction *> *)actions {
+    [self alertWithTitle:title
+                 message:message
+                 actions:actions
+      isNeedCancelAction:YES];
+}
+
++ (void)alertWithTitle:(NSString *)title
+               message:(NSString *)message
+               actions:(NSArray<UIAlertAction *> *)actions
+    isNeedCancelAction:(BOOL)isNeedCancelAction {
+    [self showWithPreferredStyle:UIAlertControllerStyleAlert
+                           title:title
+                         message:message
+                         actions:actions
+              isNeedCancelAction:isNeedCancelAction];
+}
+
+#pragma mark - Sheet
+
++ (void)sheetWithActions:(NSArray<UIAlertAction *> *)actions {
+    [self sheetWithTitle:nil
+                 message:nil
+                 actions:actions
+      isNeedCancelAction:YES];
+}
+
++ (void)sheetWithTitle:(NSString *)title
+               message:(NSString *)message
+               actions:(NSArray<UIAlertAction *> *)actions {
+    [self sheetWithTitle:title
+                 message:message
+                 actions:actions
+      isNeedCancelAction:YES];
+}
+
++ (void)sheetWithTitle:(NSString *)title
+               message:(NSString *)message
+               actions:(NSArray<UIAlertAction *> *)actions
+    isNeedCancelAction:(BOOL)isNeedCancelAction {
+    [self showWithPreferredStyle:UIAlertControllerStyleActionSheet
+                           title:title
+                         message:message
+                         actions:actions
+              isNeedCancelAction:isNeedCancelAction];
+}
+
++ (void)changeResizeWHScale:(void(^)(CGFloat resizeWHScale))handler
+              isArbitrarily:(BOOL)isArbitrarily
+              isRoundResize:(BOOL)isRoundResize {
     if (!handler) return;
-    UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"移除模糊效果" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [self sheetWithActions:@[
+        [UIAlertAction actionWithTitle:[NSString stringWithFormat:@"使用%@", isArbitrarily ? @"固定比例" : @"任意比例"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(-1);
+        }],
+        
+        [UIAlertAction actionWithTitle:[NSString stringWithFormat:@"%@圆切", isRoundResize ? @"取消" : @""] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(0);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"1 : 1" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(1);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"2 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(2.0 / 3.0);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"3 : 5" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(3.0 / 5.0);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"9 : 16" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(9.0 / 16.0);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"7 : 3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(7.0 / 3.0);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"16 : 9" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(16.0 / 9.0);
+        }],
+    ]];
+}
+
++ (void)changeBlurEffect:(void(^)(UIBlurEffect *blurEffect))handler {
+    if (!handler) return;
+    NSMutableArray<UIAlertAction *> *actions = [NSMutableArray array];
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"移除模糊效果" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         handler(nil);
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"ExtraLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"ExtraLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]);
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Light" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"Light" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]);
     }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Dark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"Dark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]);
     }]];
+    
     if (@available(iOS 10, *)) {
-        [alertCtr addAction:[UIAlertAction actionWithTitle:@"Regular" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [actions addObject:[UIAlertAction actionWithTitle:@"Regular" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]);
         }]];
-        [alertCtr addAction:[UIAlertAction actionWithTitle:@"Prominent" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [actions addObject:[UIAlertAction actionWithTitle:@"Prominent" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent]);
         }]];
         
         if (@available(iOS 13, *)) {
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThinMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterial]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThickMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterial]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemChromeMaterial" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterial]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterialLight]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThinMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterialLight]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialLight]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThickMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterialLight]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemChromeMaterialLight" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterialLight]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemUltraThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterialDark]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThinMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterialDark]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialDark]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemThickMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemThickMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThickMaterialDark]);
             }]];
-            [alertCtr addAction:[UIAlertAction actionWithTitle:@"SystemChromeMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [actions addObject:[UIAlertAction actionWithTitle:@"SystemChromeMaterialDark" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 handler([UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterialDark]);
             }]];
         }
     }
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [fromVC presentViewController:alertCtr animated:YES completion:nil];
+    
+    [self sheetWithActions:actions];
 }
 
-+ (void)replaceObj:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler
-            fromVC:(UIViewController *)fromVC {
++ (void)replaceObj:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler {
     if (!handler) return;
-    UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        NSInteger index = 1 + arc4random() % GirlCount;
-        NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
-        handler([UIImage imageNamed:girlImageName], nil, nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Kobe.jpg"], nil, nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Flowers" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler([UIImage imageNamed:@"Flowers.jpg"], nil, nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"咬人猫舞蹈节选（视频）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(nil, nil, [NSURL fileURLWithPath:JPMainBundleResourcePath(@"yaorenmao.mov", nil)]);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Gem（GIF）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(nil, [NSData dataWithContentsOfFile:JPMainBundleResourcePath(@"Gem.gif", nil)], nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"Dilraba（GIF）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler(nil, [NSData dataWithContentsOfFile:JPMainBundleResourcePath(@"Dilraba.gif", nil)], nil);
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self openAlbum:handler fromVC:fromVC];
-    }]];
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [fromVC presentViewController:alertCtr animated:YES completion:nil];
-}
-
-+ (void)openAlbum:(void(^)(UIImage *image, NSData *imageData, NSURL *videoURL))handler
-           fromVC:(UIViewController *)fromVC {
-    if (!handler) return;
-    
-    obj_ = [JPObject new];
-    obj_.replaceHandler = handler;
-    
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = obj_;
-    NSMutableArray *mediaTypes = @[(NSString *)kUTTypeMovie,
-                                   (NSString *)kUTTypeVideo,
-                                   (NSString *)kUTTypeImage].mutableCopy;
-//    if (@available(iOS 9.0, *)) {
-//        [mediaTypes addObject:(NSString *)kUTTypeLivePhoto];
-//    }
-    picker.mediaTypes = mediaTypes;
-    picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
-    [[UIWindow jp_topViewControllerFromDelegateWindow] presentViewController:picker animated:YES completion:nil];
+    [self sheetWithActions:@[
+        [UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSInteger index = 1 + arc4random() % GirlCount;
+            NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
+            handler([UIImage imageNamed:girlImageName], nil, nil);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler([UIImage imageNamed:@"Kobe.jpg"], nil, nil);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"Flowers" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler([UIImage imageNamed:@"Flowers.jpg"], nil, nil);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"咬人猫舞蹈节选（视频）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(nil, nil, [NSURL fileURLWithPath:JPMainBundleResourcePath(@"yaorenmao.mov", nil)]);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"Gem（GIF）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(nil, [NSData dataWithContentsOfFile:JPMainBundleResourcePath(@"Gem.gif", nil)], nil);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"Dilraba（GIF）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler(nil, [NSData dataWithContentsOfFile:JPMainBundleResourcePath(@"Dilraba.gif", nil)], nil);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [UIImagePickerController openAlbum:handler];
+        }],
+    ]];
 }
 
 + (void)rotation:(void(^)(BOOL isClockwise))handler1
-     toDirection:(void(^)(JPImageresizerRotationDirection direction))handler2
-          fromVC:(UIViewController *)fromVC {
+     toDirection:(void(^)(JPImageresizerRotationDirection direction))handler2{
     if (!handler1 || !handler2) return;
-    
-    UIAlertController *alertCtr = [self alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"顺时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler1(YES);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"逆时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler1(NO);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"垂直向上（0°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler2(JPImageresizerVerticalUpDirection);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"水平向右（90°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler2(JPImageresizerHorizontalRightDirection);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"垂直向下（180°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler2(JPImageresizerVerticalDownDirection);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"水平向左（270°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler2(JPImageresizerHorizontalLeftDirection);
-    }]];
-    
-    [alertCtr addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [fromVC presentViewController:alertCtr animated:YES completion:nil];
+    [self sheetWithActions:@[
+        [UIAlertAction actionWithTitle:@"顺时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler1(YES);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"逆时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler1(NO);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"垂直向上（0°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler2(JPImageresizerVerticalUpDirection);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"水平向右（90°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler2(JPImageresizerHorizontalRightDirection);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"垂直向下（180°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler2(JPImageresizerVerticalDownDirection);
+        }],
+        
+        [UIAlertAction actionWithTitle:@"水平向左（270°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler2(JPImageresizerHorizontalLeftDirection);
+        }],
+    ]];
 }
 
++ (void)changeMaskImage:(void(^)(UIImage *maskImage))handler1
+      gotoMaskImageList:(void(^)(void))handler2
+       isBecomeDanielWu:(BOOL)isBecomeDanielWu
+   isCanRemoveMaskImage:(BOOL)isCanRemoveMaskImage {
+    if (!handler1 || !handler2) return;
+    
+    NSMutableArray<UIAlertAction *> *actions = [NSMutableArray array];
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"蒙版素材列表" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler2();
+    }]];
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"love" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler1([UIImage imageNamed:@"love.png"]);
+    }]];
+    
+    [actions addObject:[UIAlertAction actionWithTitle:@"Supreme" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        handler1([UIImage imageNamed:@"supreme.png"]);
+    }]];
+    
+    if (isBecomeDanielWu) {
+        [actions addObject:[UIAlertAction actionWithTitle:@"DanielWu-Face" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            handler1([UIImage imageNamed:@"DanielWuFace.png"]);
+        }]];
+    }
+    
+    if (isCanRemoveMaskImage) {
+        [actions addObject:[UIAlertAction actionWithTitle:@"移除蒙版" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            handler1(nil);
+        }]];
+    }
+    
+    [self sheetWithActions:actions];
+}
 @end

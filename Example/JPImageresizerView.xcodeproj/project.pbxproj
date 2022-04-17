@@ -72,6 +72,7 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
+		7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
@@ -200,6 +201,8 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImagePickerController+JPImageresizer.h"; sourceTree = "<group>"; };
+		7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImagePickerController+JPImageresizer.m"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		9DE78341388E24FD10242AEE /* Pods_JPImageresizerView_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JPImageresizerView_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -339,6 +342,8 @@
 				1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */,
 				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
 				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
+				7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */,
+				7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */,
 				1A54DA73254583790053F75F /* JPExportCancelView.h */,
 				1A54DA74254583790053F75F /* JPExportCancelView.m */,
 			);
@@ -724,6 +729,7 @@
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
+				7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */,
 				1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
