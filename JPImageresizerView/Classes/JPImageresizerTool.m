@@ -7,8 +7,8 @@
 
 #import "JPImageresizerTool.h"
 #import <MobileCoreServices/UTCoreTypes.h>
-#import <JPImageresizer+Extension.h>
-#import <JPImageresizerResult.h>
+#import "JPImageresizer+Extension.h"
+#import "JPImageresizerResult.h"
 
 @implementation JPImageresizerTool
 

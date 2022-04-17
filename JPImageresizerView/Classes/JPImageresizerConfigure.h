@@ -7,7 +7,7 @@
 //  用于配置初始化参数
 
 #import <UIKit/UIKit.h>
-#import <JPImageresizerTypedef.h>
+#import "JPImageresizerTypedef.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
