@@ -86,7 +86,7 @@ extension JPCropViewController {
         slider.addTarget(self, action: #selector(endSlider), for: .touchUpOutside)
         
         // 1.初始配置
-        let configure = Configure(image)
+        let configure = Croper.Configure(image)
         
         // 2.创建croper
         let croper = Croper(frame: frame, configure)
@@ -100,7 +100,9 @@ extension JPCropViewController {
         view.insertSubview(croper, at: 0)
         self.croper = croper
         
-        slider.value = Float(configure.radian / Croper.radianRange.upperBound)
+        slider.minimumValue = -Float(Croper.diffAngle)
+        slider.maximumValue = Float(Croper.diffAngle)
+        slider.value = Float(configure.angle)
     }
     
     // MARK: - 使用JPImageresizerView
@@ -142,8 +144,8 @@ extension JPCropViewController {
     
     @objc func sliding() {
         guard let croper = croper else { return }
-        let radian = CGFloat(slider.value) * Croper.radianRange.upperBound
-        croper.updateRadian(radian)
+        let angle = CGFloat(slider.value)
+        croper.rotate(angle)
     }
     
     @objc func endSlider() {

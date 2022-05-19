@@ -511,6 +511,10 @@ static UIViewController *tmpVC_;
                     if (!self) return;
                     [self __imageresizerDoneWithResult:result];
                 }];
+            }],
+            
+            [UIAlertAction actionWithTitle:@"裁剪视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self __cropVideo];
             }]
         ]];
         return;
