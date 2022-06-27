@@ -165,7 +165,7 @@
         [self.titleView reloadDataWithAnimated:YES];
         [self.pageCtr reloadData];
         
-        if (self.isBecomeDanielWu) {
+        if (self.isReplaceFace) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [JPProgressHUD showImage:nil status:@"请选择脸模" userInteractionEnabled:YES];
             });
@@ -199,7 +199,7 @@
 - (UIViewController *)pageController:(WMPageController *)pageController viewControllerAtIndex:(NSInteger)index {
     JPAlbumViewModel *albumVM = (JPAlbumViewModel *)self.titleView.titleVMs[index];
     JPPhotoCollectionViewController *pcVC = [JPPhotoCollectionViewController pcVCWithAlbumVM:albumVM sideMargin:5 cellSpace:1 maxWHSclae:(16.0 / 9.0) maxCol:3 pcVCDelegate:self];
-    pcVC.isBecomeDanielWu = self.isBecomeDanielWu;
+    pcVC.isReplaceFace = self.isReplaceFace;
     self.photoCollectionVCs[@(index)] = pcVC;
     return pcVC;
 }

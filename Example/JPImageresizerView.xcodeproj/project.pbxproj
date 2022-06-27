@@ -410,7 +410,7 @@
 			path = ShapeList;
 			sourceTree = "<group>";
 		};
-		1AA468C1249A0CFE0081452F /* BecamDanielWu */ = {
+		1AA468C1249A0CFE0081452F /* ReplaceFace */ = {
 			isa = PBXGroup;
 			children = (
 				1A7394E8249DD9210024D2B6 /* ReplaceFaceViewController.h */,
@@ -420,7 +420,7 @@
 				1AA468C5249A0CFE0081452F /* DanielWuViewController.h */,
 				1AA468C3249A0CFE0081452F /* DanielWuViewController.m */,
 			);
-			path = BecamDanielWu;
+			path = ReplaceFace;
 			sourceTree = "<group>";
 		};
 		53D013BDB4E96A6364E8D87C /* Pods */ = {
@@ -477,7 +477,7 @@
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
 				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
-				1AA468C1249A0CFE0081452F /* BecamDanielWu */,
+				1AA468C1249A0CFE0081452F /* ReplaceFace */,
 				1AA468C0249A0CFE0081452F /* ShapeList */,
 				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
 				1A10433623A495AD00D1B2DF /* JPHelper */,

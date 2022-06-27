@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)changeMaskImage:(void(^)(UIImage *_Nullable maskImage))handler1
       gotoMaskImageList:(void(^)(void))handler2
-       isBecomeDanielWu:(BOOL)isBecomeDanielWu
+          isReplaceFace:(BOOL)isReplaceFace
    isCanRemoveMaskImage:(BOOL)isCanRemoveMaskImage;
 @end
 

@@ -16,7 +16,7 @@
 @end
 
 @interface JPPhotoCollectionViewController : UICollectionViewController
-@property (nonatomic, assign) BOOL isBecomeDanielWu;
+@property (nonatomic, assign) BOOL isReplaceFace;
 
 @property (nonatomic, weak) id<JPPhotoCollectionViewControllerDelegate> pcVCDelegate;
 

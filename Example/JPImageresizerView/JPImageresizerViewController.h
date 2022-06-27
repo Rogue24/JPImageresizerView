@@ -13,7 +13,7 @@
 @interface JPImageresizerViewController : UIViewController
 @property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, strong) JPImageresizerConfigure *configure;
-@property (nonatomic, assign) BOOL isBecomeDanielWu;
+@property (nonatomic, assign) BOOL isReplaceFace;
 
 @property (weak, nonatomic) IBOutlet UIView *topView;
 @property (weak, nonatomic) IBOutlet UIView *bottomView;

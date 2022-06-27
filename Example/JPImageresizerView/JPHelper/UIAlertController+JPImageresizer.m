@@ -282,7 +282,7 @@
 
 + (void)changeMaskImage:(void(^)(UIImage *maskImage))handler1
       gotoMaskImageList:(void(^)(void))handler2
-       isBecomeDanielWu:(BOOL)isBecomeDanielWu
+          isReplaceFace:(BOOL)isReplaceFace
    isCanRemoveMaskImage:(BOOL)isCanRemoveMaskImage {
     if (!handler1 || !handler2) return;
     
@@ -300,8 +300,8 @@
         handler1([UIImage imageNamed:@"supreme.png"]);
     }]];
     
-    if (isBecomeDanielWu) {
-        [actions addObject:[UIAlertAction actionWithTitle:@"DanielWu-Face" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    if (isReplaceFace) {
+        [actions addObject:[UIAlertAction actionWithTitle:@"Face Mask" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler1([UIImage imageNamed:@"DanielWuFace.png"]);
         }]];
     }

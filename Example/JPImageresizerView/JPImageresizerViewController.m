@@ -308,7 +308,7 @@ static UIViewController *tmpVC_;
             navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
         }
         [self presentViewController:navCtr animated:YES completion:nil];
-    } isBecomeDanielWu:self.isBecomeDanielWu isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil)];
+    } isReplaceFace:self.isReplaceFace isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil)];
 }
 
 #pragma mark 预览
@@ -371,7 +371,7 @@ static UIViewController *tmpVC_;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     
-    if (!self.isBecomeDanielWu) {
+    if (!self.isReplaceFace) {
         [actions addObject:[UIAlertAction actionWithTitle:@"九宫格风格" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.imageresizerView.maskImage = nil;
             self.imageresizerView.borderImage = nil;
@@ -576,7 +576,7 @@ static UIViewController *tmpVC_;
         }];
     };
     
-    if (self.isBecomeDanielWu ||
+    if (self.isReplaceFace ||
         self.imageresizerView.imageresizerWHScale <= 0.5 ||
         self.imageresizerView.imageresizerWHScale >= 2) {
         cropPicture();
@@ -626,7 +626,7 @@ static UIViewController *tmpVC_;
         return;
     }
     [JPProgressHUD dismiss];
-    if (self.isBecomeDanielWu) {
+    if (self.isReplaceFace) {
         DanielWuViewController *vc = [DanielWuViewController DanielWuVC:result.image];
         [self.navigationController pushViewController:vc animated:YES];
     } else {

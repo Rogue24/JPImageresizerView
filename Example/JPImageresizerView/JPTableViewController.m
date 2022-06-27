@@ -126,7 +126,7 @@ static JPImageresizerConfigure *gifConfigure_;
         case 2:
             switch (indexPath.item) {
                 case 0:
-                    cell.textLabel.text = @"成为吴彦祖";
+                    cell.textLabel.text = @"跟吴彦祖换脸";
                     break;
                 case 1:
                     cell.textLabel.text = @"暂停选老婆";
@@ -303,14 +303,14 @@ static JPImageresizerConfigure *gifConfigure_;
 }
 
 #pragma mark - 打开相册
-- (void)__openAlbum:(BOOL)isBecomeDanielWu {
+- (void)__openAlbum:(BOOL)isReplaceFace {
     @jp_weakify(self);
-    if (isBecomeDanielWu) {
+    if (isReplaceFace) {
         [JPPhotoToolSI albumAccessAuthorityWithAllowAccessAuthorityHandler:^{
             @jp_strongify(self);
             if (!self) return;
             JPPhotoViewController *vc = [[JPPhotoViewController alloc] init];
-            vc.isBecomeDanielWu = isBecomeDanielWu;
+            vc.isReplaceFace = isReplaceFace;
             [self.navigationController pushViewController:vc animated:YES];
         } refuseAccessAuthorityHandler:nil alreadyRefuseAccessAuthorityHandler:nil canNotAccessAuthorityHandler:nil isRegisterChange:NO];
         return;

@@ -21,7 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"我叫吴彦祖";
+    self.title = @"跟吴彦祖换脸";
     
     CGFloat scale = JPPortraitScreenWidth / 567.0;
     CGFloat x = self.personView.jp_x + 152.0 * scale;

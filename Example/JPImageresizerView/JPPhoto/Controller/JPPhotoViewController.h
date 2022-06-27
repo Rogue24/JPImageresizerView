@@ -10,5 +10,5 @@
 #import "JPPhotoViewModel.h"
 
 @interface JPPhotoViewController : UIViewController
-@property (nonatomic, assign) BOOL isBecomeDanielWu;
+@property (nonatomic, assign) BOOL isReplaceFace;
 @end

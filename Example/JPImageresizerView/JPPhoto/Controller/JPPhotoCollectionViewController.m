@@ -423,7 +423,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     UIImage *image = imageView.image;
     
     JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:image make:nil];
-    if (self.isBecomeDanielWu) {
+    if (self.isReplaceFace) {
         configure
         .jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"])
         .jp_isArbitrarily(NO);
@@ -431,7 +431,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     
     JPImageresizerViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
     vc.statusBarStyle = UIStatusBarStyleLightContent;
-    vc.isBecomeDanielWu = self.isBecomeDanielWu;
+    vc.isReplaceFace = self.isReplaceFace;
     vc.configure = configure;
     
     vc.view.frame = JPPortraitScreenBounds;
