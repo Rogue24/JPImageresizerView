@@ -294,7 +294,7 @@
             [self __removeVideoObj];
         }
         if (_slider) {
-            _slider.alpha = 1;
+            _slider.alpha = self.isPreview ? 0 : 1;
             [self addSubview:_slider];
             if (_frameView) {
                 CGRect sliderFrame = [_frameView convertRect:_frameView.imageresizerFrame toView:self];
@@ -338,7 +338,7 @@
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
                         self.playerView.alpha = 1;
-                        self.slider.alpha = 1;
+                        self.slider.alpha = self.isPreview ? 0 : 1;
                     } completion:^(BOOL finished) {
                         [self __removeImage];
                         self.frameView.playerView = self.playerView;
@@ -354,7 +354,7 @@
                 [self __updateImageViewImage:NO];
                 [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
                     self.playerView.alpha = 0;
-                    self.slider.alpha = isShowSlider ? 1 : 0;
+                    self.slider.alpha = isShowSlider ? (self.isPreview ? 0 : 1) : 0;
                 } completion:^(BOOL finished) {
                     [self __removeVideoObj];
                     [UIView animateWithDuration:duration2 delay:0 options:options animations:^{
@@ -370,7 +370,7 @@
         if (!isVideo) {
             [UIView transitionWithView:self.imageView duration:duration1 options:(options | UIViewAnimationOptionTransitionCrossDissolve) animations:^{
                 [self __updateImageViewImage:NO];
-                self.slider.alpha = isShowSlider ? 1 : 0;
+                self.slider.alpha = isShowSlider ? (self.isPreview ? 0 : 1) : 0;
             } completion:^(BOOL finished) {
                 [UIView animateWithDuration:duration2 delay:0 options:self->_animationOption animations:^{
                     [self __updateSubviewLayouts:duration2];
@@ -387,7 +387,7 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
                     playerView.alpha = 1;
-                    self.slider.alpha = 1;
+                    self.slider.alpha = self.isPreview ? 0 : 1;
                 } completion:^(BOOL finished) {
                     [self.playerView removeFromSuperview];
                     self.playerView = playerView;
@@ -417,7 +417,7 @@
         }
         if (_slider) {
             self.frameView.slider = self.slider;
-            self.slider.alpha = 1;
+            self.slider.alpha = self.isPreview ? 0 : 1;
             [self addSubview:self.slider];
         }
         [self __updateSubviewLayouts:0];
@@ -671,7 +671,7 @@
         self.slider.alpha = 0;
         [self addSubview:self.slider];
         [UIView animateWithDuration:0.2 animations:^{
-            self.slider.alpha = 1;
+            self.slider.alpha = self.isPreview ? 0 : 1;
         }];
         self.frameView.slider = self.slider;
     }

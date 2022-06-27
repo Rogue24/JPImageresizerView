@@ -850,8 +850,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 - (void)__hideOrShowSlider:(BOOL)isHide animateDuration:(NSTimeInterval)duration {
     if (!self.slider) return;
+    CGFloat alpha = isHide ? 0 : (_isPreview ? 0 : 1);
     [UIView animateWithDuration:duration animations:^{
-        self.slider.alpha = isHide ? 0 : 1;
+        self.slider.alpha = alpha;
     }];
 }
 
