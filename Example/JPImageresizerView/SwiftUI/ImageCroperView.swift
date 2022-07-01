@@ -50,6 +50,7 @@ class ImageCroperCoordinator: NSObject, JPCropViewControllerSwiftUIDelegate {
     }
     
     func dismissCropViewController(_ cropVC: JPCropViewController) {
+        croper.cropImage = nil
         croper.isPresented.wrappedValue.dismiss()
     }
     
