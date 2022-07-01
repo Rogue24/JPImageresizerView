@@ -74,6 +74,13 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
+		718FEDEA2869C1D800686129 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDE92869C1D800686129 /* CropView.swift */; };
+		718FEDEC2869C6B600686129 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDEB2869C6B600686129 /* Extensions.swift */; };
+		718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDED2869C6EF00686129 /* Modifier.swift */; };
+		718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE2C286AEC0300686129 /* OneDaySize.swift */; };
+		718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE2E286AEE3C00686129 /* OneDayView.swift */; };
+		718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE30286B38BA00686129 /* ImageCroperView.swift */; };
+		718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE31286B38BA00686129 /* ImagePickerView.swift */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -204,6 +211,13 @@
 		7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImagePickerController+JPImageresizer.h"; sourceTree = "<group>"; };
 		7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImagePickerController+JPImageresizer.m"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		718FEDE92869C1D800686129 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
+		718FEDEB2869C6B600686129 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		718FEDED2869C6EF00686129 /* Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
+		718FEE2C286AEC0300686129 /* OneDaySize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDaySize.swift; sourceTree = "<group>"; };
+		718FEE2E286AEE3C00686129 /* OneDayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OneDayView.swift; sourceTree = "<group>"; };
+		718FEE30286B38BA00686129 /* ImageCroperView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCroperView.swift; sourceTree = "<group>"; };
+		718FEE31286B38BA00686129 /* ImagePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		9DE78341388E24FD10242AEE /* Pods_JPImageresizerView_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JPImageresizerView_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A47783BBFA337AA1C11D8BF4 /* JPImageresizerView.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JPImageresizerView.podspec; path = ../JPImageresizerView.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -476,7 +490,8 @@
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
-				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
+				718FEDE72869C19700686129 /* Swift */,
+				718FEDE82869C1B700686129 /* SwiftUI */,
 				1AA468C1249A0CFE0081452F /* ReplaceFace */,
 				1AA468C0249A0CFE0081452F /* ShapeList */,
 				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
@@ -533,6 +548,28 @@
 				1A601A391FEBB523004B39A1 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		718FEDE72869C19700686129 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
+		718FEDE82869C1B700686129 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				718FEDE92869C1D800686129 /* CropView.swift */,
+				718FEE2E286AEE3C00686129 /* OneDayView.swift */,
+				718FEE2C286AEC0300686129 /* OneDaySize.swift */,
+				718FEDED2869C6EF00686129 /* Modifier.swift */,
+				718FEDEB2869C6B600686129 /* Extensions.swift */,
+				718FEE31286B38BA00686129 /* ImagePickerView.swift */,
+				718FEE30286B38BA00686129 /* ImageCroperView.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -723,19 +760,26 @@
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
 				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
+				718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */,
+				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
+				718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */,
 				7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */,
 				1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
+				718FEDEA2869C1D800686129 /* CropView.swift in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
+				718FEDEC2869C6B600686129 /* Extensions.swift in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
+				718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,

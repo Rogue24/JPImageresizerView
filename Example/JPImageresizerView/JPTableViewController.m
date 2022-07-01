@@ -93,7 +93,7 @@ static JPImageresizerConfigure *gifConfigure_;
         case 1:
             return 3;
         case 2:
-            return 4;
+            return 5;
         default:
             return 0;
     }
@@ -133,6 +133,9 @@ static JPImageresizerConfigure *gifConfigure_;
                     break;
                 case 2:
                     cell.textLabel.text = @"适配Swift";
+                    break;
+                case 3:
+                    cell.textLabel.text = @"适配SwiftUI";
                     break;
                 default:
                     cell.textLabel.text = @"JPCroper：高仿小红书";
@@ -222,9 +225,26 @@ static JPImageresizerConfigure *gifConfigure_;
                     }
                     break;
                     
+                case 2:
+                {
+                    JPCropViewController *cropVC = [JPCropViewController buildForCroper:NO];
+                    [self cubePushViewController:cropVC];
+                    break;
+                }
+                    
+                case 3:
+                {
+                    if (@available(iOS 15.0, *)) {
+                        [self cubePushViewController:[UIViewController createCropViewController]];
+                    } else {
+                        [JPProgressHUD showInfoWithStatus:@"请更新到iOS15以上版本" userInteractionEnabled:YES];
+                    }
+                    break;
+                }
+                    
                 default:
                 {
-                    JPCropViewController *cropVC = [JPCropViewController buildForCroper:indexPath.item == 3];
+                    JPCropViewController *cropVC = [JPCropViewController buildForCroper:YES];
                     [self cubePushViewController:cropVC];
                     break;
                 }
