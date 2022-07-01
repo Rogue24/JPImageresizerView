@@ -235,7 +235,19 @@ static JPImageresizerConfigure *gifConfigure_;
                 case 3:
                 {
                     if (@available(iOS 15.0, *)) {
-                        [self cubePushViewController:[UIViewController createCropViewController]];
+                        UIViewController *cropVC = [UIViewController createCropViewControllerWithSaveOneDayImage:^(UIImage *image) {
+                            if (image == nil) {
+                                [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+                                return;
+                            }
+                            [JPProgressHUD show];
+                            [JPPhotoToolSI savePhotoToAppAlbumWithImage:image successHandle:^(NSString *assetID) {
+                                [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+                            } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+                                [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+                            }];
+                        }];
+                        [self cubePushViewController:cropVC];
                     } else {
                         [JPProgressHUD showInfoWithStatus:@"请更新到iOS15以上版本" userInteractionEnabled:YES];
                     }

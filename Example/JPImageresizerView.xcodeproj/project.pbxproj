@@ -81,6 +81,7 @@
 		718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE2E286AEE3C00686129 /* OneDayView.swift */; };
 		718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE30286B38BA00686129 /* ImageCroperView.swift */; };
 		718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE31286B38BA00686129 /* ImagePickerView.swift */; };
+		71979C1D286F0670003AC1FF /* OneDayPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71979C1C286F0670003AC1FF /* OneDayPreferenceKey.swift */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -218,6 +219,7 @@
 		718FEE2E286AEE3C00686129 /* OneDayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OneDayView.swift; sourceTree = "<group>"; };
 		718FEE30286B38BA00686129 /* ImageCroperView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCroperView.swift; sourceTree = "<group>"; };
 		718FEE31286B38BA00686129 /* ImagePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		71979C1C286F0670003AC1FF /* OneDayPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayPreferenceKey.swift; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		9DE78341388E24FD10242AEE /* Pods_JPImageresizerView_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JPImageresizerView_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A47783BBFA337AA1C11D8BF4 /* JPImageresizerView.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JPImageresizerView.podspec; path = ../JPImageresizerView.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -564,6 +566,7 @@
 				718FEDE92869C1D800686129 /* CropView.swift */,
 				718FEE2E286AEE3C00686129 /* OneDayView.swift */,
 				718FEE2C286AEC0300686129 /* OneDaySize.swift */,
+				71979C1C286F0670003AC1FF /* OneDayPreferenceKey.swift */,
 				718FEDED2869C6EF00686129 /* Modifier.swift */,
 				718FEDEB2869C6B600686129 /* Extensions.swift */,
 				718FEE31286B38BA00686129 /* ImagePickerView.swift */,
@@ -780,6 +783,7 @@
 				718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */,
+				71979C1D286F0670003AC1FF /* OneDayPreferenceKey.swift in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,

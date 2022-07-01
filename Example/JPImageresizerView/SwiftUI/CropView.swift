@@ -15,11 +15,13 @@ struct CropView: View {
     @State var mediumImage: UIImage = .bundleImage("Girl8", ofType: "jpg")
     @State var largeImage: UIImage = .bundleImage("Girl4", ofType: "jpg")
     @State var oneDaySize: OneDaySize = .small
+    @State var oneDayFrame: CGRect = .zero
     @State var showImagePicker = false
     @State var showImageCroper = false
     @State var photo: UIImage? = nil
     @State var isCroped: Bool = false
     @Environment(\.presentationMode) var presentationMode
+    var saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?
     
     var body: some View {
         VStack(spacing: 20) {
@@ -35,13 +37,20 @@ struct CropView: View {
                 .aspectRatio(contentMode: .fill)
         )
         .ignoresSafeArea()
-        .navigationTitle("SwiftUI")
+        .navigationTitle("OneDay")
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(
             leading: Button {
                 presentationMode.wrappedValue.dismiss()
             } label: {
                 Image(systemName: "chevron.backward.circle.fill")
+                    .font(.body.weight(.bold))
+                    .foregroundColor(.primary)
+            },
+            trailing: Button {
+                saveOneDay()
+            } label: {
+                Image(systemName: "square.and.arrow.down.fill")
                     .font(.body.weight(.bold))
                     .foregroundColor(.primary)
             }
@@ -74,14 +83,26 @@ struct CropView: View {
     }
     
     @ViewBuilder var oneDayView: some View {
-        switch oneDaySize {
-        case .small:
-            OneDaySmallView(namespace: namespace, image: $smallImage)
-        case .medium:
-            OneDayMediumView(namespace: namespace, image: $mediumImage)
-        case .large:
-            OneDayLargeView(namespace: namespace, image: $largeImage)
+        Group {
+            switch oneDaySize {
+            case .small:
+                OneDaySmallView(namespace: namespace, image: $smallImage)
+            case .medium:
+                OneDayMediumView(namespace: namespace, image: $mediumImage)
+            case .large:
+                OneDayLargeView(namespace: namespace, image: $largeImage)
+            }
         }
+        .overlay(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: OneDayPreferenceKey.self,
+                                value: proxy.frame(in: .global))
+            }
+            .onPreferenceChange(OneDayPreferenceKey.self) { value in
+                oneDayFrame = value
+            }
+        )
     }
     
     var operationBar: some View {
@@ -119,6 +140,23 @@ struct CropView: View {
         case .large:
             return largeImage
         }
+    }
+    
+    func saveOneDay() {
+        guard let saveOneDayImage = saveOneDayImage else { return }
+        guard let layer = UIApplication.shared.keyWindow?.rootViewController?.view.layer else {
+            saveOneDayImage(nil)
+            return
+        }
+        let path = UIBezierPath(roundedRect: oneDayFrame, cornerRadius: 20)
+        let renderer = UIGraphicsImageRenderer(bounds: oneDayFrame)
+        let image = renderer.image { rendererContext in
+            let context = rendererContext.cgContext
+            context.addPath(path.cgPath)
+            context.clip()
+            layer.render(in: context)
+        }
+        saveOneDayImage(image)
     }
 }
 

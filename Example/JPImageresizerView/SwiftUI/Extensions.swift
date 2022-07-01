@@ -93,8 +93,8 @@ extension UIImage {
 
 @available(iOS 15.0.0, *)
 extension UIViewController {
-    @objc static func createCropViewController() -> UIViewController {
-        let vc = UIHostingController(rootView: CropView())
+    @objc static func createCropViewController(saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?) -> UIViewController {
+        let vc = UIHostingController(rootView: CropView(saveOneDayImage: saveOneDayImage))
         vc.view.clipsToBounds = true
         return vc
     }
