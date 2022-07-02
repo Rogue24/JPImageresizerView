@@ -42,9 +42,9 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        defer { self.picker.isPresented.wrappedValue.dismiss() }
         guard let selectedImage = info[.originalImage] as? UIImage else { return }
-        self.picker.selectedImage = selectedImage
-        self.picker.isPresented.wrappedValue.dismiss()
+        self.picker.selectedImage = selectedImage.jp_fixOrientation() ?? nil
     }
     
 }
