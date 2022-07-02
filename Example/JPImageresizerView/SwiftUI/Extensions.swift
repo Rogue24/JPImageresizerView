@@ -8,6 +8,49 @@
 
 import SwiftUI
 
+@available(iOS 15.0.0, *)
+extension UIViewController {
+    @objc static func createCropViewController(saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?) -> UIViewController {
+        let vc = UIHostingController(rootView: CropView(saveOneDayImage: saveOneDayImage))
+        vc.view.clipsToBounds = true
+        return vc
+    }
+}
+
+extension UIImage {
+    static func bundleImage(_ name: String, ofType ext: String?) -> UIImage {
+        UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: ext)!)!
+    }
+}
+
+extension Date {
+    typealias DateInfo = (year: String, month: String, day: String, weekday: String)
+    
+    var info: DateInfo {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .weekday], from: self)
+    
+        let year = "\(components.year!)"
+        let month = Months[components.month! - 1]
+        let day = "\(components.day!)"
+        let weekday = ShotWeekdays[components.weekday! - 1] // 星期几（注意，周日是“1”，周一是“2”。。。。）
+        return (year, month, day, weekday)
+    }
+    
+    var mmssString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss"
+        return formatter.string(from: self)
+    }
+    
+    var ssString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss"
+        return formatter.string(from: self)
+    }
+}
+
+// MARK: - Const
 let Months = [
     "January",
     "February",
@@ -57,45 +100,3 @@ let ShotWeekdays = [
     "Fri",
     "Sat"
 ]
-
-extension Date {
-    typealias DateInfo = (year: String, month: String, day: String, weekday: String)
-    
-    var info: DateInfo {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .weekday], from: self)
-    
-        let year = "\(components.year!)"
-        let month = Months[components.month! - 1]
-        let day = "\(components.day!)"
-        let weekday = ShotWeekdays[components.weekday! - 1] // 星期几（注意，周日是“1”，周一是“2”。。。。）
-        return (year, month, day, weekday)
-    }
-    
-    var mmssString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss"
-        return formatter.string(from: self)
-    }
-    
-    var ssString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss"
-        return formatter.string(from: self)
-    }
-}
-
-extension UIImage {
-    static func bundleImage(_ name: String, ofType ext: String?) -> UIImage {
-        UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: ext)!)!
-    }
-}
-
-@available(iOS 15.0.0, *)
-extension UIViewController {
-    @objc static func createCropViewController(saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?) -> UIViewController {
-        let vc = UIHostingController(rootView: CropView(saveOneDayImage: saveOneDayImage))
-        vc.view.clipsToBounds = true
-        return vc
-    }
-}

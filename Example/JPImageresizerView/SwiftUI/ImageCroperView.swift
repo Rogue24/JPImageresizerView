@@ -29,7 +29,6 @@ struct ImageCroperView: UIViewControllerRepresentable {
         
     }
     
-    // Connecting the Coordinator class with this struct
     func makeCoordinator() -> ImageCroperCoordinator {
         return ImageCroperCoordinator(croper: self)
     }

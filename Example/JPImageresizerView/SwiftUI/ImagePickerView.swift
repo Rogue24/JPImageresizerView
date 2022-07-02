@@ -26,7 +26,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
         
     }
     
-    // Connecting the Coordinator class with this struct
     func makeCoordinator() -> ImagePickerCoordinator {
         return ImagePickerCoordinator(picker: self)
     }
