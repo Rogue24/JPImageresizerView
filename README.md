@@ -31,7 +31,7 @@
         ✅ 可裁剪GIF；
         ✅ 可保存当前裁剪状态；
         ✅ 图片支持N宫格裁剪；
-        ✅ 兼容Swift环境。
+        ✅ 兼容Swift&SwiftUI环境（参考Demo）。
 
     TODO：
         🔘 Swift版本；
@@ -54,7 +54,9 @@
             //  - result.cacheURL：目标存放路径
             //  - result.isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
         }
-    3.兼容Swift环境。
+    3.兼容Swift&SwiftUI环境。
+    
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
 
 ## 如何使用
 

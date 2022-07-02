@@ -9,7 +9,7 @@ PODS:
   - JPBasic/JPProgressHUD (0.1.8):
     - SVProgressHUD
   - JPCrop (0.2.0)
-  - JPImageresizerView (1.9.8)
+  - JPImageresizerView (1.9.9)
   - JPLiquidLayout (0.1.1)
   - Masonry (1.1.0)
   - pop (1.0.12)
@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   JPBasic: 5a0459823fd51d7a02aea924227e971a0d8778b3
   JPCrop: 2a5742db56fa30f495683e8b51c0d7548ab04368
-  JPImageresizerView: ba30905a2bed6fd7e5fee238e359416920364f4b
+  JPImageresizerView: 762cd3ea68450cb3985fa3a06cd55afd0527fa73
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
@@ -48,4 +48,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5bccdc04bc3f9e2c0beae172b2765ca4c1d83661
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.1

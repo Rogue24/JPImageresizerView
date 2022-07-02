@@ -20,6 +20,7 @@ struct CropView: View {
     @State var showImageCroper = false
     @State var photo: UIImage? = nil
     @State var isCroped: Bool = false
+    @State var isUseJPCrop: Bool = false
     @Environment(\.presentationMode) var presentationMode
     var saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?
     
@@ -28,35 +29,19 @@ struct CropView: View {
             sizeBar
             oneDayView
             operationBar
+            switchCrop
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.ultraThinMaterial)
-        .background(
-            Image(uiImage: currentImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        )
+        .background(background)
+        .navigationBarHidden(true)
+        .overlay(navigationBar)
         .ignoresSafeArea()
-        .navigationTitle("OneDay")
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(
-            leading: Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                Image(systemName: "chevron.backward.circle.fill")
-                    .font(.body.weight(.bold))
-                    .foregroundColor(.primary)
-            },
-            trailing: Button {
-                saveOneDay()
-            } label: {
-                Image(systemName: "square.and.arrow.down.fill")
-                    .font(.body.weight(.bold))
-                    .foregroundColor(.primary)
-            }
-        )
     }
-    
+}
+
+@available(iOS 15.0.0, *)
+extension CropView {
     var sizeBar: some View {
         HStack(spacing: 20) {
             ForEach(OneDaySize.allCases, id: \.self) { size in
@@ -115,7 +100,7 @@ struct CropView: View {
                     .iconStyle(size: 50, cornerRadius: 20)
             }
             .fullScreenCover(isPresented: $showImageCroper, onDismiss: imageCropDismiss) {
-                ImageCroperView(cropImage: $photo, resizeWHScale: oneDaySize.imageWidth / oneDaySize.imageHeight)
+                ImageCroperView(cropImage: $photo, resizeWHScale: oneDaySize.imageWidth / oneDaySize.imageHeight, isUseJPCrop: isUseJPCrop)
                     .ignoresSafeArea()
             }
             
@@ -131,6 +116,63 @@ struct CropView: View {
         }
     }
     
+    var switchCrop: some View {
+        Text(isUseJPCrop ? "Use [JPCrop](https://github.com/Rogue24/JPCrop) to crop now." : "Use [JPImageresizerView](https://github.com/Rogue24/JPImageresizerView) to crop now.")
+            .font(.headline)
+            .foregroundColor(.white)
+            .accentColor(.yellow)
+            .padding(20)
+            .frame(minHeight: 40)
+            .background(isUseJPCrop ? Color.teal.opacity(0.8) : Color.blue.opacity(0.8), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .baseShadow()
+            .onTapGesture {
+                withAnimation {
+                    isUseJPCrop.toggle()
+                }
+            }
+    }
+    
+    var background: some View {
+        Image(uiImage: currentImage)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+    }
+    
+    var navigationBar: some View {
+        HStack {
+            Button {
+                presentationMode.wrappedValue.dismiss()
+            } label: {
+                Image(systemName: "chevron.backward.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.primary)
+            }
+            .padding()
+            Spacer()
+            Button {
+                saveOneDay()
+            } label: {
+                Image(systemName: "square.and.arrow.down.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.primary)
+            }
+            .padding()
+        }
+        .frame(height: 44)
+        .overlay(
+            Text("[OneDay](https://github.com/Rogue24/OneDay)")
+                .font(.largeTitle)
+                .bold()
+                .accentColor(.primary)
+                .baseShadow()
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .offset(y: JPConstant.statusBarH())
+    }
+}
+ 
+@available(iOS 15.0.0, *)
+extension CropView {
     var currentImage: UIImage {
         switch oneDaySize {
         case .small:

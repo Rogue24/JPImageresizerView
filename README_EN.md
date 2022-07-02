@@ -33,7 +33,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ Can crop GIF;
         ✅ The current clipping state can be saved;
         ✅ Images support n-grid clipping;
-        ✅ Compatible with Swift environment.
+        ✅ Compatible with Swift & SwiftUI environment(Reference Demo).
 
     TODO:
         🔘 Swift version;
@@ -45,6 +45,11 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         🔘 To achieve the effect of free drag rotation and flip angle.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
+    
+## Newest
+    Compatible with Swift & SwiftUI environment(Reference Demo).
+    
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
 
 ## How to use
 
