@@ -51,6 +51,9 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
 
+- For the use in `Swift`, please refer to `JPCropViewController` in demo for details.
+- For the use in `SwiftUI`, please refer to `ImageCroperView` in demo for details.
+
 ## How to use
 
 ### Initialization

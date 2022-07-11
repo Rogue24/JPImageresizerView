@@ -45,18 +45,12 @@
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
     
 ## 最新改动
-    1.图片新增【N宫格裁剪】；
-    2.所有的裁剪完成回调统一返回JPImageresizerResult实例：
-        ...completeBlock:^(JPImageresizerResult *result) {
-            // result：裁剪后的结果（JPImageresizerResult）
-            //  - result.type：裁剪结果类型（图片/GIF/视频）
-            //  - result.image：裁剪后的图片/GIF（已解码好的，若为视频类型则该属性为nil）
-            //  - result.cacheURL：目标存放路径
-            //  - result.isCacheSuccess：是否缓存成功（缓存不成功则cacheURL为nil）
-        }
-    3.兼容Swift&SwiftUI环境。
+    兼容Swift&SwiftUI环境。
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
+
+- 在`Swift`中的使用具体可参考Demo中的`JPCropViewController`
+- 在`SwiftUI`中的使用具体可参考Demo中的`ImageCroperView`
 
 ## 如何使用
 
