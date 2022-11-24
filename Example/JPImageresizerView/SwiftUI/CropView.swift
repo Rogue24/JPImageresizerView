@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import JPBasic
 
 @available(iOS 15.0.0, *)
 struct CropView: View {
