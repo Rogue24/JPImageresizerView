@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
 @property (nonatomic, copy) CGFloat (^resizeObjWhScale)(void);
+@property (nonatomic, copy) CGFloat (^rotationAngle)(void);
 
 @property (nonatomic, assign, readonly) CGSize baseContentMaxSize;
 

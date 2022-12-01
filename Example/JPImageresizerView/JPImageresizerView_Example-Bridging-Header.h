@@ -6,3 +6,4 @@
 #import <JPBasic/JPProgressHUD.h>
 #import <JPImageresizerResult.h>
 #import "JPPreviewViewController.h"
+#import "JPImageresizerViewController.h"

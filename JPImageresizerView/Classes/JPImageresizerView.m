@@ -171,6 +171,16 @@
         frameView.slider = _slider;
         frameView.playerView = _playerView;
         
+        
+        frameView.rotationAngle = ^CGFloat{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf) return 0;
+            
+            CGFloat radian = [[sSelf.scrollView.layer valueForKeyPath:@"transform.rotation.z"] doubleValue];
+            CGFloat angle = (radian * 180.0) / M_PI;
+            return angle;
+        };
+        
         [_containerView addSubview:frameView];
         _frameView = frameView;
         
@@ -889,20 +899,27 @@
 
 #pragma mark 旋转
 - (void)rotation {
-    NSInteger directionIndex = self.directionIndex;
-    BOOL isNormal = _verticalityMirror == _horizontalMirror;
-    directionIndex += (isNormal ? 1 : -1);
+    if (self.frameView.isPrepareToScale) {
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，旋转功能暂不可用，此时应该将旋转按钮设为不可点或隐藏");
+        return;
+    }
     
+    BOOL isNormal = _verticalityMirror == _horizontalMirror;
     NSInteger maxIndex = self.allDirections.count - 1;
     NSInteger minIndex = 0;
+    
+    NSInteger directionIndex = self.directionIndex + (isNormal ? 1 : -1);
     if (directionIndex < minIndex) {
         directionIndex = maxIndex;
     } else if (directionIndex > maxIndex) {
         directionIndex = minIndex;
     }
+    self.directionIndex = directionIndex;
     
     JPImageresizerRotationDirection direction = [self.allDirections[directionIndex] integerValue];
-    [self rotationToDirection:direction];
+    CGFloat angle = M_PI_2 * (isNormal ? 1 : -1) * (self.isClockwiseRotation ? 1 : -1);
+    
+    [self __rotationToDirection:direction angle:angle];
 }
 
 - (void)rotationToDirection:(JPImageresizerRotationDirection)direction {
@@ -911,14 +928,97 @@
         return;
     }
     
-    NSInteger directionIndex = [self.allDirections indexOfObject:@(direction)];
-    NSInteger diffIndex = directionIndex - self.directionIndex;
-    if (diffIndex == 0) return;
-    self.directionIndex = directionIndex;
-    
     BOOL isNormal = _verticalityMirror == _horizontalMirror;
+    if (!isNormal) {
+        switch (direction) {
+            case JPImageresizerHorizontalLeftDirection:
+                direction = JPImageresizerHorizontalRightDirection;
+                break;
+            case JPImageresizerHorizontalRightDirection:
+                direction = JPImageresizerHorizontalLeftDirection;
+                break;
+            default:
+                break;
+        }
+//        switch (direction) {
+//            case JPImageresizerVerticalUpDirection:
+//                direction = JPImageresizerVerticalDownDirection;
+//                break;
+//            case JPImageresizerHorizontalLeftDirection:
+//                direction = JPImageresizerHorizontalRightDirection;
+//                break;
+//            case JPImageresizerVerticalDownDirection:
+//                direction = JPImageresizerVerticalUpDirection;
+//                break;
+//            case JPImageresizerHorizontalRightDirection:
+//                direction = JPImageresizerHorizontalLeftDirection;
+//                break;
+//            default:
+//                break;
+//        }
+    }
+//
+//    NSInteger directionIndex = [self.allDirections indexOfObject:@(direction)];
+//    NSInteger diffIndex = directionIndex - self.directionIndex;
+//    if (diffIndex == 0) return;
+//    self.directionIndex = directionIndex;
+//
+//    CGFloat angle = diffIndex * M_PI_2;
     
-    CGFloat angle = (self.isClockwiseRotation ? diffIndex : -diffIndex) * (isNormal ? 1.0 : -1.0) * M_PI_2;
+    self.directionIndex = [self.allDirections indexOfObject:@(direction)];
+    
+    CGFloat angle = JPIRRotationDirectionDiffAngle(self.frameView.direction, direction);
+    
+    [self __rotationToDirection:direction angle:angle];
+}
+
+- (void)__rotationToDirection:(JPImageresizerRotationDirection)direction angle:(CGFloat)angle {
+//    CGRect afterFrame = self.scrollView.frame;
+//    if ((_verticalityMirror != _horizontalMirror) &&
+//        JPIRRotationDirectionIsHorVerSwitch(self.frameView.direction, direction)) {
+//
+////        BOOL isHorizontalMirror = NO;
+////        if (JPIRRotationDirectionIsHorizontal(direction)) {
+////            if (_verticalityMirror) {
+////                isHorizontalMirror = YES;
+////                _verticalityMirror = NO;
+////                _horizontalMirror = YES;
+////            } else {
+////
+////            }
+////        } else {
+////
+////        }
+//
+//        BOOL isHorizontalMirror = _verticalityMirror;
+//
+//        _verticalityMirror = !_verticalityMirror;
+//        _horizontalMirror = !_horizontalMirror;
+//
+//        CGFloat diffValue;
+//        if (isHorizontalMirror) {
+//            diffValue = _horizontalMirror ? _contentInsets.bottom : _contentInsets.top;
+//        } else {
+//            diffValue = _verticalityMirror ? _contentInsets.right : _contentInsets.left;
+//        }
+////        if (isHorizontalMirror) {
+////            diffValue = _contentInsets.top;
+////        } else {
+////            diffValue = _contentInsets.left;
+////        }
+//
+//        afterFrame = self.frameView.frame;
+//        if (isHorizontalMirror) {
+//            CGFloat h = JPIRRotationDirectionIsHorizontal(direction) ? self.frameView.bounds.size.width : self.frameView.bounds.size.height;
+//            CGFloat y = (self.frameView.baseContentMaxSize.height - h) * 0.5 + diffValue;
+//            afterFrame.origin.y = y;
+//        } else {
+//            CGFloat w = JPIRRotationDirectionIsHorizontal(direction) ? self.frameView.bounds.size.height : self.frameView.bounds.size.width;
+//            CGFloat x = (self.frameView.baseContentMaxSize.width - w) * 0.5 + diffValue;
+//            afterFrame.origin.x = x;
+//        }
+//    }
+    
     CATransform3D svTransform = CATransform3DRotate(self.scrollView.layer.transform, angle, 0, 0, 1);
     CATransform3D fvTransform = CATransform3DRotate(self.frameView.layer.transform, angle, 0, 0, 1);
     
@@ -930,10 +1030,35 @@
             self.scrollView.layer.transform = svTransform;
             self.frameView.layer.transform = fvTransform;
             [self.frameView rotatingWithDuration:duration];
+//            self.scrollView.frame = self.frameView.frame = afterFrame;
         } completion:^(BOOL finished) {
+//            NSLog(@"jpjpjp completion %@ --- %@", NSStringFromCGRect(self.scrollView.frame), NSStringFromCGRect(afterFrame));
             [self.frameView rotationDone];
         }];
     });
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        NSLog(@"jpjpjp ????");
+//        self.scrollView.frame = self.frameView.frame = afterFrame;
+//    });
+    
+    switch (direction) {
+        case JPImageresizerVerticalUpDirection:
+            NSLog(@"jpjpjp Vertical-Up");
+            break;
+        case JPImageresizerHorizontalLeftDirection:
+            NSLog(@"jpjpjp Horizontal-Left");
+            break;
+        case JPImageresizerVerticalDownDirection:
+            NSLog(@"jpjpjp Vertical-Down");
+            break;
+        case JPImageresizerHorizontalRightDirection:
+            NSLog(@"jpjpjp Horizontal-Right");
+            break;
+        default:
+            break;
+    }
+    NSLog(@"jpjpjp ================");
 }
 
 #pragma mark 镜像翻转
@@ -946,6 +1071,7 @@
         return;
     }
     if (_verticalityMirror == verticalityMirror) return;
+//    NSLog(@"jpjpjp before %d --- %@", _horizontalMirror, NSStringFromCGRect(self.frameView.frame));
     _verticalityMirror = verticalityMirror;
     [self __changeMirror:NO animated:isAnimated];
 }
@@ -959,6 +1085,7 @@
         return;
     }
     if (_horizontalMirror == horizontalMirror) return;
+//    NSLog(@"jpjpjp before %d --- %@", _horizontalMirror, NSStringFromCGRect(self.frameView.frame));
     _horizontalMirror = horizontalMirror;
     [self __changeMirror:YES animated:isAnimated];
 }
@@ -973,10 +1100,29 @@
         transform = CATransform3DRotate(transform, (_verticalityMirror ? -M_PI : M_PI), 0, 1, 0);
         diffValue = _verticalityMirror ? _contentInsets.right : _contentInsets.left;
     }
+//    if (isHorizontalMirror) {
+//        if (JPIRRotationDirectionIsHorizontal(self.frameView.direction)) {
+//            transform = CATransform3DRotate(transform, (_horizontalMirror ? -M_PI : M_PI), 0, 1, 0);
+//            diffValue = _horizontalMirror ? _contentInsets.right : _contentInsets.left;
+//        } else {
+//            transform = CATransform3DRotate(transform, (_horizontalMirror ? -M_PI : M_PI), 1, 0, 0);
+//            diffValue = _horizontalMirror ? _contentInsets.bottom : _contentInsets.top;
+//        }
+//    } else {
+//        if (JPIRRotationDirectionIsHorizontal(self.frameView.direction)) {
+//            transform = CATransform3DRotate(transform, (_verticalityMirror ? -M_PI : M_PI), 1, 0, 0);
+//            diffValue = _verticalityMirror ? _contentInsets.bottom : _contentInsets.top;
+//        } else {
+//            transform = CATransform3DRotate(transform, (_verticalityMirror ? -M_PI : M_PI), 0, 1, 0);
+//            diffValue = _verticalityMirror ? _contentInsets.right : _contentInsets.left;
+//        }
+//    }
     if (isAnimated) transform.m34 = 1.0 / 1200.0;
     
     CGRect afterFrame;
     NSTimeInterval delay = [self.frameView willMirror:isHorizontalMirror diffValue:diffValue afterFrame:&afterFrame animated:isAnimated];
+//    NSLog(@"jpjpjp after %d --- %@", _horizontalMirror, NSStringFromCGRect(afterFrame));
+//    NSLog(@"jpjpjp ---------------------------------------------");
     
     __weak typeof(self) wSelf = self;
     void (^animateBlock)(void) = ^{
@@ -1720,4 +1866,41 @@
     }
 }
 
+- (void)abc {
+//    CGRect afterFrame = self.scrollView.frame;
+//    NSLog(@"jpjpjp before %@", NSStringFromCGRect(afterFrame));
+//    afterFrame.origin.y += 10;
+//    self.scrollView.frame = self.frameView.frame = afterFrame;
+//    NSLog(@"jpjpjp after %@", NSStringFromCGRect(afterFrame));
+//    NSLog(@"jpjpjp ---------------------------------------------");
+    
+    
+    CGFloat radianX = [[self.containerView.layer valueForKeyPath:@"transform.rotation.x"] doubleValue];
+    CGFloat radianY = [[self.containerView.layer valueForKeyPath:@"transform.rotation.y"] doubleValue];
+    
+    CGFloat angleX = (radianX * 180.0) / M_PI;
+    CGFloat angleY = (radianY * 180.0) / M_PI;
+    
+    switch (self.frameView.direction) {
+        case JPImageresizerVerticalUpDirection:
+            NSLog(@"jpjpjp Vertical-Up");
+            break;
+        case JPImageresizerHorizontalLeftDirection:
+            NSLog(@"jpjpjp Horizontal-Left");
+            break;
+        case JPImageresizerVerticalDownDirection:
+            NSLog(@"jpjpjp Vertical-Down");
+            break;
+        case JPImageresizerHorizontalRightDirection:
+            NSLog(@"jpjpjp Horizontal-Right");
+            break;
+        default:
+            break;
+    }
+    NSLog(@"jpjpjp horizontalMirror %d", _horizontalMirror);
+    NSLog(@"jpjpjp verticalityMirror %d", _verticalityMirror);
+    NSLog(@"jpjpjp angleX %lf", angleX);
+    NSLog(@"jpjpjp angleY %lf", angleY);
+    NSLog(@"jpjpjp ---------------------------------------------");
+}
 @end

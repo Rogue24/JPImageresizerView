@@ -49,6 +49,98 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
     JPImageresizerVerticalDownDirection,
     JPImageresizerHorizontalRightDirection
 };
+CG_INLINE BOOL JPIRRotationDirectionIsHorizontal(JPImageresizerRotationDirection direction) {
+    return (direction == JPImageresizerHorizontalLeftDirection ||
+            direction == JPImageresizerHorizontalRightDirection);
+}
+CG_INLINE BOOL JPIRRotationDirectionIsVerToHor(JPImageresizerRotationDirection from, JPImageresizerRotationDirection to) {
+    if (JPIRRotationDirectionIsHorizontal(from)) return NO;
+    if (!JPIRRotationDirectionIsHorizontal(to)) return NO;
+    return YES;
+}
+CG_INLINE BOOL JPIRRotationDirectionIsHorToVer(JPImageresizerRotationDirection from, JPImageresizerRotationDirection to) {
+    if (!JPIRRotationDirectionIsHorizontal(from)) return NO;
+    if (JPIRRotationDirectionIsHorizontal(to)) return NO;
+    return YES;
+}
+CG_INLINE BOOL JPIRRotationDirectionIsHorVerSwitch(JPImageresizerRotationDirection from, JPImageresizerRotationDirection to) {
+    return JPIRRotationDirectionIsHorizontal(from) != JPIRRotationDirectionIsHorizontal(to);
+}
+CG_INLINE CGFloat JPIRRotationDirectionDiffAngle(JPImageresizerRotationDirection from, JPImageresizerRotationDirection to) {
+    if (from == to) return 0;
+    CGFloat angle = M_PI_2;
+    switch (from) {
+        case JPImageresizerVerticalUpDirection:
+        {
+            switch (to) {
+                case JPImageresizerHorizontalLeftDirection:
+                    angle *= -1;
+                    break;
+                case JPImageresizerVerticalDownDirection:
+                    angle *= 2;
+                    break;
+                case JPImageresizerHorizontalRightDirection:
+                    angle *= 1;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        case JPImageresizerHorizontalLeftDirection:
+        {
+            switch (to) {
+                case JPImageresizerVerticalUpDirection:
+                    angle *= 1;
+                    break;
+                case JPImageresizerVerticalDownDirection:
+                    angle *= -1;
+                    break;
+                case JPImageresizerHorizontalRightDirection:
+                    angle *= 2;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        case JPImageresizerVerticalDownDirection:
+        {
+            switch (to) {
+                case JPImageresizerHorizontalLeftDirection:
+                    angle *= -1;
+                    break;
+                case JPImageresizerVerticalUpDirection:
+                    angle *= 2;
+                    break;
+                case JPImageresizerHorizontalRightDirection:
+                    angle *= 1;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        case JPImageresizerHorizontalRightDirection:
+        {
+            switch (to) {
+                case JPImageresizerHorizontalLeftDirection:
+                    angle *= 2;
+                    break;
+                case JPImageresizerVerticalUpDirection:
+                    angle *= -1;
+                    break;
+                case JPImageresizerVerticalDownDirection:
+                    angle *= 1;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+    }
+    return angle;
+}
 
 /**
  * 裁剪视频错误原因

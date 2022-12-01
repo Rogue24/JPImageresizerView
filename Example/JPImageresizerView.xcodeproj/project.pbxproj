@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		008BF927291FBA64008E8168 /* JPImageresizerViewController.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BF926291FBA64008E8168 /* JPImageresizerViewController.Extension.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -109,6 +110,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		008BF926291FBA64008E8168 /* JPImageresizerViewController.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImageresizerViewController.Extension.swift; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 				1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */,
 				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
+				008BF926291FBA64008E8168 /* JPImageresizerViewController.Extension.swift */,
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
 				718FEDE72869C19700686129 /* Swift */,
@@ -725,20 +728,24 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JPImageresizerView_Example/Pods-JPImageresizerView_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/FunnyButton/FunnyButton.framework",
 				"${BUILT_PRODUCTS_DIR}/JPBasic/JPBasic.framework",
 				"${BUILT_PRODUCTS_DIR}/JPCrop/JPCrop.framework",
 				"${BUILT_PRODUCTS_DIR}/JPImageresizerView/JPImageresizerView.framework",
 				"${BUILT_PRODUCTS_DIR}/JPLiquidLayout/JPLiquidLayout.framework",
+				"${BUILT_PRODUCTS_DIR}/LookinServer/LookinServer.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FunnyButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPBasic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPCrop.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPImageresizerView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPLiquidLayout.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LookinServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
@@ -757,6 +764,7 @@
 			files = (
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */,
+				008BF927291FBA64008E8168 /* JPImageresizerViewController.Extension.swift in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */,
 				1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */,

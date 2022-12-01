@@ -9,6 +9,7 @@
 #import "JPTableViewController.h"
 #import "JPImageresizerViewController.h"
 #import "JPPhotoViewController.h"
+#import "JPConfigureModel.h"
 #import "JPImageresizerView_Example-Swift.h"
 
 @interface JPTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
@@ -279,17 +280,17 @@ static JPImageresizerConfigure *gifConfigure_;
 
 #pragma mark - 随机图片
 - (UIImage *)__randomImage {
-    NSString *imageName;
-    NSInteger index = 1 + arc4random() % (GirlCount + 2);
-    if (index > GirlCount) {
-        if (index == GirlCount + 1) {
-            imageName = @"Kobe.jpg";
-        } else {
-            imageName = @"Flowers.jpg";
-        }
-    } else {
-        imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
-    }
+    NSString *imageName = @"Girl6.jpg";
+//    NSInteger index = 1 + arc4random() % (GirlCount + 2);
+//    if (index > GirlCount) {
+//        if (index == GirlCount + 1) {
+//            imageName = @"Kobe.jpg";
+//        } else {
+//            imageName = @"Flowers.jpg";
+//        }
+//    } else {
+//        imageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
+//    }
     return [UIImage imageWithContentsOfFile:JPMainBundleResourcePath(imageName, nil)];
 }
 

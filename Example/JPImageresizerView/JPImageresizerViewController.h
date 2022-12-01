@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JPConfigureModel.h"
+@class JPConfigureModel;
 #import "JPImageresizerView.h"
 
 @interface JPImageresizerViewController : UIViewController

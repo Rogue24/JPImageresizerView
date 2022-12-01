@@ -742,6 +742,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)videoCancelExport;
 
+
+- (void)abc;
 @end
 
 NS_ASSUME_NONNULL_END

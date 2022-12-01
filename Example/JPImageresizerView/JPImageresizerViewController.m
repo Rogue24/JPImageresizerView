@@ -11,6 +11,8 @@
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
 #import "JPTableViewController.h"
+#import "JPConfigureModel.h"
+#import "JPImageresizerView_Example-Swift.h"
 
 @interface JPImageresizerViewController ()
 @property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
@@ -63,6 +65,12 @@
         [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
     }
 #pragma clang diagnostic pop
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self addFunny];
 }
 
 - (void)dealloc {
@@ -575,6 +583,9 @@ static UIViewController *tmpVC_;
             [self __imageresizerDoneWithResult:result];
         }];
     };
+    
+    cropPicture();
+    return;
     
     if (self.isReplaceFace ||
         self.imageresizerView.imageresizerWHScale <= 0.5 ||
