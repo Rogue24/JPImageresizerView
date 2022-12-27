@@ -85,7 +85,6 @@ class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, 
         picker.videoQuality = .typeHigh
         picker.delegate = picker
         rootVC.present(picker, animated: true)
-        
         return try await picker.pickObject()
     }
     
@@ -95,7 +94,6 @@ class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, 
         picker.sourceType = .camera
         picker.delegate = picker
         rootVC.present(picker, animated: true)
-        
         return try await picker.pickObject()
     }
     
@@ -128,7 +126,9 @@ private extension JPImagePickerController {
                 completion(.failure(.cancel))
                 return
             }
+            
             self.tryLock()
+            
             if let object = self.object {
                 completion(.success(object))
             } else {

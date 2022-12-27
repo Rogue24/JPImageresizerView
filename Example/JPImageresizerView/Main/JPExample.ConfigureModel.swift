@@ -98,7 +98,7 @@ extension JPExample.ConfigureModel {
             if let imageData = object.imageData {
                 configure = .defaultConfigure(withImageData: imageData)
             } else if let videoURL = object.videoURL {
-                configure = try await JPExample.videoFix(videoURL)
+                configure = try await JPExample.videoFixOrientation(videoURL)
             } else {
                 throw JPExampleError.pickNullObject
             }

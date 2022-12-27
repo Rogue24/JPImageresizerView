@@ -6,12 +6,14 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
+// MARK: - Error
 enum JPExampleError: Error {
     case videoFixFaild
     case nonVideoFile
     case pickNullObject
 }
 
+// MARK: - Item
 protocol JPExampleItem: RawRepresentable<Int> {
     var item: Int { get }
     var title: String { get }
@@ -51,6 +53,7 @@ extension JPExampleItem {
     }
 }
 
+// MARK: - Section
 protocol JPExampleSection: CaseIterable, JPExampleItem {
     static var section: Int { get }
     static var title: String { get }
@@ -60,8 +63,13 @@ extension JPExampleSection {
     static var items: [Self] { allCases as? [Self] ?? [] }
 }
 
+// MARK: - JPExample
 enum JPExample {
-    static let sections: [any JPExampleSection.Type] = [Section0.self, Section1.self, Section2.self]
+    static let sections: [any JPExampleSection.Type] = [
+        Section0.self,
+        Section1.self,
+        Section2.self
+    ]
     
     enum Section0: Int, JPExampleSection {
         case `default`
@@ -136,7 +144,7 @@ enum JPExample {
             case .compatibleSwiftUI:
                 return "适配 SwiftUI"
             case .JPCroper:
-                return "高仿小红书的裁剪功能：JPCroper"
+                return "JPCroper：高仿小红书的裁剪功能"
             }
         }
     }

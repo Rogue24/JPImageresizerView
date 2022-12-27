@@ -1,5 +1,5 @@
 //
-//  JPExample.VideoFix.swift
+//  JPExample.VideoFixOrientation.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/26.
@@ -7,31 +7,39 @@
 //
 
 extension JPExample {
-    static func videoFix(_ videoURL: URL) async throws -> JPImageresizerConfigure {
+    // MARK: - 修正视频方向
+    
+    static func videoFixOrientation(_ videoURL: URL) async throws -> JPImageresizerConfigure {
         let asset = AVURLAsset(url: videoURL)
         let transform = try await fetchVideoPreferredTransform(asset)
         
         if CGAffineTransformIsIdentity(transform) {
-            return .defaultConfigure(withVideoAsset: asset, make: nil, fixErrorBlock: nil, fixStart: nil, fixProgressBlock: nil)
+            // 视频方向没有改变，直接返回
+            return .defaultConfigure(withVideoAsset: asset,
+                                     make: nil,
+                                     fixErrorBlock: nil,
+                                     fixStart: nil,
+                                     fixProgressBlock: nil)
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            videoFix(asset) { result in
+            videoFixOrientation(asset) { result in
                 continuation.resume(with: result)
             }
         }
     }
     
-    private static func videoFix(_ asset: AVURLAsset, completion: @escaping (Result<JPImageresizerConfigure, Error>) -> Void) {
+    private static func videoFixOrientation(_ asset: AVURLAsset, completion: @escaping (Result<JPImageresizerConfigure, Error>) -> Void) {
         guard Thread.isMainThread else {
             DispatchQueue.main.async {
-                videoFix(asset, completion: completion)
+                videoFixOrientation(asset, completion: completion)
             }
             return
         }
         
-        let alertCtr = UIAlertController(title: "该视频方向需要先修正", message: nil, preferredStyle: .alert)
+        let alertCtr = UIAlertController(title: "该视频的方向需要修正后才可裁剪", message: nil, preferredStyle: .alert)
         
+        // MARK: 1.先进去裁剪页面，再修正视频方向
         alertCtr.addAction(.init(title: "先进页面再修正", style: .default, handler: { _ in
             let configure = JPImageresizerConfigure.defaultConfigure(withVideoURL: asset.url, make: nil) { cacheURL, reason in
                 JPImageresizerViewController.showErrorMsg(reason, pathExtension: cacheURL?.pathExtension ?? "")
@@ -45,6 +53,7 @@ extension JPExample {
             completion(.success(configure))
         }))
         
+        // MARK: 2.先修正视频方向，再进去裁剪页面
         alertCtr.addAction(.init(title: "先修正再进页面", style: .default, handler: { _ in
             JPProgressHUD.show()
             JPImageresizerTool.fixOrientationVideo(with: asset) { cacheURL, reason in
@@ -80,6 +89,8 @@ extension JPExample {
 }
 
 private extension JPExample {
+    // MARK: - 获取视频的形变信息（视频方向）
+    
     static func fetchVideoPreferredTransform(_ asset: AVURLAsset, completion: @escaping (Result<CGAffineTransform, Error>) -> Void) {
         if #available(iOS 15.0, *) {
             asset.loadTracks(withMediaType: .video) { tracks, error in

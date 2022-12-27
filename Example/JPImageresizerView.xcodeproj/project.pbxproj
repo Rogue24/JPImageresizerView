@@ -14,7 +14,7 @@
 		008BEF852959415D00C5A82C /* JPImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF842959415D00C5A82C /* JPImagePickerObject.swift */; };
 		008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */; };
-		008BEF8F2959B0E500C5A82C /* JPExample.VideoFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */; };
+		008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */; };
 		00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201D62947284000692814 /* JPExample.ItemExecute.swift */; };
 		00A201DD2947349C00692814 /* JPExample.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201DC2947349C00692814 /* JPExample.ViewController.swift */; };
 		00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201E029473C7B00692814 /* JPImagePickerController.swift */; };
@@ -123,7 +123,7 @@
 		008BEF842959415D00C5A82C /* JPImagePickerObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerObject.swift; sourceTree = "<group>"; };
 		008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.Extension.swift; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.Extension.swift; sourceTree = "<group>"; };
-		008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.VideoFix.swift; sourceTree = "<group>"; };
+		008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.VideoFixOrientation.swift; sourceTree = "<group>"; };
 		00A201D62947284000692814 /* JPExample.ItemExecute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ItemExecute.swift; sourceTree = "<group>"; };
 		00A201DC2947349C00692814 /* JPExample.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ViewController.swift; sourceTree = "<group>"; };
 		00A201E029473C7B00692814 /* JPImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerController.swift; sourceTree = "<group>"; };
@@ -265,10 +265,10 @@
 			isa = PBXGroup;
 			children = (
 				0024C32C292F5AD7002513DA /* JPExample.swift */,
-				00A201D62947284000692814 /* JPExample.ItemExecute.swift */,
-				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
-				008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */,
 				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
+				008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */,
+				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
+				00A201D62947284000692814 /* JPExample.ItemExecute.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -818,7 +818,7 @@
 				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
 				00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */,
-				008BEF8F2959B0E500C5A82C /* JPExample.VideoFix.swift in Sources */,
+				008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */,
 				008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */,
