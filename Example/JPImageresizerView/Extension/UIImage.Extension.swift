@@ -97,8 +97,8 @@ extension UIImage {
             let newImage = UIImage(cgImage: newCgImage)
             images.append(newImage)
             
-            context.clear(CGRect(origin: .zero, size: size))
             context.restoreGState()
+            context.clear(CGRect(origin: .zero, size: size))
         }
         
         return UIImage.animatedImage(with: images, duration: 4)!

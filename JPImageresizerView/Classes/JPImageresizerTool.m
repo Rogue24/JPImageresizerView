@@ -871,9 +871,9 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             [fragmentsResults addObject:singleResult];
             
             CGImageRelease(singleCGImage);
-            CGContextClearRect(context, renderRect);
             
             CGContextRestoreGState(context);
+            CGContextClearRect(context, renderRect);
         }
     }
     
@@ -937,10 +937,10 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i), context, maskImage, isRoundClip, renderRect, transform, imageSize);
             [images addObject:[UIImage imageWithCGImage:newImageRef]];
             CGImageRelease(newImageRef);
-            // 清空画布
-            CGContextClearRect(context, renderRect);
             // 把堆栈顶部的状态弹出，返回到之前的图形状态
             CGContextRestoreGState(context);
+            // 清空画布（要在`RestoreGState`之后才清空，否则清空区域会受到`transform`的影响，导致清理不干净）
+            CGContextClearRect(context, renderRect);
         }
     };
     
