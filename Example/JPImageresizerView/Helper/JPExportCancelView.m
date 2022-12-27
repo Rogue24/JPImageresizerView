@@ -32,7 +32,11 @@
         ecView.cancelBtn = cancelBtn;
         
         [ecView __didChangeStatusBarOrientation];
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         JPObserveNotification(ecView, @selector(__didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
+#pragma clang diagnostic pop
         
         ecView.tag = 184669029;
         ecView.alpha = 0;

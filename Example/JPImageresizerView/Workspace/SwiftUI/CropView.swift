@@ -149,7 +149,9 @@ extension CropView {
                     .foregroundColor(.primary)
             }
             .padding()
+            
             Spacer()
+            
             Button {
                 saveOneDay()
             } label: {
@@ -187,10 +189,7 @@ extension CropView {
     
     func saveOneDay() {
         guard let saveOneDayImage = saveOneDayImage else { return }
-        guard let layer = UIApplication.shared.keyWindow?.rootViewController?.view.layer else {
-            saveOneDayImage(nil)
-            return
-        }
+        let layer = rootVC.view.layer
         let path = UIBezierPath(roundedRect: oneDayFrame, cornerRadius: 20)
         let renderer = UIGraphicsImageRenderer(bounds: oneDayFrame)
         let image = renderer.image { rendererContext in

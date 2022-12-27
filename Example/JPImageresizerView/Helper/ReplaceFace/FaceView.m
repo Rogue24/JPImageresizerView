@@ -7,6 +7,7 @@
 //
 
 #import "FaceView.h"
+#import "JPSolveTool.h"
 
 @interface FaceView () <UIGestureRecognizerDelegate>
 @property (nonatomic, weak) UIImageView *imageView;

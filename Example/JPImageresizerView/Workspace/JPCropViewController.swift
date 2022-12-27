@@ -36,11 +36,7 @@ class JPCropViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let image = self.image ?? {
-            let imageName = "Girl\(1 + arc4random_uniform(8)).jpg"
-            let path = Bundle.main.path(forResource: imageName, ofType: nil)!
-            return UIImage(contentsOfFile: path)!
-        }()
+        let image = UIImage.randomLocalImage
         
         let y = JPConstant.statusBarH()
         let width = JPConstant.portraitScreenWidth()

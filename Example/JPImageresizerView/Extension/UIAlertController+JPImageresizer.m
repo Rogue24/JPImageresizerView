@@ -7,6 +7,7 @@
 //
 
 #import "UIAlertController+JPImageresizer.h"
+#import "JPImageresizerView_Example-Swift.h"
 
 @implementation UIAlertController (JPImageresizer)
 
@@ -219,9 +220,7 @@
     if (!handler) return;
     [self sheetWithActions:@[
         [UIAlertAction actionWithTitle:@"Girl" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            NSInteger index = 1 + arc4random() % GirlCount;
-            NSString *girlImageName = [NSString stringWithFormat:@"Girl%zd.jpg", index];
-            handler([UIImage imageNamed:girlImageName], nil, nil);
+            handler(UIImage.randomGirlImage, nil, nil);
         }],
         
         [UIAlertAction actionWithTitle:@"Kobe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -254,27 +253,27 @@
      toDirection:(void(^)(JPImageresizerRotationDirection direction))handler2{
     if (!handler1 || !handler2) return;
     [self sheetWithActions:@[
-        [UIAlertAction actionWithTitle:@"顺时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"顺时针旋转 🔃" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler1(YES);
         }],
         
-        [UIAlertAction actionWithTitle:@"逆时针旋转" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"逆时针旋转 🔄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler1(NO);
         }],
         
-        [UIAlertAction actionWithTitle:@"垂直向上（0°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"垂直向上 ⬆️" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler2(JPImageresizerVerticalUpDirection);
         }],
         
-        [UIAlertAction actionWithTitle:@"水平向右（90°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"水平向右 ➡️" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler2(JPImageresizerHorizontalRightDirection);
         }],
         
-        [UIAlertAction actionWithTitle:@"垂直向下（180°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"垂直向下 ⬇️" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler2(JPImageresizerVerticalDownDirection);
         }],
         
-        [UIAlertAction actionWithTitle:@"水平向左（270°）" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [UIAlertAction actionWithTitle:@"水平向左 ⬅️" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             handler2(JPImageresizerHorizontalLeftDirection);
         }],
     ]];

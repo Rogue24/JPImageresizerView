@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0024C32D292F5AD7002513DA /* JPExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0024C32C292F5AD7002513DA /* JPExample.swift */; };
+		002E78B5295AA4740071E30C /* JPExample.ConfigureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */; };
+		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
+		002E78C1295AE1960071E30C /* Date.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78C0295AE1960071E30C /* Date.Extension.swift */; };
+		008BEF852959415D00C5A82C /* JPImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF842959415D00C5A82C /* JPImagePickerObject.swift */; };
+		008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */; };
+		008BEF8D29599D7D00C5A82C /* UIImage.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */; };
+		008BEF8F2959B0E500C5A82C /* JPExample.VideoFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */; };
+		00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201D62947284000692814 /* JPExample.ItemExecute.swift */; };
+		00A201DD2947349C00692814 /* JPExample.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201DC2947349C00692814 /* JPExample.ViewController.swift */; };
+		00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201E029473C7B00692814 /* JPImagePickerController.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -21,9 +32,6 @@
 		1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35822B247DB00B6B6AB /* JPCategoryTitleView.m */; };
 		1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35C22B25B7300B6B6AB /* NoDataView.m */; };
 		1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */; };
-		1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */; };
-		1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */; };
-		1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CD612254F1B2B00F7768B /* JPBounceView.m */; };
 		1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */; };
 		1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A54DA74254583790053F75F /* JPExportCancelView.m */; };
 		1A54DA90254589A60053F75F /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7A254589A60053F75F /* Kobe.jpg */; };
@@ -50,7 +58,6 @@
 		1A60C768241E3BA0000E1692 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1A60C767241E3BA0000E1692 /* README.md */; };
 		1A658769262AEE0C00846689 /* JPCropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A658768262AEE0C00846689 /* JPCropViewController.swift */; };
 		1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */; };
-		1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */; };
 		1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */; };
 		1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C3249A0CFE0081452F /* DanielWuViewController.m */; };
 		1AA468C7249A0CFE0081452F /* FaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA468C4249A0CFE0081452F /* FaceView.m */; };
@@ -75,7 +82,6 @@
 		7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		718FEDEA2869C1D800686129 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDE92869C1D800686129 /* CropView.swift */; };
-		718FEDEC2869C6B600686129 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDEB2869C6B600686129 /* Extensions.swift */; };
 		718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDED2869C6EF00686129 /* Modifier.swift */; };
 		718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE2C286AEC0300686129 /* OneDaySize.swift */; };
 		718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEE2E286AEE3C00686129 /* OneDayView.swift */; };
@@ -109,6 +115,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0024C32C292F5AD7002513DA /* JPExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.swift; sourceTree = "<group>"; };
+		002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ConfigureModel.swift; sourceTree = "<group>"; };
+		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
+		002E78BE295ADDB40071E30C /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSolveTool.m; sourceTree = "<group>"; };
+		002E78C0295AE1960071E30C /* Date.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.Extension.swift; sourceTree = "<group>"; };
+		008BEF842959415D00C5A82C /* JPImagePickerObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerObject.swift; sourceTree = "<group>"; };
+		008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.Extension.swift; sourceTree = "<group>"; };
+		008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.Extension.swift; sourceTree = "<group>"; };
+		008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.VideoFix.swift; sourceTree = "<group>"; };
+		00A201D62947284000692814 /* JPExample.ItemExecute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ItemExecute.swift; sourceTree = "<group>"; };
+		00A201DC2947349C00692814 /* JPExample.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ViewController.swift; sourceTree = "<group>"; };
+		00A201E029473C7B00692814 /* JPImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerController.swift; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -138,12 +156,6 @@
 		1A0AB35D22B25B7300B6B6AB /* NoDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoDataView.h; sourceTree = "<group>"; };
 		1A0AB35F22B2760100B6B6AB /* JPPhotoCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoCollectionViewFlowLayout.m; sourceTree = "<group>"; };
 		1A0AB36022B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoCollectionViewFlowLayout.h; sourceTree = "<group>"; };
-		1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPTableViewController.m; sourceTree = "<group>"; };
-		1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPTableViewController.h; sourceTree = "<group>"; };
-		1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPConfigureModel.h; sourceTree = "<group>"; };
-		1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPConfigureModel.m; sourceTree = "<group>"; };
-		1A3CD611254F1B2B00F7768B /* JPBounceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPBounceView.h; sourceTree = "<group>"; };
-		1A3CD612254F1B2B00F7768B /* JPBounceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPBounceView.m; sourceTree = "<group>"; };
 		1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPPreviewViewController.h; sourceTree = "<group>"; };
 		1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPPreviewViewController.m; sourceTree = "<group>"; };
 		1A54DA73254583790053F75F /* JPExportCancelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPExportCancelView.h; sourceTree = "<group>"; };
@@ -174,8 +186,6 @@
 		1A658768262AEE0C00846689 /* JPCropViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPCropViewController.swift; sourceTree = "<group>"; };
 		1A7394E8249DD9210024D2B6 /* ReplaceFaceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplaceFaceViewController.h; sourceTree = "<group>"; };
 		1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplaceFaceViewController.m; sourceTree = "<group>"; };
-		1A87AF97247B8C5900123EC6 /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPSolveTool.h; path = JPImageresizerView/JPHelper/JPSolveTool.h; sourceTree = SOURCE_ROOT; };
-		1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JPSolveTool.m; path = JPImageresizerView/JPHelper/JPSolveTool.m; sourceTree = SOURCE_ROOT; };
 		1A9CBE99267A2A3400E4D0C6 /* JPDynamicPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPDynamicPage.h; sourceTree = "<group>"; };
 		1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPDynamicPage.m; sourceTree = "<group>"; };
 		1AA468C2249A0CFE0081452F /* FaceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceView.h; sourceTree = "<group>"; };
@@ -213,7 +223,6 @@
 		7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImagePickerController+JPImageresizer.m"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		718FEDE92869C1D800686129 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
-		718FEDEB2869C6B600686129 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		718FEDED2869C6EF00686129 /* Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
 		718FEE2C286AEC0300686129 /* OneDaySize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDaySize.swift; sourceTree = "<group>"; };
 		718FEE2E286AEE3C00686129 /* OneDayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OneDayView.swift; sourceTree = "<group>"; };
@@ -252,6 +261,63 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		002E78B8295ADA5B0071E30C /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				0024C32C292F5AD7002513DA /* JPExample.swift */,
+				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
+				00A201D62947284000692814 /* JPExample.ItemExecute.swift */,
+				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
+				008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		002E78B9295ADA7D0071E30C /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */,
+				008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */,
+				002E78C0295AE1960071E30C /* Date.Extension.swift */,
+				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
+				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
+				7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */,
+				7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		002E78BA295ADAD80071E30C /* Workspace */ = {
+			isa = PBXGroup;
+			children = (
+				718FEDE82869C1B700686129 /* SwiftUI */,
+				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
+				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
+				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
+				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
+				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
+			);
+			path = Workspace;
+			sourceTree = "<group>";
+		};
+		002E78BB295ADB5A0071E30C /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				008BEF832959414600C5A82C /* JPImagePicker */,
+				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
+			);
+			path = Photos;
+			sourceTree = "<group>";
+		};
+		008BEF832959414600C5A82C /* JPImagePicker */ = {
+			isa = PBXGroup;
+			children = (
+				00A201E029473C7B00692814 /* JPImagePickerController.swift */,
+				008BEF842959415D00C5A82C /* JPImagePickerObject.swift */,
+			);
+			path = JPImagePicker;
+			sourceTree = "<group>";
+		};
 		1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */ = {
 			isa = PBXGroup;
 			children = (
@@ -347,23 +413,20 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
-		1A10433623A495AD00D1B2DF /* JPHelper */ = {
+		1A10433623A495AD00D1B2DF /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				002E78BB295ADB5A0071E30C /* Photos */,
+				1AA468C1249A0CFE0081452F /* ReplaceFace */,
+				1AA468C0249A0CFE0081452F /* ShapeList */,
 				1A9CBE99267A2A3400E4D0C6 /* JPDynamicPage.h */,
 				1A9CBE9A267A2A3400E4D0C6 /* JPDynamicPage.m */,
-				1A3CD611254F1B2B00F7768B /* JPBounceView.h */,
-				1A3CD612254F1B2B00F7768B /* JPBounceView.m */,
-				1A87AF97247B8C5900123EC6 /* JPSolveTool.h */,
-				1A87AF98247B8C5A00123EC6 /* JPSolveTool.m */,
-				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
-				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
-				7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */,
-				7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */,
 				1A54DA73254583790053F75F /* JPExportCancelView.h */,
 				1A54DA74254583790053F75F /* JPExportCancelView.m */,
+				002E78BD295ADDB40071E30C /* JPSolveTool.h */,
+				002E78BE295ADDB40071E30C /* JPSolveTool.m */,
 			);
-			path = JPHelper;
+			path = Helper;
 			sourceTree = "<group>";
 		};
 		1A54DA79254589A60053F75F /* Picture */ = {
@@ -484,20 +547,10 @@
 		6003F593195388D20070C39A /* Example for JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
-				1A3CD5DD254EAF6C00F7768B /* JPConfigureModel.h */,
-				1A3CD5DE254EAF6C00F7768B /* JPConfigureModel.m */,
-				1A26108D1FF13A5800B4CC26 /* JPTableViewController.h */,
-				1A26108C1FF13A5800B4CC26 /* JPTableViewController.m */,
-				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
-				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
-				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
-				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
-				718FEDE72869C19700686129 /* Swift */,
-				718FEDE82869C1B700686129 /* SwiftUI */,
-				1AA468C1249A0CFE0081452F /* ReplaceFace */,
-				1AA468C0249A0CFE0081452F /* ShapeList */,
-				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
-				1A10433623A495AD00D1B2DF /* JPHelper */,
+				002E78B8295ADA5B0071E30C /* Main */,
+				002E78BA295ADAD80071E30C /* Workspace */,
+				002E78B9295ADA7D0071E30C /* Extension */,
+				1A10433623A495AD00D1B2DF /* Helper */,
 				1A0AB36522B2854A00B6B6AB /* Resource */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
@@ -552,14 +605,6 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		718FEDE72869C19700686129 /* Swift */ = {
-			isa = PBXGroup;
-			children = (
-				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
-			);
-			path = Swift;
-			sourceTree = "<group>";
-		};
 		718FEDE82869C1B700686129 /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -568,7 +613,6 @@
 				718FEE2C286AEC0300686129 /* OneDaySize.swift */,
 				71979C1C286F0670003AC1FF /* OneDayPreferenceKey.swift */,
 				718FEDED2869C6EF00686129 /* Modifier.swift */,
-				718FEDEB2869C6B600686129 /* Extensions.swift */,
 				718FEE31286B38BA00686129 /* ImagePickerView.swift */,
 				718FEE30286B38BA00686129 /* ImageCroperView.swift */,
 			);
@@ -725,20 +769,24 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JPImageresizerView_Example/Pods-JPImageresizerView_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/FunnyButton/FunnyButton.framework",
 				"${BUILT_PRODUCTS_DIR}/JPBasic/JPBasic.framework",
 				"${BUILT_PRODUCTS_DIR}/JPCrop/JPCrop.framework",
 				"${BUILT_PRODUCTS_DIR}/JPImageresizerView/JPImageresizerView.framework",
 				"${BUILT_PRODUCTS_DIR}/JPLiquidLayout/JPLiquidLayout.framework",
+				"${BUILT_PRODUCTS_DIR}/LookinServer/LookinServer.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FunnyButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPBasic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPCrop.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPImageresizerView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPLiquidLayout.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LookinServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
@@ -755,38 +803,44 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
-				1A87AF99247B8C5A00123EC6 /* JPSolveTool.m in Sources */,
+				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				1AA468D6249A0E240081452F /* ShapeListViewController.m in Sources */,
+				00A201DD2947349C00692814 /* JPExample.ViewController.swift in Sources */,
 				1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */,
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
 				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
+				008BEF8D29599D7D00C5A82C /* UIImage.Extension.swift in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */,
 				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
+				00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */,
+				008BEF8F2959B0E500C5A82C /* JPExample.VideoFix.swift in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
 				1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */,
+				008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
 				718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */,
 				7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */,
-				1A3CD613254F1B2B00F7768B /* JPBounceView.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
 				718FEDEA2869C1D800686129 /* CropView.swift in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
-				718FEDEC2869C6B600686129 /* Extensions.swift in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */,
+				002E78B5295AA4740071E30C /* JPExample.ConfigureModel.swift in Sources */,
+				002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */,
 				1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */,
 				718FEE2F286AEE3C00686129 /* OneDayView.swift in Sources */,
 				71979C1D286F0670003AC1FF /* OneDayPreferenceKey.swift in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
-				1A3CD5DF254EAF6C00F7768B /* JPConfigureModel.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
+				008BEF852959415D00C5A82C /* JPImagePickerObject.swift in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
@@ -794,8 +848,8 @@
 				1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */,
-				1A26108E1FF13A5800B4CC26 /* JPTableViewController.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,
+				002E78C1295AE1960071E30C /* Date.Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -961,11 +1015,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/JPImageresizerView/PrefixHeader.pch";
 				INFOPLIST_FILE = "JPImageresizerView/JPImageresizerView-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "zhoujianping.JPImageresizerView-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "JPImageresizerView/JPImageresizerView_Example-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -986,11 +1043,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/JPImageresizerView/PrefixHeader.pch";
 				INFOPLIST_FILE = "JPImageresizerView/JPImageresizerView-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "zhoujianping.JPImageresizerView-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "JPImageresizerView/JPImageresizerView_Example-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

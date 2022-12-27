@@ -1,4 +1,5 @@
 PODS:
+  - FunnyButton (0.1.2)
   - JPBasic/JPBrowseImages (0.1.8):
     - JPBasic/JPConst
   - JPBasic/JPCategory (0.1.8):
@@ -8,14 +9,18 @@ PODS:
   - JPBasic/JPConst (0.1.8)
   - JPBasic/JPProgressHUD (0.1.8):
     - SVProgressHUD
-  - JPCrop (0.2.0)
-  - JPImageresizerView (1.9.9)
+  - JPCrop (0.2.1)
+  - JPImageresizerView (1.10.0)
   - JPLiquidLayout (0.1.1)
+  - LookinServer (1.0.9):
+    - LookinServer/Core (= 1.0.9)
+  - LookinServer/Core (1.0.9)
   - Masonry (1.1.0)
   - pop (1.0.12)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
+  - FunnyButton
   - JPBasic/JPBrowseImages
   - JPBasic/JPCategory
   - JPBasic/JPConst
@@ -23,12 +28,15 @@ DEPENDENCIES:
   - JPCrop
   - JPImageresizerView (from `../`)
   - JPLiquidLayout
+  - LookinServer
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - FunnyButton
     - JPBasic
     - JPCrop
     - JPLiquidLayout
+    - LookinServer
     - Masonry
     - pop
     - SVProgressHUD
@@ -38,14 +46,16 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  FunnyButton: 980633cee38018dff1bc4f12322ba4c7e353e3bf
   JPBasic: 5a0459823fd51d7a02aea924227e971a0d8778b3
-  JPCrop: 2a5742db56fa30f495683e8b51c0d7548ab04368
-  JPImageresizerView: 762cd3ea68450cb3985fa3a06cd55afd0527fa73
+  JPCrop: c88ab75620001721a8c67a8d0ea52e15d33bca16
+  JPImageresizerView: c6c733a23d8801c5d787df37389f0fd517ee6110
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
+  LookinServer: 5d46766710ddac83ea072fa5a0351d1e74c0fd10
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 5bccdc04bc3f9e2c0beae172b2765ca4c1d83661
+PODFILE CHECKSUM: a0553c8ecf3295bdd68d9b840d88d872a1583295
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

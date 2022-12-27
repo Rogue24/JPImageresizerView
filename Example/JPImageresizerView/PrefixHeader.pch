@@ -9,19 +9,15 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
-#define GirlCount 8
-
 #define LandscapeVerBtnSpace 10.0
 #define PortraitHorBtnSpace 20.0
 #define ButtonHeight 30.0
 
-#define JPGIFDuration 2.0
 #define JPCutGIFDuration 5.0
 
 #import "JPImageresizerView.h"
 #import "JPInline.h"
 #import "JPMacro.h"
-#import "JPSolveTool.h"
 #import "UIView+JPExtension.h"
 #import "UIView+JPPOP.h"
 #import "UIColor+JPExtension.h"

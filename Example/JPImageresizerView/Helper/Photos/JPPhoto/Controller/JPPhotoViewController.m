@@ -56,6 +56,8 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
 #pragma clang diagnostic pop
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 

@@ -28,7 +28,7 @@ typedef void(^JPLivePhotoResultHandler)(PHAsset *requestAsset, PHLivePhoto *live
  @discussion 单例
  @result 获取手机相册工具单例
  */
-JPSingtonInterface
++ (instancetype)sharedInstance;
 
 #pragma mark - 访问权限
 

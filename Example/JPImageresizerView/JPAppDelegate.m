@@ -16,6 +16,17 @@
     [JPProgressHUD setCustomStyle];
     [JPProgressHUD setBackgroundColor:JPRGBColor(240, 240, 240)];
     [JPProgressHUD setForegroundColor:JPRGBColor(16, 16, 16)];
+    
+    if (@available(iOS 15.0, *)) {
+        UINavigationBar *navigationBar = [UINavigationBar appearance];
+        
+        UINavigationBarAppearance *scrollEdgeAppearance = [[UINavigationBarAppearance alloc] init];
+        navigationBar.scrollEdgeAppearance = scrollEdgeAppearance;
+        
+        UINavigationBarAppearance *standardAppearance = [[UINavigationBarAppearance alloc] init];
+        navigationBar.standardAppearance = standardAppearance;
+    }
+    
     return YES;
 }
 

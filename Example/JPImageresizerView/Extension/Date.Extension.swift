@@ -1,27 +1,10 @@
 //
-//  Extensions.swift
+//  Date.Extension.swift
 //  JPImageresizerView_Example
 //
-//  Created by aa on 2022/6/27.
+//  Created by aa on 2022/12/27.
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
-
-import SwiftUI
-
-@available(iOS 15.0.0, *)
-extension UIViewController {
-    @objc static func createCropViewController(saveOneDayImage: ((_ oneDayImage: UIImage?) -> ())?) -> UIViewController {
-        let vc = UIHostingController(rootView: CropView(saveOneDayImage: saveOneDayImage))
-        vc.view.clipsToBounds = true
-        return vc
-    }
-}
-
-extension UIImage {
-    static func bundleImage(_ name: String, ofType ext: String?) -> UIImage {
-        UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: ext)!)!
-    }
-}
 
 extension Date {
     typealias DateInfo = (year: String, month: String, day: String, weekday: String)
@@ -100,3 +83,4 @@ let ShotWeekdays = [
     "Fri",
     "Sat"
 ]
+

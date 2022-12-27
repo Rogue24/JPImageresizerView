@@ -10,7 +10,7 @@
 #import "JPPreviewViewController.h"
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
-#import "JPTableViewController.h"
+#import "JPImageresizerView_Example-Swift.h"
 
 @interface JPImageresizerViewController ()
 @property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
@@ -45,6 +45,13 @@
 
 #pragma mark - 生命周期
 
++ (instancetype)buildWithStatusBarStyle:(UIStatusBarStyle)statusBarStyle configure:(JPImageresizerConfigure *)configure {
+    JPImageresizerViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];
+    vc.statusBarStyle = statusBarStyle;
+    vc.configure = configure;
+    return vc;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self __setupBase];
@@ -57,11 +64,7 @@
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (@available(iOS 13.0, *)) {
-        [[UIApplication sharedApplication] setStatusBarStyle:(self.statusBarStyle == UIStatusBarStyleDefault ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent) animated:YES];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
-    }
+    [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
 #pragma clang diagnostic pop
 }
 
@@ -97,8 +100,11 @@
     self.backBtnLeftConstraint.constant = JPMargin;
     self.backBtnTopConstraint.constant = JPStatusBarH;
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
     JPObserveNotification(self, @selector(didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
+#pragma clang diagnostic pop
 }
 
 - (void)__setupImageresizerView {
@@ -152,8 +158,11 @@
 #pragma mark - 监听屏幕旋转
 
 - (void)didChangeStatusBarOrientation {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self setStatusBarOrientation:[UIApplication sharedApplication].statusBarOrientation
                          duration:[UIApplication sharedApplication].statusBarOrientationAnimationDuration];
+#pragma clang diagnostic pop
 }
 
 - (void)setStatusBarOrientation:(UIInterfaceOrientation)statusBarOrientation {
@@ -255,14 +264,12 @@ static UIViewController *tmpVC_;
 - (IBAction)pop:(id)sender {
     [UIAlertController alertWithTitle:@"将此次裁剪保留？" message:nil actions:@[
         [UIAlertAction actionWithTitle:@"保留" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            JPTableViewController.savedConfigure = [self.imageresizerView saveCurrentConfigure];
+            [JPExampleListViewController cacheConfigure:[self.imageresizerView saveCurrentConfigure] statusBarStyle:self.statusBarStyle];
             [self goback];
         }],
         
         [UIAlertAction actionWithTitle:@"不保留" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-            if (JPTableViewController.savedConfigure == self.configure) {
-                JPTableViewController.savedConfigure = nil;
-            }
+            [JPExampleListViewController cleanConfigure:self.configure];
             [self goback];
         }],
     ]];
@@ -338,7 +345,7 @@ static UIViewController *tmpVC_;
     NSMutableArray<UIAlertAction *> *actions = [NSMutableArray array];
     
     if (self.imageresizerView.isGIF) {
-        [actions addObject:[UIAlertAction actionWithTitle:(self.imageresizerView.isLoopPlaybackGIF ? @"GIF自主选择" : @"GIF自动播放") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [actions addObject:[UIAlertAction actionWithTitle:(self.imageresizerView.isLoopPlaybackGIF ? @"GIF可控进度" : @"GIF自动播放") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.imageresizerView.isLoopPlaybackGIF = !self.imageresizerView.isLoopPlaybackGIF;
         }]];
     }
@@ -358,15 +365,15 @@ static UIViewController *tmpVC_;
     }]];
     
     [actions addObject:[UIAlertAction actionWithTitle:@"拉伸的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.borderImageRectInset = JPConfigureModel.stretchBorderImageRectInset;
-        self.imageresizerView.borderImage = [JPConfigureModel stretchBorderImage];
+        self.imageresizerView.borderImageRectInset = UIImage.stretchBorderRectInset;
+        self.imageresizerView.borderImage = [UIImage getStretchBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];
     
     [actions addObject:[UIAlertAction actionWithTitle:@"平铺的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.imageresizerView.borderImageRectInset = JPConfigureModel.tileBorderImageRectInset;
-        self.imageresizerView.borderImage = [JPConfigureModel tileBorderImage];
+        self.imageresizerView.borderImageRectInset = UIImage.tileBorderRectInset;
+        self.imageresizerView.borderImage = [UIImage getTileBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
     }]];

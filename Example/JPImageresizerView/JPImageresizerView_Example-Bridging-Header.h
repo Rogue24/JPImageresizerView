@@ -4,5 +4,10 @@
 
 #import <JPBasic/JPConstant.h>
 #import <JPBasic/JPProgressHUD.h>
-#import <JPImageresizerResult.h>
+#import "JPImageresizerTool.h"
+#import "JPImageresizerViewController.h"
 #import "JPPreviewViewController.h"
+#import "JPExportCancelView.h"
+#import "UIView+JPExtension.h"
+#import "JPPhotoTool.h"
+#import "JPPhotoViewController.h"
