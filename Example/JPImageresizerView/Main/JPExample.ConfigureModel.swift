@@ -100,7 +100,7 @@ extension JPExample.ConfigureModel {
             } else if let videoURL = object.videoURL {
                 configure = try await JPExample.videoFix(videoURL)
             } else {
-                throw NSError(domain: "木有东西", code: 666)
+                throw JPExampleError.pickNullObject
             }
             
             return .init(.lightContent, configure)

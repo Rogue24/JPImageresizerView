@@ -265,10 +265,10 @@
 			isa = PBXGroup;
 			children = (
 				0024C32C292F5AD7002513DA /* JPExample.swift */,
-				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
 				00A201D62947284000692814 /* JPExample.ItemExecute.swift */,
-				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
+				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
 				008BEF8E2959B0E500C5A82C /* JPExample.VideoFix.swift */,
+				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";

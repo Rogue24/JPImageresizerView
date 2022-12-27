@@ -9,11 +9,12 @@
 import MobileCoreServices
 import Combine
 
+// MARK: - API Photograph
 func PhotographImage() async throws -> UIImage {
     try await JPImagePickerController<UIImage>.photograph()
 }
 
-// MARK: - Open album
+// MARK: - API Open album
 func PickAlbumImage() async throws -> UIImage {
     try await JPImagePickerController<UIImage>.openAlbum(.photo)
 }
@@ -30,6 +31,40 @@ func PickAlbumObject() async throws -> JPAlbumObject {
     try await JPImagePickerController<JPAlbumObject>.openAlbum(.all)
 }
 
+// MARK: - Enum
+enum JPImagePickerError: Error {
+    case fetchFaild
+    case cancel
+}
+
+enum JPImagePickerType {
+    case photo
+    case video
+    case all
+    
+    var types: [String] {
+        switch self {
+        case .photo:
+            return [
+                kUTTypeImage as String,
+                kUTTypeLivePhoto as String,
+            ]
+        case .video:
+            return [
+                kUTTypeMovie as String,
+                kUTTypeVideo as String,
+            ]
+        case .all:
+            return [
+                kUTTypeMovie as String,
+                kUTTypeVideo as String,
+                kUTTypeImage as String,
+                kUTTypeLivePhoto as String,
+            ]
+        }
+    }
+}
+
 class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private var object: T? = nil
     private var isSetedObject = false
@@ -38,18 +73,12 @@ class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, 
     private var isLocking = false
     
     // MARK: - Life cycle
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("jpjpjp JPImagePickerController viewDidDisappear")
-        tryUnlock()
-    }
-    
     deinit {
-        print("jpjpjp JPImagePickerController 死")
+        print("jpjpjp JPImagePickerController deinit")
     }
     
     // MARK: - Begin pick
-    static func openAlbum<T: JPImagePickerObject>(_ mediaType: PickerType) async throws -> T {
+    static func openAlbum<T: JPImagePickerObject>(_ mediaType: JPImagePickerType) async throws -> T {
         let picker = JPImagePickerController<T>()
         picker.modalPresentationStyle = .overFullScreen
         picker.mediaTypes = mediaType.types
@@ -62,6 +91,7 @@ class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, 
     
     static func photograph<T: JPImagePickerObject>() async throws -> T {
         let picker = JPImagePickerController<T>()
+        picker.modalPresentationStyle = .overFullScreen
         picker.sourceType = .camera
         picker.delegate = picker
         rootVC.present(picker, animated: true)
@@ -82,42 +112,6 @@ class JPImagePickerController<T: JPImagePickerObject>: UIImagePickerController, 
     }
 }
 
-// MARK: - Enum
-extension JPImagePickerController {
-    enum PickerType {
-        case photo
-        case video
-        case all
-        
-        var types: [String] {
-            switch self {
-            case .photo:
-                return [
-                    kUTTypeImage as String,
-                    kUTTypeLivePhoto as String,
-                ]
-            case .video:
-                return [
-                    kUTTypeMovie as String,
-                    kUTTypeVideo as String,
-                ]
-            case .all:
-                return [
-                    kUTTypeMovie as String,
-                    kUTTypeVideo as String,
-                    kUTTypeImage as String,
-                    kUTTypeLivePhoto as String,
-                ]
-            }
-        }
-    }
-    
-    enum PickerError: Error {
-        case nullObject
-        case cancel
-    }
-}
-
 // MARK: - Pick handle
 private extension JPImagePickerController {
     func pickObject() async throws -> T {
@@ -128,19 +122,22 @@ private extension JPImagePickerController {
         }
     }
     
-    func pickObject(completion: @escaping (Result<T, PickerError>) -> Void) {
-        DispatchQueue.global().async {
+    func pickObject(completion: @escaping (Result<T, JPImagePickerError>) -> Void) {
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else {
+                completion(.failure(.cancel))
+                return
+            }
             self.tryLock()
             if let object = self.object {
                 completion(.success(object))
             } else {
-                completion(.failure(self.isSetedObject ? .cancel : .nullObject))
+                completion(.failure(self.isSetedObject ? .fetchFaild : .cancel))
             }
         }
     }
     
     func setupObject(_ info: [UIImagePickerController.InfoKey : Any]) {
-        print("jpjpjp \(String(describing: object.self))")
         object = T.fetchFromPicker(info)
         isSetedObject = true
     }

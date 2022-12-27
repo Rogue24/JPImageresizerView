@@ -50,7 +50,7 @@ extension JPExample {
             JPImageresizerTool.fixOrientationVideo(with: asset) { cacheURL, reason in
                 JPImageresizerViewController.showErrorMsg(reason, pathExtension: cacheURL?.pathExtension ?? "")
                 mainVC.isExporting = false
-                completion(.failure(NSError(domain: "修正失败", code: 999)))
+                completion(.failure(JPExampleError.videoFixFaild))
                 
             } fixStart: { exportSession in
                 mainVC.isExporting = true
@@ -111,7 +111,7 @@ private extension JPExample {
         if #available(iOS 16.0, *) {
             let tracks = try await asset.load(.tracks)
             guard let track = tracks.first(where: { $0.mediaType == .video }) else {
-                throw NSError(domain: "非视频文件", code: 999)
+                throw JPExampleError.nonVideoFile
             }
             return try await track.load(.preferredTransform)
         }

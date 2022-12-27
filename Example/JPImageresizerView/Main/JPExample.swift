@@ -6,6 +6,12 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
+enum JPExampleError: Error {
+    case videoFixFaild
+    case nonVideoFile
+    case pickNullObject
+}
+
 protocol JPExampleItem: RawRepresentable<Int> {
     var item: Int { get }
     var title: String { get }
@@ -18,20 +24,28 @@ extension JPExampleItem {
         JPProgressHUD.show(nil, status: "敬请期待", userInteractionEnabled: true)
     }
     
-    func doExecute(complete: ((_ r: Result<Void, Error>) -> Void)? = nil) {
+    func doExecute() {
         Task {
             do {
                 try await execute()
-                guard let complete = complete else { return }
-                Task.detached { @MainActor in
-                    complete(.success(()))
+            } catch let error as JPImagePickerError {
+                switch error {
+                case .fetchFaild:
+                    JPProgressHUD.showError(withStatus: "获取照片/视频失败（`fetchFromPicker`转义失败）", userInteractionEnabled: true)
+                case .cancel: // 用户点了取消
+                    break
+                }
+            } catch let error as JPExampleError {
+                switch error {
+                case .videoFixFaild:
+                    JPProgressHUD.showError(withStatus: "视频修正失败", userInteractionEnabled: true)
+                case .nonVideoFile:
+                    JPProgressHUD.showError(withStatus: "非视频文件", userInteractionEnabled: true)
+                case .pickNullObject: // 用户点了取消
+                    JPProgressHUD.showError(withStatus: "获取照片/视频失败", userInteractionEnabled: true)
                 }
             } catch {
-                print("jpjpjp doExecute failure \(error)")
-                guard let complete = complete else { return }
-                Task.detached { @MainActor in
-                    complete(.failure(error))
-                }
+                JPProgressHUD.showError(withStatus: "\(error)", userInteractionEnabled: true)
             }
         }
     }
