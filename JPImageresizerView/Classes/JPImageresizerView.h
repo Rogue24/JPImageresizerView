@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @method
  @brief 类工厂
- @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
+ @param imageresizerIsCanRecovery --- 是否可以重置的回调（`isCanRecovery`仅针对[旋转]、[缩放]、[镜像]的变化情况；当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
  */
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @method
  @brief 实例工厂
- @param imageresizerIsCanRecovery --- 是否可以重置的回调（当裁剪区域缩放至适应范围后就会触发该回调）
+ @param imageresizerIsCanRecovery --- 是否可以重置的回调（`isCanRecovery`仅针对[旋转]、[缩放]、[镜像]的变化情况；当裁剪区域缩放至适应范围后就会触发该回调）
  @param imageresizerIsPrepareToScale --- 是否预备缩放裁剪区域至适应范围（当裁剪区域发生变化的开始和结束就会触发该回调）
  @discussion 可使用JPImageresizerConfigure配置好初始参数创建实例
  */
@@ -170,6 +170,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
+
+/** 是否可重置（该属性仅针对[旋转]、[缩放]、[镜像]的变化情况，其他如裁剪宽高比、圆切等变化情况需用户自行判定能否重置） */
+@property (nonatomic, assign, readonly) BOOL isCanRecovery;
 
 #pragma mark - 裁剪宽高比相关
 /**

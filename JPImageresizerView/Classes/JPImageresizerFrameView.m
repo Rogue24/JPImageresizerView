@@ -1146,10 +1146,14 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             self.isCanRecovery = YES;
             return;
         }
-    } else if (self.resizeWHScale != self.initialResizeWHScale) {
-        self.isCanRecovery = YES;
-        return;
     }
+    ///【1.10.2】改动：
+    /// `isCanRecovery`仅针对[旋转]、[缩放]、[镜像]的变化情况，
+    /// 现修改这种情况交由用户来决定能否重置（imageresizerIsCanRecovery）。
+//    else if (self.resizeWHScale != self.initialResizeWHScale) {
+//        self.isCanRecovery = YES;
+//        return;
+//    }
     
     BOOL isVerMirror = self.isVerticalityMirror();
     BOOL isHorMirror = self.isHorizontalMirror();
@@ -1623,7 +1627,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.isPrepareToScale = NO;
 }
 
-- (void)recoveryToSavedHistoryWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily {
+- (void)recoveryToSavedHistoryWithDirection:(JPImageresizerRotationDirection)direction
+                          imageresizerFrame:(CGRect)imageresizerFrame
+                       initialResizeWHScale:(CGFloat)initialResizeWHScale
+                          isToBeArbitrarily:(BOOL)isToBeArbitrarily {
     [self __updateImageOriginFrameWithDirection:direction];
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
     if (isToBeArbitrarily) {
@@ -1632,6 +1639,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     } else {
         _isArbitrarily = _resizeWHScale == 0;
     }
+    _initialResizeWHScale = initialResizeWHScale;
     [self __checkIsCanRecovery];
 }
 

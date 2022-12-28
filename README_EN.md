@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.10.1)
+## Brief introduction (Current version: 1.10.2)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -175,6 +175,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeCo
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // You can listen here to see if you can reset it.
     // If you don't need to reset (isCanRecovery is NO), you can do the corresponding processing here, such as setting the reset button to be non-point or hidden
+    // PS: isCanRecovery is only for the changes of [Rotation], [Zoom] and [Mirror]. For other changes such as resizeWHScale and isRoundResize, the user must decide whether to reset
     // Specific operation can refer to Demo
     // Pay attention to circular references
 } imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {

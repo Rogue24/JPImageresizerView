@@ -90,7 +90,6 @@
     
     self.frameType = self.configure.frameType;
     self.maskImage = self.configure.maskImage;
-    self.recoveryBtn.enabled = NO;
 }
 
 - (void)__setupConstraints {
@@ -134,6 +133,13 @@
         if (!self) return;
         // 当不需要重置设置按钮不可点
         self.recoveryBtn.enabled = isCanRecovery;
+        /**
+         *【1.10.2】改动：`isCanRecovery`仅针对[旋转]、[缩放]、[镜像]的变化情况，
+         * 其他如裁剪宽高比的变化情况需另行判定能否重置，例如可补上：
+            if (!isCanRecovery) {
+              self.recoveryBtn.enabled = self.imageresizerView.resizeWHScale == self.imageresizerView.initialResizeWHScale;
+            }
+         */
     } imageresizerIsPrepareToScale:^(BOOL isPrepareToScale) {
         @jp_strongify(self);
         if (!self) return;
@@ -153,6 +159,9 @@
     // 调用recoveryByInitialResizeWHScale方法进行重置，则resizeWHScale会重置为initialResizeWHScale的值
     // 调用recoveryByCurrentResizeWHScale方法进行重置，则resizeWHScale不会被重置
     // 调用recoveryByResizeWHScale:方法进行重置，可重置为任意resizeWHScale
+    
+    // 配置重置按钮
+    self.recoveryBtn.enabled = self.imageresizerView.isCanRecovery;
 }
 
 #pragma mark - 监听屏幕旋转

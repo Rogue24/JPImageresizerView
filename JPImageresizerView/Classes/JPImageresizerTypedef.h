@@ -102,6 +102,7 @@ struct JPCropHistory {
     CGPoint scrollViewContentOffset;
     CGFloat scrollViewMinimumZoomScale;
     CGFloat scrollViewCurrentZoomScale;
+    CGFloat initialResizeWHScale;
 };
 typedef struct CG_BOXABLE JPCropHistory JPCropHistory;
 
@@ -142,7 +143,8 @@ CG_INLINE JPCropHistory JPCropHistoryMake(CGRect viewFrame,
                                           UIEdgeInsets scrollViewContentInsets,
                                           CGPoint scrollViewContentOffset,
                                           CGFloat scrollViewMinimumZoomScale,
-                                          CGFloat scrollViewCurrentZoomScale) {
+                                          CGFloat scrollViewCurrentZoomScale,
+                                          CGFloat initialResizeWHScale) {
     JPCropHistory history;
     history.viewFrame = viewFrame;
     history.contentInsets = contentInsets;
@@ -156,6 +158,7 @@ CG_INLINE JPCropHistory JPCropHistoryMake(CGRect viewFrame,
     history.scrollViewContentOffset = scrollViewContentOffset;
     history.scrollViewMinimumZoomScale = scrollViewMinimumZoomScale;
     history.scrollViewCurrentZoomScale = scrollViewCurrentZoomScale;
+    history.initialResizeWHScale = initialResizeWHScale;
     return history;
 }
 
@@ -303,8 +306,7 @@ typedef void(^_Nullable JPImageresizerConfigureMakeBlock)(JPImageresizerConfigur
 /**
  * 是否可以重置的回调
  * 当裁剪区域缩放至适应范围后就会触发该回调
-    - YES：可重置
-    - NO：不需要重置，裁剪区域跟图片区域一致，并且没有旋转、镜像过
+    - isCanRecovery：是否可重置，仅针对[旋转]、[缩放]、[镜像]的变化情况，其他如裁剪宽高比、圆切等变化情况需用户自行判定能否重置
  */
 typedef void(^_Nullable JPImageresizerIsCanRecoveryBlock)(BOOL isCanRecovery);
 

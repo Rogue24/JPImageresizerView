@@ -678,6 +678,10 @@
     [self __updateImageViewImage:NO];
 }
 
+- (BOOL)isCanRecovery {
+    return _frameView.isCanRecovery;
+}
+
 #pragma mark - 裁剪宽高比相关
 - (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
     self.frameView.initialResizeWHScale = initialResizeWHScale;
@@ -1154,12 +1158,15 @@
                   orToRoundResize:(BOOL)isRoundResize
                     orToMaskImage:(UIImage *)maskImage
                 isToBeArbitrarily:(BOOL)isToBeArbitrarily {
-    BOOL isCanRecovery = (maskImage != nil || self.maskImage != nil) && self.maskImage != maskImage;
-    if (!isCanRecovery) isCanRecovery = self.frameView.isCanRecovery;
-    if (!isCanRecovery) {
-        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
-        return;
-    }
+    ///【1.10.2】改动：
+    /// 由于`isCanRecovery`仅针对[旋转]、[缩放]、[镜像]的变化情况，
+    /// 导致其他如裁剪宽高比、圆切等变化后无法重置，现修改为无需判断，均可重置。
+//    BOOL isCanRecovery = (maskImage != nil || self.maskImage != nil) && self.maskImage != maskImage;
+//    if (!isCanRecovery) isCanRecovery = self.frameView.isCanRecovery;
+//    if (!isCanRecovery) {
+//        JPIRLog(@"jp_tip: 已经是初始状态，不需要重置");
+//        return;
+//    }
     
     BOOL isUpdateMaskImage = maskImage != nil && self.maskImage != maskImage;
 
@@ -1696,7 +1703,8 @@
                                           self.scrollView.contentInset,
                                           self.scrollView.contentOffset,
                                           self.scrollView.minimumZoomScale,
-                                          self.scrollView.zoomScale);
+                                          self.scrollView.zoomScale,
+                                          self.frameView.initialResizeWHScale);
     return configure;
 }
 
@@ -1735,6 +1743,7 @@
             
             [self.frameView recoveryToSavedHistoryWithDirection:direction
                                               imageresizerFrame:history.imageresizerFrame
+                                           initialResizeWHScale:history.initialResizeWHScale
                                               isToBeArbitrarily:self.configure.isArbitrarily];
         }
         if (self.configure.isCleanHistoryAfterInitial) [self.configure cleanHistory];

@@ -131,7 +131,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)recoveryWithDuration:(NSTimeInterval)duration;
 - (void)recoveryDone:(BOOL)isUpdateMaskImage;
 
-- (void)recoveryToSavedHistoryWithDirection:(JPImageresizerRotationDirection)direction imageresizerFrame:(CGRect)imageresizerFrame isToBeArbitrarily:(BOOL)isToBeArbitrarily;
+- (void)recoveryToSavedHistoryWithDirection:(JPImageresizerRotationDirection)direction
+                          imageresizerFrame:(CGRect)imageresizerFrame
+                       initialResizeWHScale:(CGFloat)initialResizeWHScale
+                          isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
 - (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
