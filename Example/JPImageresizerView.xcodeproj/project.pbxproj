@@ -11,13 +11,15 @@
 		002E78B5295AA4740071E30C /* JPExample.ConfigureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */; };
 		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
 		002E78C1295AE1960071E30C /* Date.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78C0295AE1960071E30C /* Date.Extension.swift */; };
-		008BEF852959415D00C5A82C /* JPImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF842959415D00C5A82C /* JPImagePickerObject.swift */; };
 		008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */; };
 		00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201D62947284000692814 /* JPExample.ItemExecute.swift */; };
 		00A201DD2947349C00692814 /* JPExample.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201DC2947349C00692814 /* JPExample.ViewController.swift */; };
-		00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201E029473C7B00692814 /* JPImagePickerController.swift */; };
+		00B3FAF52968227E00F48389 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF22968227E00F48389 /* ImagePickerObject.swift */; };
+		00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF32968227E00F48389 /* ImagePicker.swift */; };
+		00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF42968227E00F48389 /* ImagePicker.API.swift */; };
+		00B3FAF92968306A00F48389 /* Error.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF82968306A00F48389 /* Error.Extension.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -120,13 +122,15 @@
 		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
 		002E78BE295ADDB40071E30C /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSolveTool.m; sourceTree = "<group>"; };
 		002E78C0295AE1960071E30C /* Date.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.Extension.swift; sourceTree = "<group>"; };
-		008BEF842959415D00C5A82C /* JPImagePickerObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerObject.swift; sourceTree = "<group>"; };
 		008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.Extension.swift; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.Extension.swift; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.VideoFixOrientation.swift; sourceTree = "<group>"; };
 		00A201D62947284000692814 /* JPExample.ItemExecute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ItemExecute.swift; sourceTree = "<group>"; };
 		00A201DC2947349C00692814 /* JPExample.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ViewController.swift; sourceTree = "<group>"; };
-		00A201E029473C7B00692814 /* JPImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPImagePickerController.swift; sourceTree = "<group>"; };
+		00B3FAF22968227E00F48389 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
+		00B3FAF32968227E00F48389 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		00B3FAF42968227E00F48389 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
+		00B3FAF82968306A00F48389 /* Error.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.Extension.swift; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -279,6 +283,7 @@
 				008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */,
 				008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */,
 				002E78C0295AE1960071E30C /* Date.Extension.swift */,
+				00B3FAF82968306A00F48389 /* Error.Extension.swift */,
 				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
 				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
 				7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */,
@@ -303,19 +308,20 @@
 		002E78BB295ADB5A0071E30C /* Photos */ = {
 			isa = PBXGroup;
 			children = (
-				008BEF832959414600C5A82C /* JPImagePicker */,
 				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
 			);
 			path = Photos;
 			sourceTree = "<group>";
 		};
-		008BEF832959414600C5A82C /* JPImagePicker */ = {
+		00B3FAF12968227E00F48389 /* ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
-				00A201E029473C7B00692814 /* JPImagePickerController.swift */,
-				008BEF842959415D00C5A82C /* JPImagePickerObject.swift */,
+				00B3FAF42968227E00F48389 /* ImagePicker.API.swift */,
+				00B3FAF32968227E00F48389 /* ImagePicker.swift */,
+				00B3FAF22968227E00F48389 /* ImagePickerObject.swift */,
 			);
-			path = JPImagePicker;
+			name = ImagePicker;
+			path = Photos/ImagePicker;
 			sourceTree = "<group>";
 		};
 		1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */ = {
@@ -416,6 +422,7 @@
 		1A10433623A495AD00D1B2DF /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				00B3FAF12968227E00F48389 /* ImagePicker */,
 				002E78BB295ADB5A0071E30C /* Photos */,
 				1AA468C1249A0CFE0081452F /* ReplaceFace */,
 				1AA468C0249A0CFE0081452F /* ShapeList */,
@@ -804,6 +811,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */,
+				00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
@@ -817,9 +825,9 @@
 				718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */,
 				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
-				00A201E129473C7B00692814 /* JPImagePickerController.swift in Sources */,
 				008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */,
 				1AE37BB123D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m in Sources */,
+				00B3FAF92968306A00F48389 /* Error.Extension.swift in Sources */,
 				1A9CBE9B267A2A3500E4D0C6 /* JPDynamicPage.m in Sources */,
 				008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */,
 				1A0AB30A22B22B0F00B6B6AB /* JPPhotoCell.m in Sources */,
@@ -840,13 +848,14 @@
 				71979C1D286F0670003AC1FF /* OneDayPreferenceKey.swift in Sources */,
 				1A0AB30622B22B0F00B6B6AB /* WMScrollView.m in Sources */,
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
-				008BEF852959415D00C5A82C /* JPImagePickerObject.swift in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A658769262AEE0C00846689 /* JPCropViewController.swift in Sources */,
+				00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */,
 				1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
+				00B3FAF52968227E00F48389 /* ImagePickerObject.swift in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,
 				002E78C1295AE1960071E30C /* Date.Extension.swift in Sources */,

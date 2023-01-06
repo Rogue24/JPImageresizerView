@@ -100,10 +100,16 @@ extension JPExample.ViewController {
     
     func photograph() {
         Task {
-            let image = try await PhotographImage()
-            let model = JPExample.ConfigureModel(.lightContent, .defaultConfigure(with: image))
-            await MainActor.run {
-                pushImageresizerVC(with: model)
+            do {
+                let image = try await ImagePicker.photograph()
+                let model = JPExample.ConfigureModel(.lightContent, .defaultConfigure(with: image))
+                await MainActor.run {
+                    pushImageresizerVC(with: model)
+                }
+            } catch let error as ErrorHUD {
+                error.showErrorHUD()
+            } catch {
+                JPProgressHUD.showError(withStatus: "系统错误：\(error)", userInteractionEnabled: true)
             }
         }
     }

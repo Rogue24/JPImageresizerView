@@ -92,7 +92,7 @@ extension JPExample.ConfigureModel {
             return .init(.darkContent, configure)
             
         case .album:
-            let object = try await PickAlbumObject()
+            let object: AlbumObject = try await ImagePicker.openAlbum()
             
             let configure: JPImageresizerConfigure
             if let imageData = object.imageData {
