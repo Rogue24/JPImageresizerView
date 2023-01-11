@@ -2,48 +2,33 @@
 //  JPExample.ItemExecute.swift
 //  JPImageresizerView_Example
 //
-//  Created by aa on 2022/12/12.
-//  Copyright © 2022 ZhouJianPing. All rights reserved.
+//  Created by aa on 2023/1/11.
+//  Copyright © 2023 ZhouJianPing. All rights reserved.
 //
 
-extension JPExample.Section0 {
-    func execute() async throws {
-        let model = JPExample.ConfigureModel.build(with: self)
-        await MainActor.run {
-            mainVC.pushImageresizerVC(with: model)
+extension JPExample.Item {
+    func doExecute() {
+        Task {
+            do {
+                try await execute()
+            } catch let error as ErrorHUD {
+                error.showErrorHUD()
+            } catch {
+                JPProgressHUD.showError(withStatus: "发生错误：\(error)", userInteractionEnabled: true)
+            }
         }
-    }
-}
-
-extension JPExample.Section1 {
-    func execute() async throws {
-        let model = try await JPExample.ConfigureModel.build(with: self)
-        await MainActor.run {
-            mainVC.pushImageresizerVC(with: model)
-        }
-    }
-}
-
-extension JPExample.Section2 {
-    private static var girlsImg: UIImage? = nil
-    private static func getGirlsImg() async -> UIImage {
-        if let girlsImg = self.girlsImg {
-            return girlsImg
-        }
-        let girlsImg = await UIImage.createGirlsGIFImage()
-        self.girlsImg = girlsImg
-        return girlsImg
     }
     
     func execute() async throws {
         switch self {
+        // MARK: - Section2
         case .replaceFace:
             await MainActor.run {
                 mainVC.pushChooseFaceVC()
             }
             
         case .girlsGIF:
-            let girlsImg = await Self.getGirlsImg()
+            let girlsImg = await UIImage.getGirlsGIFImage()
             let configure = JPImageresizerConfigure.defaultConfigure(with: girlsImg).jp_isLoopPlaybackGIF(true)
             let model = JPExample.ConfigureModel(.lightContent, configure)
             await MainActor.run {
@@ -64,7 +49,13 @@ extension JPExample.Section2 {
             await MainActor.run {
                 mainVC.pushCropVC(isJPCroper: true)
             }
+            
+        // MARK: - Section0 & Section1
+        default:
+            guard let model = try await JPExample.ConfigureModel.build(with: self) else { return }
+            await MainActor.run {
+                mainVC.pushImageresizerVC(with: model)
+            }
         }
     }
 }
-

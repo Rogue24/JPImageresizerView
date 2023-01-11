@@ -19,8 +19,9 @@ extension JPExample {
 }
 
 extension JPExample.ConfigureModel {
-    class func build(with item: JPExample.Section0) -> Self {
+    class func build(with item: JPExample.Item) async throws -> Self? {
         switch item {
+        // MARK: - Section0
         case .`default`:
             let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
             return .init(.lightContent, configure)
@@ -63,13 +64,8 @@ extension JPExample.ConfigureModel {
                 .jp_maskImage(UIImage(named: "love.png"))
                 .jp_isArbitrarily(false)
             return .init(.lightContent, configure)
-        }
-    }
-}
-
-extension JPExample.ConfigureModel {
-    class func build(with item: JPExample.Section1) async throws -> Self {
-        switch item {
+            
+        // MARK: - Section1
         case .localGIF:
             let gifPath = Bundle.main.path(forResource: Bool.random() ? "Gem" : "Dilraba", ofType: "gif")!
             let gifData = try! Data(contentsOf: URL(fileURLWithPath: gifPath))
@@ -104,7 +100,10 @@ extension JPExample.ConfigureModel {
             }
             
             return .init(.lightContent, configure)
+            
+        // MARK: - Section2
+        default:
+            return nil
         }
     }
 }
-

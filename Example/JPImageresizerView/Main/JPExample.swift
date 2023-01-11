@@ -6,132 +6,65 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
-// MARK: - Error
+// MARK: - JPExample
+enum JPExample {
+    static let sections: [Section] = [
+        Section(title: "裁剪图片", items: [
+            .`default`,
+            .darkBlur,
+            .lightBlur,
+            .stretchBorder,
+            .tileBorder,
+            .roundResize,
+            .mask,
+        ]),
+        
+        Section(title: "裁剪GIF&视频", items: [
+            .localGIF,
+            .localVideo,
+            .album,
+        ]),
+        
+        Section(title: "其他", items: [
+            .replaceFace,
+            .girlsGIF,
+            .compatibleSwift,
+            .compatibleSwiftUI,
+            .JPCroper,
+        ]),
+    ]
+    
+    struct Section {
+        let title: String
+        let items: [Item]
+    }
+    
+    enum Item: String {
+        case `default` = "默认样式"
+        case darkBlur = "深色毛玻璃遮罩"
+        case lightBlur = "浅色毛玻璃遮罩"
+        case stretchBorder = "拉伸的边框图片"
+        case tileBorder = "平铺的边框图片"
+        case roundResize = "圆切样式"
+        case mask = "蒙版样式"
+        
+        case localGIF = "裁剪GIF"
+        case localVideo = "裁剪视频"
+        case album = "打开相册"
+        
+        case replaceFace = "趣味换脸"
+        case girlsGIF = "自制GIF"
+        case compatibleSwift = "适配 Swift"
+        case compatibleSwiftUI = "适配 SwiftUI"
+        case JPCroper = "JPCroper：高仿小红书的裁剪功能"
+        
+        var title: String { rawValue }
+    }
+}
+
+// MARK: - JPExampleError
 enum JPExampleError: Error {
     case videoFixFaild
     case nonVideoFile
     case pickNullObject
-}
-
-// MARK: - Item
-protocol JPExampleItem: RawRepresentable<Int> {
-    var item: Int { get }
-    var title: String { get }
-    func execute() async throws
-}
-extension JPExampleItem {
-    var item: Int { rawValue }
-    
-    func execute() async throws {
-        JPProgressHUD.show(nil, status: "敬请期待", userInteractionEnabled: true)
-    }
-    
-    func doExecute() {
-        Task {
-            do {
-                try await execute()
-            } catch let error as ErrorHUD {
-                error.showErrorHUD()
-            } catch {
-                JPProgressHUD.showError(withStatus: "系统错误：\(error)", userInteractionEnabled: true)
-            }
-        }
-    }
-}
-
-// MARK: - Section
-protocol JPExampleSection: CaseIterable, JPExampleItem {
-    static var section: Int { get }
-    static var title: String { get }
-    static var items: [Self] { get }
-}
-extension JPExampleSection {
-    static var items: [Self] { allCases as? [Self] ?? [] }
-}
-
-// MARK: - JPExample
-enum JPExample {
-    static let sections: [any JPExampleSection.Type] = [
-        Section0.self,
-        Section1.self,
-        Section2.self
-    ]
-    
-    enum Section0: Int, JPExampleSection {
-        case `default`
-        case darkBlur
-        case lightBlur
-        case stretchBorder
-        case tileBorder
-        case roundResize
-        case mask
-        
-        static var section: Int { 0 }
-        static var title: String { "裁剪图片" }
-        
-        var title: String {
-            switch self {
-            case .`default`:
-                return "默认样式"
-            case .darkBlur:
-                return "深色毛玻璃遮罩"
-            case .lightBlur:
-                return "浅色毛玻璃遮罩"
-            case .stretchBorder:
-                return "拉伸的边框图片"
-            case .tileBorder:
-                return "平铺的边框图片"
-            case .roundResize:
-                return "圆切样式"
-            case .mask:
-                return "蒙版样式"
-            }
-        }
-    }
-    
-    enum Section1: Int, JPExampleSection {
-        case localGIF
-        case localVideo
-        case album
-        
-        static var section: Int { 1 }
-        static var title: String { "裁剪GIF&视频" }
-        
-        var title: String {
-            switch self {
-            case .localGIF:
-                return "裁剪GIF"
-            case .localVideo:
-                return "裁剪视频"
-            case .album:
-                return "打开相册"
-            }
-        }
-    }
-    
-    enum Section2: Int, JPExampleSection {
-        case replaceFace
-        case girlsGIF
-        case compatibleSwift
-        case compatibleSwiftUI
-        case JPCroper
-        
-        static var section: Int { 2 }
-        static var title: String { "其他" }
-        
-        var title: String {
-            switch self {
-            case .replaceFace:
-                return "趣味换脸"
-            case .girlsGIF:
-                return "自制GIF"
-            case .compatibleSwift:
-                return "适配 Swift"
-            case .compatibleSwiftUI:
-                return "适配 SwiftUI"
-            case .JPCroper:
-                return "JPCroper：高仿小红书的裁剪功能"
-            }
-        }
-    }
 }

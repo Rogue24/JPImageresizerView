@@ -54,7 +54,18 @@ extension UIImage {
         return bundleImage(imageName, ofType: nil)
     }
     
-    static func createGirlsGIFImage() async -> UIImage {
+    static func getGirlsGIFImage() async -> UIImage {
+        if let girlsGIFImg = self.girlsGIFImg {
+            return girlsGIFImg
+        }
+        let girlsGIFImg = await createGirlsGIFImage()
+        self.girlsGIFImg = girlsGIFImg
+        return girlsGIFImg
+    }
+    
+    private static var girlsGIFImg: UIImage? = nil
+    
+    private static func createGirlsGIFImage() async -> UIImage {
         let girlCount = 8
         let size = CGSize(width: 500, height: 500)
         var images: [UIImage] = []

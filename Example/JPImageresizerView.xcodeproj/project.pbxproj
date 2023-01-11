@@ -14,12 +14,12 @@
 		008BEF8729594ACE00C5A82C /* UIViewController.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */; };
-		00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201D62947284000692814 /* JPExample.ItemExecute.swift */; };
 		00A201DD2947349C00692814 /* JPExample.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201DC2947349C00692814 /* JPExample.ViewController.swift */; };
 		00B3FAF52968227E00F48389 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF22968227E00F48389 /* ImagePickerObject.swift */; };
 		00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF32968227E00F48389 /* ImagePicker.swift */; };
 		00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF42968227E00F48389 /* ImagePicker.API.swift */; };
 		00B3FAF92968306A00F48389 /* Error.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF82968306A00F48389 /* Error.Extension.swift */; };
+		00E5D9D3296EB82E006A6FDD /* JPExample.ItemExecute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E5D9D2296EB82E006A6FDD /* JPExample.ItemExecute.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
 		1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2EB22B22B0F00B6B6AB /* WMPageController.m */; };
@@ -125,12 +125,12 @@
 		008BEF8629594ACE00C5A82C /* UIViewController.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.Extension.swift; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.Extension.swift; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.VideoFixOrientation.swift; sourceTree = "<group>"; };
-		00A201D62947284000692814 /* JPExample.ItemExecute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ItemExecute.swift; sourceTree = "<group>"; };
 		00A201DC2947349C00692814 /* JPExample.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ViewController.swift; sourceTree = "<group>"; };
 		00B3FAF22968227E00F48389 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
 		00B3FAF32968227E00F48389 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		00B3FAF42968227E00F48389 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
 		00B3FAF82968306A00F48389 /* Error.Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.Extension.swift; sourceTree = "<group>"; };
+		00E5D9D2296EB82E006A6FDD /* JPExample.ItemExecute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ItemExecute.swift; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
 		1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPPhotoViewModel.m; sourceTree = "<group>"; };
@@ -269,10 +269,10 @@
 			isa = PBXGroup;
 			children = (
 				0024C32C292F5AD7002513DA /* JPExample.swift */,
-				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
-				008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */,
 				00A201DC2947349C00692814 /* JPExample.ViewController.swift */,
-				00A201D62947284000692814 /* JPExample.ItemExecute.swift */,
+				008BEF8E2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift */,
+				002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */,
+				00E5D9D2296EB82E006A6FDD /* JPExample.ItemExecute.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -810,7 +810,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00A201D72947284000692814 /* JPExample.ItemExecute.swift in Sources */,
 				00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
@@ -836,6 +835,7 @@
 				718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */,
 				7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
+				00E5D9D3296EB82E006A6FDD /* JPExample.ItemExecute.swift in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
 				718FEDEA2869C1D800686129 /* CropView.swift in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
