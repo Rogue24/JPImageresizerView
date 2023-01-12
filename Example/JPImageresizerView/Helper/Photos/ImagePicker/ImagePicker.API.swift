@@ -62,3 +62,71 @@ extension ImagePicker {
         ImagePicker.Controller<UIImage>.photograph(completion: completion)
     }
 }
+
+// MARK: - OC
+extension NSObject {
+    /// Open album -> 图片
+    @objc static func openAlbumForImage(completion: @escaping (_ image: UIImage?) -> Void) {
+        ImagePicker.openAlbumForImage { result in
+            switch result {
+            case let .success(image):
+                completion(image)
+            case let .failure(error):
+                error.showErrorHUD()
+                completion(nil)
+            }
+        }
+    }
+    
+    /// Open album -> 图片/GIF数据
+    @objc static func openAlbumForImageData(completion: @escaping (_ imageData: Data?) -> Void) {
+        ImagePicker.openAlbumForImageData { result in
+            switch result {
+            case let .success(imageData):
+                completion(imageData)
+            case let .failure(error):
+                error.showErrorHUD()
+                completion(nil)
+            }
+        }
+    }
+    
+    /// Open album -> 视频路径
+    @objc static func openAlbumForVideoURL(completion: @escaping (_ videoURL: URL?) -> Void) {
+        ImagePicker.openAlbumForVideoURL { result in
+            switch result {
+            case let .success(videoURL):
+                completion(videoURL)
+            case let .failure(error):
+                error.showErrorHUD()
+                completion(nil)
+            }
+        }
+    }
+    
+    /// Open album -> 图片/GIF数据 or 视频路径
+    @objc static func openAlbumForObject(completion: @escaping (_ imageData: Data?, _ videoURL: URL?) -> Void) {
+        ImagePicker.openAlbumForObject { result in
+            switch result {
+            case let .success(obj):
+                completion(obj.imageData, obj.videoURL)
+            case let .failure(error):
+                error.showErrorHUD()
+                completion(nil, nil)
+            }
+        }
+    }
+    
+    /// Photograph -> 图片
+    @objc static func photograph(completion: @escaping (_ image: UIImage?) -> Void) {
+        ImagePicker.photograph { result in
+            switch result {
+            case let .success(image):
+                completion(image)
+            case let .failure(error):
+                error.showErrorHUD()
+                completion(nil)
+            }
+        }
+    }
+}

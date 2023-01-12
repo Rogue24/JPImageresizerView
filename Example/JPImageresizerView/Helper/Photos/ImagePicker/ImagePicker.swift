@@ -155,9 +155,7 @@ extension ImagePicker.Controller {
 // MARK: - Show picker
 private extension ImagePicker.Controller {
     static func showAlbumPicker<T>(mediaType: ImagePicker.PickType) throws -> ImagePicker.Controller<T> {
-        guard let parentVC = UIApplication.shared.delegate?.window??.rootViewController else {
-            throw ImagePicker.PickError.nullParentVC
-        }
+        let parentVC = try getParentVC()
         let picker = ImagePicker.Controller<T>()
         picker.modalPresentationStyle = .overFullScreen
         picker.mediaTypes = mediaType.types
@@ -168,15 +166,23 @@ private extension ImagePicker.Controller {
     }
     
     static func showPhotographPicker() throws -> ImagePicker.Controller<UIImage> {
-        guard let parentVC = UIApplication.shared.delegate?.window??.rootViewController else {
-            throw ImagePicker.PickError.nullParentVC
-        }
+        let parentVC = try getParentVC()
         let picker = ImagePicker.Controller<UIImage>()
         picker.modalPresentationStyle = .overFullScreen
         picker.sourceType = .camera
         picker.delegate = picker
         parentVC.present(picker, animated: true)
         return picker
+    }
+    
+    static func getParentVC() throws -> UIViewController {
+        guard var parentVC = UIApplication.shared.delegate?.window??.rootViewController else {
+            throw ImagePicker.PickError.nullParentVC
+        }
+        while parentVC.presentedViewController != nil {
+            parentVC = parentVC.presentedViewController!
+        }
+        return parentVC
     }
 }
 

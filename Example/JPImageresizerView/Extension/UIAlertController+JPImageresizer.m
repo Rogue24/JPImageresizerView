@@ -244,7 +244,9 @@
         }],
         
         [UIAlertAction actionWithTitle:@"系统相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [UIImagePickerController openAlbum:handler];
+            [NSObject openAlbumForObjectWithCompletion:^(NSData *imageData, NSURL *videoURL) {
+                handler(nil, imageData, videoURL);
+            }];
         }],
     ]];
 }

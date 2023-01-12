@@ -81,7 +81,6 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		718FEDEA2869C1D800686129 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDE92869C1D800686129 /* CropView.swift */; };
 		718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718FEDED2869C6EF00686129 /* Modifier.swift */; };
@@ -223,8 +222,6 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImagePickerController+JPImageresizer.h"; sourceTree = "<group>"; };
-		7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImagePickerController+JPImageresizer.m"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		718FEDE92869C1D800686129 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
 		718FEDED2869C6EF00686129 /* Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
@@ -286,8 +283,6 @@
 				00B3FAF82968306A00F48389 /* Error.Extension.swift */,
 				1AE37BAF23D9AA4A0028EFCE /* UIAlertController+JPImageresizer.h */,
 				1AE37BB023D9AA4B0028EFCE /* UIAlertController+JPImageresizer.m */,
-				7124AC0A27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.h */,
-				7124AC0B27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -501,10 +496,10 @@
 			children = (
 				1A7394E8249DD9210024D2B6 /* ReplaceFaceViewController.h */,
 				1A7394E9249DD9210024D2B6 /* ReplaceFaceViewController.m */,
-				1AA468C2249A0CFE0081452F /* FaceView.h */,
-				1AA468C4249A0CFE0081452F /* FaceView.m */,
 				1AA468C5249A0CFE0081452F /* DanielWuViewController.h */,
 				1AA468C3249A0CFE0081452F /* DanielWuViewController.m */,
+				1AA468C2249A0CFE0081452F /* FaceView.h */,
+				1AA468C4249A0CFE0081452F /* FaceView.m */,
 			);
 			path = ReplaceFace;
 			sourceTree = "<group>";
@@ -833,7 +828,6 @@
 				1A0AB36122B2760200B6B6AB /* JPPhotoCollectionViewFlowLayout.m in Sources */,
 				6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */,
 				718FEE33286B38BA00686129 /* ImagePickerView.swift in Sources */,
-				7124AC0C27B4B3650043A0F5 /* UIImagePickerController+JPImageresizer.m in Sources */,
 				1A0AB35A22B247DB00B6B6AB /* JPCategoryTitleCell.m in Sources */,
 				00E5D9D3296EB82E006A6FDD /* JPExample.ItemExecute.swift in Sources */,
 				1A0AB30722B22B0F00B6B6AB /* JPPhotoCollectionViewController.m in Sources */,
