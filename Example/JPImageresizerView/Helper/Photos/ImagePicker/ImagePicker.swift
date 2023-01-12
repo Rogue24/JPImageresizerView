@@ -179,8 +179,8 @@ private extension ImagePicker.Controller {
         guard var parentVC = UIApplication.shared.delegate?.window??.rootViewController else {
             throw ImagePicker.PickError.nullParentVC
         }
-        while parentVC.presentedViewController != nil {
-            parentVC = parentVC.presentedViewController!
+        while let next = parentVC.presentedViewController {
+            parentVC = next
         }
         return parentVC
     }
