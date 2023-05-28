@@ -518,7 +518,6 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 ### Switching resizeWHScale
-![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
 - PS: Setting the clipping aspect ratio automatically removes the circular cuts and masks
 ```objc
 // 1.Custom parameter switching

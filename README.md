@@ -519,7 +519,6 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 ### 切换裁剪宽高比
-![switch_resizeWHScale](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/switchingresizewhscale.gif)
 - PS：设置裁剪宽高比会自动移除圆切和蒙版
 ```objc
 // 1.自定义参数切换
