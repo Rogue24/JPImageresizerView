@@ -6,6 +6,9 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
+import UIKit
+import JPImageresizerView
+
 extension JPExample {
     class ConfigureModel: NSObject {
         let statusBarStyle: UIStatusBarStyle

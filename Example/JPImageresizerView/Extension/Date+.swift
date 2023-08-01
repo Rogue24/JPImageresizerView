@@ -1,10 +1,12 @@
 //
-//  Date.Extension.swift
+//  Date+.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/27.
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
+
+import SwiftUI
 
 extension Date {
     typealias DateInfo = (year: String, month: String, day: String, weekday: String)

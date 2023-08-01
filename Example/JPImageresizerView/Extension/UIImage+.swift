@@ -1,10 +1,12 @@
 //
-//  UIImage.Extension.swift
+//  UIImage+.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/26.
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
+
+import UIKit
 
 extension UIImage {
     static func bundleImage(_ name: String, ofType ext: String?) -> UIImage {

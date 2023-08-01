@@ -6,6 +6,10 @@
 //  Copyright © 2023 ZhouJianPing. All rights reserved.
 //
 
+import UIKit
+import JPImageresizerView
+import JPBasic
+
 extension JPExample.Item {
     func doExecute() {
         Task {

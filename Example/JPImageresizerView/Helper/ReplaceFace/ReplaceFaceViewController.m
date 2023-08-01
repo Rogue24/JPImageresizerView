@@ -108,16 +108,18 @@
 #pragma mark - 保存脸模图片
 
 - (void)__saveFaceImage {
-    [UIAlertController sheetWithTitle:@"是否保存脸模到相册" message:nil actions:@[
-        [UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [JPProgressHUD show];
-            [JPPhotoToolSI savePhotoToAppAlbumWithImage:self.faceImage successHandle:^(NSString *assetID) {
-                [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
-            } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
-                [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
-            }];
-        }],
-    ]];
+    UIImage *faceImage = self.faceImage;
+    UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:@"是否保存脸模到相册" message:nil];
+    [alertCtr addAction:@"保存" handler:^{
+        [JPProgressHUD show];
+        [JPPhotoToolSI savePhotoToAppAlbumWithImage:faceImage successHandle:^(NSString *assetID) {
+            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+        }];
+    }];
+    [alertCtr addCancel:@"取消" handler:nil];
+    [alertCtr presentFrom:self];
 }
 
 #pragma mark - 合成图片

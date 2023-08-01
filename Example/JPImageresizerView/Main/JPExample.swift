@@ -6,6 +6,8 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
+import Foundation
+
 // MARK: - JPExample
 enum JPExample {
     static let sections: [Section] = [

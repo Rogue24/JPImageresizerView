@@ -68,7 +68,8 @@ extension CropView {
         .zIndex(1)
     }
     
-    @ViewBuilder var oneDayView: some View {
+    @ViewBuilder
+    var oneDayView: some View {
         Group {
             switch oneDaySize {
             case .small:
@@ -79,16 +80,9 @@ extension CropView {
                 OneDayLargeView(namespace: namespace, image: $largeImage)
             }
         }
-        .overlay(
-            GeometryReader { proxy in
-                Color.clear
-                    .preference(key: OneDayPreferenceKey.self,
-                                value: proxy.frame(in: .global))
-            }
-            .onPreferenceChange(OneDayPreferenceKey.self) { value in
-                oneDayFrame = value
-            }
-        )
+        .readFrame(.global, key: OneDayPreferenceKey.self) { value in
+            oneDayFrame = value
+        }
     }
     
     var operationBar: some View {

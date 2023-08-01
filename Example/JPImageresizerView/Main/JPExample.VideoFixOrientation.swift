@@ -6,6 +6,10 @@
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
+import UIKit
+import JPImageresizerView
+import JPBasic
+
 extension JPExample {
     // MARK: - 修正视频方向
     

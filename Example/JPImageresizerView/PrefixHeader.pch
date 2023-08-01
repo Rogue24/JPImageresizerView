@@ -24,7 +24,6 @@
 #import "JPProgressHUD.h"
 #import "JPImageresizerTool.h"
 #import "JPExportCancelView.h"
-#import "UIAlertController+JPImageresizer.h"
 
 CG_INLINE UIFont * JPShapeFont(CGFloat fontSize)  {
     return [UIFont fontWithName:@"shape" size:JPScaleValue(fontSize)];

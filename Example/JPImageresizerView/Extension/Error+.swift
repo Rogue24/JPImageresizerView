@@ -1,10 +1,12 @@
 //
-//  Error.Extension.swift
+//  Error+.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2023/1/6.
 //  Copyright © 2023 ZhouJianPing. All rights reserved.
 //
+
+import JPBasic
 
 protocol ErrorHUD: Error {
     func showErrorHUD()

@@ -1,12 +1,12 @@
 //
-//  UIViewController.Extension.swift
+//  UIViewController+.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/26.
 //  Copyright © 2022 ZhouJianPing. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import SwiftUI
 
 var rootVC: UIViewController {

@@ -271,17 +271,21 @@
 #pragma mark 返回
 static UIViewController *tmpVC_;
 - (IBAction)pop:(id)sender {
-    [UIAlertController alertWithTitle:@"将此次裁剪保留？" message:nil actions:@[
-        [UIAlertAction actionWithTitle:@"保留" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [JPExampleListViewController cacheConfigure:[self.imageresizerView saveCurrentConfigure] statusBarStyle:self.statusBarStyle];
-            [self goback];
-        }],
-        
-        [UIAlertAction actionWithTitle:@"不保留" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-            [JPExampleListViewController cleanConfigure:self.configure];
-            [self goback];
-        }],
-    ]];
+    @jp_weakify(self);
+    UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleAlert title:@"将此次裁剪保留？" message:nil];
+    [alertCtr addAction:@"保留" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [JPExampleListViewController cacheConfigure:[self.imageresizerView saveCurrentConfigure] statusBarStyle:self.statusBarStyle];
+        [self goback];
+    }];
+    [alertCtr addDestructive:@"不保留" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [JPExampleListViewController cleanConfigure:self.configure];
+        [self goback];
+    }];
+    [alertCtr presentFrom:self];
 }
 - (void)goback {
     if (self.backBlock) {
@@ -351,44 +355,57 @@ static UIViewController *tmpVC_;
 
 #pragma mark 更换边框样式
 - (IBAction)changeFrameType:(UIButton *)sender {
-    NSMutableArray<UIAlertAction *> *actions = [NSMutableArray array];
+    @jp_weakify(self);
+    UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
     
     if (self.imageresizerView.isGIF) {
-        [actions addObject:[UIAlertAction actionWithTitle:(self.imageresizerView.isLoopPlaybackGIF ? @"GIF可控进度" : @"GIF自动播放") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertCtr addAction:(self.imageresizerView.isLoopPlaybackGIF ? @"GIF可控进度" : @"GIF自动播放") handler:^{
+            @jp_strongify(self);
+            if (!self) return;
             self.imageresizerView.isLoopPlaybackGIF = !self.imageresizerView.isLoopPlaybackGIF;
-        }]];
+        }];
     }
     
-    [actions addObject:[UIAlertAction actionWithTitle:@"简洁样式" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:@"简洁样式" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPConciseFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
-    }]];
+    }];
     
-    [actions addObject:[UIAlertAction actionWithTitle:@"经典样式" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:@"经典样式" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPClassicFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
-    }]];
+    }];
     
-    [actions addObject:[UIAlertAction actionWithTitle:@"拉伸的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:@"拉伸的边框图片" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
         self.imageresizerView.borderImageRectInset = UIImage.stretchBorderRectInset;
         self.imageresizerView.borderImage = [UIImage getStretchBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
-    }]];
+    }];
     
-    [actions addObject:[UIAlertAction actionWithTitle:@"平铺的边框图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertCtr addAction:@"平铺的边框图片" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
         self.imageresizerView.borderImageRectInset = UIImage.tileBorderRectInset;
         self.imageresizerView.borderImage = [UIImage getTileBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
         self.imageresizerView.isShowGridlinesWhenDragging = YES;
-    }]];
+    }];
     
     if (!self.isReplaceFace) {
-        [actions addObject:[UIAlertAction actionWithTitle:@"九宫格风格" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertCtr addAction:@"九宫格风格" handler:^{
+            @jp_strongify(self);
+            if (!self) return;
             self.imageresizerView.maskImage = nil;
             self.imageresizerView.borderImage = nil;
             self.imageresizerView.frameType = JPClassicFrameType;
@@ -396,10 +413,11 @@ static UIViewController *tmpVC_;
             self.imageresizerView.gridCount = 3;
             self.imageresizerView.isShowGridlinesWhenIdle = YES;
             self.imageresizerView.isShowGridlinesWhenDragging = YES;
-        }]];
+        }];
     }
     
-    [UIAlertController sheetWithActions:actions];
+    [alertCtr addCancel:@"取消" handler:nil];
+    [alertCtr presentFrom:self];
 }
 
 #pragma mark 旋转
@@ -502,37 +520,46 @@ static UIViewController *tmpVC_;
     
     // 裁剪视频
     if (self.imageresizerView.videoURL) {
-        [UIAlertController sheetWithActions:@[
-            [UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [JPProgressHUD show];
-                [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                    @jp_strongify(self);
-                    if (!self) return;
-                    [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-                } completeBlock:^(JPImageresizerResult *result) {
-                    @jp_strongify(self);
-                    if (!self) return;
-                    [self __imageresizerDoneWithResult:result];
-                }];
-            }],
-            
-            [UIAlertAction actionWithTitle:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [JPProgressHUD show];
-                [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                    @jp_strongify(self);
-                    if (!self) return;
-                    [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-                } completeBlock:^(JPImageresizerResult *result) {
-                    @jp_strongify(self);
-                    if (!self) return;
-                    [self __imageresizerDoneWithResult:result];
-                }];
-            }],
-            
-            [UIAlertAction actionWithTitle:@"裁剪视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [self __cropVideo];
-            }]
-        ]];
+        UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
+        
+        [alertCtr addAction:@"裁剪当前帧画面" handler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [JPProgressHUD show];
+            [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+                @jp_strongify(self);
+                if (!self) return;
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            } completeBlock:^(JPImageresizerResult *result) {
+                @jp_strongify(self);
+                if (!self) return;
+                [self __imageresizerDoneWithResult:result];
+            }];
+        }];
+        
+        [alertCtr addAction:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] handler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [JPProgressHUD show];
+            [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+                @jp_strongify(self);
+                if (!self) return;
+                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            } completeBlock:^(JPImageresizerResult *result) {
+                @jp_strongify(self);
+                if (!self) return;
+                [self __imageresizerDoneWithResult:result];
+            }];
+        }];
+        
+        [alertCtr addAction:@"裁剪视频" handler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [self __cropVideo];
+        }];
+        
+        [alertCtr addCancel:@"取消" handler:nil];
+        [alertCtr presentFrom:self];
         return;
     }
     
@@ -556,24 +583,27 @@ static UIViewController *tmpVC_;
         if (self.imageresizerView.isLoopPlaybackGIF) {
             cropGIF();
         } else {
-            [UIAlertController sheetWithActions:@[
-                [UIAlertAction actionWithTitle:@"裁剪当前帧画面" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    [JPProgressHUD show];
-                    [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                        @jp_strongify(self);
-                        if (!self) return;
-                        [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-                    } completeBlock:^(JPImageresizerResult *result) {
-                        @jp_strongify(self);
-                        if (!self) return;
-                        [self __imageresizerDoneWithResult:result];
-                    }];
-                }],
-                
-                [UIAlertAction actionWithTitle:@"裁剪GIF" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    cropGIF();
-                }]
-            ]];
+            UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
+            
+            [alertCtr addAction:@"裁剪当前帧画面" handler:^{
+                @jp_strongify(self);
+                if (!self) return;
+                [JPProgressHUD show];
+                [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+                    @jp_strongify(self);
+                    if (!self) return;
+                    [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                } completeBlock:^(JPImageresizerResult *result) {
+                    @jp_strongify(self);
+                    if (!self) return;
+                    [self __imageresizerDoneWithResult:result];
+                }];
+            }];
+            
+            [alertCtr addAction:@"裁剪GIF" handler:cropGIF];
+            
+            [alertCtr addCancel:@"取消" handler:nil];
+            [alertCtr presentFrom:self];
         }
         return;
     }
@@ -599,24 +629,27 @@ static UIViewController *tmpVC_;
         return;
     }
     
-    [UIAlertController sheetWithActions:@[
-        [UIAlertAction actionWithTitle:@"直接裁剪" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            cropPicture();
-        }],
-        
-        [UIAlertAction actionWithTitle:@"裁剪九宫格" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [JPProgressHUD show];
-            [self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:nil cacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                @jp_strongify(self);
-                if (!self) return;
-                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
-            } completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
-                @jp_strongify(self);
-                if (!self) return;
-                [self __girdImageresizerDoneWithOriginResult:originResult fragmentResults:fragmentResults columnCount:columnCount rowCount:rowCount];
-            }];
-        }],
-    ]];
+    UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
+    
+    [alertCtr addAction:@"直接裁剪" handler:cropPicture];
+    
+    [alertCtr addAction:@"裁剪九宫格" handler:^{
+        @jp_strongify(self);
+        if (!self) return;
+        [JPProgressHUD show];
+        [self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:nil cacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+            @jp_strongify(self);
+            if (!self) return;
+            [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        } completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
+            @jp_strongify(self);
+            if (!self) return;
+            [self __girdImageresizerDoneWithOriginResult:originResult fragmentResults:fragmentResults columnCount:columnCount rowCount:rowCount];
+        }];
+    }];
+    
+    [alertCtr addCancel:@"取消" handler:nil];
+    [alertCtr presentFrom:self];
 }
 
 #pragma mark - 以当前时间戳生成缓存路径
@@ -641,6 +674,7 @@ static UIViewController *tmpVC_;
         [JPProgressHUD showErrorWithStatus:@"裁剪失败" userInteractionEnabled:YES];
         return;
     }
+    
     [JPProgressHUD dismiss];
     if (self.isReplaceFace) {
         DanielWuViewController *vc = [DanielWuViewController DanielWuVC:result.image];
