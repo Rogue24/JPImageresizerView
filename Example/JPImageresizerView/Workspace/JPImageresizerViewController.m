@@ -521,7 +521,6 @@ static UIViewController *tmpVC_;
     // 裁剪视频
     if (self.imageresizerView.videoURL) {
         UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
-        
         [alertCtr addAction:@"裁剪当前帧画面" handler:^{
             @jp_strongify(self);
             if (!self) return;
@@ -536,7 +535,6 @@ static UIViewController *tmpVC_;
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
-        
         [alertCtr addAction:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] handler:^{
             @jp_strongify(self);
             if (!self) return;
@@ -551,13 +549,11 @@ static UIViewController *tmpVC_;
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
-        
         [alertCtr addAction:@"裁剪视频" handler:^{
             @jp_strongify(self);
             if (!self) return;
             [self __cropVideo];
         }];
-        
         [alertCtr addCancel:@"取消" handler:nil];
         [alertCtr presentFrom:self];
         return;
@@ -584,7 +580,6 @@ static UIViewController *tmpVC_;
             cropGIF();
         } else {
             UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
-            
             [alertCtr addAction:@"裁剪当前帧画面" handler:^{
                 @jp_strongify(self);
                 if (!self) return;
@@ -599,9 +594,7 @@ static UIViewController *tmpVC_;
                     [self __imageresizerDoneWithResult:result];
                 }];
             }];
-            
             [alertCtr addAction:@"裁剪GIF" handler:cropGIF];
-            
             [alertCtr addCancel:@"取消" handler:nil];
             [alertCtr presentFrom:self];
         }
@@ -630,9 +623,7 @@ static UIViewController *tmpVC_;
     }
     
     UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:nil message:nil];
-    
     [alertCtr addAction:@"直接裁剪" handler:cropPicture];
-    
     [alertCtr addAction:@"裁剪九宫格" handler:^{
         @jp_strongify(self);
         if (!self) return;
@@ -647,7 +638,6 @@ static UIViewController *tmpVC_;
             [self __girdImageresizerDoneWithOriginResult:originResult fragmentResults:fragmentResults columnCount:columnCount rowCount:rowCount];
         }];
     }];
-    
     [alertCtr addCancel:@"取消" handler:nil];
     [alertCtr presentFrom:self];
 }

@@ -237,17 +237,17 @@ extension JPCropViewController {
             return
         }
         
-        let alertCtr = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alertCtr.addAction(.init(title: "直接裁剪", style: .default, handler: { [weak self] _ in
-            guard let self = self else { return }
-            self.cropForImageresizerView(isNineGird: false)
-        }))
-        alertCtr.addAction(.init(title: "裁剪九宫格", style: .default, handler: { [weak self] _ in
-            guard let self = self else { return }
-            self.cropForImageresizerView(isNineGird: true)
-        }))
-        alertCtr.addAction(.init(title: "取消", style: .cancel, handler: nil))
-        present(alertCtr, animated: true, completion: nil)
+        UIAlertController.build(.actionSheet)
+            .addAction("直接裁剪") { [weak self] in
+                guard let self = self else { return }
+                self.cropForImageresizerView(isNineGird: false)
+            }
+            .addAction("裁剪九宫格") { [weak self] in
+                guard let self = self else { return }
+                self.cropForImageresizerView(isNineGird: true)
+            }
+            .addCancel()
+            .present(from: self)
     }
 }
 
