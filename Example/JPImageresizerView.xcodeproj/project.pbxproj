@@ -317,13 +317,6 @@
 			path = Photos;
 			sourceTree = "<group>";
 		};
-		006A9E242A77C67700AD86BA /* Modifier */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Modifier;
-			sourceTree = "<group>";
-		};
 		00B3FAF12968227E00F48389 /* ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -568,7 +561,6 @@
 				002E78B8295ADA5B0071E30C /* Main */,
 				002E78BA295ADAD80071E30C /* Workspace */,
 				002E78B9295ADA7D0071E30C /* Extension */,
-				006A9E242A77C67700AD86BA /* Modifier */,
 				1A10433623A495AD00D1B2DF /* Helper */,
 				1A0AB36522B2854A00B6B6AB /* Resource */,
 				6003F594195388D20070C39A /* Supporting Files */,
