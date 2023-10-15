@@ -253,27 +253,37 @@ static NSTimeInterval JPImageSourceGetGIFFrameDelayAtIndex(CGImageSourceRef sour
     return delay;
 };
 
-static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, UIImage *maskImage, BOOL isRoundClip, CGRect renderRect, CGAffineTransform transform, CGSize imageSize) {
+static CGImageRef _Nullable JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, UIImage *maskImage, BOOL isRoundClip, CGRect renderRect, CGAffineTransform transform, CGSize imageSize) {
+    if (!imageRef || !context) {
+        return nil;
+    }
+    
     if (maskImage) {
         CGImageRef maskImageRef = maskImage.CGImage;
         CGContextClipToMask(context, renderRect, maskImageRef);
     }
+    
     if (isRoundClip) {
         CGFloat radius = MIN(renderRect.size.width, renderRect.size.height) * 0.5;
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:radius];
         CGContextAddPath(context, path.CGPath);
         CGContextClip(context);
     }
+    
     CGContextConcatCTM(context, transform);
     CGContextDrawImage(context, (CGRect){CGPointZero, imageSize}, imageRef);
-    return CGBitmapContextCreateImage(context);
+    
+    CGImageRef newImageRef = CGBitmapContextCreateImage(context);
+    if (!newImageRef) {
+        return nil;
+    }
+    return newImageRef;
 }
 
 #pragma mark - 私有方法
 
 #pragma mark 修正图片方向
 + (UIImage *)__imageFixOrientation:(UIImage *)image {
-    
     // No-op if the orientation is already correct
     if (image.imageOrientation == UIImageOrientationUp)
         return image;
@@ -340,6 +350,8 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                                              CGImageGetBitsPerComponent(image.CGImage), 0,
                                              CGImageGetColorSpace(image.CGImage),
                                              CGImageGetBitmapInfo(image.CGImage));
+    if (!ctx) return image;
+    
     CGContextConcatCTM(ctx, transform);
     switch (image.imageOrientation) {
         case UIImageOrientationLeft:
@@ -356,10 +368,13 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     }
     
     // And now we just create a new UIImage from the drawing context
+    UIImage *img = image;
     CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
-    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    if (cgimg) {
+        img = [UIImage imageWithCGImage:cgimg];
+        CGImageRelease(cgimg);
+    }
     CGContextRelease(ctx);
-    CGImageRelease(cgimg);
     return img;
 }
 
@@ -736,6 +751,13 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
     
     CGContextRef context = CGBitmapContextCreate(NULL, renderRect.size.width, renderRect.size.height, 8, 0, colorSpace, bitmapInfo);
+    if (!context) {
+        if (source != NULL) CFRelease(source);
+        CGColorSpaceRelease(colorSpace);
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
+        return;
+    }
+    
     CGContextSetShouldAntialias(context, true);
     CGContextSetAllowsAntialiasing(context, true);
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
@@ -757,14 +779,21 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                          finalImage:&finalImage];
     } else {
         CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
-        finalImage = [UIImage imageWithCGImage:newImageRef];
-        CGImageRelease(newImageRef);
-        [self __cacheImage:finalImage cacheURL:cacheURL];
+        if (newImageRef) {
+            finalImage = [UIImage imageWithCGImage:newImageRef];
+            CGImageRelease(newImageRef);
+            [self __cacheImage:finalImage cacheURL:cacheURL];
+        }
     }
     
     if (source != NULL) CFRelease(source);
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
+    
+    if (!finalImage) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
+        return;
+    }
     
     if (isGIF) {
         [self __executeCropDoneBlock:completeBlock gifImage:finalImage cacheURL:cacheURL];
@@ -838,6 +867,15 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
     bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
     
     CGContextRef context = CGBitmapContextCreate(NULL, renderWidth, renderHeight, 8, 0, colorSpace, bitmapInfo);
+    if (!context) {
+        if (completeBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completeBlock(originResult, @[], columnCount, rowCount);
+            });
+        }
+        return;
+    }
+    
     CGContextSetShouldAntialias(context, true);
     CGContextSetAllowsAntialiasing(context, true);
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
@@ -870,8 +908,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             JPImageresizerResult *singleResult = [[JPImageresizerResult alloc] initWithImage:singleImage cacheURL:singleCacheURL];
             [fragmentsResults addObject:singleResult];
             
-            CGImageRelease(singleCGImage);
-            
+            if (singleCGImage) CGImageRelease(singleCGImage);
             CGContextRestoreGState(context);
             CGContextClearRect(context, renderRect);
         }
@@ -901,6 +938,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
                isReverseOrder:(BOOL)isReverseOrder
                      cacheURL:(NSURL *)cacheURL
                    finalImage:(UIImage **)finalImage {
+    if (!image || !context) return;
     
     __block NSTimeInterval duration = 0;
     NSMutableArray *delays = [NSMutableArray array];
@@ -935,8 +973,11 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
             CGContextSaveGState(context);
             // 绘制裁剪后的图片
             CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i), context, maskImage, isRoundClip, renderRect, transform, imageSize);
-            [images addObject:[UIImage imageWithCGImage:newImageRef]];
-            CGImageRelease(newImageRef);
+            if (newImageRef) {
+                UIImage *newImage = [UIImage imageWithCGImage:newImageRef];
+                if (newImage) [images addObject:newImage];
+                CGImageRelease(newImageRef);
+            }
             // 把堆栈顶部的状态弹出，返回到之前的图形状态
             CGContextRestoreGState(context);
             // 清空画布（要在`RestoreGState`之后才清空，否则清空区域会受到`transform`的影响，导致清理不干净）
@@ -1021,7 +1062,7 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         size_t height = CGImageGetHeight(imageRef);
         if (width == 0 || height == 0) {
             CFRelease(source);
-            CFRelease(imageRef);
+            CGImageRelease(imageRef);
             return nil;
         }
         
@@ -1035,15 +1076,15 @@ static CGImageRef JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, 
         CGColorSpaceRelease(space);
         if (!context) {
             CFRelease(source);
-            CFRelease(imageRef);
+            CGImageRelease(imageRef);
             return nil;
         }
         CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
         CGImageRef decoded = CGBitmapContextCreateImage(context);
-        CFRelease(context);
+        CGContextRelease(context);
         if (!decoded) {
             CFRelease(source);
-            CFRelease(imageRef);
+            CGImageRelease(imageRef);
             return nil;
         }
         UIImage *image = [UIImage imageWithCGImage:decoded];
