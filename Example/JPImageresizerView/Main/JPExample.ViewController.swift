@@ -10,6 +10,7 @@ import UIKit
 import JPImageresizerView
 import JPBasic
 import Combine
+import FunnyButton
 
 var mainVC: JPExample.ViewController {
     (rootVC as! UINavigationController).viewControllers.first! as! JPExample.ViewController
@@ -59,6 +60,10 @@ extension JPExample {
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
             removeTmpFile()
+            
+            replaceFunnyAction { [weak self] in
+                self?.navigationController?.pushViewController(JPTestViewController(), animated: true)
+            }
         }
         
         deinit {

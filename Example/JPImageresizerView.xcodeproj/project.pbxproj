@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00168E192AD91EA800B1D8E4 /* JPTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00168E182AD91EA800B1D8E4 /* JPTestViewController.m */; };
 		0024C32D292F5AD7002513DA /* JPExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0024C32C292F5AD7002513DA /* JPExample.swift */; };
 		002E78B5295AA4740071E30C /* JPExample.ConfigureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */; };
 		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
@@ -118,6 +119,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00168E172AD91EA800B1D8E4 /* JPTestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPTestViewController.h; sourceTree = "<group>"; };
+		00168E182AD91EA800B1D8E4 /* JPTestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPTestViewController.m; sourceTree = "<group>"; };
 		0024C32C292F5AD7002513DA /* JPExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.swift; sourceTree = "<group>"; };
 		002E78B4295AA4740071E30C /* JPExample.ConfigureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.ConfigureModel.swift; sourceTree = "<group>"; };
 		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
@@ -300,6 +303,8 @@
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
+				00168E172AD91EA800B1D8E4 /* JPTestViewController.h */,
+				00168E182AD91EA800B1D8E4 /* JPTestViewController.m */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -832,6 +837,7 @@
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */,
 				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
+				00168E192AD91EA800B1D8E4 /* JPTestViewController.m in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
 				008BEF8F2959B0E500C5A82C /* JPExample.VideoFixOrientation.swift in Sources */,
 				00B3FAF92968306A00F48389 /* Error+.swift in Sources */,
