@@ -76,12 +76,12 @@ extension UIImage {
         bitmapRawValue += CGImageAlphaInfo.noneSkipFirst.rawValue
         
         let context = CGContext(data: nil,
-                                      width: Int(size.width),
-                                      height: Int(size.height),
-                                      bitsPerComponent: 8,
-                                      bytesPerRow: 0,
-                                      space: CGColorSpaceCreateDeviceRGB(),
-                                      bitmapInfo: bitmapRawValue)!
+                                width: Int(size.width),
+                                height: Int(size.height),
+                                bitsPerComponent: 8,
+                                bytesPerRow: 0,
+                                space: CGColorSpaceCreateDeviceRGB(),
+                                bitmapInfo: bitmapRawValue)!
         context.setShouldAntialias(true)
         context.setAllowsAntialiasing(true)
         context.interpolationQuality = .high

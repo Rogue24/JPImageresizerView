@@ -114,7 +114,7 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+    [super viewDidDisappear:animated];
     [self.dp stopAnimation];
     [self __removeFragmentAnimation];
 }
