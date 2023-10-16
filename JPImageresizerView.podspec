@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JPImageresizerView'
-  s.version          = '1.10.3'
+  s.version          = '1.10.4'
   s.summary          = '一个专门裁剪图片、GIF、视频的轮子😋简单易用、功能丰富☕️'
 
 # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Rogue24/JPImageresizerView.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'JPImageresizerView/Classes/**/*'
   
