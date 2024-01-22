@@ -78,6 +78,10 @@
         _resizeObjWhScale = 1;
         _isLoopPlaybackGIF = configure.isLoopPlaybackGIF;
         
+        _gifStrokeColor = configure.gifStrokeColor;
+        _gifStrokeWidth = configure.gifStrokeWidth;
+        _gifPadding = configure.gifPadding;
+        
         BOOL isVideo = NO;
         if (configure.image) {
             [self setImage:configure.image animated:NO];
@@ -1375,6 +1379,9 @@
                                 isReverseOrder:isReverseOrder
                                           rate:rate
                                      maskImage:self.frameView.maskImage
+                                   strokeColor:self.gifStrokeColor
+                                   strokeWidth:self.gifStrokeWidth
+                                       padding:self.gifPadding
                                      configure:self.frameView.currentCropConfigure
                                  compressScale:compressScale
                                       cacheURL:cacheURL
@@ -1385,6 +1392,9 @@
                                  isReverseOrder:isReverseOrder
                                            rate:rate
                                       maskImage:self.frameView.maskImage
+                                    strokeColor:self.gifStrokeColor
+                                    strokeWidth:self.gifStrokeWidth
+                                        padding:self.gifPadding 
                                       configure:self.frameView.currentCropConfigure
                                   compressScale:compressScale
                                        cacheURL:cacheURL
@@ -1691,6 +1701,9 @@
     configure.isShowGridlinesWhenDragging = self.isShowGridlinesWhenDragging;
     configure.gridCount = self.gridCount;
     configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
+    configure.gifStrokeColor = self.gifStrokeColor;
+    configure.gifStrokeWidth = self.gifStrokeWidth;
+    configure.gifPadding = self.gifPadding;
     
     configure.history = JPCropHistoryMake(self.frame,
                                           _contentInsets,

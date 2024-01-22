@@ -500,7 +500,7 @@ static UIViewController *tmpVC_;
             @jp_weakify(self);
             [self.imageresizerView setVideoURL:videoURL animated:YES fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
                 weak_self.isExporting = NO;
-                [weak_self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } fixStartBlock:^{
                 [JPProgressHUD show];
             } fixProgressBlock:^(float progress) {
@@ -526,9 +526,7 @@ static UIViewController *tmpVC_;
             if (!self) return;
             [JPProgressHUD show];
             [self.imageresizerView cropVideoCurrentFrameWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                @jp_strongify(self);
-                if (!self) return;
-                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -540,9 +538,7 @@ static UIViewController *tmpVC_;
             if (!self) return;
             [JPProgressHUD show];
             [self.imageresizerView cropVideoToGIFFromCurrentSecondWithDuration:JPCutGIFDuration cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                @jp_strongify(self);
-                if (!self) return;
-                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -567,9 +563,7 @@ static UIViewController *tmpVC_;
             // isReverseOrder：是否倒放
             // rate：速率
             [self.imageresizerView cropGIFWithCompressScale:1 isReverseOrder:NO rate:1 cacheURL:[self __cacheURL:@"gif"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                @jp_strongify(self);
-                if (!self) return;
-                [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
                 if (!self) return;
@@ -585,9 +579,7 @@ static UIViewController *tmpVC_;
                 if (!self) return;
                 [JPProgressHUD show];
                 [self.imageresizerView cropGIFCurrentIndexWithCacheURL:nil errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-                    @jp_strongify(self);
-                    if (!self) return;
-                    [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+                    [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
                 } completeBlock:^(JPImageresizerResult *result) {
                     @jp_strongify(self);
                     if (!self) return;
@@ -605,9 +597,7 @@ static UIViewController *tmpVC_;
     void (^cropPicture)(void) = ^{
         [JPProgressHUD show];
         [self.imageresizerView cropPictureWithCacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-            @jp_strongify(self);
-            if (!self) return;
-            [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
         } completeBlock:^(JPImageresizerResult *result) {
             @jp_strongify(self);
             if (!self) return;
@@ -629,9 +619,7 @@ static UIViewController *tmpVC_;
         if (!self) return;
         [JPProgressHUD show];
         [self.imageresizerView cropNineGirdPicturesWithCompressScale:1 bgColor:nil cacheURL:[self __cacheURL:@"jpeg"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
-            @jp_strongify(self);
-            if (!self) return;
-            [self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+            [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
         } completeBlock:^(JPImageresizerResult *originResult, NSArray<JPImageresizerResult *> *fragmentResults, NSInteger columnCount, NSInteger rowCount) {
             @jp_strongify(self);
             if (!self) return;
@@ -692,7 +680,7 @@ static UIViewController *tmpVC_;
     @jp_weakify(self);
     [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         weak_self.isExporting = NO;
-        [weak_self.class showErrorMsg:reason pathExtension:[cacheURL pathExtension]];
+        [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
     } progressBlock:^(float progress) {
         // 监听进度
         weak_self.isExporting = YES;
@@ -722,30 +710,6 @@ static UIViewController *tmpVC_;
         }];
     } else {
         [JPExportCancelView hide];
-    }
-}
-
-#pragma mark - 打印错误信息
-+ (void)showErrorMsg:(JPImageresizerErrorReason)reason pathExtension:(NSString *)pathExtension {
-    switch (reason) {
-        case JPIEReason_NilObject:
-            [JPProgressHUD showErrorWithStatus:@"资源为空" userInteractionEnabled:YES];
-            break;
-        case JPIEReason_CacheURLAlreadyExists:
-            [JPProgressHUD showErrorWithStatus:@"缓存路径已存在其他文件" userInteractionEnabled:YES];
-            break;
-        case JPIEReason_NoSupportedFileType:
-            [JPProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"“%@” 不支持的文件格式", pathExtension] userInteractionEnabled:YES];
-            break;
-        case JPIEReason_VideoAlreadyDamage:
-            [JPProgressHUD showErrorWithStatus:@"视频文件已损坏" userInteractionEnabled:YES];
-            break;
-        case JPIEReason_VideoExportFailed:
-            [JPProgressHUD showErrorWithStatus:@"视频导出失败" userInteractionEnabled:YES];
-            break;
-        case JPIEReason_VideoExportCancelled:
-            [JPProgressHUD showInfoWithStatus:@"视频导出取消" userInteractionEnabled:YES];
-            break;
     }
 }
 

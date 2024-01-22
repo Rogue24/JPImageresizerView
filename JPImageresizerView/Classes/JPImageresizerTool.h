@@ -17,14 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIImage *)convertBlackImage:(UIImage *)image;
 
 /**
- * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
- */
-+ (UIImage *_Nullable)decodeGIFData:(NSData *)data;
-
-/**
  * 是否GIF
  */
 + (BOOL)isGIFData:(NSData *)data;
+
+/**
+ * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
+ */
++ (UIImage *_Nullable)decodeGIFData:(NSData *)data;
 
 #pragma mark - 裁剪图片
 /**
@@ -85,6 +85,9 @@ NS_ASSUME_NONNULL_BEGIN
              isReverseOrder:(BOOL)isReverseOrder
                        rate:(float)rate
                   maskImage:(UIImage *_Nullable)maskImage
+                strokeColor:(UIColor *_Nullable)strokeColor
+                strokeWidth:(CGFloat)strokeWidth
+                    padding:(UIEdgeInsets)padding
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
                    cacheURL:(NSURL *_Nullable)cacheURL
@@ -110,6 +113,9 @@ NS_ASSUME_NONNULL_BEGIN
             isReverseOrder:(BOOL)isReverseOrder
                       rate:(float)rate
                  maskImage:(UIImage *_Nullable)maskImage
+               strokeColor:(UIColor *_Nullable)strokeColor
+               strokeWidth:(CGFloat)strokeWidth
+                   padding:(UIEdgeInsets)padding
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
                   cacheURL:(NSURL *_Nullable)cacheURL
@@ -169,10 +175,38 @@ NS_ASSUME_NONNULL_BEGIN
              completeBlock:(JPCropDoneBlock)completeBlock;
 
 #pragma mark - 修正视频方向
+
 + (void)fixOrientationVideoWithAsset:(AVURLAsset *)asset
                        fixErrorBlock:(JPImageresizerErrorBlock)fixErrorBlock
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
                     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
+
+#pragma mark - 给图像内容添加描边
+
++ (void)imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
+                                      strokeColor:(UIColor *)strokeColor
+                                      strokeWidth:(size_t)strokeWidth
+                                          padding:(UIEdgeInsets)padding
+                                         cacheURL:(NSURL *_Nullable)cacheURL
+                                       errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                    completeBlock:(JPCropDoneBlock)completeBlock;
+
++ (void)imageContentOutlineAddStrokeWithImages:(NSArray<UIImage *> *)images
+                                      duration:(NSTimeInterval)duration
+                                   strokeColor:(UIColor *)strokeColor
+                                   strokeWidth:(size_t)strokeWidth
+                                       padding:(UIEdgeInsets)padding
+                                      cacheURL:(NSURL *_Nullable)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
+
++ (void)imageContentOutlineAddStrokeWithImage:(UIImage *)image
+                                  strokeColor:(UIColor *)strokeColor
+                                  strokeWidth:(size_t)strokeWidth
+                                      padding:(UIEdgeInsets)padding
+                                     cacheURL:(NSURL *_Nullable)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPCropDoneBlock)completeBlock;
 @end
 
 NS_ASSUME_NONNULL_END

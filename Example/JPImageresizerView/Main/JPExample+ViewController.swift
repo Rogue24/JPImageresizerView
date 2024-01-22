@@ -1,5 +1,5 @@
 //
-//  JPExample.ViewController.swift
+//  JPExample+ViewController.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/12.
@@ -215,6 +215,12 @@ extension JPExample.ViewController {
             vc.isReplaceFace = true
             navCtr.pushViewController(vc, animated: true)
         }, refuseAccessAuthorityHandler: nil, alreadyRefuseAccessAuthorityHandler: nil, canNotAccessAuthorityHandler: nil, isRegisterChange: false)
+    }
+    
+    func pushPreviewVC(_ results: [JPImageresizerResult], columnCount: Int = 1, rowCount: Int = 1) {
+        guard let navCtr = navigationController else { return }
+        let vc = JPPreviewViewController.build(with: results, columnCount: columnCount, rowCount: rowCount)
+        navCtr.pushViewController(vc, animated: true)
     }
 }
 

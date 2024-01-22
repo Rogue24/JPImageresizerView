@@ -36,6 +36,9 @@
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
     .jp_isLoopPlaybackGIF(NO)
+    .jp_gifStrokeColor(nil)
+    .jp_gifStrokeWidth(0)
+    .jp_gifPadding(UIEdgeInsetsZero)
     .jp_isCleanHistoryAfterInitial(YES);
     return configure;
 }
@@ -407,6 +410,28 @@
 - (JPImageresizerConfigure *(^)(BOOL))jp_isLoopPlaybackGIF {
     return ^(BOOL isLoopPlaybackGIF) {
         self.isLoopPlaybackGIF = isLoopPlaybackGIF;
+        return self;
+    };
+}
+
+
+- (JPImageresizerConfigure *(^)(UIColor *))jp_gifStrokeColor {
+    return ^(UIColor *gifStrokeColor) {
+        self.gifStrokeColor = gifStrokeColor;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat))jp_gifStrokeWidth {
+    return ^(CGFloat gifStrokeWidth) {
+        self.gifStrokeWidth = gifStrokeWidth;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(UIEdgeInsets))jp_gifPadding {
+    return ^(UIEdgeInsets gifPadding) {
+        self.gifPadding = gifPadding;
         return self;
     };
 }

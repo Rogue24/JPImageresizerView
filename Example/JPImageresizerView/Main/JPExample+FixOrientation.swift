@@ -1,5 +1,5 @@
 //
-//  JPExample.VideoFixOrientation.swift
+//  JPExample+FixOrientation.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/26.
@@ -52,7 +52,7 @@ private extension JPExample {
     static func afterIntoView_videoFixOrientation(_ asset: AVURLAsset, _ completion: @escaping (Result<JPImageresizerConfigure, Error>) -> Void) {
         completion(.success(
             JPImageresizerConfigure.defaultConfigure(withVideoURL: asset.url, make: nil) { cacheURL, reason in
-                JPImageresizerViewController.showErrorMsg(reason, pathExtension: cacheURL?.pathExtension ?? "")
+                JPProgressHUD.showImageresizerError(reason, pathExtension: cacheURL?.pathExtension ?? "")
             } fixStart: {
                 JPProgressHUD.show()
             } fixProgressBlock: { progress in
@@ -67,7 +67,7 @@ private extension JPExample {
     static func beforeIntoView_videoFixOrientation(_ asset: AVURLAsset, _ completion: @escaping (Result<JPImageresizerConfigure, Error>) -> Void) {
         JPProgressHUD.show()
         JPImageresizerTool.fixOrientationVideo(with: asset) { cacheURL, reason in
-            JPImageresizerViewController.showErrorMsg(reason, pathExtension: cacheURL?.pathExtension ?? "")
+            JPProgressHUD.showImageresizerError(reason, pathExtension: cacheURL?.pathExtension ?? "")
             mainVC.isExporting = false
             completion(.failure(JPExampleError.videoFixFaild))
             

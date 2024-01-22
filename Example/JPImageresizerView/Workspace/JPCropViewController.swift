@@ -9,6 +9,7 @@
 import UIKit
 import JPCrop
 import JPImageresizerView
+import JPBasic
 
 protocol JPCropViewControllerSwiftUIDelegate: AnyObject {
     func cropViewController(_ cropVC: JPCropViewController, imageDidFinishCrop image: UIImage)

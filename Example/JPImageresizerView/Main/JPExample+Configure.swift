@@ -1,5 +1,5 @@
 //
-//  JPExample.ConfigureModel.swift
+//  JPExample+Configure.swift
 //  JPImageresizerView_Example
 //
 //  Created by aa on 2022/12/27.
@@ -104,7 +104,7 @@ extension JPExample.ConfigureModel {
             
             return .init(.lightContent, configure)
             
-        // MARK: - Section2
+        // MARK: - Section2 & Section3
         default:
             return nil
         }

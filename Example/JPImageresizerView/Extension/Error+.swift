@@ -7,6 +7,7 @@
 //
 
 import JPBasic
+import JPImageresizerView
 
 protocol ErrorHUD: Error {
     func showErrorHUD()
@@ -43,5 +44,32 @@ extension ImagePicker.PickError: ErrorHUD {
             return
         }
         JPProgressHUD.showError(withStatus: errorMsg, userInteractionEnabled: true)
+    }
+}
+
+extension JPProgressHUD {
+    @objc class func showImageresizerError(_ reason: JPImageresizerErrorReason, pathExtension: String? = nil) {
+        switch reason {
+        case .JPIEReason_NilObject:
+            showError(withStatus: "资源为空", userInteractionEnabled: true)
+            
+        case .JPIEReason_CacheURLAlreadyExists:
+            showError(withStatus: "缓存路径已存在其他文件", userInteractionEnabled: true)
+            
+        case .JPIEReason_NoSupportedFileType:
+            showError(withStatus: pathExtension.map({ "“\($0)”：" }) ?? "" + "不支持的文件格式", userInteractionEnabled: true)
+            
+        case .JPIEReason_VideoAlreadyDamage:
+            showError(withStatus: "视频文件已损坏", userInteractionEnabled: true)
+            
+        case .JPIEReason_VideoExportFailed:
+            showError(withStatus: "视频导出失败", userInteractionEnabled: true)
+            
+        case .JPIEReason_VideoExportCancelled:
+            showError(withStatus: "视频导出取消", userInteractionEnabled: true)
+            
+        @unknown default:
+            break
+        }
     }
 }

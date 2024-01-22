@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^_Nullable backBlock)(JPImageresizerViewController *vc);
 
 + (instancetype)buildWithStatusBarStyle:(UIStatusBarStyle)statusBarStyle configure:(JPImageresizerConfigure *)configure;
-+ (void)showErrorMsg:(JPImageresizerErrorReason)reason pathExtension:(NSString *)pathExtension;
 @end
 
 NS_ASSUME_NONNULL_END
