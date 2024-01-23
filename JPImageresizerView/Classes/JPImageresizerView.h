@@ -389,9 +389,7 @@ NS_ASSUME_NONNULL_BEGIN
       contentInsets:(UIEdgeInsets)contentInsets
            duration:(NSTimeInterval)duration;
 
-@property (nonatomic, strong) UIColor *_Nullable gifStrokeColor;
-@property (nonatomic, assign) CGFloat gifStrokeWidth;
-@property (nonatomic, assign) UIEdgeInsets gifPadding;
+@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifCropSettings;
 
 #pragma mark - 重置
 /*!

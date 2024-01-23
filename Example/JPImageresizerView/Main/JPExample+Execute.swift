@@ -29,13 +29,17 @@ extension JPExample.Item {
         case .cropGifAndAddStroke:
             let gifPath = Bundle.main.path(forResource: Bool.random() ? "Gem" : "Dilraba", ofType: "gif")!
             let gifData = try! Data(contentsOf: URL(fileURLWithPath: gifPath))
+            
+            let settings = JPImageProcessingSettings()
+            settings.outlineStrokeColor = .white
+            settings.outlineStrokeWidth = 2
+            settings.padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+            
             let configure = JPImageresizerConfigure.defaultConfigure(withImageData: gifData)
                 .jp_frameType(.classicFrameType)
                 .jp_maskImage(UIImage(named: "love.png"))
                 .jp_isLoopPlaybackGIF(Bool.random())
-                .jp_gifStrokeColor(.white)
-                .jp_gifStrokeWidth(2)
-                .jp_gifPadding(UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
+                .jp_gifCropSettings(settings)
             let model = JPExample.ConfigureModel(.lightContent, configure)
             await MainActor.run {
                 mainVC.pushImageresizerVC(with: model)
@@ -47,18 +51,15 @@ extension JPExample.Item {
             }
             let gifImage = UIImage.animatedImage(with: gifImgs, duration: 1.5)!
             
-            let strokeWidth: CGFloat = 2
-            let padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
+            let settings = JPImageProcessingSettings()
+            settings.outlineStrokeColor = .white
+            settings.outlineStrokeWidth = 2
+            settings.padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
             
             let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).gif"
             let cacheURL = URL(fileURLWithPath: cachePath)
             
-            guard let result = await JPImageresizerTool
-                .addStrokeForContentOutline(withImage: gifImage,
-                                            strokeColor: .white,
-                                            strokeWidth: strokeWidth,
-                                            padding: padding,
-                                            cacheURL: cacheURL) else { return }
+            guard let result = await Self.processImage(gifImage, settings, cacheURL) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
@@ -66,21 +67,29 @@ extension JPExample.Item {
             
         case .singleImageAddStroke:
             let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png"].randomElement()!
+//            let imageName = "Flowers.jpg"
+//            let imageName = "bazhuawan_empty.png"
             let image = UIImage(named: imageName)!
             
             let scale = await (image.size.width * image.scale) / UIScreen.main.bounds.width
+            let cornerRadius: CGFloat = scale <= 1 ? 30 : (30 * scale)
+            let borderWidth: CGFloat = scale <= 1 ? 5 : (5 * scale)
             let strokeWidth: CGFloat = scale <= 1 ? 2 : (2 * scale)
-            let padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
+            
+            let settings = JPImageProcessingSettings()
+            settings.backgroundColor = .black
+            settings.cornerRadius = cornerRadius
+            settings.borderColor = .red
+            settings.borderWidth = borderWidth
+            settings.outlineStrokeColor = .white
+            settings.outlineStrokeWidth = strokeWidth
+            settings.padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
+            settings.isOnlyDrawOutline = Bool.random()
             
             let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
             let cacheURL = URL(fileURLWithPath: cachePath)
             
-            guard let result = await JPImageresizerTool
-                .addStrokeForContentOutline(withImage: image,
-                                            strokeColor: .white,
-                                            strokeWidth: strokeWidth,
-                                            padding: padding,
-                                            cacheURL: cacheURL) else { return }
+            guard let result = await Self.processImage(image, settings, cacheURL) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
@@ -119,6 +128,27 @@ extension JPExample.Item {
             guard let model = try await JPExample.ConfigureModel.build(with: self) else { return }
             await MainActor.run {
                 mainVC.pushImageresizerVC(with: model)
+            }
+        }
+    }
+}
+
+extension JPExample.Item {
+    static func processImage(_ image: UIImage,
+                             _ settings: JPImageProcessingSettings?,
+                             _ cacheURL: URL?) async -> JPImageresizerResult? {
+        JPProgressHUD.show()
+        return await withCheckedContinuation { (continuation: CheckedContinuation<JPImageresizerResult?, Never>) in
+            JPImageresizerTool.processImage(with: image, settings: settings, cacheURL: cacheURL) { kURL, reason in
+                JPProgressHUD.showImageresizerError(reason, pathExtension: kURL?.pathExtension ?? "")
+                continuation.resume(returning: nil)
+            } complete: { result in
+                if result == nil {
+                    JPProgressHUD.showError(withStatus: "操作失败", userInteractionEnabled: true)
+                } else {
+                    JPProgressHUD.dismiss()
+                }
+                continuation.resume(returning: result)
             }
         }
     }

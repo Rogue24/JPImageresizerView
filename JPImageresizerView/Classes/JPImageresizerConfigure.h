@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
+#import "JPImageProcessingSettings.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,9 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
     - maskImage = nil;
     - isArbitrarilyMask = NO;
     - isLoopPlaybackGIF = NO;
-    - gifStrokeColor = nil;
-    - gifStrokeWidth = 0;
-    - gifPadding = UIEdgeInsetsZero;
+    - gifCropSettings = nil;
     - isCleanHistoryAfterInitial = YES;
  */
 
@@ -239,9 +238,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
-@property (nonatomic, strong) UIColor *_Nullable gifStrokeColor;
-@property (nonatomic, assign) CGFloat gifStrokeWidth;
-@property (nonatomic, assign) UIEdgeInsets gifPadding;
+@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifCropSettings;
 
 /** 裁剪历史 */
 @property (nonatomic, assign) JPCropHistory history;
@@ -278,9 +275,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
-@property (readonly) JPImageresizerConfigure *(^jp_gifStrokeColor)(UIColor *_Nullable gifStrokeColor);
-@property (readonly) JPImageresizerConfigure *(^jp_gifStrokeWidth)(CGFloat gifStrokeWidth);
-@property (readonly) JPImageresizerConfigure *(^jp_gifPadding)(UIEdgeInsets gifPadding);
+@property (readonly) JPImageresizerConfigure *(^jp_gifCropSettings)(JPImageProcessingSettings *_Nullable gifCropSettings);
 @property (readonly) JPImageresizerConfigure *(^jp_isCleanHistoryAfterInitial)(BOOL isCleanHistoryAfterInitial);
 @end
 

@@ -38,7 +38,6 @@
 		006A9E282A77CD1200AD86BA /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E272A77CD1200AD86BA /* UIAlertController+.swift */; };
 		006A9E2A2A77CD4700AD86BA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E292A77CD4700AD86BA /* View+.swift */; };
 		006A9E2C2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E2B2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift */; };
-		00746A762B5E5A8F00F0E9A8 /* JPImageresizerView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00746A752B5E5A8F00F0E9A8 /* JPImageresizerView+.swift */; };
 		008BEF8729594ACE00C5A82C /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController+.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage+.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample+FixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */; };
@@ -161,7 +160,6 @@
 		006A9E272A77CD1200AD86BA /* UIAlertController+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+.swift"; sourceTree = "<group>"; };
 		006A9E292A77CD4700AD86BA /* View+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		006A9E2B2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+JPImageresizer.swift"; sourceTree = "<group>"; };
-		00746A752B5E5A8F00F0E9A8 /* JPImageresizerView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPImageresizerView+.swift"; sourceTree = "<group>"; };
 		008BEF8629594ACE00C5A82C /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+FixOrientation.swift"; sourceTree = "<group>"; };
@@ -308,7 +306,6 @@
 				006A9E292A77CD4700AD86BA /* View+.swift */,
 				002E78C0295AE1960071E30C /* Date+.swift */,
 				00B3FAF82968306A00F48389 /* Error+.swift */,
-				00746A752B5E5A8F00F0E9A8 /* JPImageresizerView+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -846,7 +843,6 @@
 				00A201DD2947349C00692814 /* JPExample+ViewController.swift in Sources */,
 				1A7394EA249DD9210024D2B6 /* ReplaceFaceViewController.m in Sources */,
 				6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */,
-				00746A762B5E5A8F00F0E9A8 /* JPImageresizerView+.swift in Sources */,
 				1AA468D2249A0DC60081452F /* JPAttachmentFlowLayout.m in Sources */,
 				008BEF8D29599D7D00C5A82C /* UIImage+.swift in Sources */,
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,

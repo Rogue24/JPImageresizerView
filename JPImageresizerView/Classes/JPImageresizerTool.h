@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
+#import "JPImageProcessingSettings.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -85,11 +86,9 @@ NS_ASSUME_NONNULL_BEGIN
              isReverseOrder:(BOOL)isReverseOrder
                        rate:(float)rate
                   maskImage:(UIImage *_Nullable)maskImage
-                strokeColor:(UIColor *_Nullable)strokeColor
-                strokeWidth:(CGFloat)strokeWidth
-                    padding:(UIEdgeInsets)padding
                   configure:(JPCropConfigure)configure
               compressScale:(CGFloat)compressScale
+              otherSettings:(JPImageProcessingSettings *_Nullable)settings
                    cacheURL:(NSURL *_Nullable)cacheURL
                  errorBlock:(JPImageresizerErrorBlock)errorBlock
               completeBlock:(JPCropDoneBlock)completeBlock;
@@ -113,11 +112,9 @@ NS_ASSUME_NONNULL_BEGIN
             isReverseOrder:(BOOL)isReverseOrder
                       rate:(float)rate
                  maskImage:(UIImage *_Nullable)maskImage
-               strokeColor:(UIColor *_Nullable)strokeColor
-               strokeWidth:(CGFloat)strokeWidth
-                   padding:(UIEdgeInsets)padding
                  configure:(JPCropConfigure)configure
              compressScale:(CGFloat)compressScale
+             otherSettings:(JPImageProcessingSettings *_Nullable)settings
                   cacheURL:(NSURL *_Nullable)cacheURL
                 errorBlock:(JPImageresizerErrorBlock)errorBlock
              completeBlock:(JPCropDoneBlock)completeBlock;
@@ -183,30 +180,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - 给图像内容添加轮廓描边
 
-+ (void)addStrokeForContentOutlineWithImageData:(NSData *)imageData
-                                    strokeColor:(UIColor *)strokeColor
-                                    strokeWidth:(size_t)strokeWidth
-                                        padding:(UIEdgeInsets)padding
-                                       cacheURL:(NSURL *_Nullable)cacheURL
-                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                  completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)processImageWithImageData:(NSData *)imageData
+                         settings:(JPImageProcessingSettings *_Nullable)settings
+                         cacheURL:(NSURL *_Nullable)cacheURL
+                       errorBlock:(JPImageresizerErrorBlock)errorBlock
+                    completeBlock:(JPCropDoneBlock)completeBlock;
 
-+ (void)addStrokeForContentOutlineWithImages:(NSArray<UIImage *> *)images
-                                    duration:(NSTimeInterval)duration
-                                 strokeColor:(UIColor *)strokeColor
-                                 strokeWidth:(size_t)strokeWidth
-                                     padding:(UIEdgeInsets)padding
-                                    cacheURL:(NSURL *_Nullable)cacheURL
-                                  errorBlock:(JPImageresizerErrorBlock)errorBlock
-                               completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)processImageWithImage:(UIImage *)image
+                     settings:(JPImageProcessingSettings *_Nullable)settings
+                     cacheURL:(NSURL *_Nullable)cacheURL
+                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                completeBlock:(JPCropDoneBlock)completeBlock;
 
-+ (void)addStrokeForContentOutlineWithImage:(UIImage *)image
-                                strokeColor:(UIColor *)strokeColor
-                                strokeWidth:(size_t)strokeWidth
-                                    padding:(UIEdgeInsets)padding
-                                   cacheURL:(NSURL *_Nullable)cacheURL
-                                 errorBlock:(JPImageresizerErrorBlock)errorBlock
-                              completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)makeGIFWithImages:(NSArray<UIImage *> *)images
+                 duration:(NSTimeInterval)duration
+                 settings:(JPImageProcessingSettings *_Nullable)settings
+                 cacheURL:(NSURL *_Nullable)cacheURL
+               errorBlock:(JPImageresizerErrorBlock)errorBlock
+            completeBlock:(JPCropDoneBlock)completeBlock;
 @end
 
 NS_ASSUME_NONNULL_END

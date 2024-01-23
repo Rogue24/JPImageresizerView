@@ -80,3 +80,10 @@ enum JPExampleError: Error {
     case nonVideoFile
     case pickNullObject
 }
+
+// MARK: - JPExampleConfigure
+@objcMembers
+class JPExampleConfigure: NSObject {
+    
+}
+
