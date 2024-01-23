@@ -27,6 +27,11 @@ static BOOL JPIsSameSize(CGSize size1, CGSize size2) {
     return (fabs(size1.width - size2.width) < 0.5 && fabs(size1.height - size2.height) < 0.5);
 }
 
+static BOOL JPIsNeedAddStroke(CGColorRef strokeColor, size_t strokeWidth, UIEdgeInsets padding) {
+    return (strokeWidth > 0 && CGColorGetAlpha(strokeColor) > 0.1) ||
+           (padding.top >= 1 || padding.left >= 1 || padding.bottom >= 1 || padding.right >= 1);
+}
+
 static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize) {
     if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
         return (CGRect){CGPointZero, originSize};
@@ -280,29 +285,27 @@ static CGImageRef _Nullable JPCreateNewCGImage(CGImageRef imageRef, CGContextRef
     return newImageRef;
 }
 
-static BOOL JPIsNeedAddStroke(CGColorRef strokeColor, size_t strokeWidth, UIEdgeInsets padding) {
-    padding = UIEdgeInsetsMake(floor(padding.top), floor(padding.left), floor(padding.bottom), floor(padding.right));
-    return (strokeWidth > 0 && CGColorGetAlpha(strokeColor) > 0.1) || !UIEdgeInsetsEqualToEdgeInsets(padding, UIEdgeInsetsZero);
-}
-
 static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRef, CGColorRef strokeColor, size_t strokeWidth, UIEdgeInsets padding) {
     if (!imageRef) return NULL;
     
+    // 优化计算：边距取整
     padding = UIEdgeInsetsMake(floor(padding.top), floor(padding.left), floor(padding.bottom), floor(padding.right));
     
+    // 是否需要轮廓描边
     BOOL isNeedStroke = strokeWidth > 0 && CGColorGetAlpha(strokeColor) > 0.1;
     if (!isNeedStroke) {
+        // 如果不需要轮廓描边，并且边距为0，直接返回null
         if (UIEdgeInsetsEqualToEdgeInsets(padding, UIEdgeInsetsZero)) {
-            return imageRef;
+            return NULL;
         }
     }
     
     size_t width = CGImageGetWidth(imageRef);
     size_t height = CGImageGetHeight(imageRef);
-    if (width == 0 || height == 0) return imageRef;
+    if (width == 0 || height == 0) return NULL;
     
     size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
-    if (bytesPerRow == 0) return imageRef;
+    if (bytesPerRow == 0) return NULL;
     
     size_t renderWidth = padding.left + width + padding.right;
     size_t renderHeight = padding.top + height + padding.bottom;
@@ -315,7 +318,7 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
                                                  0, // 要么重新计算（renderWidth * 4）要么传0交给系统自动计算
                                                  CGImageGetColorSpace(imageRef),
                                                  CGImageGetBitmapInfo(imageRef));
-    if (!context) return imageRef;
+    if (!context) return NULL;
     
     CGFloat diffX = padding.left;
     CGFloat diffY = padding.bottom; // 此处的y轴跟UIKit的上下颠倒
@@ -329,15 +332,21 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     if (isNeedStroke) {
         // 获取图像对象中存储的字节数据的指针
         CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
-        if (!dataProvider) return imageRef;
+        if (!dataProvider) {
+            CGContextRelease(context);
+            return NULL;
+        }
         CFDataRef data = CGDataProviderCopyData(dataProvider);
-        if (!data) return imageRef;
+        if (!data) {
+            CGContextRelease(context);
+            return NULL;
+        }
         const UInt8 *bytePtr = CFDataGetBytePtr(data);
         
         // 每个像素所占的字节数：4个字节
         size_t bytesPerPixel = 4;
         
-        // 每个像素渲染的大小：以像素为中点，线宽为外边距
+        // 每个像素渲染的大小：以像素点为中点，线宽为外边距，向外扩展
         CGFloat fillWH = (CGFloat)strokeWidth + 1 + (CGFloat)strokeWidth;
         /**
          * 🌰🌰🌰
@@ -349,6 +358,7 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
              🟦 🟦 🟦 🟦 🟦
          */
         
+        // 渲染所有非透明的像素点
         CGContextSetFillColorWithColor(context, strokeColor);
         for (size_t x = 0; x < width; x++) {
             for (size_t y = 0; y < height; y++) {
@@ -374,6 +384,8 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
                 }
             }
         }
+        
+        // 释放内存
         CFRelease(data);
     }
     
@@ -387,7 +399,7 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     CGContextRelease(context);
     
     if (!newImageRef) {
-        return imageRef;
+        return NULL;
     }
     return newImageRef;
 }
@@ -905,6 +917,10 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
                          finalImage:&finalImage];
     } else {
         CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+        if (source != NULL) {
+            CGImageRelease(imageRef);
+        }
+        
         if (newImageRef) {
             finalImage = [UIImage imageWithCGImage:newImageRef];
             CGImageRelease(newImageRef);
@@ -1100,15 +1116,29 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
         @autoreleasepool {
             // 将当前图形状态推入堆栈
             CGContextSaveGState(context);
+            
             // 绘制裁剪后的图片
-            CGImageRef newImageRef = JPCreateNewCGImage(getCurrentImageRef(i), context, maskImage, isRoundClip, renderRect, transform, imageSize);
-            // 添加描边（如果无需添加就返回原图片）
-            newImageRef = JPAddStrokeForImageContentOutline(newImageRef, strokeColor.CGColor, strokeWidth, padding);
+            CGImageRef imageRef = getCurrentImageRef(i);
+            CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+            if (source != NULL) {
+                CGImageRelease(imageRef);
+            }
+            
+            // 添加轮廓描边
+            if (newImageRef) {
+                CGImageRef strokeImageRef = JPAddStrokeForImageContentOutline(newImageRef, strokeColor.CGColor, strokeWidth, padding);
+                if (strokeImageRef) {
+                    CGImageRelease(newImageRef);
+                    newImageRef = strokeImageRef;
+                }
+            }
+            
             if (newImageRef) {
                 UIImage *newImage = [UIImage imageWithCGImage:newImageRef];
-                if (newImage) [images addObject:newImage];
+                [images addObject:newImage];
                 CGImageRelease(newImageRef);
             }
+            
             // 把堆栈顶部的状态弹出，返回到之前的图形状态
             CGContextRestoreGState(context);
             // 清空画布（要在`RestoreGState`之后才清空，否则清空区域会受到`transform`的影响，导致清理不干净）
@@ -1958,17 +1988,12 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     }];
 }
 
-+ (UIImage *)imageContentOutlineAddStrokeWithImage:(UIImage *)image
-                                       strokeColor:(UIColor *)strokeColor
-                                       strokeWidth:(size_t)strokeWidth
-                                           padding:(UIEdgeInsets)padding {
-    CGImageRef newImageRef = JPAddStrokeForImageContentOutline(image.CGImage, strokeColor.CGColor, strokeWidth, padding);
-    if (newImageRef) {
-        return [UIImage imageWithCGImage:newImageRef];
-    } else {
-        return image;
-    }
-}
+
+
+
+
+
+#pragma mark - 给图像内容添加轮廓描边
 
 + (void)imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
                                       strokeColor:(UIColor *)strokeColor
@@ -2053,39 +2078,36 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
         return;
     }
     
-    if (image.images.count > 1) {
-        [self imageContentOutlineAddStrokeWithImages:image.images
-                                            duration:image.duration
-                                         strokeColor:strokeColor
-                                         strokeWidth:strokeWidth
-                                             padding:padding
-                                            cacheURL:cacheURL
-                                          errorBlock:errorBlock
-                                       completeBlock:completeBlock];
-        return;
-    }
-    
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self __imageContentOutlineAddStrokeWithSingleImage:image
-                                                    strokeColor:strokeColor
-                                                    strokeWidth:strokeWidth
-                                                        padding:padding
-                                                       cacheURL:cacheURL
-                                                     errorBlock:errorBlock
-                                                  completeBlock:completeBlock];
+            [self __imageContentOutlineAddStrokeWithImage:image
+                                              strokeColor:strokeColor
+                                              strokeWidth:strokeWidth
+                                                  padding:padding
+                                                 cacheURL:cacheURL
+                                               errorBlock:errorBlock
+                                            completeBlock:completeBlock];
         });
         return;
     }
     
-    [self __imageContentOutlineAddStrokeWithSingleImage:image
-                                            strokeColor:strokeColor
-                                            strokeWidth:strokeWidth
-                                                padding:padding
-                                               cacheURL:cacheURL
-                                             errorBlock:errorBlock
-                                          completeBlock:completeBlock];
+    [self __imageContentOutlineAddStrokeWithImage:image
+                                      strokeColor:strokeColor
+                                      strokeWidth:strokeWidth
+                                          padding:padding
+                                         cacheURL:cacheURL
+                                       errorBlock:errorBlock
+                                    completeBlock:completeBlock];
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2101,21 +2123,13 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropDoneBlock)completeBlock {
     if (![self isGIFData:imageData]) {
-        UIImage *image = [UIImage imageWithData:imageData];
-        [self __imageContentOutlineAddStrokeWithImages:image.images
-                                              duration:image.duration
-                                           strokeColor:strokeColor
-                                           strokeWidth:strokeWidth
-                                               padding:padding
-                                              cacheURL:cacheURL
-                                            errorBlock:errorBlock
-                                         completeBlock:completeBlock];
-        return;
-    }
-    
-    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFTypeRef)(imageData), NULL);
-    if (source == NULL) {
-        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
+        [self __imageContentOutlineAddStrokeWithImage:[UIImage imageWithData:imageData]
+                                          strokeColor:strokeColor
+                                          strokeWidth:strokeWidth
+                                              padding:padding
+                                             cacheURL:cacheURL
+                                           errorBlock:errorBlock
+                                        completeBlock:completeBlock];
         return;
     }
     
@@ -2130,30 +2144,44 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
         }
     }
     
-    size_t count = CGImageSourceGetCount(source);
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFTypeRef)(imageData), NULL);
+    if (!source) {
+        [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
+        return;
+    }
+    
     NSTimeInterval duration = 0;
     NSMutableArray *delays = [NSMutableArray array];
     NSMutableArray *images = [NSMutableArray array];
+    size_t count = CGImageSourceGetCount(source);
     for (NSInteger i = 0; i < count; i++) {
         @autoreleasepool {
             CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
-            CGImageRef newImageRef = JPAddStrokeForImageContentOutline(imageRef, strokeColor.CGColor, strokeWidth, padding);
-            if (newImageRef) {
-                UIImage *newImage = [UIImage imageWithCGImage:newImageRef];
-                if (newImage) {
-                    [images addObject:newImage];
-                    NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i);
-                    duration += delay;
-                    [delays addObject:@(delay)];
-                }
-                CGImageRelease(newImageRef);
+            if (!imageRef) continue;
+            
+            CGImageRef strokeImageRef = JPAddStrokeForImageContentOutline(imageRef, strokeColor.CGColor, strokeWidth, padding);
+            
+            UIImage *image;
+            if (strokeImageRef) {
+                CGImageRelease(imageRef);
+                image = [UIImage imageWithCGImage:strokeImageRef];
+                CGImageRelease(strokeImageRef);
+            } else {
+                image = [UIImage imageWithCGImage:imageRef];
+                CGImageRelease(imageRef);
             }
+            [images addObject:image];
+            
+            NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i);
+            [delays addObject:@(delay)];
+            duration += delay;
         }
     }
-    
-    [self __cacheGIF:images delays:delays cacheURL:cacheURL];
+    CFRelease(source);
     
     UIImage *finalImage = images.count > 1 ? [UIImage animatedImageWithImages:images duration:duration] : images.firstObject;
+    
+    [self __cacheGIF:images delays:delays cacheURL:cacheURL];
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
@@ -2172,13 +2200,13 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     }
     
     if (count == 1) {
-        [self __imageContentOutlineAddStrokeWithSingleImage:images.firstObject
-                                                strokeColor:strokeColor
-                                                strokeWidth:strokeWidth
-                                                    padding:padding
-                                                   cacheURL:cacheURL
-                                                 errorBlock:errorBlock
-                                              completeBlock:completeBlock];
+        [self __imageContentOutlineAddStrokeWithImage:images.firstObject
+                                          strokeColor:strokeColor
+                                          strokeWidth:strokeWidth
+                                              padding:padding
+                                             cacheURL:cacheURL
+                                           errorBlock:errorBlock
+                                        completeBlock:completeBlock];
         return;
     }
     
@@ -2196,33 +2224,48 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     NSMutableArray *newImages = [NSMutableArray array];
     for (NSInteger i = 0; i < count; i++) {
         @autoreleasepool {
-            CGImageRef newImageRef = JPAddStrokeForImageContentOutline(images[i].CGImage, strokeColor.CGColor, strokeWidth, padding);
-            if (newImageRef) {
-                UIImage *newImage = [UIImage imageWithCGImage:newImageRef];
-                if (newImage) [newImages addObject:newImage];
-                CGImageRelease(newImageRef);
+            UIImage *newImage = images[i];
+            
+            CGImageRef strokeImageRef = JPAddStrokeForImageContentOutline(newImage.CGImage, strokeColor.CGColor, strokeWidth, padding);
+            if (strokeImageRef) {
+                newImage = [UIImage imageWithCGImage:strokeImageRef];
+                CGImageRelease(strokeImageRef);
             }
+            
+            [newImages addObject:newImage];
         }
     }
     
     NSTimeInterval delay = duration / (NSTimeInterval)count;
     if (delay < 0.02) delay = 0.1;
     
-    [self __cacheGIF:newImages delays:@[@(delay)] cacheURL:cacheURL];
-    
     UIImage *finalImage = newImages.count > 1 ? [UIImage animatedImageWithImages:newImages duration:duration] : newImages.firstObject;
+    
+    [self __cacheGIF:newImages delays:@[@(delay)] cacheURL:cacheURL];
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
-+ (void)__imageContentOutlineAddStrokeWithSingleImage:(UIImage *)image
-                                          strokeColor:(UIColor *)strokeColor
-                                          strokeWidth:(size_t)strokeWidth
-                                              padding:(UIEdgeInsets)padding
-                                             cacheURL:(NSURL *_Nullable)cacheURL
-                                           errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                        completeBlock:(JPCropDoneBlock)completeBlock {
++ (void)__imageContentOutlineAddStrokeWithImage:(UIImage *)image
+                                    strokeColor:(UIColor *)strokeColor
+                                    strokeWidth:(size_t)strokeWidth
+                                        padding:(UIEdgeInsets)padding
+                                       cacheURL:(NSURL *_Nullable)cacheURL
+                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                  completeBlock:(JPCropDoneBlock)completeBlock {
     if (!image) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
+        return;
+    }
+    
+    if (image.images && image.images.count > 1) {
+        [self __imageContentOutlineAddStrokeWithImages:image.images
+                                              duration:image.duration
+                                           strokeColor:strokeColor
+                                           strokeWidth:strokeWidth
+                                               padding:padding
+                                              cacheURL:cacheURL
+                                            errorBlock:errorBlock
+                                         completeBlock:completeBlock];
         return;
     }
     
@@ -2240,20 +2283,17 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
         }
     }
     
-    CGImageRef newImageRef = JPAddStrokeForImageContentOutline(imageRef, strokeColor.CGColor, strokeWidth, padding);
-    if (!newImageRef) {
+    CGImageRef strokeImageRef = JPAddStrokeForImageContentOutline(imageRef, strokeColor.CGColor, strokeWidth, padding);
+    if (!strokeImageRef) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     
-    UIImage *finalImage = [UIImage imageWithCGImage:newImageRef];
-    CGImageRelease(newImageRef);
-    [self __cacheImage:finalImage cacheURL:cacheURL];
+    UIImage *finalImage = [UIImage imageWithCGImage:strokeImageRef];
+    CGImageRelease(strokeImageRef);
     
+    [self __cacheImage:finalImage cacheURL:cacheURL];
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
-
-
-
 
 @end

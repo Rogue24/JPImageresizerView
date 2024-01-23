@@ -181,7 +181,7 @@ NS_ASSUME_NONNULL_BEGIN
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
                     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-#pragma mark - 给图像内容添加描边
+#pragma mark - 给图像内容添加轮廓描边
 
 + (void)imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
                                       strokeColor:(UIColor *)strokeColor
