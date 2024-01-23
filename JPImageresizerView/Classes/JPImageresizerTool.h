@@ -183,30 +183,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - 给图像内容添加轮廓描边
 
-+ (void)imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
-                                      strokeColor:(UIColor *)strokeColor
-                                      strokeWidth:(size_t)strokeWidth
-                                          padding:(UIEdgeInsets)padding
-                                         cacheURL:(NSURL *_Nullable)cacheURL
-                                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                    completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)addStrokeForContentOutlineWithImageData:(NSData *)imageData
+                                    strokeColor:(UIColor *)strokeColor
+                                    strokeWidth:(size_t)strokeWidth
+                                        padding:(UIEdgeInsets)padding
+                                       cacheURL:(NSURL *_Nullable)cacheURL
+                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                  completeBlock:(JPCropDoneBlock)completeBlock;
 
-+ (void)imageContentOutlineAddStrokeWithImages:(NSArray<UIImage *> *)images
-                                      duration:(NSTimeInterval)duration
-                                   strokeColor:(UIColor *)strokeColor
-                                   strokeWidth:(size_t)strokeWidth
-                                       padding:(UIEdgeInsets)padding
-                                      cacheURL:(NSURL *_Nullable)cacheURL
-                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                 completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)addStrokeForContentOutlineWithImages:(NSArray<UIImage *> *)images
+                                    duration:(NSTimeInterval)duration
+                                 strokeColor:(UIColor *)strokeColor
+                                 strokeWidth:(size_t)strokeWidth
+                                     padding:(UIEdgeInsets)padding
+                                    cacheURL:(NSURL *_Nullable)cacheURL
+                                  errorBlock:(JPImageresizerErrorBlock)errorBlock
+                               completeBlock:(JPCropDoneBlock)completeBlock;
 
-+ (void)imageContentOutlineAddStrokeWithImage:(UIImage *)image
-                                  strokeColor:(UIColor *)strokeColor
-                                  strokeWidth:(size_t)strokeWidth
-                                      padding:(UIEdgeInsets)padding
-                                     cacheURL:(NSURL *_Nullable)cacheURL
-                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                completeBlock:(JPCropDoneBlock)completeBlock;
++ (void)addStrokeForContentOutlineWithImage:(UIImage *)image
+                                strokeColor:(UIColor *)strokeColor
+                                strokeWidth:(size_t)strokeWidth
+                                    padding:(UIEdgeInsets)padding
+                                   cacheURL:(NSURL *_Nullable)cacheURL
+                                 errorBlock:(JPImageresizerErrorBlock)errorBlock
+                              completeBlock:(JPCropDoneBlock)completeBlock;
 @end
 
 NS_ASSUME_NONNULL_END

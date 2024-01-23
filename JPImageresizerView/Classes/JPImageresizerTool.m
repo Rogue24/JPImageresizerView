@@ -1995,13 +1995,13 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
 
 #pragma mark - 给图像内容添加轮廓描边
 
-+ (void)imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
-                                      strokeColor:(UIColor *)strokeColor
-                                      strokeWidth:(size_t)strokeWidth
-                                          padding:(UIEdgeInsets)padding
-                                         cacheURL:(NSURL *_Nullable)cacheURL
-                                       errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                    completeBlock:(JPCropDoneBlock)completeBlock {
++ (void)addStrokeForContentOutlineWithImageData:(NSData *)imageData
+                                    strokeColor:(UIColor *)strokeColor
+                                    strokeWidth:(size_t)strokeWidth
+                                        padding:(UIEdgeInsets)padding
+                                       cacheURL:(NSURL *_Nullable)cacheURL
+                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                  completeBlock:(JPCropDoneBlock)completeBlock {
     if (!imageData) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
@@ -2009,34 +2009,34 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self __imageContentOutlineAddStrokeWithImageData:imageData
-                                                  strokeColor:strokeColor
-                                                  strokeWidth:strokeWidth
-                                                      padding:padding
-                                                     cacheURL:cacheURL
-                                                   errorBlock:errorBlock
-                                                completeBlock:completeBlock];
+            [self __addStrokeForContentOutlineWithImageData:imageData
+                                                strokeColor:strokeColor
+                                                strokeWidth:strokeWidth
+                                                    padding:padding
+                                                   cacheURL:cacheURL
+                                                 errorBlock:errorBlock
+                                              completeBlock:completeBlock];
         });
         return;
     }
     
-    [self __imageContentOutlineAddStrokeWithImageData:imageData
-                                          strokeColor:strokeColor
-                                          strokeWidth:strokeWidth
-                                              padding:padding
-                                             cacheURL:cacheURL
-                                           errorBlock:errorBlock
-                                        completeBlock:completeBlock];
+    [self __addStrokeForContentOutlineWithImageData:imageData
+                                        strokeColor:strokeColor
+                                        strokeWidth:strokeWidth
+                                            padding:padding
+                                           cacheURL:cacheURL
+                                         errorBlock:errorBlock
+                                      completeBlock:completeBlock];
 }
 
-+ (void)imageContentOutlineAddStrokeWithImages:(NSArray<UIImage *> *)images
-                                      duration:(NSTimeInterval)duration
-                                   strokeColor:(UIColor *)strokeColor
-                                   strokeWidth:(size_t)strokeWidth
-                                       padding:(UIEdgeInsets)padding
-                                      cacheURL:(NSURL *_Nullable)cacheURL
-                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                 completeBlock:(JPCropDoneBlock)completeBlock {
++ (void)addStrokeForContentOutlineWithImages:(NSArray<UIImage *> *)images
+                                    duration:(NSTimeInterval)duration
+                                 strokeColor:(UIColor *)strokeColor
+                                 strokeWidth:(size_t)strokeWidth
+                                     padding:(UIEdgeInsets)padding
+                                    cacheURL:(NSURL *_Nullable)cacheURL
+                                  errorBlock:(JPImageresizerErrorBlock)errorBlock
+                               completeBlock:(JPCropDoneBlock)completeBlock {
     if (images.count == 0) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
@@ -2044,29 +2044,29 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self __imageContentOutlineAddStrokeWithImages:images
-                                                  duration:duration
-                                               strokeColor:strokeColor
-                                               strokeWidth:strokeWidth
-                                                   padding:padding
-                                                  cacheURL:cacheURL
-                                                errorBlock:errorBlock
-                                             completeBlock:completeBlock];
+            [self __addStrokeForContentOutlineWithImages:images
+                                                duration:duration
+                                             strokeColor:strokeColor
+                                             strokeWidth:strokeWidth
+                                                 padding:padding
+                                                cacheURL:cacheURL
+                                              errorBlock:errorBlock
+                                           completeBlock:completeBlock];
         });
         return;
     }
     
-    [self __imageContentOutlineAddStrokeWithImages:images
-                                          duration:duration
-                                       strokeColor:strokeColor
-                                       strokeWidth:strokeWidth
-                                           padding:padding
-                                          cacheURL:cacheURL
-                                        errorBlock:errorBlock
-                                     completeBlock:completeBlock];
+    [self __addStrokeForContentOutlineWithImages:images
+                                        duration:duration
+                                     strokeColor:strokeColor
+                                     strokeWidth:strokeWidth
+                                         padding:padding
+                                        cacheURL:cacheURL
+                                      errorBlock:errorBlock
+                                   completeBlock:completeBlock];
 }
 
-+ (void)imageContentOutlineAddStrokeWithImage:(UIImage *)image
++ (void)addStrokeForContentOutlineWithImage:(UIImage *)image
                                   strokeColor:(UIColor *)strokeColor
                                   strokeWidth:(size_t)strokeWidth
                                       padding:(UIEdgeInsets)padding
@@ -2080,24 +2080,24 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self __imageContentOutlineAddStrokeWithImage:image
-                                              strokeColor:strokeColor
-                                              strokeWidth:strokeWidth
-                                                  padding:padding
-                                                 cacheURL:cacheURL
-                                               errorBlock:errorBlock
-                                            completeBlock:completeBlock];
+            [self __addStrokeForContentOutlineWithImage:image
+                                            strokeColor:strokeColor
+                                            strokeWidth:strokeWidth
+                                                padding:padding
+                                               cacheURL:cacheURL
+                                             errorBlock:errorBlock
+                                          completeBlock:completeBlock];
         });
         return;
     }
     
-    [self __imageContentOutlineAddStrokeWithImage:image
-                                      strokeColor:strokeColor
-                                      strokeWidth:strokeWidth
-                                          padding:padding
-                                         cacheURL:cacheURL
-                                       errorBlock:errorBlock
-                                    completeBlock:completeBlock];
+    [self __addStrokeForContentOutlineWithImage:image
+                                    strokeColor:strokeColor
+                                    strokeWidth:strokeWidth
+                                        padding:padding
+                                       cacheURL:cacheURL
+                                     errorBlock:errorBlock
+                                  completeBlock:completeBlock];
 }
 
 
@@ -2115,7 +2115,7 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
 
 
 
-+ (void)__imageContentOutlineAddStrokeWithImageData:(NSData *)imageData
++ (void)__addStrokeForContentOutlineWithImageData:(NSData *)imageData
                                         strokeColor:(UIColor *)strokeColor
                                         strokeWidth:(size_t)strokeWidth
                                             padding:(UIEdgeInsets)padding
@@ -2123,13 +2123,13 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropDoneBlock)completeBlock {
     if (![self isGIFData:imageData]) {
-        [self __imageContentOutlineAddStrokeWithImage:[UIImage imageWithData:imageData]
-                                          strokeColor:strokeColor
-                                          strokeWidth:strokeWidth
-                                              padding:padding
-                                             cacheURL:cacheURL
-                                           errorBlock:errorBlock
-                                        completeBlock:completeBlock];
+        [self __addStrokeForContentOutlineWithImage:[UIImage imageWithData:imageData]
+                                        strokeColor:strokeColor
+                                        strokeWidth:strokeWidth
+                                            padding:padding
+                                           cacheURL:cacheURL
+                                         errorBlock:errorBlock
+                                      completeBlock:completeBlock];
         return;
     }
     
@@ -2185,14 +2185,14 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
-+ (void)__imageContentOutlineAddStrokeWithImages:(NSArray<UIImage *> *)images
-                                        duration:(NSTimeInterval)duration
-                                     strokeColor:(UIColor *)strokeColor
-                                     strokeWidth:(size_t)strokeWidth
-                                         padding:(UIEdgeInsets)padding
-                                        cacheURL:(NSURL *_Nullable)cacheURL
-                                      errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                   completeBlock:(JPCropDoneBlock)completeBlock {
++ (void)__addStrokeForContentOutlineWithImages:(NSArray<UIImage *> *)images
+                                      duration:(NSTimeInterval)duration
+                                   strokeColor:(UIColor *)strokeColor
+                                   strokeWidth:(size_t)strokeWidth
+                                       padding:(UIEdgeInsets)padding
+                                      cacheURL:(NSURL *_Nullable)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock {
     NSInteger count = images.count;
     if (count == 0) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
@@ -2200,13 +2200,13 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     }
     
     if (count == 1) {
-        [self __imageContentOutlineAddStrokeWithImage:images.firstObject
-                                          strokeColor:strokeColor
-                                          strokeWidth:strokeWidth
-                                              padding:padding
-                                             cacheURL:cacheURL
-                                           errorBlock:errorBlock
-                                        completeBlock:completeBlock];
+        [self __addStrokeForContentOutlineWithImage:images.firstObject
+                                        strokeColor:strokeColor
+                                        strokeWidth:strokeWidth
+                                            padding:padding
+                                           cacheURL:cacheURL
+                                         errorBlock:errorBlock
+                                      completeBlock:completeBlock];
         return;
     }
     
@@ -2245,27 +2245,27 @@ static CGImageRef _Nullable JPAddStrokeForImageContentOutline(CGImageRef imageRe
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
-+ (void)__imageContentOutlineAddStrokeWithImage:(UIImage *)image
-                                    strokeColor:(UIColor *)strokeColor
-                                    strokeWidth:(size_t)strokeWidth
-                                        padding:(UIEdgeInsets)padding
-                                       cacheURL:(NSURL *_Nullable)cacheURL
-                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
-                                  completeBlock:(JPCropDoneBlock)completeBlock {
++ (void)__addStrokeForContentOutlineWithImage:(UIImage *)image
+                                  strokeColor:(UIColor *)strokeColor
+                                  strokeWidth:(size_t)strokeWidth
+                                      padding:(UIEdgeInsets)padding
+                                     cacheURL:(NSURL *_Nullable)cacheURL
+                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                completeBlock:(JPCropDoneBlock)completeBlock {
     if (!image) {
         [self __executeErrorBlock:errorBlock cacheURL:nil reason:JPIEReason_NilObject];
         return;
     }
     
     if (image.images && image.images.count > 1) {
-        [self __imageContentOutlineAddStrokeWithImages:image.images
-                                              duration:image.duration
-                                           strokeColor:strokeColor
-                                           strokeWidth:strokeWidth
-                                               padding:padding
-                                              cacheURL:cacheURL
-                                            errorBlock:errorBlock
-                                         completeBlock:completeBlock];
+        [self __addStrokeForContentOutlineWithImages:image.images
+                                            duration:image.duration
+                                         strokeColor:strokeColor
+                                         strokeWidth:strokeWidth
+                                             padding:padding
+                                            cacheURL:cacheURL
+                                          errorBlock:errorBlock
+                                       completeBlock:completeBlock];
         return;
     }
     

@@ -11,10 +11,14 @@ import JPImageresizerView
 import JPBasic
 
 extension JPImageresizerTool {
-    static func imageContentOutlineAddStroke(withImage image: UIImage, strokeColor: UIColor, strokeWidth: CGFloat, padding: UIEdgeInsets, cacheURL: URL?) async -> JPImageresizerResult? {
+    static func addStrokeForContentOutline(withImage image: UIImage,
+                                           strokeColor: UIColor,
+                                           strokeWidth: CGFloat,
+                                           padding: UIEdgeInsets,
+                                           cacheURL: URL?) async -> JPImageresizerResult? {
         JPProgressHUD.show()
         return await withCheckedContinuation { (continuation: CheckedContinuation<JPImageresizerResult?, Never>) in
-            self.imageContentOutlineAddStroke(with: image, stroke: strokeColor, strokeWidth: Int(strokeWidth), padding: padding, cacheURL: cacheURL) { kURL, reason in
+            self.addStrokeForContentOutline(with: image, stroke: strokeColor, strokeWidth: Int(strokeWidth), padding: padding, cacheURL: cacheURL) { kURL, reason in
                 JPProgressHUD.showImageresizerError(reason, pathExtension: kURL?.pathExtension ?? "")
                 continuation.resume(returning: nil)
             } complete: { result in
@@ -27,7 +31,4 @@ extension JPImageresizerTool {
             }
         }
     }
-
-    
-    
 }

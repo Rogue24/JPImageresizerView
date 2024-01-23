@@ -316,7 +316,6 @@
 		002E78BA295ADAD80071E30C /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
-				718FEDE82869C1B700686129 /* SwiftUI */,
 				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
 				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
@@ -324,6 +323,7 @@
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
 				00168E172AD91EA800B1D8E4 /* JPTestViewController.h */,
 				00168E182AD91EA800B1D8E4 /* JPTestViewController.m */,
+				718FEDE82869C1B700686129 /* SwiftUI */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";

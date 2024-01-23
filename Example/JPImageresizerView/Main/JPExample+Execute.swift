@@ -53,14 +53,12 @@ extension JPExample.Item {
             let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).gif"
             let cacheURL = URL(fileURLWithPath: cachePath)
             
-            guard let result = await JPImageresizerTool.imageContentOutlineAddStroke(
-                withImage: gifImage,
-                strokeColor: .white,
-                strokeWidth: strokeWidth,
-                padding: padding,
-                cacheURL: cacheURL
-            ) else { return }
-
+            guard let result = await JPImageresizerTool
+                .addStrokeForContentOutline(withImage: gifImage,
+                                            strokeColor: .white,
+                                            strokeWidth: strokeWidth,
+                                            padding: padding,
+                                            cacheURL: cacheURL) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
@@ -77,14 +75,12 @@ extension JPExample.Item {
             let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
             let cacheURL = URL(fileURLWithPath: cachePath)
             
-            guard let result = await JPImageresizerTool.imageContentOutlineAddStroke(
-                withImage: image,
-                strokeColor: .white,
-                strokeWidth: strokeWidth,
-                padding: padding,
-                cacheURL: cacheURL
-            ) else { return }
-
+            guard let result = await JPImageresizerTool
+                .addStrokeForContentOutline(withImage: image,
+                                            strokeColor: .white,
+                                            strokeWidth: strokeWidth,
+                                            padding: padding,
+                                            cacheURL: cacheURL) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
