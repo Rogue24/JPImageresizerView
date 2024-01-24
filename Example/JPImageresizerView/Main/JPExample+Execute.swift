@@ -46,10 +46,7 @@ extension JPExample.Item {
             }
             
         case .makeGifAndAddOutlineStroke:
-            let gifImgs = Array(1...20).map {
-                UIImage(named: "bazhuawan_\($0).png")!
-            }
-            let gifImage = UIImage.animatedImage(with: gifImgs, duration: 1.5)!
+            let gifImage = await UIImage.getCuteOctoGIFImage()
             
             let settings = JPImageProcessingSettings()
             settings.outlineStrokeColor = .white
@@ -78,7 +75,6 @@ extension JPExample.Item {
                 settings.borderWidth = borderWidth
             } else {
                 let strokeWidth: CGFloat = scale <= 1 ? 2 : (2 * scale)
-                settings.backgroundColor = .black
                 settings.outlineStrokeColor = .white
                 settings.outlineStrokeWidth = strokeWidth
                 settings.padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)

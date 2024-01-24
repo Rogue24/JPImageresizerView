@@ -56,6 +56,18 @@ extension UIImage {
         return bundleImage(imageName, ofType: nil)
     }
     
+    private static var cuteOctoGIFImg: UIImage? = nil
+    static func getCuteOctoGIFImage() async -> UIImage {
+        if let cuteOctoGIFImg = self.cuteOctoGIFImg {
+            return cuteOctoGIFImg
+        }
+        let images = Array(1...20).map { UIImage(named: "bazhuawan_\($0).png")! }
+        let cuteOctoGIFImg = UIImage.animatedImage(with: images, duration: 1.5)!
+        self.cuteOctoGIFImg = cuteOctoGIFImg
+        return cuteOctoGIFImg
+    }
+    
+    private static var girlsGIFImg: UIImage? = nil
     static func getGirlsGIFImage() async -> UIImage {
         if let girlsGIFImg = self.girlsGIFImg {
             return girlsGIFImg
@@ -64,8 +76,6 @@ extension UIImage {
         self.girlsGIFImg = girlsGIFImg
         return girlsGIFImg
     }
-    
-    private static var girlsGIFImg: UIImage? = nil
     
     private static func createGirlsGIFImage() async -> UIImage {
         let girlCount = 8

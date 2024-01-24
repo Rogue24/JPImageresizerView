@@ -64,6 +64,12 @@ extension UIAlertController {
             .addAction("咬人猫舞蹈节选（视频）") { handler(nil, nil, URL(fileURLWithPath: Bundle.main.path(forResource: "yaorenmao", ofType: "mov")!)) }
             .addAction("Gem（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Gem", ofType: "gif")!)), nil) }
             .addAction("Dilraba（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Dilraba", ofType: "gif")!)), nil) }
+            .addAction("八爪丸（GIF）") {
+                Task {
+                    let gifImage = await UIImage.getCuteOctoGIFImage()
+                    handler(gifImage, nil, nil)
+                }
+            }
             .addAction("系统相册") {
                 ImagePicker.openAlbumForObject { result in
                     switch result {
