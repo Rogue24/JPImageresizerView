@@ -27,6 +27,306 @@ static BOOL JPIsSameSize(CGSize size1, CGSize size2) {
     return (fabs(size1.width - size2.width) < 0.5 && fabs(size1.height - size2.height) < 0.5);
 }
 
+static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo, CGFloat *white, CGFloat *alpha) {
+    CGFloat w = 0, a = 1;
+    switch (alphaInfo) {
+        case kCGImageAlphaPremultipliedFirst:
+        case kCGImageAlphaFirst:
+        {
+            if (byteOrderNormal) {
+                // AW
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                w = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            } else {
+                // WA
+                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaPremultipliedLast:
+        case kCGImageAlphaLast:
+        {
+            if (byteOrderNormal) {
+                // WA
+                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            } else {
+                // AW
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                w = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNone:
+        {
+            // W
+            w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            break;
+        }
+            
+        case kCGImageAlphaNoneSkipLast:
+        {
+            if (byteOrderNormal) {
+                // WX
+                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            } else {
+                // XW
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNoneSkipFirst:
+        {
+            if (byteOrderNormal) {
+                // XW
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            } else {
+                // WX
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaOnly:
+        {
+            // A
+            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    if (white) *white = w;
+    if (alpha) *alpha = a;
+}
+
+static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo, CGFloat *red, CGFloat *green, CGFloat *blue, CGFloat *alpha) {
+    CGFloat r = 0, g = 0, b = 0, a = 1;
+    switch (alphaInfo) {
+        case kCGImageAlphaPremultipliedFirst:
+        case kCGImageAlphaFirst:
+        {
+            if (byteOrderNormal) {
+                // ARGB
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            } else {
+                // BGRA
+                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaPremultipliedLast:
+        case kCGImageAlphaLast:
+        {
+            if (byteOrderNormal) {
+                // RGBA
+                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            } else {
+                // ABGR
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNone:
+        {
+            if (byteOrderNormal) {
+                // RGB
+                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+            } else {
+                // BGR
+                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNoneSkipLast:
+        {
+            if (byteOrderNormal) {
+                // RGBX
+                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+            } else {
+                // XBGR
+                b = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNoneSkipFirst:
+        {
+            if (byteOrderNormal) {
+                // XRGB
+                r = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                b = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            } else {
+                // BGRX
+                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaOnly:
+        {
+            // A
+            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    if (red) *red = r;
+    if (green) *green = g;
+    if (blue) *blue = b;
+    if (alpha) *alpha = a;
+}
+
+static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo) {
+    CGFloat a = 1;
+    switch (alphaInfo) {
+        case kCGImageAlphaPremultipliedFirst:
+        case kCGImageAlphaFirst:
+        {
+            if (byteOrderNormal) {
+                // AW
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            } else {
+                // WA
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaPremultipliedLast:
+        case kCGImageAlphaLast:
+        {
+            if (byteOrderNormal) {
+                // WA
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            } else {
+                // AW
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNone: // W
+            break;
+            
+        case kCGImageAlphaNoneSkipLast:
+        {
+            if (!byteOrderNormal) {
+                // XW
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNoneSkipFirst:
+        {
+            if (byteOrderNormal) {
+                // XW
+                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+            } else {
+                // WX
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaOnly:
+        {
+            // A
+            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    return a;
+}
+
+static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo) {
+    CGFloat a = 1;
+    switch (alphaInfo) {
+        case kCGImageAlphaPremultipliedFirst:
+        case kCGImageAlphaFirst:
+        {
+            if (byteOrderNormal) {
+                // ARGB
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            } else {
+                // BGRA
+                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaPremultipliedLast:
+        case kCGImageAlphaLast:
+        {
+            if (byteOrderNormal) {
+                // RGBA
+                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            } else {
+                // ABGR
+                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            }
+            break;
+        }
+            
+        case kCGImageAlphaNone:
+        case kCGImageAlphaNoneSkipLast:
+        case kCGImageAlphaNoneSkipFirst:
+            break;
+            
+        case kCGImageAlphaOnly:
+        {
+            // A
+            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    return a;
+}
+
 static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize) {
     if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
         return (CGRect){CGPointZero, originSize};
@@ -139,6 +439,7 @@ static CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImagere
                 }
             }
             break;
+            
         case JPImageresizerHorizontalLeftDirection:
             // 原点在左下
             if (isVerMirror || isHorMirror) {
@@ -169,6 +470,7 @@ static CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImagere
                 }
             }
             break;
+            
         case JPImageresizerVerticalDownDirection:
             // 原点在右下
             if (isVerMirror || isHorMirror) {
@@ -199,6 +501,7 @@ static CGPoint JPConfirmTranslate(CGRect cropFrame, CGSize originSize, JPImagere
                 }
             }
             break;
+            
         case JPImageresizerHorizontalRightDirection:
             // 原点在右上
             if (isVerMirror || isHorMirror) {
@@ -287,54 +590,36 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
     
     size_t width = CGImageGetWidth(imageRef);
     size_t height = CGImageGetHeight(imageRef);
-    if (width == 0 || height == 0) {
-        return;
-    }
-    
-    BOOL isHasAlpha = NO;
-    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-        alphaInfo == kCGImageAlphaPremultipliedFirst ||
-        alphaInfo == kCGImageAlphaLast ||
-        alphaInfo == kCGImageAlphaFirst) {
-        isHasAlpha = YES;
-    }
-    
-    if (!isHasAlpha) {
-        CGContextSetFillColorWithColor(context, outlineStrokeColor);
-        CGFloat fillX = diffX - (CGFloat)outlineStrokeWidth;
-        CGFloat fillY = diffY - (CGFloat)outlineStrokeWidth;
-        CGFloat fillW = (CGFloat)(outlineStrokeWidth + width + outlineStrokeWidth);
-        CGFloat fillH = (CGFloat)(outlineStrokeWidth + height + outlineStrokeWidth);
-        CGContextFillRect(context, CGRectMake(fillX, fillY, fillW, fillH));
-        return;
-    }
+    if (width == 0 || height == 0) return;
     
     // 一行的总像素数
     size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
-    if (bytesPerRow == 0) {
-        return;
-    }
+    if (bytesPerRow == 0) return;
     
     // 获取指向图像对象的字节数据的指针
     CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
-    if (!dataProvider) {
-        return;
-    }
+    if (!dataProvider) return;
     CFDataRef data = CGDataProviderCopyData(dataProvider);
-    if (!data) {
-        return;
-    }
+    if (!data) return;
     const UInt8 *bytePtr = CFDataGetBytePtr(data);
     
-    // 一个像素所占的字节数：4个字节
-    size_t bytesPerPixel = 4;
-    
-    // 获取alpha通道下标：ARGB，+0拿到A / RGBA，+3拿到A
-    size_t alphaIndex = 0;
-    if (alphaInfo == kCGImageAlphaPremultipliedLast || alphaInfo == kCGImageAlphaLast) {
-        alphaIndex = 3;
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    // 获取透明信息
+    CGImageAlphaInfo alphaInfo = bitmapInfo & kCGBitmapAlphaInfoMask;
+    // 获取字节排序（大端or小端）
+    CGBitmapInfo byteOrderInfo = bitmapInfo & kCGBitmapByteOrderMask;
+    BOOL byteOrderNormal = NO;
+    switch (byteOrderInfo) {
+        case kCGBitmapByteOrderDefault:
+        case kCGBitmapByteOrder32Big:
+            byteOrderNormal = YES;
+            break;
+        default:
+            break;
     }
+    
+    // 一个像素所占的字节数：RGB/RGBA 4个字节，greyscale 2个字节
+    size_t bytesPerPixel = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
     
     // 渲染一个像素的大小：以像素点为中点，线宽为外边距，向外扩展
     CGFloat fillWH = (CGFloat)outlineStrokeWidth + 1 + (CGFloat)outlineStrokeWidth;
@@ -355,11 +640,17 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
             // 像素下标 = 第几行 * 每一行的像素数 + 第几列 * 每个像素的字节数
             size_t byteIndex = y * bytesPerRow + x * bytesPerPixel;
             
-            // 通过alpha通道下标获取透明度
-            CGFloat alpha = (CGFloat)bytePtr[byteIndex + alphaIndex] / 255.0;
+            // 获取透明度
+            CGFloat alpha = 1;
+            if (bytesPerPixel == 4) {
+                alpha = JPGetAlphaFromRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
+            } else if (bytesPerPixel == 2) {
+                alpha = JPGetAlphaFromGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
+            }
+//            CGFloat alpha = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
             
             // 非透明的地方就涂色（注意：这里的xy是基于图像的坐标，需要适配成context的坐标进行填充）
-            if (alpha > 0.01) { // 透明度0.01以下是看不见的，直接忽略
+            if (alpha > 0.1) { // 透明度0.1以下人眼【几乎】看不见，直接忽略吧
                 CGFloat fillX = (CGFloat)x - (CGFloat)outlineStrokeWidth;
                 
                 CGFloat fillY = (CGFloat)y - (CGFloat)outlineStrokeWidth;
@@ -381,6 +672,9 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
 
 static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRadius, CGColorRef backgroundColor, size_t borderWidth, CGColorRef borderColor, size_t outlineStrokeWidth, CGColorRef outlineStrokeColor, UIEdgeInsets padding, BOOL isOnlyDrawOutline) {
     if (!imageRef) return NULL;
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    if (width == 0 || height == 0) return NULL;
     
     // 优化计算：取整
     cornerRadius = floor(cornerRadius);
@@ -388,26 +682,26 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     outlineStrokeWidth = floor(outlineStrokeWidth);
     padding = UIEdgeInsetsMake(floor(padding.top), floor(padding.left), floor(padding.bottom), floor(padding.right));
     
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    if (width == 0 || height == 0) return NULL;
-    
     size_t renderWidth = borderWidth + padding.left + width + padding.right + borderWidth;
     size_t renderHeight = borderWidth + padding.top + height + padding.bottom + borderWidth;
     
+    BOOL isHasAlpha = JPIsHasAlpha(imageRef);
+    
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(imageRef);
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-    if (!JPIsHasAlpha(imageRef) && cornerRadius > 0) {
+    if (!isHasAlpha && cornerRadius > 0) {
         bitmapInfo = kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst;
     }
     
     CGContextRef context = CGBitmapContextCreate(NULL,
                                                  renderWidth,
                                                  renderHeight,
-                                                 CGImageGetBitsPerComponent(imageRef),
+                                                 bitsPerComponent,
                                                  0, // 这里不能用CGImageGetBytesPerRow(imageRef)，
                                                  // →→ 因为`renderWidth`跟`width`可能不一样，
                                                  // →→ 要么重新计算`(renderWidth * 4)`、要么传0交给系统自动计算。
-                                                 CGImageGetColorSpace(imageRef),
+                                                 colorSpace,
                                                  bitmapInfo);
     if (!context) return NULL;
     CGContextSetShouldAntialias(context, true);
@@ -441,7 +735,16 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     
     // 3.给图像内容添加轮廓描边（填充非透明部分）
     if (outlineStrokeColor && (outlineStrokeWidth > 0 || isOnlyDrawOutline)) {
-        JPDrawOutlineStroke(imageRef, context, outlineStrokeWidth, outlineStrokeColor, diffX, diffY);
+        if (isHasAlpha) {
+            JPDrawOutlineStroke(imageRef, context, outlineStrokeWidth, outlineStrokeColor, diffX, diffY);
+        } else {
+            CGContextSetFillColorWithColor(context, outlineStrokeColor);
+            CGFloat fillX = diffX - (CGFloat)outlineStrokeWidth;
+            CGFloat fillY = diffY - (CGFloat)outlineStrokeWidth;
+            CGFloat fillW = (CGFloat)(outlineStrokeWidth + width + outlineStrokeWidth);
+            CGFloat fillH = (CGFloat)(outlineStrokeWidth + height + outlineStrokeWidth);
+            CGContextFillRect(context, CGRectMake(fillX, fillY, fillW, fillH));
+        }
     }
     
     // 4.绘制原图像（盖在轮廓描边上）

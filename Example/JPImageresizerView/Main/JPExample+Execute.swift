@@ -45,7 +45,7 @@ extension JPExample.Item {
                 mainVC.pushImageresizerVC(with: model)
             }
             
-        case .makeGifAndAddStroke:
+        case .makeGifAndAddOutlineStroke:
             let gifImgs = Array(1...20).map {
                 UIImage(named: "bazhuawan_\($0).png")!
             }
@@ -64,27 +64,41 @@ extension JPExample.Item {
                 mainVC.pushPreviewVC([result])
             }
             
-            
-        case .singleImageAddStroke:
-            let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png"].randomElement()!
-//            let imageName = "Flowers.jpg"
-//            let imageName = "bazhuawan_empty.png"
+        case .singleImageAddOutlineStroke:
+            let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png", "Kobe.jpg", "Flowers.jpg"].randomElement()!
             let image = UIImage(named: imageName)!
             
             let scale = await (image.size.width * image.scale) / UIScreen.main.bounds.width
-            let cornerRadius: CGFloat = scale <= 1 ? 30 : (30 * scale)
-            let borderWidth: CGFloat = scale <= 1 ? 5 : (5 * scale)
-            let strokeWidth: CGFloat = scale <= 1 ? 2 : (2 * scale)
             
             let settings = JPImageProcessingSettings()
-            settings.backgroundColor = .black
-            settings.cornerRadius = cornerRadius
-            settings.borderColor = .red
-            settings.borderWidth = borderWidth
-            settings.outlineStrokeColor = .white
-            settings.outlineStrokeWidth = strokeWidth
-            settings.padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
-            settings.isOnlyDrawOutline = Bool.random()
+            if let last = imageName.components(separatedBy: ".").last, last == "jpg" {
+                let borderWidth: CGFloat = scale <= 1 ? 5 : (5 * scale)
+                settings.cornerRadius = scale <= 1 ? 30 : (30 * scale)
+                settings.borderColor = .systemPink
+                settings.borderWidth = borderWidth
+            } else {
+                let strokeWidth: CGFloat = scale <= 1 ? 2 : (2 * scale)
+                settings.backgroundColor = .black
+                settings.outlineStrokeColor = .white
+                settings.outlineStrokeWidth = strokeWidth
+                settings.padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
+            }
+            
+            let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
+            let cacheURL = URL(fileURLWithPath: cachePath)
+            
+            guard let result = await Self.processImage(image, settings, cacheURL) else { return }
+            await MainActor.run {
+                mainVC.pushPreviewVC([result])
+            }
+            
+        case .singleImageOnlyDrawOutline:
+            let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png", "bazhuawan_6.png", "bazhuawan_15.png"].randomElement()!
+            let image = UIImage(named: imageName)!
+            
+            let settings = JPImageProcessingSettings()
+            settings.outlineStrokeColor = .systemYellow
+            settings.isOnlyDrawOutline = true
             
             let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
             let cacheURL = URL(fileURLWithPath: cachePath)

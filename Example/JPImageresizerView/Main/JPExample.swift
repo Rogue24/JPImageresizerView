@@ -24,8 +24,9 @@ enum JPExample {
         case album = "打开相册"
         
         case cropGifAndAddStroke = "裁剪GIF并添加轮廓描边"
-        case makeGifAndAddStroke = "多张PNG图片组装GIF并添加轮廓描边"
-        case singleImageAddStroke = "单张PNG图片添加轮廓描边"
+        case makeGifAndAddOutlineStroke = "多张PNG图片组装GIF并添加轮廓描边"
+        case singleImageAddOutlineStroke = "单张图片添加轮廓描边"
+        case singleImageOnlyDrawOutline = "绘制图像内容的轮廓蒙版"
         
         case replaceFace = "趣味换脸"
         case girlsGIF = "自制GIF"
@@ -60,8 +61,9 @@ enum JPExample {
         
         Section(title: "图像内容添加轮廓描边", items: [
             .cropGifAndAddStroke,
-            .makeGifAndAddStroke,
-            .singleImageAddStroke,
+            .makeGifAndAddOutlineStroke,
+            .singleImageAddOutlineStroke,
+            .singleImageOnlyDrawOutline,
         ]),
         
         Section(title: "其他", items: [
