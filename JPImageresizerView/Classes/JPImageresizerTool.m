@@ -592,9 +592,15 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
     size_t height = CGImageGetHeight(imageRef);
     if (width == 0 || height == 0) return;
     
-    // 一行的总像素数
+    // 每一行的总字节数
     size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
     if (bytesPerRow == 0) return;
+    
+    // 每个像素包含的颜色通道数 = 一个像素的总位数 / 每个颜色通道使用的位数
+    // 在32位像素格式下，每个颜色通道固定占8位，所以算出的「每个像素包含的颜色通道数」相当于「每个像素占用的字节数」
+    size_t components = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
+    // greyscale有2个，RGB有3个，RGBA有4个，其他则是无法识别的颜色空间了
+    if (components != 2 && components != 3 && components != 4) return;
     
     // 获取指向图像对象的字节数据的指针
     CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
@@ -618,9 +624,6 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
             break;
     }
     
-    // 一个像素所占的字节数：RGB/RGBA 4个字节，greyscale 2个字节
-    size_t bytesPerPixel = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
-    
     // 渲染一个像素的大小：以像素点为中点，线宽为外边距，向外扩展
     CGFloat fillWH = (CGFloat)outlineStrokeWidth + 1 + (CGFloat)outlineStrokeWidth;
     /**
@@ -637,15 +640,15 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
     CGContextSetFillColorWithColor(context, outlineStrokeColor);
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
-            // 像素下标 = 第几行 * 每一行的像素数 + 第几列 * 每个像素的字节数
-            size_t byteIndex = y * bytesPerRow + x * bytesPerPixel;
+            // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
+            size_t byteIndex = y * bytesPerRow + x * components;
             
             // 获取透明度
             CGFloat alpha = 1;
-            if (bytesPerPixel == 4) {
-                alpha = JPGetAlphaFromRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
-            } else if (bytesPerPixel == 2) {
+            if (components == 2) { // greyscale
                 alpha = JPGetAlphaFromGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
+            } else if (components == 3 || components == 4) { // RGB || RGBA
+                alpha = JPGetAlphaFromRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
             }
 //            CGFloat alpha = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
             
@@ -2621,6 +2624,144 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     
     [self __cacheGIF:newImages delays:@[@(delay)] cacheURL:cacheURL];
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
+}
+
++ (UIColor *)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point {
+    CGImageRef imageRef = image.CGImage;
+    if (!imageRef) return nil;
+    
+    // 每一行的总字节数
+    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+    if (bytesPerRow == 0) return nil;
+    
+    // 每个像素包含的颜色通道数 = 一个像素的总位数 / 每个颜色通道使用的位数
+    // 在32位像素格式下，每个颜色通道固定占8位，所以算出的「每个像素包含的颜色通道数」相当于「每个像素占用的字节数」
+    size_t components = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
+    // greyscale有2个，RGB有3个，RGBA有4个，其他则是无法识别的颜色空间了
+    if (components != 2 && components != 3 && components != 4) return nil;
+    
+    // 获取指向图像对象的字节数据的指针
+    CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
+    if (!dataProvider) return nil;
+    CFDataRef data = CGDataProviderCopyData(dataProvider);
+    if (!data) return nil;
+    const UInt8 *bytePtr = CFDataGetBytePtr(data);
+    
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    // 获取透明信息
+    CGImageAlphaInfo alphaInfo = bitmapInfo & kCGBitmapAlphaInfoMask;
+    // 获取字节排序（大端or小端）
+    CGBitmapInfo byteOrderInfo = bitmapInfo & kCGBitmapByteOrderMask;
+    BOOL byteOrderNormal = NO;
+    switch (byteOrderInfo) {
+        case kCGBitmapByteOrderDefault:
+        case kCGBitmapByteOrder32Big:
+            byteOrderNormal = YES;
+            break;
+        default:
+            break;
+    }
+    
+    // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
+    size_t byteIndex = (size_t)point.y * bytesPerRow + (size_t)point.x * components;
+    
+    UIColor *color = nil;
+    if (components == 2) { // greyscale
+        CGFloat white = 0, alpha = 1;
+        JPGetGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &white, &alpha);
+        color = [UIColor colorWithWhite:white alpha:alpha];
+    } else if (components == 3 || components == 4) { // RGB || RGBA
+        CGFloat red = 0, green = 0, blue = 0, alpha = 1;
+        JPGetRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &red, &red, &red, &red);
+        color = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+    }
+    
+    // 释放内存
+    CFRelease(data);
+    
+    return color;
+}
+
+
+static CFDataRef data_;
+static const UInt8 *bytePtr_;
+static CGImageAlphaInfo alphaInfo_;
+static BOOL byteOrderNormal_;
+static size_t bytesPerRow_;
+static size_t components_;
+
++ (void)beginRetrievalImage:(UIImage *)image {
+    [self endRetrievalImage];
+    
+    CGImageRef imageRef = image.CGImage;
+    if (!imageRef) return;
+    
+    // 每一行的总字节数
+    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+    if (bytesPerRow == 0) return;
+    
+    // 每个像素包含的颜色通道数 = 一个像素的总位数 / 每个颜色通道使用的位数
+    // 在32位像素格式下，每个颜色通道固定占8位，所以算出的「每个像素包含的颜色通道数」相当于「每个像素占用的字节数」
+    size_t components = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
+    // greyscale有2个，RGB有3个，RGBA有4个，其他则是无法识别的颜色空间了
+    if (components != 2 && components != 3 && components != 4) return;
+    
+    // 获取指向图像对象的字节数据的指针
+    CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
+    if (!dataProvider) return;
+    CFDataRef data = CGDataProviderCopyData(dataProvider);
+    if (!data) return;
+    const UInt8 *bytePtr = CFDataGetBytePtr(data);
+    
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    // 获取透明信息
+    CGImageAlphaInfo alphaInfo = bitmapInfo & kCGBitmapAlphaInfoMask;
+    // 获取字节排序（大端or小端）
+    CGBitmapInfo byteOrderInfo = bitmapInfo & kCGBitmapByteOrderMask;
+    BOOL byteOrderNormal = NO;
+    switch (byteOrderInfo) {
+        case kCGBitmapByteOrderDefault:
+        case kCGBitmapByteOrder32Big:
+            byteOrderNormal = YES;
+            break;
+        default:
+            break;
+    }
+    
+    data_ = data;
+    bytePtr_ = bytePtr;
+    alphaInfo_ = alphaInfo;
+    byteOrderNormal_ = byteOrderNormal;
+    bytesPerRow_ = bytesPerRow;
+    components_ = components;
+}
+
++ (UIColor *)getColorFromRetrievingImageAtPoint:(CGPoint)point {
+    if (!data_) return nil;
+    
+    // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
+    size_t byteIndex = (size_t)point.y * bytesPerRow_ + (size_t)point.x * components_;
+    
+    UIColor *color = nil;
+    if (components_ == 2) { // greyscale
+        CGFloat white = 0, alpha = 1;
+        JPGetGrayscaleAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &white, &alpha);
+        color = [UIColor colorWithWhite:white alpha:alpha];
+    } else if (components_ == 3 || components_ == 4) { // RGB || RGBA
+        CGFloat red = 0, green = 0, blue = 0, alpha = 1;
+        JPGetRGBAAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &red, &red, &red, &red);
+        color = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+    }
+    
+    return color;
+}
+
++ (void)endRetrievalImage {
+    CFDataRef data = data_;
+    data_ = NULL;
+    if (data) {
+        CFRelease(data);
+    }
 }
 
 @end

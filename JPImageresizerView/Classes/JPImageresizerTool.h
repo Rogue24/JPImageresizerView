@@ -198,6 +198,12 @@ NS_ASSUME_NONNULL_BEGIN
                  cacheURL:(NSURL *_Nullable)cacheURL
                errorBlock:(JPImageresizerErrorBlock)errorBlock
             completeBlock:(JPCropDoneBlock)completeBlock;
+
++ (UIColor *_Nullable)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point;
+
++ (void)beginRetrievalImage:(UIImage *)image;
++ (UIColor *_Nullable)getColorFromRetrievingImageAtPoint:(CGPoint)point;
++ (void)endRetrievalImage;
 @end
 
 NS_ASSUME_NONNULL_END
