@@ -199,9 +199,12 @@ NS_ASSUME_NONNULL_BEGIN
                errorBlock:(JPImageresizerErrorBlock)errorBlock
             completeBlock:(JPCropDoneBlock)completeBlock;
 
+
++ (BOOL)getRGBAFromImage:(UIImage *)image atPoint:(CGPoint)point red:(CGFloat *_Nullable)red green:(CGFloat *_Nullable)green blue:(CGFloat *_Nullable)blue alpha:(CGFloat *_Nullable)alpha;
 + (UIColor *_Nullable)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point;
 
 + (void)beginRetrievalImage:(UIImage *)image;
++ (BOOL)getColorFromRetrievingImageAtPoint:(CGPoint)point red:(CGFloat *_Nullable)red green:(CGFloat *_Nullable)green blue:(CGFloat *_Nullable)blue alpha:(CGFloat *_Nullable)alpha;
 + (UIColor *_Nullable)getColorFromRetrievingImageAtPoint:(CGPoint)point;
 + (void)endRetrievalImage;
 @end

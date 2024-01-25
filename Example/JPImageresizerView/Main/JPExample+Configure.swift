@@ -29,27 +29,29 @@ extension JPExample.ConfigureModel {
             let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
             return .init(.lightContent, configure)
             
-        case .darkBlur:
-            let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
-            return .init(.lightContent, configure)
+        case .blurBg:
+            if Bool.random() {
+                let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
+                return .init(.lightContent, configure)
+            } else {
+                let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
+                return .init(.darkContent, configure)
+            }
             
-        case .lightBlur:
-            let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
-            return .init(.darkContent, configure)
-            
-        case .stretchBorder:
-            let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
-                .jp_strokeColor(UIColor(red: 205.0 / 255.0, green: 107.0 / 255.0, blue: 153.0 / 255.0, alpha: 1))
-                .jp_borderImage(UIImage.getStretchBorderImage())
-                .jp_borderImageRectInset(UIImage.stretchBorderRectInset)
-            return .init(.darkContent, configure)
-            
-        case .tileBorder:
-            let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
-                .jp_frameType(.classicFrameType)
-                .jp_borderImage(UIImage.getTileBorderImage())
-                .jp_borderImageRectInset(UIImage.tileBorderRectInset)
-            return .init(.lightContent, configure)
+        case .customBorder:
+            if Bool.random() {
+                let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
+                    .jp_strokeColor(UIColor(red: 205.0 / 255.0, green: 107.0 / 255.0, blue: 153.0 / 255.0, alpha: 1))
+                    .jp_borderImage(UIImage.getStretchBorderImage())
+                    .jp_borderImageRectInset(UIImage.stretchBorderRectInset)
+                return .init(.darkContent, configure)
+            } else {
+                let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
+                    .jp_frameType(.classicFrameType)
+                    .jp_borderImage(UIImage.getTileBorderImage())
+                    .jp_borderImageRectInset(UIImage.tileBorderRectInset)
+                return .init(.lightContent, configure)
+            }
             
         case .roundResize:
             let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
@@ -64,7 +66,7 @@ extension JPExample.ConfigureModel {
         case .mask:
             let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
                 .jp_frameType(.classicFrameType)
-                .jp_maskImage(UIImage(named: "love.png"))
+                .jp_maskImage(UIImage.bundleImage("love.png"))
                 .jp_isArbitrarily(false)
             return .init(.lightContent, configure)
             

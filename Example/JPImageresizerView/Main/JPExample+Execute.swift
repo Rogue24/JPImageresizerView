@@ -32,12 +32,12 @@ extension JPExample.Item {
             
             let settings = JPImageProcessingSettings()
             settings.outlineStrokeColor = .white
-            settings.outlineStrokeWidth = 2
-            settings.padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+            settings.outlineStrokeWidth = 3
+            settings.padding = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
             
             let configure = JPImageresizerConfigure.defaultConfigure(withImageData: gifData)
                 .jp_frameType(.classicFrameType)
-                .jp_maskImage(UIImage(named: "love.png"))
+                .jp_maskImage(UIImage.bundleImage("love.png"))
                 .jp_isLoopPlaybackGIF(Bool.random())
                 .jp_gifCropSettings(settings)
             let model = JPExample.ConfigureModel(.lightContent, configure)
@@ -50,20 +50,25 @@ extension JPExample.Item {
             
             let settings = JPImageProcessingSettings()
             settings.outlineStrokeColor = .white
-            settings.outlineStrokeWidth = 2
-            settings.padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+            settings.outlineStrokeWidth = 3
+            settings.padding = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
             
-            let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).gif"
-            let cacheURL = URL(fileURLWithPath: cachePath)
-            
-            guard let result = await Self.processImage(gifImage, settings, cacheURL) else { return }
+            guard let result = await Self.processImage(gifImage, settings, getTmpCacheURL("gif")) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
             
         case .singleImageAddOutlineStroke:
-            let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png", "Kobe.jpg", "Flowers.jpg"].randomElement()!
-            let image = UIImage(named: imageName)!
+            let imageName = ["love.png",
+                             "supreme.png",
+                             "bazhuawan_icon.png",
+                             "bazhuawan_error.png",
+                             "bazhuawan_empty.png",
+                             "bazhuawan_\(Int.random(in: 1...20)).png",
+                             "Girl\(Int.random(in: 1...8)).jpg",
+                             "Kobe.jpg",
+                             "flowers.jpg"].randomElement()!
+            let image = UIImage.bundleImage(imageName)
             
             let scale = await (image.size.width * image.scale) / UIScreen.main.bounds.width
             
@@ -80,28 +85,41 @@ extension JPExample.Item {
                 settings.padding = UIEdgeInsets(top: strokeWidth, left: strokeWidth, bottom: strokeWidth, right: strokeWidth)
             }
             
-            let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
-            let cacheURL = URL(fileURLWithPath: cachePath)
-            
-            guard let result = await Self.processImage(image, settings, cacheURL) else { return }
+            guard let result = await Self.processImage(image, settings, getTmpCacheURL("png")) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
             }
             
         case .singleImageOnlyDrawOutline:
-            let imageName = ["love.png", "supreme.png", "bazhuawan_icon.png", "bazhuawan_error.png", "bazhuawan_empty.png", "bazhuawan_6.png", "bazhuawan_15.png"].randomElement()!
-            let image = UIImage(named: imageName)!
+            let imageName = ["bazhuawan_error.png",
+                             "bazhuawan_empty.png",
+                             "bazhuawan_\(Int.random(in: 1...20)).png",
+                             "love.png",
+                             "supreme.png",
+                             "bazhuawan_icon.png"].randomElement()!
+            let image = UIImage.bundleImage(imageName)
             
             let settings = JPImageProcessingSettings()
-            settings.outlineStrokeColor = .systemYellow
             settings.isOnlyDrawOutline = true
+            settings.outlineStrokeColor = UIColor(red: CGFloat.random(in: 0...1),
+                                                  green: CGFloat.random(in: 0...1),
+                                                  blue: CGFloat.random(in: 0...1),
+                                                  alpha: 1)
             
-            let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970)).png"
-            let cacheURL = URL(fileURLWithPath: cachePath)
-            
-            guard let result = await Self.processImage(image, settings, cacheURL) else { return }
+            guard let result = await Self.processImage(image, settings, getTmpCacheURL("png")) else { return }
             await MainActor.run {
                 mainVC.pushPreviewVC([result])
+            }
+            
+        case .colorMeasurement:
+            let imageName = ["colorpicker.png", 
+                             "bazhuawan_\(Int.random(in: 1...20)).png",
+                             "Girl\(Int.random(in: 1...8)).jpg",
+                             "Kobe.jpg",
+                             "flowers.jpg"].randomElement()!
+            let image = UIImage.bundleImage(imageName)
+            await MainActor.run {
+                mainVC.pushColorMeasurementVC(image)
             }
             
         // MARK: - Section3
@@ -144,6 +162,11 @@ extension JPExample.Item {
 }
 
 extension JPExample.Item {
+    func getTmpCacheURL(_ pathExtension: String) -> URL {
+        let cachePath = NSTemporaryDirectory() + "\(Int(Date().timeIntervalSince1970))" + "." + pathExtension
+        return URL(fileURLWithPath: cachePath)
+    }
+    
     static func processImage(_ image: UIImage,
                              _ settings: JPImageProcessingSettings?,
                              _ cacheURL: URL?) async -> JPImageresizerResult? {

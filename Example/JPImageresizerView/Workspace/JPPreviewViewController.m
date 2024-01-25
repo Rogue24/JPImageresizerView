@@ -65,7 +65,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"Finish";
+    self.title = @"Preview";
     self.view.backgroundColor = JPRandomColor;
     
     [self __setupNavigationBar];
@@ -181,6 +181,10 @@
     AVPlayer *player = [[AVPlayer alloc] initWithPlayerItem:item];
     AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
     playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    playerLayer.shadowOpacity = 0.3;
+    playerLayer.shadowColor = UIColor.blackColor.CGColor;
+    playerLayer.shadowOffset = CGSizeMake(1, 1);
+    playerLayer.shadowRadius = 5;
     [self.view.layer addSublayer:playerLayer];
     self.playerLayer = playerLayer;
     self.player = player;
@@ -230,6 +234,10 @@
         if (!image) image = [UIImage imageWithData:data];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.layer.shadowOpacity = 0.3;
+        imageView.layer.shadowColor = UIColor.blackColor.CGColor;
+        imageView.layer.shadowOffset = CGSizeMake(1, 1);
+        imageView.layer.shadowRadius = 5;
         [self.view addSubview:imageView];
         self.imageView = imageView;
         

@@ -28,19 +28,19 @@ static BOOL JPIsSameSize(CGSize size1, CGSize size2) {
 }
 
 static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo, CGFloat *white, CGFloat *alpha) {
-    CGFloat w = 0, a = 1;
+    CGFloat w = 0, a = 255.0;
     switch (alphaInfo) {
         case kCGImageAlphaPremultipliedFirst:
         case kCGImageAlphaFirst:
         {
             if (byteOrderNormal) {
                 // AW
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                w = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
+                w = (CGFloat)bytePtr[byteIndex + 1];
             } else {
                 // WA
-                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                w = (CGFloat)bytePtr[byteIndex];
+                a = (CGFloat)bytePtr[byteIndex + 1];
             }
             break;
         }
@@ -50,12 +50,12 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         {
             if (byteOrderNormal) {
                 // WA
-                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                w = (CGFloat)bytePtr[byteIndex];
+                a = (CGFloat)bytePtr[byteIndex + 1];
             } else {
                 // AW
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                w = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
+                w = (CGFloat)bytePtr[byteIndex + 1];
             }
             break;
         }
@@ -63,7 +63,7 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         case kCGImageAlphaNone:
         {
             // W
-            w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            w = (CGFloat)bytePtr[byteIndex];
             break;
         }
             
@@ -71,10 +71,10 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         {
             if (byteOrderNormal) {
                 // WX
-                w = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                w = (CGFloat)bytePtr[byteIndex];
             } else {
                 // XW
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             }
             break;
         }
@@ -83,10 +83,10 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         {
             if (byteOrderNormal) {
                 // XW
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             } else {
                 // WX
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             }
             break;
         }
@@ -94,7 +94,7 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         case kCGImageAlphaOnly:
         {
             // A
-            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            a = (CGFloat)bytePtr[byteIndex];
             break;
         }
             
@@ -107,23 +107,23 @@ static inline void JPGetGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex,
 }
 
 static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo, CGFloat *red, CGFloat *green, CGFloat *blue, CGFloat *alpha) {
-    CGFloat r = 0, g = 0, b = 0, a = 1;
+    CGFloat r = 0, g = 0, b = 0, a = 255.0;
     switch (alphaInfo) {
         case kCGImageAlphaPremultipliedFirst:
         case kCGImageAlphaFirst:
         {
             if (byteOrderNormal) {
                 // ARGB
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
+                r = (CGFloat)bytePtr[byteIndex + 1];
+                g = (CGFloat)bytePtr[byteIndex + 2];
+                b = (CGFloat)bytePtr[byteIndex + 3];
             } else {
                 // BGRA
-                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                b = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                r = (CGFloat)bytePtr[byteIndex + 2];
+                a = (CGFloat)bytePtr[byteIndex + 3];
             }
             break;
         }
@@ -133,16 +133,16 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
         {
             if (byteOrderNormal) {
                 // RGBA
-                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                r = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                b = (CGFloat)bytePtr[byteIndex + 2];
+                a = (CGFloat)bytePtr[byteIndex + 3];
             } else {
                 // ABGR
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
+                b = (CGFloat)bytePtr[byteIndex + 1];
+                g = (CGFloat)bytePtr[byteIndex + 2];
+                r = (CGFloat)bytePtr[byteIndex + 3];
             }
             break;
         }
@@ -151,14 +151,14 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
         {
             if (byteOrderNormal) {
                 // RGB
-                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                r = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                b = (CGFloat)bytePtr[byteIndex + 2];
             } else {
                 // BGR
-                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                b = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                r = (CGFloat)bytePtr[byteIndex + 2];
             }
             break;
         }
@@ -167,14 +167,14 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
         {
             if (byteOrderNormal) {
                 // RGBX
-                r = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                r = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                b = (CGFloat)bytePtr[byteIndex + 2];
             } else {
                 // XBGR
-                b = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                b = (CGFloat)bytePtr[byteIndex + 1];
+                g = (CGFloat)bytePtr[byteIndex + 2];
+                r = (CGFloat)bytePtr[byteIndex + 3];
             }
             break;
         }
@@ -183,14 +183,14 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
         {
             if (byteOrderNormal) {
                 // XRGB
-                r = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
-                b = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                r = (CGFloat)bytePtr[byteIndex + 1];
+                g = (CGFloat)bytePtr[byteIndex + 2];
+                b = (CGFloat)bytePtr[byteIndex + 3];
             } else {
                 // BGRX
-                b = ((CGFloat)bytePtr[byteIndex]) / 255.0;
-                g = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
-                r = ((CGFloat)bytePtr[byteIndex + 2]) / 255.0;
+                b = (CGFloat)bytePtr[byteIndex];
+                g = (CGFloat)bytePtr[byteIndex + 1];
+                r = (CGFloat)bytePtr[byteIndex + 2];
             }
             break;
         }
@@ -198,7 +198,7 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
         case kCGImageAlphaOnly:
         {
             // A
-            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            a = (CGFloat)bytePtr[byteIndex];
             break;
         }
             
@@ -213,17 +213,17 @@ static void JPGetRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOr
 }
 
 static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo) {
-    CGFloat a = 1;
+    CGFloat a = 255.0;
     switch (alphaInfo) {
         case kCGImageAlphaPremultipliedFirst:
         case kCGImageAlphaFirst:
         {
             if (byteOrderNormal) {
                 // AW
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             } else {
                 // WA
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             }
             break;
         }
@@ -233,10 +233,10 @@ static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteI
         {
             if (byteOrderNormal) {
                 // WA
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             } else {
                 // AW
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             }
             break;
         }
@@ -248,7 +248,7 @@ static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteI
         {
             if (!byteOrderNormal) {
                 // XW
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             }
             break;
         }
@@ -257,10 +257,10 @@ static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteI
         {
             if (byteOrderNormal) {
                 // XW
-                a = ((CGFloat)bytePtr[byteIndex + 1]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 1];
             } else {
                 // WX
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             }
             break;
         }
@@ -268,7 +268,7 @@ static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteI
         case kCGImageAlphaOnly:
         {
             // A
-            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            a = (CGFloat)bytePtr[byteIndex];
             break;
         }
             
@@ -280,17 +280,17 @@ static CGFloat JPGetAlphaFromGrayscaleAtPixel(const UInt8 *bytePtr, size_t byteI
 }
 
 static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex, BOOL byteOrderNormal, CGImageAlphaInfo alphaInfo) {
-    CGFloat a = 1;
+    CGFloat a = 255.0;
     switch (alphaInfo) {
         case kCGImageAlphaPremultipliedFirst:
         case kCGImageAlphaFirst:
         {
             if (byteOrderNormal) {
                 // ARGB
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             } else {
                 // BGRA
-                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 3];
             }
             break;
         }
@@ -300,10 +300,10 @@ static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         {
             if (byteOrderNormal) {
                 // RGBA
-                a = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex + 3];
             } else {
                 // ABGR
-                a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+                a = (CGFloat)bytePtr[byteIndex];
             }
             break;
         }
@@ -316,7 +316,7 @@ static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex,
         case kCGImageAlphaOnly:
         {
             // A
-            a = ((CGFloat)bytePtr[byteIndex]) / 255.0;
+            a = (CGFloat)bytePtr[byteIndex];
             break;
         }
             
@@ -644,13 +644,14 @@ static void JPDrawOutlineStroke(CGImageRef imageRef, CGContextRef context, size_
             size_t byteIndex = y * bytesPerRow + x * components;
             
             // 获取透明度
-            CGFloat alpha = 1;
+//            CGFloat alpha = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            CGFloat alpha = 255.0;
             if (components == 2) { // greyscale
                 alpha = JPGetAlphaFromGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
             } else if (components == 3 || components == 4) { // RGB || RGBA
                 alpha = JPGetAlphaFromRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo);
             }
-//            CGFloat alpha = ((CGFloat)bytePtr[byteIndex + 3]) / 255.0;
+            alpha /= 255.0;
             
             // 非透明的地方就涂色（注意：这里的xy是基于图像的坐标，需要适配成context的坐标进行填充）
             if (alpha > 0.1) { // 透明度0.1以下人眼【几乎】看不见，直接忽略吧
@@ -2626,25 +2627,33 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
-+ (UIColor *)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point {
++ (BOOL)getRGBAFromImage:(UIImage *)image atPoint:(CGPoint)point red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
+    BOOL isSuccess = NO;
+    
     CGImageRef imageRef = image.CGImage;
-    if (!imageRef) return nil;
+    if (!imageRef) return isSuccess;
+    
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    if (width == 0 || height == 0) return isSuccess;
+    
+    if (point.x < 0 || point.y < 0 || point.x >= width || point.y >= height) return isSuccess;
     
     // 每一行的总字节数
     size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
-    if (bytesPerRow == 0) return nil;
+    if (bytesPerRow == 0) return isSuccess;
     
     // 每个像素包含的颜色通道数 = 一个像素的总位数 / 每个颜色通道使用的位数
     // 在32位像素格式下，每个颜色通道固定占8位，所以算出的「每个像素包含的颜色通道数」相当于「每个像素占用的字节数」
     size_t components = CGImageGetBitsPerPixel(imageRef) / CGImageGetBitsPerComponent(imageRef);
     // greyscale有2个，RGB有3个，RGBA有4个，其他则是无法识别的颜色空间了
-    if (components != 2 && components != 3 && components != 4) return nil;
+    if (components != 2 && components != 3 && components != 4) return isSuccess;
     
     // 获取指向图像对象的字节数据的指针
     CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
-    if (!dataProvider) return nil;
+    if (!dataProvider) return isSuccess;
     CFDataRef data = CGDataProviderCopyData(dataProvider);
-    if (!data) return nil;
+    if (!data) return isSuccess;
     const UInt8 *bytePtr = CFDataGetBytePtr(data);
     
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
@@ -2665,21 +2674,35 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
     size_t byteIndex = (size_t)point.y * bytesPerRow + (size_t)point.x * components;
     
-    UIColor *color = nil;
     if (components == 2) { // greyscale
-        CGFloat white = 0, alpha = 1;
-        JPGetGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &white, &alpha);
-        color = [UIColor colorWithWhite:white alpha:alpha];
+        CGFloat w = 0, a = 255.0;
+        JPGetGrayscaleAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &w, &a);
+        if (red) *red = w;
+        if (green) *green = w;
+        if (blue) *blue = w;
+        if (alpha) *alpha = a / 255.0;
+        isSuccess = YES;
     } else if (components == 3 || components == 4) { // RGB || RGBA
-        CGFloat red = 0, green = 0, blue = 0, alpha = 1;
-        JPGetRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &red, &red, &red, &red);
-        color = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+        CGFloat r = 0, g = 0, b = 0, a = 255.0;
+        JPGetRGBAAtPixel(bytePtr, byteIndex, byteOrderNormal, alphaInfo, &r, &g, &b, &a);
+        if (red) *red = r;
+        if (green) *green = g;
+        if (blue) *blue = b;
+        if (alpha) *alpha = a / 255.0;
+        isSuccess = YES;
     }
     
     // 释放内存
     CFRelease(data);
-    
-    return color;
+    return isSuccess;
+}
+
++ (UIColor *)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point {
+    CGFloat r = 0, g = 0, b = 0, a = 1;
+    if ([self getRGBAFromImage:image atPoint:point red:&r green:&g blue:&b alpha:&a]) {
+        return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+    }
+    return nil;
 }
 
 
@@ -2689,12 +2712,18 @@ static CGImageAlphaInfo alphaInfo_;
 static BOOL byteOrderNormal_;
 static size_t bytesPerRow_;
 static size_t components_;
+static size_t width_;
+static size_t height_;
 
 + (void)beginRetrievalImage:(UIImage *)image {
     [self endRetrievalImage];
     
     CGImageRef imageRef = image.CGImage;
     if (!imageRef) return;
+    
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    if (width == 0 || height == 0) return;
     
     // 每一行的总字节数
     size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
@@ -2734,26 +2763,45 @@ static size_t components_;
     byteOrderNormal_ = byteOrderNormal;
     bytesPerRow_ = bytesPerRow;
     components_ = components;
+    width_ = width;
+    height_ = height;
 }
 
-+ (UIColor *)getColorFromRetrievingImageAtPoint:(CGPoint)point {
-    if (!data_) return nil;
++ (BOOL)getColorFromRetrievingImageAtPoint:(CGPoint)point red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
+    BOOL isSuccess = NO;
+    if (!data_) return isSuccess;
+    if (point.x < 0 || point.y < 0 || point.x >= width_ || point.y >= height_) return isSuccess;
     
     // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
     size_t byteIndex = (size_t)point.y * bytesPerRow_ + (size_t)point.x * components_;
     
-    UIColor *color = nil;
     if (components_ == 2) { // greyscale
-        CGFloat white = 0, alpha = 1;
-        JPGetGrayscaleAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &white, &alpha);
-        color = [UIColor colorWithWhite:white alpha:alpha];
+        CGFloat w = 0, a = 255.0;
+        JPGetGrayscaleAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &w, &a);
+        if (red) *red = w;
+        if (green) *green = w;
+        if (blue) *blue = w;
+        if (alpha) *alpha = a / 255.0;
+        isSuccess = YES;
     } else if (components_ == 3 || components_ == 4) { // RGB || RGBA
-        CGFloat red = 0, green = 0, blue = 0, alpha = 1;
-        JPGetRGBAAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &red, &red, &red, &red);
-        color = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+        CGFloat r = 0, g = 0, b = 0, a = 255.0;
+        JPGetRGBAAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &r, &g, &b, &a);
+        if (red) *red = r;
+        if (green) *green = g;
+        if (blue) *blue = b;
+        if (alpha) *alpha = a / 255.0;
+        isSuccess = YES;
     }
     
-    return color;
+    return isSuccess;
+}
+
++ (UIColor *)getColorFromRetrievingImageAtPoint:(CGPoint)point {
+    CGFloat r = 0, g = 0, b = 0, a = 1;
+    if ([self getColorFromRetrievingImageAtPoint:point red:&r green:&g blue:&b alpha:&a]) {
+        return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+    }
+    return nil;
 }
 
 + (void)endRetrievalImage {

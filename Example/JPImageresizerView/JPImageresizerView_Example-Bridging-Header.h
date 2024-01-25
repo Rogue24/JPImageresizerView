@@ -11,4 +11,4 @@
 #import "UIView+JPExtension.h"
 #import "JPPhotoTool.h"
 #import "JPPhotoViewController.h"
-#import "JPTestViewController.h"
+#import "JPDynamicPage.h"

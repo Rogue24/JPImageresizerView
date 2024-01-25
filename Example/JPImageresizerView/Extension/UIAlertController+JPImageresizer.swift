@@ -59,8 +59,8 @@ extension UIAlertController {
         UIAlertController
             .build(.actionSheet)
             .addAction("Girl") { handler(UIImage.randomGirlImage, nil, nil) }
-            .addAction("Kobe") { handler(UIImage(named: "Kobe.jpg"), nil, nil) }
-            .addAction("Flowers") { handler(UIImage(named: "Flowers.jpg"), nil, nil) }
+            .addAction("Kobe") { handler(UIImage.bundleImage("Kobe.jpg"), nil, nil) }
+            .addAction("Flowers") { handler(UIImage.bundleImage("flowers.jpg"), nil, nil) }
             .addAction("咬人猫舞蹈节选（视频）") { handler(nil, nil, URL(fileURLWithPath: Bundle.main.path(forResource: "yaorenmao", ofType: "mov")!)) }
             .addAction("Gem（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Gem", ofType: "gif")!)), nil) }
             .addAction("Dilraba（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Dilraba", ofType: "gif")!)), nil) }
@@ -104,10 +104,10 @@ extension UIAlertController {
                                 isCanRemoveMaskImage: Bool) {
         let alertCtr = UIAlertController.build(.actionSheet)
             .addAction("蒙版素材列表") { handler2() }
-            .addAction("love") { handler1(UIImage(named: "love.png")) }
-            .addAction("Supreme") { handler1(UIImage(named: "supreme.png")) }
+            .addAction("love") { handler1(UIImage.bundleImage("love.png")) }
+            .addAction("Supreme") { handler1(UIImage.bundleImage("supreme.png")) }
         if isReplaceFace {
-            alertCtr.addAction("Face Mask") { handler1(UIImage(named: "DanielWuFace.png")) }
+            alertCtr.addAction("Face Mask") { handler1(UIImage.bundleImage("DanielWuFace.png")) }
         }
         if isCanRemoveMaskImage {
             alertCtr.addDestructive("移除蒙版") { handler1(nil) }

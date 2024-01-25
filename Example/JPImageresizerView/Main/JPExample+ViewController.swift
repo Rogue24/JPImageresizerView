@@ -54,16 +54,12 @@ extension JPExample {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             navigationController?.navigationBar.prefersLargeTitles = true
-            navigationController?.setNavigationBarHidden(false, animated: true)
+            navigationController?.setNavigationBarHidden(false, animated: animated)
         }
         
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
             removeTmpFile()
-            
-            replaceFunnyAction { [weak self] in
-                self?.navigationController?.pushViewController(JPTestViewController(), animated: true)
-            }
         }
         
         deinit {
@@ -80,13 +76,14 @@ extension JPExample {
             cameraBtn.addTarget(self, action: #selector(cameraAction), for: .touchUpInside)
             
             cacheBtn.isHidden = true
-            cacheBtn.setImage(UIImage(systemName: "arrow.uturn.backward.square"), for: .normal)
+            cacheBtn.setImage(UIImage(systemName: "arrow.backward.to.line"), for: .normal)
             cacheBtn.addTarget(self, action: #selector(backCacheAction), for: .touchUpInside)
             cacheCanceler = publisher(for: \.cacheModel, options: .new).sink { [weak self] newValue in
                 self?.cacheBtn.isHidden = newValue == nil
             }
             
-            navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: cameraBtn), UIBarButtonItem(customView: cacheBtn)]
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cacheBtn)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cameraBtn)
         }
     }
 }
@@ -220,6 +217,12 @@ extension JPExample.ViewController {
     func pushPreviewVC(_ results: [JPImageresizerResult], columnCount: Int = 1, rowCount: Int = 1) {
         guard let navCtr = navigationController else { return }
         let vc = JPPreviewViewController.build(with: results, columnCount: columnCount, rowCount: rowCount)
+        navCtr.pushViewController(vc, animated: true)
+    }
+    
+    func pushColorMeasurementVC(_ image: UIImage) {
+        guard let navCtr = navigationController else { return }
+        let vc = JPColorMeasurementViewController(image: image)
         navCtr.pushViewController(vc, animated: true)
     }
 }

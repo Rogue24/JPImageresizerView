@@ -8,6 +8,12 @@
 import SwiftUI
 
 extension View {
+    func intoUIVC() -> UIHostingController<Self> {
+        UIHostingController(rootView: self)
+    }
+}
+
+extension View {
     func sheet(item: Binding<(some View & Identifiable)?>) -> some View {
         self.sheet(item: item) { $0 }
     }

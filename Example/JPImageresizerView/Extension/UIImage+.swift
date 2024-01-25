@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIImage {
-    static func bundleImage(_ name: String, ofType ext: String?) -> UIImage {
+    static func bundleImage(_ name: String, ofType ext: String? = nil) -> UIImage {
         UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: ext)!)!
     }
 }
@@ -51,7 +51,7 @@ extension UIImage {
         case (girlCount + 1):
             imageName = "Kobe.jpg"
         default:
-            imageName = "Flowers.jpg"
+            imageName = "flowers.jpg"
         }
         return bundleImage(imageName, ofType: nil)
     }
@@ -61,7 +61,7 @@ extension UIImage {
         if let cuteOctoGIFImg = self.cuteOctoGIFImg {
             return cuteOctoGIFImg
         }
-        let images = Array(1...20).map { UIImage(named: "bazhuawan_\($0).png")! }
+        let images = Array(1...20).map { UIImage.bundleImage("bazhuawan_\($0).png") }
         let cuteOctoGIFImg = UIImage.animatedImage(with: images, duration: 1.5)!
         self.cuteOctoGIFImg = cuteOctoGIFImg
         return cuteOctoGIFImg

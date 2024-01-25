@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00168E192AD91EA800B1D8E4 /* JPTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00168E182AD91EA800B1D8E4 /* JPTestViewController.m */; };
 		0024C32D292F5AD7002513DA /* JPExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0024C32C292F5AD7002513DA /* JPExample.swift */; };
 		002E78B5295AA4740071E30C /* JPExample+Configure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample+Configure.swift */; };
 		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
@@ -38,6 +37,9 @@
 		006A9E282A77CD1200AD86BA /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E272A77CD1200AD86BA /* UIAlertController+.swift */; };
 		006A9E2A2A77CD4700AD86BA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E292A77CD4700AD86BA /* View+.swift */; };
 		006A9E2C2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A9E2B2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift */; };
+		00746A8C2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00746A8B2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift */; };
+		00796CC22B626D1E001F9C51 /* transparentBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 00796CC12B626D1E001F9C51 /* transparentBG.png */; };
+		00796CC42B62795E001F9C51 /* colorpicker.png in Resources */ = {isa = PBXBuildFile; fileRef = 00796CC32B62795E001F9C51 /* colorpicker.png */; };
 		008BEF8729594ACE00C5A82C /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController+.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage+.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample+FixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */; };
@@ -64,7 +66,7 @@
 		1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */; };
 		1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A54DA74254583790053F75F /* JPExportCancelView.m */; };
 		1A54DA90254589A60053F75F /* Kobe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7A254589A60053F75F /* Kobe.jpg */; };
-		1A54DA91254589A60053F75F /* Flowers.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7B254589A60053F75F /* Flowers.jpg */; };
+		1A54DA91254589A60053F75F /* flowers.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7B254589A60053F75F /* flowers.jpg */; };
 		1A54DA92254589A60053F75F /* DanielWuFace.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7C254589A60053F75F /* DanielWuFace.png */; };
 		1A54DA93254589A60053F75F /* DanielWu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7D254589A60053F75F /* DanielWu.jpg */; };
 		1A54DA94254589A60053F75F /* Girl8.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A54DA7E254589A60053F75F /* Girl8.jpg */; };
@@ -127,8 +129,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00168E172AD91EA800B1D8E4 /* JPTestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPTestViewController.h; sourceTree = "<group>"; };
-		00168E182AD91EA800B1D8E4 /* JPTestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPTestViewController.m; sourceTree = "<group>"; };
 		0024C32C292F5AD7002513DA /* JPExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.swift; sourceTree = "<group>"; };
 		002E78B4295AA4740071E30C /* JPExample+Configure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+Configure.swift"; sourceTree = "<group>"; };
 		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
@@ -160,6 +160,9 @@
 		006A9E272A77CD1200AD86BA /* UIAlertController+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+.swift"; sourceTree = "<group>"; };
 		006A9E292A77CD4700AD86BA /* View+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		006A9E2B2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+JPImageresizer.swift"; sourceTree = "<group>"; };
+		00746A8B2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPColorMeasurementViewController.swift; sourceTree = "<group>"; };
+		00796CC12B626D1E001F9C51 /* transparentBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = transparentBG.png; sourceTree = "<group>"; };
+		00796CC32B62795E001F9C51 /* colorpicker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colorpicker.png; sourceTree = "<group>"; };
 		008BEF8629594ACE00C5A82C /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+FixOrientation.swift"; sourceTree = "<group>"; };
@@ -203,7 +206,7 @@
 		1A54DA73254583790053F75F /* JPExportCancelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPExportCancelView.h; sourceTree = "<group>"; };
 		1A54DA74254583790053F75F /* JPExportCancelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPExportCancelView.m; sourceTree = "<group>"; };
 		1A54DA7A254589A60053F75F /* Kobe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Kobe.jpg; sourceTree = "<group>"; };
-		1A54DA7B254589A60053F75F /* Flowers.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Flowers.jpg; sourceTree = "<group>"; };
+		1A54DA7B254589A60053F75F /* flowers.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = flowers.jpg; sourceTree = "<group>"; };
 		1A54DA7C254589A60053F75F /* DanielWuFace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DanielWuFace.png; sourceTree = "<group>"; };
 		1A54DA7D254589A60053F75F /* DanielWu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DanielWu.jpg; sourceTree = "<group>"; };
 		1A54DA7E254589A60053F75F /* Girl8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Girl8.jpg; sourceTree = "<group>"; };
@@ -313,13 +316,12 @@
 		002E78BA295ADAD80071E30C /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
-				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
 				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
-				00168E172AD91EA800B1D8E4 /* JPTestViewController.h */,
-				00168E182AD91EA800B1D8E4 /* JPTestViewController.m */,
+				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
+				00746A8B2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift */,
 				718FEDE82869C1B700686129 /* SwiftUI */,
 			);
 			path = Workspace;
@@ -361,6 +363,21 @@
 				006A047C2B395A71009D8E82 /* bazhuawan_20.png */,
 			);
 			path = "八爪丸";
+			sourceTree = "<group>";
+		};
+		00796CC52B628196001F9C51 /* Girls */ = {
+			isa = PBXGroup;
+			children = (
+				1A54DA86254589A60053F75F /* Girl1.jpg */,
+				1A54DA84254589A60053F75F /* Girl2.jpg */,
+				1A54DA85254589A60053F75F /* Girl3.jpg */,
+				1A54DA7F254589A60053F75F /* Girl4.jpg */,
+				1A54DA80254589A60053F75F /* Girl5.jpg */,
+				1A54DA83254589A60053F75F /* Girl6.jpg */,
+				1A54DA82254589A60053F75F /* Girl7.jpg */,
+				1A54DA7E254589A60053F75F /* Girl8.jpg */,
+			);
+			path = Girls;
 			sourceTree = "<group>";
 		};
 		00B3FAF12968227E00F48389 /* ImagePicker */ = {
@@ -489,21 +506,16 @@
 		1A54DA79254589A60053F75F /* Picture */ = {
 			isa = PBXGroup;
 			children = (
+				00796CC52B628196001F9C51 /* Girls */,
+				006A04712B395A71009D8E82 /* 八爪丸 */,
 				1A54DA7D254589A60053F75F /* DanielWu.jpg */,
 				1A54DA7C254589A60053F75F /* DanielWuFace.png */,
-				1A54DA86254589A60053F75F /* Girl1.jpg */,
-				1A54DA84254589A60053F75F /* Girl2.jpg */,
-				1A54DA85254589A60053F75F /* Girl3.jpg */,
-				1A54DA7F254589A60053F75F /* Girl4.jpg */,
-				1A54DA80254589A60053F75F /* Girl5.jpg */,
-				1A54DA83254589A60053F75F /* Girl6.jpg */,
-				1A54DA82254589A60053F75F /* Girl7.jpg */,
-				1A54DA7E254589A60053F75F /* Girl8.jpg */,
 				1A54DA7A254589A60053F75F /* Kobe.jpg */,
-				1A54DA7B254589A60053F75F /* Flowers.jpg */,
+				1A54DA7B254589A60053F75F /* flowers.jpg */,
 				1A54DA87254589A60053F75F /* love.png */,
 				1A54DA81254589A60053F75F /* supreme.png */,
-				006A04712B395A71009D8E82 /* 八爪丸 */,
+				00796CC12B626D1E001F9C51 /* transparentBG.png */,
+				00796CC32B62795E001F9C51 /* colorpicker.png */,
 			);
 			path = Picture;
 			sourceTree = "<group>";
@@ -727,7 +739,9 @@
 				006A04702B39277B009D8E82 /* bazhuawan_empty.png in Resources */,
 				006A04942B395A71009D8E82 /* bazhuawan_5.png in Resources */,
 				1A54DA99254589A60053F75F /* Girl6.jpg in Resources */,
+				00796CC22B626D1E001F9C51 /* transparentBG.png in Resources */,
 				006A046E2B39276F009D8E82 /* bazhuawan_error.png in Resources */,
+				00796CC42B62795E001F9C51 /* colorpicker.png in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				1A54DA9F254589A60053F75F /* Dilraba.gif in Resources */,
 				006A048B2B395A71009D8E82 /* bazhuawan_16.png in Resources */,
@@ -765,7 +779,7 @@
 				006A04972B395A71009D8E82 /* bazhuawan_2.png in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				1A54DA95254589A60053F75F /* Girl4.jpg in Resources */,
-				1A54DA91254589A60053F75F /* Flowers.jpg in Resources */,
+				1A54DA91254589A60053F75F /* flowers.jpg in Resources */,
 				1A54DAA0254589A60053F75F /* yaorenmao.mov in Resources */,
 				1A54DA93254589A60053F75F /* DanielWu.jpg in Resources */,
 			);
@@ -836,6 +850,7 @@
 				006A9E282A77CD1200AD86BA /* UIAlertController+.swift in Sources */,
 				00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
+				00746A8C2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift in Sources */,
 				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				006A9E2C2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift in Sources */,
@@ -848,7 +863,6 @@
 				1A0AB30822B22B0F00B6B6AB /* JPPhotoViewController.m in Sources */,
 				718FEDEE2869C6EF00686129 /* Modifier.swift in Sources */,
 				718FEE32286B38BA00686129 /* ImageCroperView.swift in Sources */,
-				00168E192AD91EA800B1D8E4 /* JPTestViewController.m in Sources */,
 				1AA468CD249A0D9B0081452F /* ShapeMergeCell.m in Sources */,
 				008BEF8F2959B0E500C5A82C /* JPExample+FixOrientation.swift in Sources */,
 				00B3FAF92968306A00F48389 /* Error+.swift in Sources */,
