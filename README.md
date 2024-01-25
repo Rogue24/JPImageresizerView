@@ -338,8 +338,10 @@ self.imageresizerView = imageresizerView
 ```
 
 **对GIF的图像进行处理**
+
 原GIF：
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
+
 ```objc
 // 1.配置需处理的设置
 JPImageProcessingSettings *settings = [[JPImageProcessingSettings alloc] init];
@@ -351,6 +353,7 @@ settings.cornerRadius = 30; // 圆角
 // 2.在裁剪前设置即可`gifSettings`（可动态设置）
 self.imageresizerView.gifSettings = settings;
 ```
+
 处理后的GIF：
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 

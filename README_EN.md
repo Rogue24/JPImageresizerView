@@ -339,8 +339,10 @@ For specific use, refer to Demo (JPCropViewController).
 ```
 
 **Process Images for GIF**
+
 Original GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
+
 ```objc
 // 1.Configure settings for processing
 JPImageProcessingSettings *settings = [[JPImageProcessingSettings alloc] init];
@@ -352,6 +354,7 @@ settings.cornerRadius = 30;
 // 2.Set within `gifSettings` before cropping (can be dynamically configured)
 self.imageresizerView.gifSettings = settings;
 ```
+
 Processed GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
