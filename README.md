@@ -337,7 +337,7 @@ self.imageresizerView = imageresizerView
                    completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**对GIF的图像进行处理**
+- **对GIF的图像进行处理**
 
 原GIF：
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
@@ -357,7 +357,7 @@ self.imageresizerView.gifSettings = settings;
 处理后的GIF：
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
-**裁剪GIF的其中一帧**
+- **裁剪GIF的其中一帧**
 ```objc
 // 1.原图尺寸裁剪GIF当前帧画面
 // completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
@@ -381,14 +381,15 @@ self.imageresizerView.gifSettings = settings;
               errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropDoneBlock)completeBlock;
 ```
-- PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
+PS：可以设置isLoopPlaybackGIF自主选择裁剪哪一帧（默认为NO，设置为YES会自动播放GIF）
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
+
 #### 裁剪本地视频
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
-- PS：目前只针对本地视频，远程视频暂未适配。
+PS：目前只针对本地视频，远程视频暂未适配。
 ```objc
 // 裁剪整段视频
 // cacheURL：如果为nil，会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
@@ -420,9 +421,9 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 // 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
 - (void)videoCancelExport;
 ```
-- PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
+PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会自动对尺寸进行校正，不足的地方会以绿边的形式进行填充，因此我在方法内部对裁剪尺寸做了对16除余的修改，最后导出视频的宽高比有可能跟指定的宽高比有些许差异。
 
-**裁剪视频的其中一帧**
+- **裁剪视频的其中一帧**
 ```ojbc
 // 1.原图尺寸裁剪视频当前帧画面
 // cacheURL --- 缓存路径（可设置为nil，则不会缓存）
@@ -450,7 +451,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                       completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**截取视频某一段裁剪后转GIF**
+- **截取视频某一段裁剪后转GIF**
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
 ```objc
 // 1.视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
@@ -476,7 +477,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropDoneBlock)completeBlock;
 ```
-- PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
+PS：裁剪整段视频画面圆切、蒙版的功能不能使用，目前只对图片和GIF有效。
 
 ### 蒙版
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)

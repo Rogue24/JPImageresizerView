@@ -338,7 +338,7 @@ For specific use, refer to Demo (JPCropViewController).
                    completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**Process Images for GIF**
+- **Process Images for GIF**
 
 Original GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
@@ -358,7 +358,7 @@ self.imageresizerView.gifSettings = settings;
 Processed GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
-**Crop one of the GIF frames**
+- **Crop one of the GIF frames**
 ```objc
 // 1.The size of the original image cuts the current frame of GIF
 // completeBlock --- Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
@@ -382,14 +382,15 @@ Processed GIF:
               errorBlock:(JPImageresizerErrorBlock)errorBlock
            completeBlock:(JPCropDoneBlock)completeBlock;
 ```
-- PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is NO, if YES is set, GIF will be played automatically)
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
+PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is NO, if YES is set, GIF will be played automatically)
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
+
 #### Crop local video
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
-- PS: At present, it is only for local video, and remote video is not suitable for the moment.
+PS: At present, it is only for local video, and remote video is not suitable for the moment.
 ```objc
 // Clip the entire video
 // cacheURL: If it is nil, it will be cached in the NSTemporaryDirectory folder of the system by default. The video name is the current timestamp, and the format is MP4
@@ -420,9 +421,9 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 // When the video is being exported, the call can cancel the export and trigger the errorblock callback (JPIEReason_ExportCancelled)
 - (void)videoCancelExport;
 ```
-- PS: Since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method. Therefore, the width to height ratio of the exported video may be slightly different from the specified width height ratio.
+PS: Since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method. Therefore, the width to height ratio of the exported video may be slightly different from the specified width height ratio.
 
-**Clip one frame of the video**
+- **Clip one frame of the video**
 ```ojbc
 // 1.The size of the original image cuts the current frame of the video
 // cacheURL --- Cache path (can be set to nil, it will not be cached)
@@ -450,7 +451,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                       completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**Cut a video segment and transfer it to GIF**
+- **Cut a video segment and transfer it to GIF**
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
 ```objc
 // 1.Video from the current time to capture a specified number of seconds screen to GIF (fps = 10, rate = 1, maximumSize = 500 * 500)
@@ -475,7 +476,7 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
                            errorBlock:(JPImageresizerErrorBlock)errorBlock
                         completeBlock:(JPCropDoneBlock)completeBlock;
 ```
-- PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
+PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
 
 ### Mask image
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
