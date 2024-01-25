@@ -91,6 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 裁剪的图片/GIF（UIImage）
  * 设置该值会调用 -setImage: animated: 方法（默认isAnimated = YES，淡入淡出的效果）
+ * PS：GIF的`data`通过`[UIImage imageWithData:data]`创建的`image`是普通的静态图片，请该用`imageData`正确传入GIF。
  */
 @property (nonatomic, strong) UIImage *_Nullable image;
 /*!
