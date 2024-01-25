@@ -36,7 +36,7 @@
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
     .jp_isLoopPlaybackGIF(NO)
-    .jp_gifCropSettings(nil)
+    .jp_gifSettings(nil)
     .jp_isCleanHistoryAfterInitial(YES);
     return configure;
 }
@@ -412,9 +412,9 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(JPImageProcessingSettings *))jp_gifCropSettings {
-    return ^(JPImageProcessingSettings *gifCropSettings) {
-        self.gifCropSettings = gifCropSettings;
+- (JPImageresizerConfigure *(^)(JPImageProcessingSettings *))jp_gifSettings {
+    return ^(JPImageProcessingSettings *gifSettings) {
+        self.gifSettings = gifSettings;
         return self;
     };
 }

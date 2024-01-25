@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
     - maskImage = nil;
     - isArbitrarilyMask = NO;
     - isLoopPlaybackGIF = NO;
-    - gifCropSettings = nil;
+    - gifSettings = nil;
     - isCleanHistoryAfterInitial = YES;
  */
 
@@ -238,7 +238,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
-@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifCropSettings;
+/** GIF图像处理设置（背景色、圆角、边框、轮廓描边、内容边距） */
+@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifSettings;
 
 /** 裁剪历史 */
 @property (nonatomic, assign) JPCropHistory history;
@@ -275,7 +276,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_isShowGridlinesWhenDragging)(BOOL isShowGridlinesWhenDragging);
 @property (readonly) JPImageresizerConfigure *(^jp_gridCount)(NSUInteger gridCount);
 @property (readonly) JPImageresizerConfigure *(^jp_isLoopPlaybackGIF)(BOOL isLoopPlaybackGIF);
-@property (readonly) JPImageresizerConfigure *(^jp_gifCropSettings)(JPImageProcessingSettings *_Nullable gifCropSettings);
+@property (readonly) JPImageresizerConfigure *(^jp_gifSettings)(JPImageProcessingSettings *_Nullable gifSettings);
 @property (readonly) JPImageresizerConfigure *(^jp_isCleanHistoryAfterInitial)(BOOL isCleanHistoryAfterInitial);
 @end
 

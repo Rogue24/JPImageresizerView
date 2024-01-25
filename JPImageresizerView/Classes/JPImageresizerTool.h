@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)isGIFData:(NSData *)data;
 
 /**
- * 解码GIF【该方法采用的是 YYKit 的代码（膜拜大神）】
+ * 解码GIF【该方法采用的是 YYKit 的代码】
  */
 + (UIImage *_Nullable)decodeGIFData:(NSData *)data;
 
@@ -178,20 +178,29 @@ NS_ASSUME_NONNULL_BEGIN
                        fixStartBlock:(JPExportVideoStartBlock)fixStartBlock
                     fixCompleteBlock:(JPExportVideoCompleteBlock)fixCompleteBlock;
 
-#pragma mark - 给图像内容添加轮廓描边
+#pragma mark - 图片处理并缓存（背景色、圆角、边框、轮廓描边、内容边距）
 
+/**
+ * 图片处理（NSData）
+ */
 + (void)processImageWithImageData:(NSData *)imageData
                          settings:(JPImageProcessingSettings *_Nullable)settings
                          cacheURL:(NSURL *_Nullable)cacheURL
                        errorBlock:(JPImageresizerErrorBlock)errorBlock
                     completeBlock:(JPCropDoneBlock)completeBlock;
 
+/**
+ * 图片处理（UIImage）
+ */
 + (void)processImageWithImage:(UIImage *)image
                      settings:(JPImageProcessingSettings *_Nullable)settings
                      cacheURL:(NSURL *_Nullable)cacheURL
                    errorBlock:(JPImageresizerErrorBlock)errorBlock
                 completeBlock:(JPCropDoneBlock)completeBlock;
 
+/**
+ * 本地图片组装GIF
+ */
 + (void)makeGIFWithImages:(NSArray<UIImage *> *)images
                  duration:(NSTimeInterval)duration
                  settings:(JPImageProcessingSettings *_Nullable)settings
@@ -199,14 +208,48 @@ NS_ASSUME_NONNULL_BEGIN
                errorBlock:(JPImageresizerErrorBlock)errorBlock
             completeBlock:(JPCropDoneBlock)completeBlock;
 
+#pragma mark - 获取图片目标像素的颜色值
 
+/**
+ * 获取图片目标像素的颜色值
+ *  - 获取`RBGA`值并返回是否成功获取
+ *  - `RGB: 0~255, alpha: 0~1`
+ */
 + (BOOL)getRGBAFromImage:(UIImage *)image atPoint:(CGPoint)point red:(CGFloat *_Nullable)red green:(CGFloat *_Nullable)green blue:(CGFloat *_Nullable)blue alpha:(CGFloat *_Nullable)alpha;
+
+/**
+ * 获取图片目标像素的颜色
+ *  - 返回`UIColor`
+ */
 + (UIColor *_Nullable)getColorFromImage:(UIImage *)image atPoint:(CGPoint)point;
 
+#pragma mark - 持续获取图片目标像素的颜色值
+
+/**
+ * 开始检索图片
+ *  - 调用后会一直【持有】图片数据，当不再需要检索时，要调用`endRetrievalImage`方法来释放内存
+ */
 + (void)beginRetrievalImage:(UIImage *)image;
+
+/**
+ * 获取「正在检索的图片」目标像素的颜色值
+ *  - 获取`RBGA`值并返回是否成功获取
+ *  - `RGB: 0~255, alpha: 0~1`
+ */
 + (BOOL)getColorFromRetrievingImageAtPoint:(CGPoint)point red:(CGFloat *_Nullable)red green:(CGFloat *_Nullable)green blue:(CGFloat *_Nullable)blue alpha:(CGFloat *_Nullable)alpha;
+
+/**
+ * 获取「正在检索的图片」目标像素的颜色
+ *  - 返回`UIColor`
+ */
 + (UIColor *_Nullable)getColorFromRetrievingImageAtPoint:(CGPoint)point;
+
+/**
+ * 结束检索图片
+ *  - 调用`beginRetrievalImage`方法后，最后要搭配该方法来释放内存
+ */
 + (void)endRetrievalImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

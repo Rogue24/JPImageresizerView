@@ -171,6 +171,13 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否重复循环GIF播放（NO则有拖动条控制） */
 @property (nonatomic, assign) BOOL isLoopPlaybackGIF;
 
+/**
+ * GIF图像处理设置
+ *  - 包括：背景色、圆角、边框、轮廓描边、内容边距
+ *  - 可在裁剪前动态修改
+ */
+@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifSettings;
+
 /** 是否可重置（该属性仅针对[旋转]、[缩放]、[镜像]的变化情况，其他如裁剪宽高比、圆切等变化情况需用户自行判定能否重置） */
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 
@@ -388,8 +395,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateFrame:(CGRect)frame
       contentInsets:(UIEdgeInsets)contentInsets
            duration:(NSTimeInterval)duration;
-
-@property (nonatomic, strong) JPImageProcessingSettings *_Nullable gifCropSettings;
 
 #pragma mark - 重置
 /*!

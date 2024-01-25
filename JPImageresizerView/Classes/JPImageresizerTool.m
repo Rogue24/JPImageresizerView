@@ -2338,12 +2338,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     }];
 }
 
+#pragma mark - 图片处理并缓存（背景色、圆角、边框、轮廓描边、内容边距）
 
-
-
-
-
-#pragma mark - 给图像内容添加轮廓描边
 + (void)processImageWithImageData:(NSData *)imageData
                          settings:(JPImageProcessingSettings *)settings
                          cacheURL:(NSURL *_Nullable)cacheURL
@@ -2627,6 +2623,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     [self __executeCropDoneBlock:completeBlock image:finalImage cacheURL:cacheURL];
 }
 
+#pragma mark - 获取图片目标像素的颜色值
+
 + (BOOL)getRGBAFromImage:(UIImage *)image atPoint:(CGPoint)point red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
     BOOL isSuccess = NO;
     
@@ -2705,15 +2703,16 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     return nil;
 }
 
+#pragma mark - 持续获取图片目标像素的颜色值
 
-static CFDataRef data_;
-static const UInt8 *bytePtr_;
-static CGImageAlphaInfo alphaInfo_;
-static BOOL byteOrderNormal_;
-static size_t bytesPerRow_;
-static size_t components_;
-static size_t width_;
-static size_t height_;
+static CFDataRef rlImgData_;
+static size_t rlImgWidth_;
+static size_t rlImgHeight_;
+static size_t rlImgBytesPerRow_;
+static size_t rlImgComponents_;
+static CGImageAlphaInfo rlImgAlphaInfo_;
+static BOOL rlImgByteOrderNormal_;
+static const UInt8 *rlImgBytePtr_;
 
 + (void)beginRetrievalImage:(UIImage *)image {
     [self endRetrievalImage];
@@ -2757,35 +2756,35 @@ static size_t height_;
             break;
     }
     
-    data_ = data;
-    bytePtr_ = bytePtr;
-    alphaInfo_ = alphaInfo;
-    byteOrderNormal_ = byteOrderNormal;
-    bytesPerRow_ = bytesPerRow;
-    components_ = components;
-    width_ = width;
-    height_ = height;
+    rlImgData_            = data;
+    rlImgWidth_           = width;
+    rlImgHeight_          = height;
+    rlImgBytesPerRow_     = bytesPerRow;
+    rlImgComponents_      = components;
+    rlImgAlphaInfo_       = alphaInfo;
+    rlImgByteOrderNormal_ = byteOrderNormal;
+    rlImgBytePtr_         = bytePtr;
 }
 
 + (BOOL)getColorFromRetrievingImageAtPoint:(CGPoint)point red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
     BOOL isSuccess = NO;
-    if (!data_) return isSuccess;
-    if (point.x < 0 || point.y < 0 || point.x >= width_ || point.y >= height_) return isSuccess;
+    if (!rlImgData_) return isSuccess;
+    if (point.x < 0 || point.y < 0 || point.x >= rlImgWidth_ || point.y >= rlImgHeight_) return isSuccess;
     
     // 像素下标 = 第几行 * 每一行的总字节数 + 第几列 * 每个像素占用的字节数
-    size_t byteIndex = (size_t)point.y * bytesPerRow_ + (size_t)point.x * components_;
+    size_t byteIndex = (size_t)point.y * rlImgBytesPerRow_ + (size_t)point.x * rlImgComponents_;
     
-    if (components_ == 2) { // greyscale
+    if (rlImgComponents_ == 2) { // greyscale
         CGFloat w = 0, a = 255.0;
-        JPGetGrayscaleAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &w, &a);
+        JPGetGrayscaleAtPixel(rlImgBytePtr_, byteIndex, rlImgByteOrderNormal_, rlImgAlphaInfo_, &w, &a);
         if (red) *red = w;
         if (green) *green = w;
         if (blue) *blue = w;
         if (alpha) *alpha = a / 255.0;
         isSuccess = YES;
-    } else if (components_ == 3 || components_ == 4) { // RGB || RGBA
+    } else if (rlImgComponents_ == 3 || rlImgComponents_ == 4) { // RGB || RGBA
         CGFloat r = 0, g = 0, b = 0, a = 255.0;
-        JPGetRGBAAtPixel(bytePtr_, byteIndex, byteOrderNormal_, alphaInfo_, &r, &g, &b, &a);
+        JPGetRGBAAtPixel(rlImgBytePtr_, byteIndex, rlImgByteOrderNormal_, rlImgAlphaInfo_, &r, &g, &b, &a);
         if (red) *red = r;
         if (green) *green = g;
         if (blue) *blue = b;
@@ -2805,8 +2804,8 @@ static size_t height_;
 }
 
 + (void)endRetrievalImage {
-    CFDataRef data = data_;
-    data_ = NULL;
+    CFDataRef data = rlImgData_;
+    rlImgData_ = NULL;
     if (data) {
         CFRelease(data);
     }

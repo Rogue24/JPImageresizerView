@@ -10,7 +10,7 @@ PODS:
   - JPBasic/JPProgressHUD (0.1.8):
     - SVProgressHUD
   - JPCrop (0.2.3)
-  - JPImageresizerView (1.10.5)
+  - JPImageresizerView (1.11.0)
   - JPLiquidLayout (0.1.1)
   - LookinServer (1.1.5):
     - LookinServer/Core (= 1.1.5)
@@ -49,7 +49,7 @@ SPEC CHECKSUMS:
   FunnyButton: e8202ece176aaa5f7ead1e5c8eb0f29d28fc5ad4
   JPBasic: 5a0459823fd51d7a02aea924227e971a0d8778b3
   JPCrop: d260e4456ee0b281214642f6abd96b76b3e17971
-  JPImageresizerView: 86b0d0dcb0f4f09ad26e5ea4fb72ef77a475df8b
+  JPImageresizerView: ab124507e39cb1849564469c9c5bca3a88031f49
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
   LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201

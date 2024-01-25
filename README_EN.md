@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.10.5)
+## Brief introduction (Current version: 1.11.0)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -31,6 +31,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ It can cut the whole picture or a frame of local video;
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
+        ✅ Configurable properties for GIF: background color, corner radius, border, outline stroke, and content padding;
         ✅ The current clipping state can be saved;
         ✅ Images support n-grid clipping;
         ✅ Compatible with Swift & SwiftUI environment(Reference Demo).
@@ -47,7 +48,9 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
     
 ## Newest
-    Compatible with Swift & SwiftUI environment(Reference Demo).
+    1.Configurable properties for GIF: background color, corner radius, border, outline stroke, and content padding;
+    2.Assemble GIF using local images;
+    3.Retrieve color values of target pixels in images.
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
 
@@ -74,6 +77,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
       - resizeWHScale: width-height ratio of the clipping
       - contentInsets: the inner margin between the crop region and the main view
       - maskImage: customize the mask image
+      - gifSettings: GIF Image Processing Settings
      
 **Image / GIF**
 ```objc
@@ -334,6 +338,23 @@ For specific use, refer to Demo (JPCropViewController).
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 ```
+
+**Process Images for GIFs**
+Original GIF:
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
+```objc
+// 1.Configure settings for processing
+JPImageProcessingSettings *settings = [[JPImageProcessingSettings alloc] init];
+settings.backgroundColor = UIColor.blackColor;
+settings.outlineStrokeColor = UIColor.whiteColor;
+settings.outlineStrokeWidth = 3;
+settings.cornerRadius = 30;
+
+// 2.Set within `gifSettings` before cropping (can be dynamically configured)
+self.imageresizerView.gifSettings = settings;
+```
+Processed GIF:
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
 **Crop one of the GIF frames**
 ```objc

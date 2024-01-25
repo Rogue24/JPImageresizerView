@@ -39,7 +39,7 @@ extension JPExample.Item {
                 .jp_frameType(.classicFrameType)
                 .jp_maskImage(UIImage.bundleImage("love.png"))
                 .jp_isLoopPlaybackGIF(Bool.random())
-                .jp_gifCropSettings(settings)
+                .jp_gifSettings(settings)
             let model = JPExample.ConfigureModel(.lightContent, configure)
             await MainActor.run {
                 mainVC.pushImageresizerVC(with: model)

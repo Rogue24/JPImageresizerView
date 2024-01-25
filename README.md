@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.10.5）
+## 简介（当前版本：1.11.0）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -29,6 +29,7 @@
         ✅ 可裁剪本地视频整段画面或某一帧画面；
         ✅ 可截取某一段本地视频，裁剪后并转成GIF；
         ✅ 可裁剪GIF；
+        ✅ 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；
         ✅ 可保存当前裁剪状态；
         ✅ 图片支持N宫格裁剪；
         ✅ 兼容Swift&SwiftUI环境（参考Demo）。
@@ -45,7 +46,9 @@
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
     
 ## 最新改动
-    兼容Swift&SwiftUI环境。
+    1.可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；
+    2.可使用本地图片组装GIF；
+    3.可获取图片目标像素的颜色值。
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
 
@@ -72,6 +75,7 @@
         - resizeWHScale：裁剪的宽高比
         - contentInsets：裁剪区域与视图的间距
         - maskImage：蒙版图片
+        - gifSettings：GIF图像处理设置
      
 **图片/GIF**
 ```objc
@@ -333,6 +337,23 @@ self.imageresizerView = imageresizerView
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 ```
+
+**对GIF的图像进行处理**
+原GIF：
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
+```objc
+// 1.配置需处理的设置
+JPImageProcessingSettings *settings = [[JPImageProcessingSettings alloc] init];
+settings.backgroundColor = UIColor.blackColor; // 背景色
+settings.outlineStrokeColor = UIColor.whiteColor; // 轮廓描边颜色
+settings.outlineStrokeWidth = 3; // 轮廓描边大小
+settings.cornerRadius = 30; // 圆角
+
+// 2.在裁剪前设置即可`gifSettings`（可动态设置）
+self.imageresizerView.gifSettings = settings;
+```
+处理后的GIF：
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
 **裁剪GIF的其中一帧**
 ```objc

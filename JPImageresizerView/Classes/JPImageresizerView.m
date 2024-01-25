@@ -77,7 +77,7 @@
         
         _resizeObjWhScale = 1;
         _isLoopPlaybackGIF = configure.isLoopPlaybackGIF;
-        _gifCropSettings = configure.gifCropSettings;
+        _gifSettings = configure.gifSettings;
         
         BOOL isVideo = NO;
         if (configure.image) {
@@ -1378,7 +1378,7 @@
                                      maskImage:self.frameView.maskImage
                                      configure:self.frameView.currentCropConfigure
                                  compressScale:compressScale
-                                 otherSettings:self.gifCropSettings
+                                 otherSettings:self.gifSettings
                                       cacheURL:cacheURL
                                     errorBlock:errorBlock
                                  completeBlock:completeBlock];
@@ -1389,7 +1389,7 @@
                                       maskImage:self.frameView.maskImage
                                       configure:self.frameView.currentCropConfigure
                                   compressScale:compressScale
-                                  otherSettings:self.gifCropSettings
+                                  otherSettings:self.gifSettings
                                        cacheURL:cacheURL
                                      errorBlock:errorBlock
                                   completeBlock:completeBlock];
@@ -1694,7 +1694,7 @@
     configure.isShowGridlinesWhenDragging = self.isShowGridlinesWhenDragging;
     configure.gridCount = self.gridCount;
     configure.isLoopPlaybackGIF = self.isLoopPlaybackGIF;
-    configure.gifCropSettings = self.gifCropSettings;
+    configure.gifSettings = self.gifSettings;
     
     configure.history = JPCropHistoryMake(self.frame,
                                           _contentInsets,
