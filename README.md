@@ -50,10 +50,9 @@
     2.可使用本地图片组装GIF；
     3.可获取图片目标像素的颜色值。
     
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
-- 在`Swift`中的使用具体可参考Demo中的`JPCropViewController`
-- 在`SwiftUI`中的使用具体可参考Demo中的`ImageCroperView`
+- 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距。
 
 ## 如何使用
 

@@ -31,7 +31,7 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ It can cut the whole picture or a frame of local video;
         ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
-        ✅ Configurable properties for GIF: background color, corner radius, border, outline stroke, and content padding;
+        ✅ Process Images for GIF: background color, corner radius, border, outline stroke, and content padding;
         ✅ The current clipping state can be saved;
         ✅ Images support n-grid clipping;
         ✅ Compatible with Swift & SwiftUI environment(Reference Demo).
@@ -52,10 +52,9 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
     2.Assemble GIF using local images;
     3.Retrieve color values of target pixels in images.
     
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/inSwiftUI.gif)
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
-- For the use in `Swift`, please refer to `JPCropViewController` in demo for details.
-- For the use in `SwiftUI`, please refer to `ImageCroperView` in demo for details.
+- Process Images for GIF: background color, corner radius, border, outline stroke, and content padding.
 
 ## How to use
 
@@ -339,7 +338,7 @@ For specific use, refer to Demo (JPCropViewController).
                    completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-**Process Images for GIFs**
+**Process Images for GIF**
 Original GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
 ```objc
