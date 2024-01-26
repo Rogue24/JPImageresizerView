@@ -328,7 +328,7 @@ static UIViewController *tmpVC_;
             navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
         }
         [self presentViewController:navCtr animated:YES completion:nil];
-    } isReplaceFace:self.isReplaceFace isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil)];
+    } isReplaceFace:self.isReplaceFace isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil) fromVC:self];
 }
 
 #pragma mark 预览
@@ -427,7 +427,7 @@ static UIViewController *tmpVC_;
         [self.imageresizerView rotation];
     } toDirection:^(JPImageresizerRotationDirection direction) {
         [self.imageresizerView rotationToDirection:direction];
-    }];
+    } fromVC:self];
 }
 
 #pragma mark 重置
@@ -445,14 +445,14 @@ static UIViewController *tmpVC_;
         } else {
             self.imageresizerView.resizeWHScale = resizeWHScale;
         }
-    } isArbitrarily:self.imageresizerView.isArbitrarily isRoundResize:self.imageresizerView.isRoundResize];
+    } isArbitrarily:self.imageresizerView.isArbitrarily isRoundResize:self.imageresizerView.isRoundResize fromVC:self];
 }
 
 #pragma mark 设置毛玻璃
 - (IBAction)changeBlurEffect:(id)sender {
     [UIAlertController changeBlurEffect:^(UIBlurEffect *blurEffect) {
         self.imageresizerView.blurEffect = blurEffect;
-    }];
+    } fromVC:self];
 }
 
 #pragma mark 随机颜色（边框、背景、遮罩透明度）
@@ -511,7 +511,7 @@ static UIViewController *tmpVC_;
                 [JPProgressHUD dismiss];
             }];
         }
-    }];
+    } fromVC:self];
 }
 
 #pragma mark 裁剪

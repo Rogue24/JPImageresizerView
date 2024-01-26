@@ -76,7 +76,7 @@ extension JPExample {
             cameraBtn.addTarget(self, action: #selector(cameraAction), for: .touchUpInside)
             
             cacheBtn.isHidden = true
-            cacheBtn.setImage(UIImage(systemName: "arrow.backward.to.line"), for: .normal)
+            cacheBtn.setImage(UIImage(systemName: "arrow.uturn.backward"), for: .normal)
             cacheBtn.addTarget(self, action: #selector(backCacheAction), for: .touchUpInside)
             cacheCanceler = publisher(for: \.cacheModel, options: .new).sink { [weak self] newValue in
                 self?.cacheBtn.isHidden = newValue == nil
@@ -176,7 +176,7 @@ extension JPExample.ViewController {
     
     func pushCropVC(isJPCroper: Bool) {
         guard let navCtr = navigationController else { return }
-        let vc = JPCropViewController.build(forCroper: isJPCroper)
+        let vc = JPCropViewController.build(forCroper: isJPCroper, image: nil)
         navCtr.addCubeAnimation()
         navCtr.pushViewController(vc, animated: false)
     }

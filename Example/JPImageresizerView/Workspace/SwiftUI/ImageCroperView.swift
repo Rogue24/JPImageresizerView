@@ -18,8 +18,7 @@ struct ImageCroperView: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var isPresented
     
     func makeUIViewController(context: Context) -> JPCropViewController {
-        let imageCroper = JPCropViewController.build(forCroper: isUseJPCrop)
-        imageCroper.image = cropImage
+        let imageCroper = JPCropViewController.build(forCroper: isUseJPCrop, image: cropImage)
         imageCroper.resizeWHScale = resizeWHScale
         imageCroper.swiftUIDelegate = context.coordinator
         return imageCroper

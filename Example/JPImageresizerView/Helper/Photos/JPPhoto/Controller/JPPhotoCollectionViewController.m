@@ -373,6 +373,12 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
         cell.hidden = NO;
     }
+    
+    if (self.isReplaceFace) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [JPProgressHUD showImage:nil status:@"请选择要【换脸】的照片" userInteractionEnabled:YES];
+        });
+    }
 }
 
 - (void)cellRequestImage:(JPBrowseImageCell *)cell
@@ -425,8 +431,8 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
     JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:image make:nil];
     if (self.isReplaceFace) {
         configure
-        .jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"])
-        .jp_isArbitrarily(NO);
+            .jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"])
+            .jp_isArbitrarily(NO);
     }
     
     JPImageresizerViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"JPImageresizerViewController"];

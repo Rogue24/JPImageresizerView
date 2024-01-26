@@ -12,7 +12,7 @@ import JPImageresizerView
 
 @objc
 extension UIAlertController {
-    static func changeResizeWHScale(_ handler: @escaping (_ resizeWHScale: CGFloat) -> Void, isArbitrarily: Bool, isRoundResize: Bool) {
+    static func changeResizeWHScale(_ handler: @escaping (_ resizeWHScale: CGFloat) -> Void, isArbitrarily: Bool, isRoundResize: Bool, fromVC: UIViewController? = nil) {
         UIAlertController
             .build(.actionSheet)
             .addAction("使用\(isArbitrarily ? "固定比例" : "任意比例")") { handler(-1) }
@@ -24,10 +24,10 @@ extension UIAlertController {
             .addAction("7 : 3") { handler(7.0 / 3.0) }
             .addAction("16 : 9") { handler(16.0 / 9.0) }
             .addCancel()
-            .present(from: rootVC)
+            .present(from: fromVC ?? rootVC)
     }
     
-    static func changeBlurEffect(_ handler: @escaping (_ blurEffect: UIBlurEffect?) -> Void) {
+    static func changeBlurEffect(_ handler: @escaping (_ blurEffect: UIBlurEffect?) -> Void, fromVC: UIViewController? = nil) {
         UIAlertController
             .build(.actionSheet)
             .addDestructive("移除模糊效果") { handler(nil) }
@@ -52,10 +52,10 @@ extension UIAlertController {
             .addAction("SystemThickMaterialDark") { handler(.init(style: .systemThickMaterialDark)) }
             .addAction("SystemChromeMaterialDark") { handler(.init(style: .systemChromeMaterialDark)) }
             .addCancel()
-            .present(from: rootVC)
+            .present(from: fromVC ?? rootVC)
     }
     
-    static func replaceObj(_ handler: @escaping (_ image: UIImage?, _ imageData: Data?, _ videoURL: URL?) -> Void) {
+    static func replaceObj(_ handler: @escaping (_ image: UIImage?, _ imageData: Data?, _ videoURL: URL?) -> Void, fromVC: UIViewController? = nil) {
         UIAlertController
             .build(.actionSheet)
             .addAction("Girl") { handler(UIImage.randomGirlImage, nil, nil) }
@@ -81,11 +81,10 @@ extension UIAlertController {
                 }
             }
             .addCancel()
-            .present(from: rootVC)
+            .present(from: fromVC ?? rootVC)
     }
     
-    static func rotation(_ handler1: @escaping (_ isClockwise: Bool) -> Void,
-                         toDirection handler2: @escaping (_ direction: JPImageresizerRotationDirection) -> Void) {
+    static func rotation(_ handler1: @escaping (_ isClockwise: Bool) -> Void, toDirection handler2: @escaping (_ direction: JPImageresizerRotationDirection) -> Void, fromVC: UIViewController? = nil) {
         UIAlertController
             .build(.actionSheet)
             .addAction("顺时针旋转 🔃") { handler1(true) }
@@ -95,13 +94,14 @@ extension UIAlertController {
             .addAction("垂直向下 ⬇️") { handler2(.verticalDownDirection) }
             .addAction("水平向左 ⬅️") { handler2(.horizontalLeftDirection) }
             .addCancel()
-            .present(from: rootVC)
+            .present(from: fromVC ?? rootVC)
     }
     
     static func changeMaskImage(_ handler1: @escaping (_ maskImage: UIImage?) -> Void,
                                 gotoMaskImageList handler2: @escaping () -> Void,
                                 isReplaceFace: Bool,
-                                isCanRemoveMaskImage: Bool) {
+                                isCanRemoveMaskImage: Bool,
+                                fromVC: UIViewController? = nil) {
         let alertCtr = UIAlertController.build(.actionSheet)
             .addAction("蒙版素材列表") { handler2() }
             .addAction("love") { handler1(UIImage.bundleImage("love.png")) }
@@ -114,6 +114,6 @@ extension UIAlertController {
         }
         alertCtr
             .addCancel()
-            .present(from: rootVC)
+            .present(from: fromVC ?? rootVC)
     }
 }

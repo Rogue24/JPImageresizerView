@@ -24,7 +24,7 @@ class JPCropViewController: UIViewController {
     @IBOutlet weak var operationView: UIView!
     @IBOutlet weak var operationViewHeightConstraint: NSLayoutConstraint!
     
-    var image: UIImage? = nil
+    private var image: UIImage? = nil
     var resizeWHScale: CGFloat? = nil
     weak var swiftUIDelegate: JPCropViewControllerSwiftUIDelegate? = nil
     
@@ -37,17 +37,15 @@ class JPCropViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let image = UIImage.randomLocalImage
-        
         let y = JPConstant.statusBarH()
         let width = JPConstant.portraitScreenWidth()
         let height = JPConstant.portraitScreenHeight() - y - JPConstant.diffTabBarH() - (isCroper ? 100 : 60)
         let cropFrame = CGRect(x: 0, y: y, width: width, height: height)
         
         if isCroper {
-            setupCroper(image, frame: cropFrame)
+            setupCroper(image ?? UIImage.randomLocalImage, frame: cropFrame)
         } else {
-            setupImageresizerView(image, frame: cropFrame)
+            setupImageresizerView(image ?? UIImage.randomLocalImage, frame: cropFrame)
         }
     }
     
@@ -58,8 +56,9 @@ class JPCropViewController: UIViewController {
     }
     
     // MARK: - 工厂
-    class func build(forCroper isCroper: Bool) -> Self {
+    class func build(forCroper isCroper: Bool, image: UIImage?) -> Self {
         let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "JPCropViewController") as! Self
+        vc.image = image
         vc.isCroper = isCroper
         return vc
     }

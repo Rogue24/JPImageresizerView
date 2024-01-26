@@ -7,11 +7,11 @@
 //
 
 #import "JPPhotoViewController.h"
+#import <pop/POP.h>
 #import "WMPageController.h"
 #import "JPAlbumViewModel.h"
 #import "JPPhotoCollectionViewController.h"
 #import "JPCategoryTitleView.h"
-#import <pop/POP.h>
 
 @interface JPPhotoViewController () <UINavigationControllerDelegate, WMPageControllerDataSource, WMPageControllerDelegate, JPPhotoCollectionViewControllerDelegate>
 @property (nonatomic, weak) WMPageController *pageCtr;
@@ -23,6 +23,7 @@
 
 @implementation JPPhotoViewController
 {
+    BOOL _isDidAppear;
     BOOL _isDragging;
     CGFloat _startOffsetX;
 }
@@ -59,6 +60,18 @@
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (self.isReplaceFace && _isDidAppear) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [JPProgressHUD showImage:nil status:@"请选择要【换脸】的照片" userInteractionEnabled:YES];
+        });
+    }
+    
+    _isDidAppear = YES;
 }
 
 - (void)dealloc {
@@ -169,7 +182,7 @@
         
         if (self.isReplaceFace) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [JPProgressHUD showImage:nil status:@"请选择脸模" userInteractionEnabled:YES];
+                [JPProgressHUD showImage:nil status:@"请选择要【换脸】的照片" userInteractionEnabled:YES];
             });
         }
     }];
