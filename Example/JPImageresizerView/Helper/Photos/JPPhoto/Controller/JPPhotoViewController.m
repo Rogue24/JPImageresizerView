@@ -67,7 +67,7 @@
     
     if (self.isReplaceFace && _isDidAppear) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [JPProgressHUD showImage:nil status:@"请选择要【换脸】的照片" userInteractionEnabled:YES];
+            [JPProgressHUD showImage:nil status:@"请选择用来换脸的【脸膜】照片" userInteractionEnabled:YES];
         });
     }
     
@@ -182,7 +182,7 @@
         
         if (self.isReplaceFace) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [JPProgressHUD showImage:nil status:@"请选择要【换脸】的照片" userInteractionEnabled:YES];
+                [JPProgressHUD showImage:nil status:@"请选择用来换脸的【脸膜】照片" userInteractionEnabled:YES];
             });
         }
     }];
