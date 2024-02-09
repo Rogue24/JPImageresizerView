@@ -10,9 +10,9 @@
 #import "FaceView.h"
 
 @interface ReplaceFaceViewController : UIViewController
-- (instancetype)initWithPersonImage:(UIImage *)personImage faceImage:(UIImage *)faceImage;
+- (instancetype)initWithPersonImage:(UIImage *)personImage faceImages:(NSArray<UIImage *> *)faceImages;
 @property (nonatomic, strong) UIImage *personImage;
-@property (nonatomic, strong) UIImage *faceImage;
+@property (nonatomic, copy) NSArray<UIImage *> *faceImages;
 @property (nonatomic, weak) UIImageView *personView;
-@property (nonatomic, weak) FaceView *faceView;
+@property (nonatomic, copy) NSArray<FaceView *> *faceViews;
 @end

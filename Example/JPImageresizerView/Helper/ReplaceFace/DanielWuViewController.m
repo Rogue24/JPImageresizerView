@@ -15,16 +15,17 @@
 @implementation DanielWuViewController
 
 + (instancetype)DanielWuVC:(UIImage *)faceImage {
-    return [[self alloc] initWithPersonImage:[UIImage imageNamed:@"DanielWu.jpg"] faceImage:faceImage];
+    return [[self alloc] initWithPersonImage:[UIImage imageNamed:@"DanielWu.jpg"] faceImages:@[faceImage]];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"趣味换脸";
     
     CGFloat scale = JPPortraitScreenWidth / 567.0;
     CGFloat x = self.personView.jp_x + 152.0 * scale;
     CGFloat y = self.personView.jp_y + 239.0 * scale;
-    self.faceView.jp_origin = CGPointMake(x, y);
+    self.faceViews[0].jp_origin = CGPointMake(x, y);
 }
 
 @end

@@ -27,7 +27,7 @@
 @property (nonatomic, assign) CGFloat maxRadius;
 @property (nonatomic, assign) CGFloat currentRadius;
 
-@property (nonatomic, copy) void (^longPressAction)(void);
+@property (nonatomic, copy) void (^longPressAction)(UIImage * image);
 @end
 
 @implementation FaceView
@@ -55,7 +55,7 @@
 
 #pragma mark - 生命周期
 
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void (^)(void))longPressAction {
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void (^)(UIImage * image))longPressAction {
     if (self = [super initWithFrame:frame]) {
         self.userInteractionEnabled = YES;
         _isShowingOther = YES;
@@ -133,8 +133,8 @@
 }
 
 - (void)longPress:(UILongPressGestureRecognizer *)lpGR {
-    if (!self.longPressAction || lpGR.state != UIGestureRecognizerStateBegan) return;
-    self.longPressAction();
+    if (!self.faceImage || !self.longPressAction || lpGR.state != UIGestureRecognizerStateBegan) return;
+    self.longPressAction(self.faceImage);
 }
 
 - (void)pan:(UIPanGestureRecognizer *)panGR {

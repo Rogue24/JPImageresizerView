@@ -13,10 +13,10 @@
 
 @implementation ReplaceFaceViewController
 
-- (instancetype)initWithPersonImage:(UIImage *)personImage faceImage:(UIImage *)faceImage {
+- (instancetype)initWithPersonImage:(UIImage *)personImage faceImages:(NSArray<UIImage *> *)faceImages {
     if (self = [super init]) {
         self.personImage = personImage;
-        self.faceImage = faceImage;
+        self.faceImages = faceImages;
     }
     return self;
 }
@@ -47,12 +47,10 @@
 #pragma mark - 初始布局
 
 - (void)__setupNavigationBar {
-    self.title = @"趣味换脸";
-    
     UIButton *replaceImgBtn = ({
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
         btn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-        [btn setTitle:@"替换人物" forState:UIControlStateNormal];
+        [btn setTitle:@"替换背景" forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(__replacePersonImage) forControlEvents:UIControlEventTouchUpInside];
         btn;
     });
@@ -87,28 +85,34 @@
         [self.view addSubview:personView];
         self.personView = personView;
         
-        if (self.faceImage) {
+        if (self.faceImages.count > 0) {
             CGFloat scale = JPPortraitScreenWidth / self.personImage.size.width;
             w = (567.0 - 152.0 - 166.0) * scale;
             h = w * (300.0 / 263.0);
             x = self.personView.jp_x + JPHalfOfDiff(self.personView.jp_width, w);
             y = self.personView.jp_y + JPHalfOfDiff(self.personView.jp_height, h);
+            
+            NSMutableArray *faceViews = [NSMutableArray array];
             @jp_weakify(self);
-            FaceView *faceView = [[FaceView alloc] initWithFrame:CGRectMake(x, y, w, h) image:self.faceImage longPressAction:^{
-                @jp_strongify(self);
-                if (!self) return;
-                [self __saveFaceImage];
-            }];
-            [self.view addSubview:faceView];
-            self.faceView = faceView;
+            for (UIImage *faceImage in self.faceImages) {
+                FaceView *faceView = [[FaceView alloc] initWithFrame:CGRectMake(x, y, w, h) image:faceImage longPressAction:^(UIImage *image) {
+                    @jp_strongify(self);
+                    if (!self) return;
+                    [self __saveFaceImage:image];
+                }];
+                [self.view addSubview:faceView];
+                [faceViews addObject:faceView];
+                x += 10;
+                y += 10;
+            }
+            self.faceViews = faceViews.copy;
         }
     }
 }
 
 #pragma mark - 保存脸模图片
 
-- (void)__saveFaceImage {
-    UIImage *faceImage = self.faceImage;
+- (void)__saveFaceImage:(UIImage *)faceImage {
     UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:@"是否保存脸模到相册" message:nil];
     [alertCtr addAction:@"保存" handler:^{
         [JPProgressHUD show];
@@ -130,23 +134,42 @@
     UIImage *personImage = self.personView.image;
     CGRect rect = CGRectMake(0, 0, floorl(self.personView.frame.size.width), floorl(self.personView.frame.size.height));
     
-    UIImage *faceImage = self.faceView.faceImage;
-    CGFloat faceRadian = self.faceView.layer.jp_radian;
-    CGFloat faceScale = self.faceView.layer.jp_scaleX;
-    CGRect faceBounds = self.faceView.layer.bounds;
-    CGPoint faceOrigin = [self.faceView convertPoint:CGPointZero toView:self.personView];
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         UIGraphicsBeginImageContextWithOptions(rect.size, NO, JPScreenScale);
         [personImage drawInRect:rect];
         
-        CGImageRef faceImageRef = [self __imageDownMirrored:faceImage].CGImage;
-        
         CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextTranslateCTM(context, faceOrigin.x, faceOrigin.y); // 要先进行位移，确定好位置后再进行其他的形变操作，否则位置错乱。
-        CGContextScaleCTM(context, faceScale, faceScale);
-        CGContextRotateCTM(context, faceRadian);
-        CGContextDrawImage(context, faceBounds, faceImageRef);
+        
+        for (FaceView *faceView in self.faceViews) {
+            UIImage *faceImage = faceView.faceImage;
+            if (!faceImage) continue;
+            
+            CGImageRef faceImageRef = [self __imageDownMirrored:faceImage].CGImage;
+            
+            // 将当前图形状态推入堆栈
+            CGContextSaveGState(context);
+            
+            __block CGFloat faceRadian;
+            __block CGFloat faceScale;
+            __block CGRect faceBounds;
+            __block CGPoint faceOrigin;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                faceRadian = faceView.layer.jp_radian;
+                faceScale = faceView.layer.jp_scaleX;
+                faceBounds = faceView.layer.bounds;
+                faceOrigin = [faceView convertPoint:CGPointZero toView:self.personView];
+            });
+            
+            // 要先进行位移，确定好位置后再进行其他的形变操作，否则位置错乱。
+            CGContextTranslateCTM(context, faceOrigin.x, faceOrigin.y);
+            CGContextScaleCTM(context, faceScale, faceScale);
+            CGContextRotateCTM(context, faceRadian);
+            
+            CGContextDrawImage(context, faceBounds, faceImageRef);
+            
+            // 把堆栈顶部的状态弹出，返回到之前的图形状态
+            CGContextRestoreGState(context);
+        }
         
         UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();

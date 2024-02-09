@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface FaceView : UIView
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void(^)(void))longPressAction;
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image longPressAction:(void(^)(UIImage * image))longPressAction;
 - (UIImage *)faceImage;
 @end
