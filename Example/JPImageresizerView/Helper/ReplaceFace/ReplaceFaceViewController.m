@@ -116,11 +116,30 @@
     UIAlertController *alertCtr = [UIAlertController build:UIAlertControllerStyleActionSheet title:@"是否保存脸模到相册" message:nil];
     [alertCtr addAction:@"保存" handler:^{
         [JPProgressHUD show];
-        [JPPhotoToolSI savePhotoToAppAlbumWithImage:faceImage successHandle:^(NSString *assetID) {
-            [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
-        } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
-            [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
-        }];
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            NSString *folderPath = NSTemporaryDirectory();
+            NSString *fileName = [NSString stringWithFormat:@"%.0lf.png", [[NSDate date] timeIntervalSince1970]];
+            NSString *filePath = [folderPath stringByAppendingPathComponent:fileName];
+            NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+            
+            // 📢 注意：苹果保存时默认使用占用磁盘空间小的图片格式（有损且不含alpha通道的jpeg格式）。
+            // 想保存有透明度的图片，需要手动用代码将图片转化为png格式后（这样苹果才不进行此优化）再保存。
+            NSData *imageData = UIImagePNGRepresentation(faceImage);
+            if (!imageData || ![imageData writeToURL:fileURL atomically:YES]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+                });
+                return;
+            }
+            
+            [JPPhotoToolSI saveFileToAppAlbumWithFileURL:fileURL successHandle:^(NSString *assetID) {
+                [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+                [JPProgressHUD showSuccessWithStatus:@"保存成功" userInteractionEnabled:YES];
+            } failHandle:^(NSString *assetID, BOOL isGetAlbumFail, BOOL isSaveFail) {
+                [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+                [JPProgressHUD showErrorWithStatus:@"保存失败" userInteractionEnabled:YES];
+            }];
+        });
     }];
     [alertCtr addCancel:@"取消" handler:nil];
     [alertCtr presentFrom:self];
