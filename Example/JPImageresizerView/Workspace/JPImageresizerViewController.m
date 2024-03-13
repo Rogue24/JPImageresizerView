@@ -328,7 +328,7 @@ static UIViewController *tmpVC_;
             navCtr.modalPresentationStyle = UIModalPresentationFullScreen;
         }
         [self presentViewController:navCtr animated:YES completion:nil];
-    } isReplaceFace:self.isReplaceFace isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil) fromVC:self];
+    } isCanRemoveMaskImage:(self.imageresizerView.maskImage != nil) fromVC:self];
 }
 
 #pragma mark 预览

@@ -99,16 +99,13 @@ extension UIAlertController {
     
     static func changeMaskImage(_ handler1: @escaping (_ maskImage: UIImage?) -> Void,
                                 gotoMaskImageList handler2: @escaping () -> Void,
-                                isReplaceFace: Bool,
                                 isCanRemoveMaskImage: Bool,
                                 fromVC: UIViewController? = nil) {
         let alertCtr = UIAlertController.build(.actionSheet)
             .addAction("蒙版素材列表") { handler2() }
             .addAction("love") { handler1(UIImage.bundleImage("love.png")) }
             .addAction("Supreme") { handler1(UIImage.bundleImage("supreme.png")) }
-        if isReplaceFace {
-            alertCtr.addAction("Face Mask") { handler1(UIImage.bundleImage("DanielWuFace.png")) }
-        }
+            .addAction("Face Mask") { handler1(UIImage.bundleImage("DanielWuFace.png")) }
         if isCanRemoveMaskImage {
             alertCtr.addDestructive("移除蒙版") { handler1(nil) }
         }
