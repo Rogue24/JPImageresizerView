@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.11.0）
+## 简介（当前版本：1.11.1）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -696,6 +696,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.11.1 | 1. 添加隐私清单PrivacyInfo。
 1.11.0 | 1. 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；<br>2. 可使用本地图片组装GIF；<br>3. 可获取图片目标像素的颜色值；<br>4. 修复引起内存泄漏的漏洞。
 1.10.0~1.10.5 | 1. 修复旋转方向错误的问题；<br>2. 修复有透明背景的GIF裁剪后图像重叠的问题；<br>3. 修复仅修改`裁剪宽高比`而无法重置的问题；<br>4. 新增isCanRecovery只读属性：是否可重置，该属性仅针对`旋转`、`缩放`、`镜像`的变化情况，其他如`裁剪宽高比`、`圆切`等变化情况需用户自行判定能否重置，与`JPImageresizerIsCanRecoveryBlock`中返回的isCanRecovery一致；<br>5. 添加一些防Crash逻辑。
 1.9.0~1.9.9 | 1. 图片新增N宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例；<br>3. 兼容Swift环境；<br>4. 修复`isShowGridlinesWhenDragging`属性为YES时，拖动图片本身没有显示网格的问题；<br>5. 修复部分音频有问题的视频裁剪出错的问题；<br>6. 修复裁剪视频或GIF时进度条没有显示的问题；<br>7. 新增更多`Configure`初始化和可自定义旋转至目标方向的API；<br>8. 修复在预览模式下会显示进度条的问题。
