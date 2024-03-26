@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JPImageresizerView'
-  s.version          = '1.11.0'
+  s.version          = '1.11.1'
   s.summary          = '一个专门裁剪图片、GIF、视频的轮子😋简单易用、功能丰富☕️'
 
 # This description is used to generate tags and improve search results.
@@ -30,12 +30,12 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'JPImageresizerView/Classes/**/*'
+  s.source_files = 'JPImageresizerView/Classes/*.{h,m}'
   
-  # s.resource_bundles = {
-  #   'JPImageresizerView' => ['JPImageresizerView/Assets/*.png']
-  # }
-
+  s.resource_bundles = {
+    'JPImageresizerView_Privacy' => ['JPImageresizerView/Classes/PrivacyInfo.xcprivacy']
+  }
+  
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
