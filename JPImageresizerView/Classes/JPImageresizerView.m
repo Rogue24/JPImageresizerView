@@ -315,6 +315,7 @@
         BOOL isGIF = _isGIF;
         BOOL isLoopPlaybackGIF = _isLoopPlaybackGIF;
         BOOL isShowSlider = isVideo || (isGIF && !isLoopPlaybackGIF);
+        BOOL isConvertVideoAndImage = (isVideo && _image != nil) || (!isVideo && _videoObj != nil);
         
         if (isShowSlider) {
             if (self.slider && !self.slider.superview) {
@@ -328,7 +329,44 @@
             self.frameView.slider = nil;
         }
         
-        if ((isVideo && _image != nil) || (!isVideo && _videoObj != nil)) {
+        if (!self.isArbitrarily) {
+            UIView *snapshotView = [self.containerView snapshotViewAfterScreenUpdates:NO];
+            snapshotView.frame = self.containerView.frame;
+            [self addSubview:snapshotView];
+            if (isVideo) {
+                [self.playerView removeFromSuperview];
+                JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
+                playerView.frame = self.imageView.bounds;
+                [self.imageView addSubview:playerView];
+                self.playerView = playerView;
+                self.frameView.playerView = playerView;
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self __removeImage];
+                    [self __updateSubviewLayouts:0];
+                    [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
+                        self.slider.alpha = self.isPreview ? 0 : 1;
+                        snapshotView.alpha = 0;
+                    } completion:^(BOOL finished) {
+                        self.userInteractionEnabled = YES;
+                        [snapshotView removeFromSuperview];
+                    }];
+                });
+            } else {
+                [self __removeVideoObj];
+                [self __updateImageViewImage:NO];
+                [self __updateSubviewLayouts:0];
+                [UIView animateWithDuration:duration1 delay:0 options:options animations:^{
+                    self.slider.alpha = isShowSlider ? (self.isPreview ? 0 : 1) : 0;
+                    snapshotView.alpha = 0;
+                } completion:^(BOOL finished) {
+                    self.userInteractionEnabled = YES;
+                    [snapshotView removeFromSuperview];
+                }];
+            }
+            return;
+        }
+        
+        if (isConvertVideoAndImage) {
             if (isVideo) {
                 [self.playerView removeFromSuperview];
                 JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
@@ -368,19 +406,7 @@
             return;
         }
         
-        if (!isVideo) {
-            [UIView transitionWithView:self.imageView duration:duration1 options:(options | UIViewAnimationOptionTransitionCrossDissolve) animations:^{
-                [self __updateImageViewImage:NO];
-                self.slider.alpha = isShowSlider ? (self.isPreview ? 0 : 1) : 0;
-            } completion:^(BOOL finished) {
-                [UIView animateWithDuration:duration2 delay:0 options:self->_animationOption animations:^{
-                    [self __updateSubviewLayouts:duration2];
-                } completion:^(BOOL finished) {
-                    [self __removeVideoObj];
-                    self.userInteractionEnabled = YES;
-                }];
-            }];
-        } else {
+        if (isVideo) {
             JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
             playerView.frame = self.imageView.bounds;
             playerView.alpha = 0;
@@ -401,20 +427,31 @@
                     }];
                 }];
             });
+        } else {
+            [UIView transitionWithView:self.imageView duration:duration1 options:(options | UIViewAnimationOptionTransitionCrossDissolve) animations:^{
+                [self __updateImageViewImage:NO];
+                self.slider.alpha = isShowSlider ? (self.isPreview ? 0 : 1) : 0;
+            } completion:^(BOOL finished) {
+                [UIView animateWithDuration:duration2 delay:0 options:options animations:^{
+                    [self __updateSubviewLayouts:duration2];
+                } completion:^(BOOL finished) {
+                    [self __removeVideoObj];
+                    self.userInteractionEnabled = YES;
+                }];
+            }];
         }
     } else {
-        if (!isVideo) {
-            [self __removeVideoObj];
-            [self __updateImageViewImage:NO];
-        } else {
+        if (isVideo) {
             [self __removeImage];
-            
             [self.playerView removeFromSuperview];
             JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
             playerView.frame = self.imageView.bounds;
             [self.imageView addSubview:playerView];
             self.playerView = playerView;
             self.frameView.playerView = playerView;
+        } else {
+            [self __removeVideoObj];
+            [self __updateImageViewImage:NO];
         }
         if (_slider) {
             self.frameView.slider = self.slider;
