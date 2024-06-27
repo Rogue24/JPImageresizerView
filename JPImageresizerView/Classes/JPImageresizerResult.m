@@ -8,6 +8,7 @@
 #import "JPImageresizerResult.h"
 
 @implementation JPImageresizerResult
+
 - (instancetype)initWithImage:(UIImage *)image cacheURL:(NSURL *)cacheURL {
     if (self = [super init]) {
         _type = JPImageresizerResult_Image;
@@ -20,6 +21,7 @@
 - (instancetype)initWithGifImage:(UIImage *)gifImage cacheURL:(NSURL *)cacheURL {
     if (self = [super init]) {
         _type = JPImageresizerResult_GIF;
+        _image = gifImage;
         self.cacheURL = cacheURL;
     }
     return self;
@@ -37,4 +39,5 @@
     _cacheURL = cacheURL;
     _isCacheSuccess = cacheURL ? [[NSFileManager defaultManager] fileExistsAtPath:cacheURL.path] : NO;
 }
+
 @end
