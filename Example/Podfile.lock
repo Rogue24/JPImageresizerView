@@ -17,6 +17,7 @@ PODS:
   - LookinServer/Core (1.1.5)
   - Masonry (1.1.0)
   - pop (1.0.12)
+  - ScreenRotator (0.1.0)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
@@ -29,6 +30,7 @@ DEPENDENCIES:
   - JPImageresizerView (from `../`)
   - JPLiquidLayout
   - LookinServer
+  - ScreenRotator
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -39,6 +41,7 @@ SPEC REPOS:
     - LookinServer
     - Masonry
     - pop
+    - ScreenRotator
     - SVProgressHUD
 
 EXTERNAL SOURCES:
@@ -54,8 +57,9 @@ SPEC CHECKSUMS:
   LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
+  ScreenRotator: 94d1496f0c3bc3ce87ca80705f2f9b10782628c0
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 893e51542de2a96e1dba85733fb7fbc7c09df075
+PODFILE CHECKSUM: 245e9c09e475f7e519c86054f3dde2c539779764
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

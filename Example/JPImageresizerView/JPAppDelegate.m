@@ -7,6 +7,7 @@
 //
 
 #import "JPAppDelegate.h"
+#import <ScreenRotator/JPScreenRotator.h>
 
 @implementation JPAppDelegate
 
@@ -16,6 +17,9 @@
     [JPProgressHUD setCustomStyle];
     [JPProgressHUD setBackgroundColor:JPRGBColor(240, 240, 240)];
     [JPProgressHUD setForegroundColor:JPRGBColor(16, 16, 16)];
+    
+    [JPScreenRotator sharedInstance].isLockLandscapeWhenDeviceOrientationDidChange = NO;
+    [JPScreenRotator sharedInstance].isLockOrientationWhenDeviceOrientationDidChange = NO;
     
     if (@available(iOS 15.0, *)) {
         UINavigationBar *navigationBar = [UINavigationBar appearance];
@@ -28,6 +32,10 @@
     }
     
     return YES;
+}
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return [JPScreenRotator sharedInstance].orientationMask;
 }
 
 @end

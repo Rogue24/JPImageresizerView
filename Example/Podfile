@@ -13,6 +13,7 @@ target 'JPImageresizerView_Example' do
   pod 'JPBasic/JPBrowseImages'
   pod 'JPCrop'
   pod 'FunnyButton'
+  pod 'ScreenRotator'
   pod 'LookinServer', :configurations => ['Debug']
   
   post_install do |installer|

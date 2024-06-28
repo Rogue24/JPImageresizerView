@@ -11,9 +11,10 @@
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
 #import "JPImageresizerView_Example-Swift.h"
+#import <ScreenRotator/JPScreenRotator.h>
 
 @interface JPImageresizerViewController ()
-@property (nonatomic, assign) UIInterfaceOrientation statusBarOrientation;
+@property (nonatomic, assign) JPScreenOrientation orientation;
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
 @property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
@@ -99,11 +100,8 @@
     self.backBtnLeftConstraint.constant = JPMargin;
     self.backBtnTopConstraint.constant = JPStatusBarH;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    self.statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    JPObserveNotification(self, @selector(didChangeStatusBarOrientation), UIApplicationDidChangeStatusBarOrientationNotification, nil);
-#pragma clang diagnostic pop
+    self.orientation = [JPScreenRotator sharedInstance].orientation;
+    JPObserveNotification(self, @selector(orientationDidChange), JPScreenRotatorOrientationDidChangeNotification, nil);
 }
 
 - (void)__setupImageresizerView {
@@ -166,21 +164,21 @@
 
 #pragma mark - 监听屏幕旋转
 
-- (void)didChangeStatusBarOrientation {
+- (void)orientationDidChange {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self setStatusBarOrientation:[UIApplication sharedApplication].statusBarOrientation
-                         duration:[UIApplication sharedApplication].statusBarOrientationAnimationDuration];
+    NSTimeInterval duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
 #pragma clang diagnostic pop
+    [self setOrientation:[JPScreenRotator sharedInstance].orientation duration:duration > 0 ? duration : 0.3];
 }
 
-- (void)setStatusBarOrientation:(UIInterfaceOrientation)statusBarOrientation {
-    [self setStatusBarOrientation:statusBarOrientation duration:0];
+- (void)setOrientation:(JPScreenOrientation)orientation {
+    [self setOrientation:orientation duration:0];
 }
 
-- (void)setStatusBarOrientation:(UIInterfaceOrientation)statusBarOrientation duration:(NSTimeInterval)duration {
-    if (_statusBarOrientation == statusBarOrientation) return;
-    _statusBarOrientation = statusBarOrientation;
+- (void)setOrientation:(JPScreenOrientation)orientation duration:(NSTimeInterval)duration {
+    if (_orientation == orientation) return;
+    _orientation = orientation;
     
     float portraitPriority;
     float landscapePriority;
@@ -190,13 +188,13 @@
     
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
     
-    if (statusBarOrientation == UIInterfaceOrientationLandscapeLeft ||
-        statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+    if (orientation == JPScreenOrientationLandscapeLeft ||
+        orientation == JPScreenOrientationLandscapeRight) {
         portraitPriority = 1;
         landscapePriority = 999;
         backBtnTop = JPMargin;
         
-        if (statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+        if (orientation == JPScreenOrientationLandscapeLeft) {
             backBtnLeft = JPStatusBarH;
             resizeBtnRight = JPDiffTabBarH;
         } else {
@@ -206,15 +204,21 @@
         
         contentInsets.left += self.replaceMaskImgBtn.jp_width + backBtnLeft;
         contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
-        contentInsets.top = JPDiffTabBarH;
-        contentInsets.bottom = JPDiffTabBarH;
+        if (JPDiffTabBarH > 0) {
+            contentInsets.top = JPDiffTabBarH;
+            contentInsets.bottom = JPDiffTabBarH;
+        } else {
+            contentInsets.top = JPMargin;
+            contentInsets.bottom = JPMargin;
+        }
+        
     } else {
         portraitPriority = 999;
         landscapePriority = 1;
         backBtnLeft = JPMargin;
         resizeBtnRight = JPMargin;
         
-        if (statusBarOrientation == UIInterfaceOrientationPortrait) {
+        if (orientation == JPScreenOrientationPortrait) {
             backBtnTop = JPStatusBarH;
         } else {
             backBtnTop = JPDiffTabBarH;
@@ -223,12 +227,14 @@
         contentInsets.top += JPStatusBarH + ButtonHeight;
         contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
     }
+    
     for (NSLayoutConstraint *constraint in self.portraitConstraints) {
         constraint.priority = portraitPriority;
     }
     for (NSLayoutConstraint *constraint in self.landscapeConstraints) {
         constraint.priority = landscapePriority;
     }
+    
     self.backBtnLeftConstraint.constant = backBtnLeft;
     self.backBtnTopConstraint.constant = backBtnTop;
     self.resizeBtnRightConstraint.constant = resizeBtnRight;
@@ -263,7 +269,10 @@
     }
     
     // 横竖屏切换
-    [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:contentInsets duration:duration];
+    // 📢 想要获取【旋转之后】的屏幕尺寸，需要到`Runloop`的下一个循环才能获取
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:contentInsets duration:duration];
+    });
 }
 
 #pragma mark - 按钮点击事件
@@ -287,6 +296,7 @@ static UIViewController *tmpVC_;
     }];
     [alertCtr presentFrom:self];
 }
+
 - (void)goback {
     if (self.backBlock) {
         self.backBlock(self);
