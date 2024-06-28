@@ -539,7 +539,10 @@ static UIViewController *tmpVC_;
                 [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
-                if (!self) return;
+                if (!self) {
+                    [JPProgressHUD dismiss];
+                    return;
+                }
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
@@ -551,7 +554,10 @@ static UIViewController *tmpVC_;
                 [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
-                if (!self) return;
+                if (!self) {
+                    [JPProgressHUD dismiss];
+                    return;
+                }
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
@@ -576,7 +582,10 @@ static UIViewController *tmpVC_;
                 [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
             } completeBlock:^(JPImageresizerResult *result) {
                 @jp_strongify(self);
-                if (!self) return;
+                if (!self) {
+                    [JPProgressHUD dismiss];
+                    return;
+                }
                 [self __imageresizerDoneWithResult:result];
             }];
         };
@@ -592,7 +601,10 @@ static UIViewController *tmpVC_;
                     [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
                 } completeBlock:^(JPImageresizerResult *result) {
                     @jp_strongify(self);
-                    if (!self) return;
+                    if (!self) {
+                        [JPProgressHUD dismiss];
+                        return;
+                    }
                     [self __imageresizerDoneWithResult:result];
                 }];
             }];
@@ -610,7 +622,10 @@ static UIViewController *tmpVC_;
             [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
         } completeBlock:^(JPImageresizerResult *result) {
             @jp_strongify(self);
-            if (!self) return;
+            if (!self) {
+                [JPProgressHUD dismiss];
+                return;
+            }
             [self __imageresizerDoneWithResult:result];
         }];
     };
@@ -649,8 +664,10 @@ static UIViewController *tmpVC_;
     for (NSString *fileName in fileEnumerator) {
         [fileManager removeItemAtPath:[folderPath stringByAppendingPathComponent:fileName] error:nil];
     }
-    
-    NSString *fileName = [NSString stringWithFormat:@"%.0lf.%@", [[NSDate date] timeIntervalSince1970], extension];
+    NSString *fileName = [NSString stringWithFormat:@"%.0lf", [[NSDate date] timeIntervalSince1970]];
+    if (extension.length > 0) {
+        fileName = [NSString stringWithFormat:@"%@.%@", fileName, extension];
+    }
     NSString *cachePath = [folderPath stringByAppendingPathComponent:fileName];
     return [NSURL fileURLWithPath:cachePath];
 }
@@ -664,6 +681,8 @@ static UIViewController *tmpVC_;
     }
     
     [JPProgressHUD dismiss];
+    JPLog(@"🎉 裁剪成功！缓存路径 >>>>> %@", result.cacheURL.absoluteString);
+    
     if (self.isReplaceFace) {
         DanielWuViewController *vc = [DanielWuViewController DanielWuVC:result.image];
         [self.navigationController pushViewController:vc animated:YES];
@@ -686,9 +705,11 @@ static UIViewController *tmpVC_;
 #pragma mark - 裁剪视频
 
 - (void)__cropVideo {
+    NSURL *videoURL = self.imageresizerView.videoURL;
+    NSURL *cacheURL = [self __cacheURL:videoURL.pathExtension];
     [JPProgressHUD show];
     @jp_weakify(self);
-    [self.imageresizerView cropVideoWithCacheURL:[self __cacheURL:@"mov"] errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    [self.imageresizerView cropVideoWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         weak_self.isExporting = NO;
         [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
     } progressBlock:^(float progress) {
@@ -696,15 +717,14 @@ static UIViewController *tmpVC_;
         weak_self.isExporting = YES;
         [JPProgressHUD showProgress:progress status:[NSString stringWithFormat:@"%.0f%%", progress * 100] userInteractionEnabled:YES];
     } completeBlock:^(JPImageresizerResult *result) {
-        // 裁剪完成
-        [JPProgressHUD dismiss];
-        
         @jp_strongify(self);
-        if (!self) return;
+        if (!self) {
+            [JPProgressHUD dismiss];
+            return;
+        }
         self.isExporting = NO;
-        
-        JPPreviewViewController *vc = [JPPreviewViewController buildWithResult:result];
-        [self.navigationController pushViewController:vc animated:YES];
+        self.isReplaceFace = NO;
+        [self __imageresizerDoneWithResult:result];
     }];
 }
 

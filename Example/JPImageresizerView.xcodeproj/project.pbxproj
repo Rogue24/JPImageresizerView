@@ -11,6 +11,7 @@
 		002E78B5295AA4740071E30C /* JPExample+Configure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample+Configure.swift */; };
 		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
 		002E78C1295AE1960071E30C /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78C0295AE1960071E30C /* Date+.swift */; };
+		00465FD62C2E66D100E2D9BF /* seeTheSea.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 00465FD52C2E66D100E2D9BF /* seeTheSea.mp4 */; };
 		006A046C2B39273C009D8E82 /* bazhuawan_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 006A046B2B39273C009D8E82 /* bazhuawan_icon.png */; };
 		006A046E2B39276F009D8E82 /* bazhuawan_error.png in Resources */ = {isa = PBXBuildFile; fileRef = 006A046D2B39276F009D8E82 /* bazhuawan_error.png */; };
 		006A04702B39277B009D8E82 /* bazhuawan_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 006A046F2B39277B009D8E82 /* bazhuawan_empty.png */; };
@@ -134,6 +135,7 @@
 		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
 		002E78BE295ADDB40071E30C /* JPSolveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSolveTool.m; sourceTree = "<group>"; };
 		002E78C0295AE1960071E30C /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
+		00465FD52C2E66D100E2D9BF /* seeTheSea.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = seeTheSea.mp4; sourceTree = "<group>"; };
 		006A046B2B39273C009D8E82 /* bazhuawan_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bazhuawan_icon.png; sourceTree = "<group>"; };
 		006A046D2B39276F009D8E82 /* bazhuawan_error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bazhuawan_error.png; sourceTree = "<group>"; };
 		006A046F2B39277B009D8E82 /* bazhuawan_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bazhuawan_empty.png; sourceTree = "<group>"; };
@@ -533,6 +535,7 @@
 			isa = PBXGroup;
 			children = (
 				1A54DA8C254589A60053F75F /* yaorenmao.mov */,
+				00465FD52C2E66D100E2D9BF /* seeTheSea.mp4 */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -757,6 +760,7 @@
 				1A54DA97254589A60053F75F /* supreme.png in Resources */,
 				1A54DA9A254589A60053F75F /* Girl2.jpg in Resources */,
 				1A54DA9E254589A60053F75F /* Gem.gif in Resources */,
+				00465FD62C2E66D100E2D9BF /* seeTheSea.mp4 in Resources */,
 				006A04882B395A71009D8E82 /* bazhuawan_14.png in Resources */,
 				006A04962B395A71009D8E82 /* bazhuawan_6.png in Resources */,
 				1A54DA9C254589A60053F75F /* Girl1.jpg in Resources */,

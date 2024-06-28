@@ -62,6 +62,7 @@ extension UIAlertController {
             .addAction("Kobe") { handler(UIImage.bundleImage("Kobe.jpg"), nil, nil) }
             .addAction("Flowers") { handler(UIImage.bundleImage("flowers.jpg"), nil, nil) }
             .addAction("咬人猫舞蹈节选（视频）") { handler(nil, nil, URL(fileURLWithPath: Bundle.main.path(forResource: "yaorenmao", ofType: "mov")!)) }
+            .addAction("See the sea（视频）") { handler(nil, nil, URL(fileURLWithPath: Bundle.main.path(forResource: "seeTheSea", ofType: "mp4")!)) }
             .addAction("Gem（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Gem", ofType: "gif")!)), nil) }
             .addAction("Dilraba（GIF）") { handler(nil, try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "Dilraba", ofType: "gif")!)), nil) }
             .addAction("八爪丸（GIF）") {
