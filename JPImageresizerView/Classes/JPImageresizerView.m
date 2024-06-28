@@ -331,8 +331,9 @@
         
         if (!self.isArbitrarily) {
             UIView *snapshotView = [self.containerView snapshotViewAfterScreenUpdates:NO];
+            snapshotView.layer.transform = self.containerView.layer.transform;
             snapshotView.frame = self.containerView.frame;
-            [self addSubview:snapshotView];
+            [self insertSubview:snapshotView aboveSubview:self.containerView];
             if (isVideo) {
                 [self.playerView removeFromSuperview];
                 JPPlayerView *playerView = [[JPPlayerView alloc] initWithVideoObj:_videoObj];
