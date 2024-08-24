@@ -20,13 +20,8 @@ let package = Package(
         .target(
             name: "JPImageresizerView",
             path: "JPImageresizerView",
-            sources: ["Core"],
-            resources: [
-                .copy("PrivacyInfo.xcprivacy")
-            ],
-            cSettings: [
-                .headerSearchPath("Core")
-            ]
+            resources: [.copy("PrivacyInfo.xcprivacy")],
+            publicHeadersPath: ""
         )
     ]
 )
