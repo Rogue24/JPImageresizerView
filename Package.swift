@@ -21,7 +21,6 @@ let package = Package(
             name: "JPImageresizerView",
             dependencies: [],
             path: "JPImageresizerView",
-            sources: ["Classes"],
             resources: [
                 .copy("PrivacyInfo.xcprivacy")
             ],
