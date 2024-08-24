@@ -731,6 +731,13 @@ self.imageresizerView.isAutoScale = NO;
 
 ## 安装
 
+### Swift Package Manager
+
+File > Swift Packages > Add Package Dependency
+Add https://github.com/onevcat/Kingfisher.git
+Select "Up to Next Major" with "7.0.0"
+
+### CocoaPods
 JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添加下面一行到你的podfile：
 
 ```ruby

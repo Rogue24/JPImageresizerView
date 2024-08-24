@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
   s.source_files = 'JPImageresizerView/Classes/*.{h,m}'
   
   s.resource_bundles = {
-    'JPImageresizerView_Privacy' => ['JPImageresizerView/Classes/PrivacyInfo.xcprivacy']
+    'JPImageresizerView_Privacy' => ['JPImageresizerView/PrivacyInfo.xcprivacy']
   }
   
   # s.public_header_files = 'Pod/Classes/**/*.h'

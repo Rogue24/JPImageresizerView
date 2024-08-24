@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "JPImageresizerView",
     platforms: [
-        .iOS(.v11)
+        .iOS(.v12)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -22,7 +22,9 @@ let package = Package(
             dependencies: [],
             path: "JPImageresizerView",
             sources: ["Classes"],
-            resources: [],
+            resources: [
+                .copy("PrivacyInfo.xcprivacy")
+            ],
             cSettings: [
                 .headerSearchPath("Classes"),
             ]
