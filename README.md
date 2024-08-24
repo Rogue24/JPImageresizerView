@@ -738,7 +738,7 @@ self.imageresizerView.isAutoScale = NO;
 - 在 Xcode 中，选择：File -> Swift Packages -> Add Package Dependency
 - 输入包存储库URL：https://github.com/Rogue24/JPImageresizerView.git
 - 选择适当的版本（例如特定版本、分支或提交）
-- 添加`JPImageresizerView`到您的目标依赖项。
+- 添加`JPImageresizerView`到您的目标依赖项
 
 ### CocoaPods
 

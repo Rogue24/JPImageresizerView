@@ -694,7 +694,7 @@ self.imageresizerView.isAutoScale = NO;
 
 ### Swift Package Manager
 
-- In Xcode, select File: File -> Swift Packages -> Add Package Dependency
+- In Xcode, select: File -> Swift Packages -> Add Package Dependency
 - Enter the package repository URL: https://github.com/Rogue24/JPImageresizerView.git
 - Choose the appropriate version (e.g. a specific version, branch, or commit).
 - Add `JPImageresizerView` to your target dependencies.
