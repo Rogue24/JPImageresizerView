@@ -8,7 +8,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.11.2）
+## 简介（当前版本：1.11.3）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -733,12 +733,13 @@ self.imageresizerView.isAutoScale = NO;
 
 ### Swift Package Manager
 
-File > Swift Packages > Add Package Dependency
-Add https://github.com/onevcat/Kingfisher.git
-Select "Up to Next Major" with "7.0.0"
+- File > Swift Packages > Add Package Dependency
+- 添加 https://github.com/Rogue24/JPImageresizerView.git
+- 选择 "Up to Next Major" 为 "1.11.3"
 
 ### CocoaPods
-JPImageresizerView 可通过[CocoaPods](http://cocoapods.org)安装，只需添加下面一行到你的podfile：
+
+- 只需添加下面一行到你的podfile：
 
 ```ruby
 pod 'JPImageresizerView'

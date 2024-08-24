@@ -10,7 +10,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.11.2)
+## Brief introduction (Current version: 1.11.3)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -690,7 +690,15 @@ self.imageresizerView.isAutoScale = NO;
 
 ## Install
 
-JPImageresizerView can be installed by [CocoaPods](http://cocoapods.org), just add the following line to your podfile:
+### Swift Package Manager
+
+- File > Swift Packages > Add Package Dependency
+- Add https://github.com/Rogue24/JPImageresizerView.git
+- Select "Up to Next Major" with "1.11.3"
+
+### CocoaPods
+
+- just add the following line to your podfile:
 
 ```ruby
 pod 'JPImageresizerView'
