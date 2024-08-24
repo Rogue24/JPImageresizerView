@@ -33,3 +33,4 @@ Podfile.lock
 
 # SwiftPM
 .build
+.swiftpm

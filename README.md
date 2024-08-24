@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-green.svg?style=flat)](https://cocoapods.org)
 
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
@@ -696,7 +698,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
-1.11.1~1.11.2 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题。
+1.11.1~1.11.3 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题；<br>3. 支持Swift Package Manager安装。
 1.11.0 | 1. 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；<br>2. 可使用本地图片组装GIF；<br>3. 可获取图片目标像素的颜色值；<br>4. 修复引起内存泄漏的漏洞。
 1.10.0~1.10.5 | 1. 修复旋转方向错误的问题；<br>2. 修复有透明背景的GIF裁剪后图像重叠的问题；<br>3. 修复仅修改`裁剪宽高比`而无法重置的问题；<br>4. 新增isCanRecovery只读属性：是否可重置，该属性仅针对`旋转`、`缩放`、`镜像`的变化情况，其他如`裁剪宽高比`、`圆切`等变化情况需用户自行判定能否重置，与`JPImageresizerIsCanRecoveryBlock`中返回的isCanRecovery一致；<br>5. 添加一些防Crash逻辑。
 1.9.0~1.9.9 | 1. 图片新增N宫格裁剪；<br>2. 所有的裁剪完成回调统一返回JPImageresizerResult实例；<br>3. 兼容Swift环境；<br>4. 修复`isShowGridlinesWhenDragging`属性为YES时，拖动图片本身没有显示网格的问题；<br>5. 修复部分音频有问题的视频裁剪出错的问题；<br>6. 修复裁剪视频或GIF时进度条没有显示的问题；<br>7. 新增更多`Configure`初始化和可自定义旋转至目标方向的API；<br>8. 修复在预览模式下会显示进度条的问题。
@@ -733,9 +735,10 @@ self.imageresizerView.isAutoScale = NO;
 
 ### Swift Package Manager
 
-- File > Swift Packages > Add Package Dependency
-- 添加 https://github.com/Rogue24/JPImageresizerView.git
-- 选择 "Up to Next Major" 为 "1.11.3"
+- 在 Xcode 中，选择：File -> Swift Packages -> Add Package Dependency
+- 输入包存储库URL：https://github.com/Rogue24/JPImageresizerView.git
+- 选择适当的版本（例如特定版本、分支或提交）
+- 添加`JPImageresizerView`到您的目标依赖项。
 
 ### CocoaPods
 

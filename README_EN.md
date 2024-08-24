@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/cocoapods/l/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Platform](https://img.shields.io/cocoapods/p/JPImageresizerView.svg?style=flat)](http://cocoapods.org/pods/JPImageresizerView)
 [![Language](http://img.shields.io/badge/language-ObjC-brightgreen.svg?style=flat)](https://developer.apple.com/Objective-C)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-green.svg?style=flat)](https://cocoapods.org)
 
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.cn/post/6958803759073853447) |
 [Little Red Book App Crop](https://github.com/Rogue24/JPCrop)
@@ -692,9 +694,10 @@ self.imageresizerView.isAutoScale = NO;
 
 ### Swift Package Manager
 
-- File > Swift Packages > Add Package Dependency
-- Add https://github.com/Rogue24/JPImageresizerView.git
-- Select "Up to Next Major" with "1.11.3"
+- In Xcode, select File: File -> Swift Packages -> Add Package Dependency
+- Enter the package repository URL: https://github.com/Rogue24/JPImageresizerView.git
+- Choose the appropriate version (e.g. a specific version, branch, or commit).
+- Add `JPImageresizerView` to your target dependencies.
 
 ### CocoaPods
 

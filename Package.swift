@@ -12,13 +12,15 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "JPImageresizerView",
-            targets: ["JPImageresizerView"]),
+            targets: ["JPImageresizerView"]
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "JPImageresizerView",
+            dependencies: [],
             path: "JPImageresizerView",
             resources: [.copy("PrivacyInfo.xcprivacy")],
             publicHeadersPath: ""
