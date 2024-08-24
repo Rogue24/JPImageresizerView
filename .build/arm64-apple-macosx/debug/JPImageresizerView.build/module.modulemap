@@ -1,0 +1,4 @@
+module JPImageresizerView {
+    umbrella "/Users/aa/Desktop/JPKit/JPImageresizerView/JPImageresizerView/include"
+    export *
+}

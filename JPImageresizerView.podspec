@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'JPImageresizerView/*.{h,m}'
+  s.source_files = 'JPImageresizerView/Core/*.{h,m}'
   
   s.resource_bundles = {
     'JPImageresizerView_Privacy' => ['JPImageresizerView/PrivacyInfo.xcprivacy']
