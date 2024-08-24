@@ -25,9 +25,7 @@ let package = Package(
             resources: [
                 .copy("PrivacyInfo.xcprivacy")
             ],
-            cSettings: [
-                .headerSearchPath("Classes"),
-            ]
+            publicHeadersPath: "include"
         ),
     ]
 )
