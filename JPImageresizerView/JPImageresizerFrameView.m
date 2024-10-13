@@ -1236,7 +1236,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     maskImgView.image = [JPImageresizerTool convertBlackImage:_maskImage];
     
     JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha];
-    if (!isBlur) [maskBlurView setIsBlur:NO duration:0];
+    [maskBlurView setIsBlur:isBlur duration:0];
     maskBlurView.userInteractionEnabled = NO;
     maskBlurView.maskView = maskImgView;
     [self insertSubview:maskBlurView belowSubview:self.blurView];
