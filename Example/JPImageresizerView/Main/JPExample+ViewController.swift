@@ -46,6 +46,7 @@ extension JPExample {
         var cacheCanceler: AnyCancellable?
         
         // MARK: - Life cycle
+        
         override func viewDidLoad() {
             super.viewDidLoad()
             setupNavigationBar()
@@ -66,6 +67,8 @@ extension JPExample {
             removeProgressTimer()
             cacheCanceler?.cancel()
         }
+        
+        // MARK: - Setup
         
         private func setupNavigationBar() {
             navigationController?.navigationItem.largeTitleDisplayMode = .always

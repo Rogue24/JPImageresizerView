@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0002A5532CBBBBD40006C80F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
+		0002A5802CBBC81D0006C80F /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0002A57F2CBBC81D0006C80F /* SceneDelegate.m */; };
 		0024C32D292F5AD7002513DA /* JPExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0024C32C292F5AD7002513DA /* JPExample.swift */; };
 		002E78B5295AA4740071E30C /* JPExample+Configure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002E78B4295AA4740071E30C /* JPExample+Configure.swift */; };
 		002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 002E78BE295ADDB40071E30C /* JPSolveTool.m */; };
@@ -101,7 +103,6 @@
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
-		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
 		6003F59E195388D20070C39A /* JPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* JPAppDelegate.m */; };
 		6003F5A7195388D20070C39A /* JPImageresizerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* JPImageresizerViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
@@ -130,6 +131,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0002A57E2CBBC81D0006C80F /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		0002A57F2CBBC81D0006C80F /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		0024C32C292F5AD7002513DA /* JPExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPExample.swift; sourceTree = "<group>"; };
 		002E78B4295AA4740071E30C /* JPExample+Configure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+Configure.swift"; sourceTree = "<group>"; };
 		002E78BD295ADDB40071E30C /* JPSolveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSolveTool.h; sourceTree = "<group>"; };
@@ -618,6 +621,10 @@
 		6003F593195388D20070C39A /* Example for JPImageresizerView */ = {
 			isa = PBXGroup;
 			children = (
+				6003F59C195388D20070C39A /* JPAppDelegate.h */,
+				6003F59D195388D20070C39A /* JPAppDelegate.m */,
+				0002A57E2CBBC81D0006C80F /* SceneDelegate.h */,
+				0002A57F2CBBC81D0006C80F /* SceneDelegate.m */,
 				002E78B8295ADA5B0071E30C /* Main */,
 				002E78BA295ADAD80071E30C /* Workspace */,
 				002E78B9295ADA7D0071E30C /* Extension */,
@@ -638,8 +645,6 @@
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
-				6003F59C195388D20070C39A /* JPAppDelegate.h */,
-				6003F59D195388D20070C39A /* JPAppDelegate.m */,
 				1AA6F3F023A9B862008EFA8B /* PrefixHeader.pch */,
 				1A658767262AEE0B00846689 /* JPImageresizerView_Example-Bridging-Header.h */,
 			);
@@ -885,7 +890,6 @@
 				718FEDEA2869C1D800686129 /* CropView.swift in Sources */,
 				006A9E2A2A77CD4700AD86BA /* View+.swift in Sources */,
 				1AA468C7249A0CFE0081452F /* FaceView.m in Sources */,
-				6003F59A195388D20070C39A /* main.m in Sources */,
 				718FEE2D286AEC0300686129 /* OneDaySize.swift in Sources */,
 				002E78B5295AA4740071E30C /* JPExample+Configure.swift in Sources */,
 				002E78BF295ADDB40071E30C /* JPSolveTool.m in Sources */,
@@ -898,9 +902,11 @@
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A658769262AEE0C00846689 /* JPCropViewController.swift in Sources */,
+				0002A5802CBBC81D0006C80F /* SceneDelegate.m in Sources */,
 				00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */,
 				1AA468C6249A0CFE0081452F /* DanielWuViewController.m in Sources */,
 				1A0AB35E22B25B7300B6B6AB /* NoDataView.m in Sources */,
+				0002A5532CBBBBD40006C80F /* main.m in Sources */,
 				00B3FAF52968227E00F48389 /* ImagePickerObject.swift in Sources */,
 				1A4406AF1FFBC0AB009345D5 /* JPPreviewViewController.m in Sources */,
 				1A0AB30522B22B0F00B6B6AB /* UIViewController+WMPageController.m in Sources */,

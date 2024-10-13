@@ -268,9 +268,10 @@
         [self.view layoutIfNeeded];
     }
     
-    // 横竖屏切换
-    // 📢 想要获取【旋转之后】的屏幕尺寸，需要到`Runloop`的下一个循环才能获取
-    dispatch_async(dispatch_get_main_queue(), ^{
+    //「横竖屏切换」
+    // 📢 此时还是【旋转之前】的尺寸，延时大概0.1s后就能获取【旋转之后】的屏幕尺寸。
+    // 🤯 因为此时只是告知布局要刷新，实际刷新需要到`Runloop`的下一个循环才会进行。
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:contentInsets duration:duration];
     });
 }
