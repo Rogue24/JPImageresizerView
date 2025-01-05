@@ -190,7 +190,7 @@
     self.player = player;
     
     @jp_weakify(self);
-    self.timeObserver = [player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    self.timeObserver = [player addPeriodicTimeObserverForInterval:CMTimeMake(1, 24) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         @jp_strongify(self);
         if (!self) return;
         self.slider.second = CMTimeGetSeconds(time);

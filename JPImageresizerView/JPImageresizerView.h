@@ -682,7 +682,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @method
- @brief 视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
+ @brief 视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 x 500）
  @param duration --- 截取多少秒
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
@@ -733,8 +733,8 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @method
  @brief 裁剪整段视频
- @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+ @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
  @param errorBlock --- 错误回调
  @param progressBlock --- 进度回调
  @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
@@ -745,6 +745,44 @@ NS_ASSUME_NONNULL_BEGIN
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   progressBlock:(JPExportVideoProgressBlock)progressBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
+
+/*!
+ @method
+ @brief 裁剪视频并从当前时间开始截取指定秒数
+ @param duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+ @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+ @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
+ @param errorBlock --- 错误回调
+ @param progressBlock --- 进度回调
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoFromCurrentSecondWithDuration:(NSTimeInterval)duration
+                                    presetName:(NSString *)presetName
+                                      cacheURL:(NSURL *_Nullable)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 progressBlock:(JPExportVideoProgressBlock)progressBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
+
+/*!
+ @method
+ @brief 裁剪视频并自定义截取指定秒数
+ @param startSecond --- 从第几秒开始截取
+ @param duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+ @param presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+ @param cacheURL --- 缓存路径，如果为nil则默认为NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
+ @param errorBlock --- 错误回调
+ @param progressBlock --- 进度回调
+ @param completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含缓存路径）
+ @discussion 裁剪过程在子线程，回调已切回到主线程，可调用该方法前加上状态提示
+ */
+- (void)cropVideoFromStartSecond:(NSTimeInterval)startSecond
+                        duration:(NSTimeInterval)duration
+                      presetName:(NSString *)presetName
+                        cacheURL:(NSURL *_Nullable)cacheURL
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
+                   progressBlock:(JPExportVideoProgressBlock)progressBlock
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 /*!
  @method

@@ -60,6 +60,7 @@ typedef NS_ENUM(NSUInteger, JPImageresizerRotationDirection) {
  * JPIEReason_VideoAlreadyDamage：视频文件已损坏
  * JPIEReason_VideoExportFailed：视频导出失败
  * JPIEReason_VideoExportCancelled：视频导出取消
+ * JPIEReason_VideoDurationTooShort：视频截取时间过短（至少1s）
  */
 typedef NS_ENUM(NSUInteger, JPImageresizerErrorReason) {
     JPIEReason_NilObject,
@@ -67,7 +68,8 @@ typedef NS_ENUM(NSUInteger, JPImageresizerErrorReason) {
     JPIEReason_NoSupportedFileType,
     JPIEReason_VideoAlreadyDamage,
     JPIEReason_VideoExportFailed,
-    JPIEReason_VideoExportCancelled
+    JPIEReason_VideoExportCancelled,
+    JPIEReason_VideoDurationTooShort
 };
 
 #pragma mark - Struct

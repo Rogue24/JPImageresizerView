@@ -1562,6 +1562,7 @@
                              completeBlock:completeBlock];
 }
 
+// 视频从当前时间开始截取指定秒数画面转GIF
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
@@ -1575,6 +1576,8 @@
                              errorBlock:errorBlock
                           completeBlock:completeBlock];
 }
+
+// 视频自定义截取指定秒数画面转GIF
 - (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
                              duration:(NSTimeInterval)duration
                                   fps:(float)fps
@@ -1631,6 +1634,39 @@
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                  progressBlock:(JPExportVideoProgressBlock)progressBlock
                  completeBlock:(JPCropDoneBlock)completeBlock {
+    [self cropVideoFromStartSecond:0
+                          duration:0
+                        presetName:presetName
+                          cacheURL:cacheURL
+                        errorBlock:errorBlock
+                     progressBlock:progressBlock
+                     completeBlock:completeBlock];
+}
+
+// 裁剪视频并从当前时间开始截取指定秒数
+- (void)cropVideoFromCurrentSecondWithDuration:(NSTimeInterval)duration
+                                    presetName:(NSString *)presetName
+                                      cacheURL:(NSURL *)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 progressBlock:(JPExportVideoProgressBlock)progressBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock {
+    [self cropVideoFromStartSecond:self.slider.second
+                          duration:duration
+                        presetName:presetName
+                          cacheURL:cacheURL
+                        errorBlock:errorBlock
+                     progressBlock:progressBlock
+                     completeBlock:completeBlock];
+}
+
+// 裁剪视频并自定义截取指定秒数
+- (void)cropVideoFromStartSecond:(NSTimeInterval)startSecond
+                        duration:(NSTimeInterval)duration
+                      presetName:(NSString *)presetName
+                        cacheURL:(NSURL *)cacheURL
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
+                   progressBlock:(JPExportVideoProgressBlock)progressBlock
+                   completeBlock:(JPCropDoneBlock)completeBlock {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪功能暂不可用，此时应该将裁剪按钮设为不可点或隐藏");
         !completeBlock ? : completeBlock(nil);
@@ -1641,8 +1677,17 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    if (startSecond < 0) {
+        startSecond = 0;
+    } else if (startSecond > self.slider.seconds) {
+        JPIRLog(@"jp_tip: 请设置正确的初始时间");
+        !completeBlock ? : completeBlock(nil);
+        return;
+    }
     __weak typeof(self) wSelf = self;
     [JPImageresizerTool cropVideoWithAsset:self.videoObj.asset
+                               startSecond:startSecond
+                                  duration:duration
                                 presetName:presetName
                                  configure:self.frameView.currentCropConfigure
                                   cacheURL:cacheURL

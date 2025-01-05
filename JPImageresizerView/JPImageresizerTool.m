@@ -2036,6 +2036,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
 
 #pragma mark 裁剪视频
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
+               startSecond:(NSTimeInterval)startSecond
+                  duration:(NSTimeInterval)duration
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *)cacheURL
@@ -2047,9 +2049,16 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
         return;
     }
     
+    if (duration > 0 && duration < 1) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_VideoDurationTooShort];
+        return;
+    }
+    
     if ([NSThread currentThread] == [NSThread mainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self cropVideoWithAsset:asset
+                         startSecond:startSecond
+                            duration:duration
                           presetName:presetName
                            configure:configure
                             cacheURL:cacheURL
@@ -2105,7 +2114,37 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     CMTimeScale timescale = asset.duration.timescale;
     CMTime frameDuration = CMTimeMakeWithSeconds(1.0 / videoTrack.nominalFrameRate, timescale);
     CMTime zeroTime = CMTimeMake(0, timescale);
-    CMTimeRange timeRange = CMTimeRangeMake(zeroTime, asset.duration);
+    
+    // 起始时间
+    CMTime startTime;
+    if (startSecond <= 0) {
+        startTime = zeroTime;
+    } else {
+        startTime = CMTimeMakeWithSeconds(startSecond, timescale);
+    }
+    
+    // 截取时间
+    CMTime cutTime;
+    if (duration <= 0) {
+        cutTime = CMTimeSubtract(asset.duration, startTime);
+    } else {
+        cutTime = CMTimeMakeWithSeconds(duration, timescale);
+        // 校验是否超出视频最长时间
+        CMTime finalTime = CMTimeAdd(startTime, cutTime);
+        if (CMTimeCompare(finalTime, asset.duration) > 0) {
+            cutTime = CMTimeSubtract(asset.duration, startTime);
+        }
+    }
+    
+    // 校验截取时间是否过短（至少1s）
+    CMTime minTime = CMTimeMakeWithSeconds(1, timescale);
+    if (CMTimeCompare(minTime, cutTime) > 0) {
+        [self __executeErrorBlock:errorBlock cacheURL:cacheURL reason:JPIEReason_VideoDurationTooShort];
+        return;
+    }
+    
+    // 获取视频截取时间段
+    CMTimeRange timeRange = CMTimeRangeMake(startTime, cutTime);
     
     AVMutableComposition *composition = [AVMutableComposition composition];
     
@@ -2168,7 +2207,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     [layerInstruciton setTransform:transform atTime:zeroTime];
     
     AVMutableVideoCompositionInstruction *compositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-    compositionInstruction.timeRange = timeRange;
+    // 这里设置的是「已经截取后」的时间段，所以不能使用上面的timeRange，那是相较于整个视频的时间段。
+    compositionInstruction.timeRange = CMTimeRangeMake(zeroTime, cutTime);
     compositionInstruction.layerInstructions = @[layerInstruciton];
     
     AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];

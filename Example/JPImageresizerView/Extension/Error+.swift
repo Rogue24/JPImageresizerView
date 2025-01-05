@@ -68,6 +68,9 @@ extension JPProgressHUD {
         case .JPIEReason_VideoExportCancelled:
             showError(withStatus: "视频导出取消", userInteractionEnabled: true)
             
+        case .JPIEReason_VideoDurationTooShort:
+            showError(withStatus: "视频截取时间过短（至少1s）", userInteractionEnabled: true)
+            
         @unknown default:
             break
         }

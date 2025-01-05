@@ -164,6 +164,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 裁剪视频
  */
 + (void)cropVideoWithAsset:(AVURLAsset *)asset
+               startSecond:(NSTimeInterval)startSecond
+                  duration:(NSTimeInterval)duration
                 presetName:(NSString *)presetName
                  configure:(JPCropConfigure)configure
                   cacheURL:(NSURL *_Nullable)cacheURL
