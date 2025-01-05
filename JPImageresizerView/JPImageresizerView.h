@@ -369,6 +369,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** 动画曲线（默认是线性Linear） */
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
+/** 当前GIF/视频的秒数（进度条的滑动值） */
+@property (readonly) NSTimeInterval currentSecond;
+
 #pragma mark 预览
 /**
  * 预览模式（隐藏边框，停止拖拽操作，用于预览裁剪后的区域）
@@ -682,7 +685,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @method
- @brief 视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 x 500）
+ @brief 裁剪视频从当前时间开始截取指定秒数片段转成GIF（fps = 10，rate = 1，maximumSize = 500 x 500）
  @param duration --- 截取多少秒
  @param cacheURL --- 缓存路径（可设置为nil）
  @param errorBlock --- 错误回调
@@ -696,7 +699,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @method
- @brief 视频自定义截取指定秒数画面转GIF
+ @brief 裁剪视频并自定义截取指定秒数片段转成GIF
  @param startSecond --- 从第几秒开始截取
  @param duration --- 截取多少秒
  @param fps --- 帧率（设置为0则以视频真身帧率）

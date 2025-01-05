@@ -12,7 +12,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.11.4)
+## Brief introduction (Current version: 1.12.0)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -30,10 +30,10 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ Custom border image;
         ✅ It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
         ✅ Can customize the mask image clipping;
-        ✅ It can cut the whole picture or a frame of local video;
-        ✅ A local video can be intercepted, cut and transferred to GIF;
         ✅ Can crop GIF;
         ✅ Process Images for GIF: background color, corner radius, border, outline stroke, and content padding;
+        ✅ You can crop a local video either as a whole or a specific frame;
+        ✅ You can crop a local video and customize the extraction of a specified duration, or convert it into a GIF;
         ✅ The current clipping state can be saved;
         ✅ Images support n-grid clipping;
         ✅ Compatible with Swift & SwiftUI environment(Reference Demo).
@@ -414,10 +414,30 @@ PS: At present, it is only for local video, and remote video is not suitable for
 // Video export quality can be set
 // presetName --- The video export quality of the system, such as: AVAssetExportPresetLowQuality, AVAssetExportPresetMediumQuality, AVAssetExportPresetHighestQuality, etc
 - (void)cropVideoWithPresetName:(NSString *)presetName
-                       cacheURL:(NSURL *)cacheURL 
+                       cacheURL:(NSURL *_Nullable)cacheURL 
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   progressBlock:(JPExportVideoProgressBlock)progressBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
+                  
+// Crop the video and extract a specified duration starting from the current time
+// duration --- Duration to extract in seconds (minimum 1s; if 0, extracts until the end of the video)
+- (void)cropVideoFromCurrentSecondWithDuration:(NSTimeInterval)duration
+                                    presetName:(NSString *)presetName
+                                      cacheURL:(NSURL *_Nullable)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 progressBlock:(JPExportVideoProgressBlock)progressBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
+
+// Crop the video and customize the extraction duration
+// startSecond --- Start extracting from which second
+// duration --- Duration to extract in seconds (minimum 1s; if 0, extracts until the end of the video)
+- (void)cropVideoFromStartSecond:(NSTimeInterval)startSecond
+                        duration:(NSTimeInterval)duration
+                      presetName:(NSString *)presetName
+                        cacheURL:(NSURL *_Nullable)cacheURL
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
+                   progressBlock:(JPExportVideoProgressBlock)progressBlock
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 // Cancel video export
 // When the video is being exported, the call can cancel the export and trigger the errorblock callback (JPIEReason_ExportCancelled)

@@ -14,6 +14,7 @@
 #define ButtonHeight 30.0
 
 #define JPCutGIFDuration 5.0
+#define JPCutVideoDuration 10.0
 
 #import "JPImageresizerView.h"
 #import "JPInline.h"

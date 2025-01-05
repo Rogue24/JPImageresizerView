@@ -10,7 +10,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.11.4）
+## 简介（当前版本：1.12.0）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -28,10 +28,10 @@
         ✅ 自定义边框图片；
         ✅ 可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
         ✅ 可自定义蒙版图片裁剪；
-        ✅ 可裁剪本地视频整段画面或某一帧画面；
-        ✅ 可截取某一段本地视频，裁剪后并转成GIF；
         ✅ 可裁剪GIF；
         ✅ 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；
+        ✅ 可裁剪本地视频整段画面或某一帧画面；
+        ✅ 可裁剪本地视频并自定义截取指定秒数片段，或将其转成GIF；
         ✅ 可保存当前裁剪状态；
         ✅ 图片支持N宫格裁剪；
         ✅ 兼容Swift&SwiftUI环境（参考Demo）。
@@ -414,10 +414,30 @@ PS：目前只针对本地视频，远程视频暂未适配。
 // 可设置视频导出质量
 // presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
 - (void)cropVideoWithPresetName:(NSString *)presetName
-                       cacheURL:(NSURL *)cacheURL
+                       cacheURL:(NSURL *_Nullable)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
                   progressBlock:(JPExportVideoProgressBlock)progressBlock
                   completeBlock:(JPCropDoneBlock)completeBlock;
+                  
+// 裁剪视频并从当前时间开始截取指定秒数
+// duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+- (void)cropVideoFromCurrentSecondWithDuration:(NSTimeInterval)duration
+                                    presetName:(NSString *)presetName
+                                      cacheURL:(NSURL *_Nullable)cacheURL
+                                    errorBlock:(JPImageresizerErrorBlock)errorBlock
+                                 progressBlock:(JPExportVideoProgressBlock)progressBlock
+                                 completeBlock:(JPCropDoneBlock)completeBlock;
+
+// 裁剪视频并自定义截取指定秒数
+// startSecond --- 从第几秒开始截取
+// duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+- (void)cropVideoFromStartSecond:(NSTimeInterval)startSecond
+                        duration:(NSTimeInterval)duration
+                      presetName:(NSString *)presetName
+                        cacheURL:(NSURL *_Nullable)cacheURL
+                      errorBlock:(JPImageresizerErrorBlock)errorBlock
+                   progressBlock:(JPExportVideoProgressBlock)progressBlock
+                   completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 取消视频导出
 // 当视频正在导出时调用即可取消导出，触发errorBlock回调（JPIEReason_ExportCancelled）
@@ -453,10 +473,10 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
                       completeBlock:(JPCropDoneBlock)completeBlock;
 ```
 
-- **截取视频某一段裁剪后转GIF**
+- **裁剪视频并截取指定秒数片段转成GIF**
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
 ```objc
-// 1.视频从当前时间开始截取指定秒数画面转GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
+// 1.裁剪视频并从当前时间开始截取指定秒数片段转成GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
 // duration --- 截取多少秒
 // completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
@@ -464,7 +484,7 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropDoneBlock)completeBlock;
 
-// 2.视频自定义截取指定秒数画面转GIF
+// 2.裁剪视频并自定义截取指定秒数片段转成GIF
 // duration --- 截取多少秒
 // fps --- 帧率（设置为0则以视频真身帧率）
 // rate --- 速率
@@ -698,6 +718,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.12.0 | 1. 现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）。
 1.11.1~1.11.4 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题；<br>3. 支持Swift Package Manager安装；<br>4. 修复「初始化/横竖屏切换」蒙版展示失效的问题。
 1.11.0 | 1. 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；<br>2. 可使用本地图片组装GIF；<br>3. 可获取图片目标像素的颜色值；<br>4. 修复引起内存泄漏的漏洞。
 1.10.0~1.10.5 | 1. 修复旋转方向错误的问题；<br>2. 修复有透明背景的GIF裁剪后图像重叠的问题；<br>3. 修复仅修改`裁剪宽高比`而无法重置的问题；<br>4. 新增isCanRecovery只读属性：是否可重置，该属性仅针对`旋转`、`缩放`、`镜像`的变化情况，其他如`裁剪宽高比`、`圆切`等变化情况需用户自行判定能否重置，与`JPImageresizerIsCanRecoveryBlock`中返回的isCanRecovery一致；<br>5. 添加一些防Crash逻辑。

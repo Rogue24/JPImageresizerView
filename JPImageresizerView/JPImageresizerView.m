@@ -1098,6 +1098,10 @@
     }
 }
 
+- (NSTimeInterval)currentSecond {
+    return self.slider.second;
+}
+
 #pragma mark 预览
 - (void)setIsPreview:(BOOL)isPreview {
     [self setIsPreview:isPreview animated:YES];

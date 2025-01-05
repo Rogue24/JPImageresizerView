@@ -547,7 +547,7 @@ static UIViewController *tmpVC_;
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
-        [alertCtr addAction:[NSString stringWithFormat:@"截取%.0lf秒为GIF", JPCutGIFDuration] handler:^{
+        [alertCtr addAction:[NSString stringWithFormat:@"从当前时间开始截取%.0lf秒为GIF", JPCutGIFDuration] handler:^{
             @jp_strongify(self);
             if (!self) return;
             [JPProgressHUD show];
@@ -562,10 +562,15 @@ static UIViewController *tmpVC_;
                 [self __imageresizerDoneWithResult:result];
             }];
         }];
-        [alertCtr addAction:@"裁剪视频" handler:^{
+        [alertCtr addAction:@"裁剪整个视频" handler:^{
             @jp_strongify(self);
             if (!self) return;
-            [self __cropVideo];
+            [self __cropVideo:0];
+        }];
+        [alertCtr addAction:[NSString stringWithFormat:@"裁剪视频并从当前时间开始截取%.0lf秒片段", JPCutVideoDuration] handler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [self __cropVideo:JPCutVideoDuration];
         }];
         [alertCtr addCancel:@"取消" handler:nil];
         [alertCtr presentFrom:self];
@@ -705,12 +710,16 @@ static UIViewController *tmpVC_;
 
 #pragma mark - 裁剪视频
 
-- (void)__cropVideo {
+- (void)__cropVideo:(NSTimeInterval)duration {
     NSURL *videoURL = self.imageresizerView.videoURL;
     NSURL *cacheURL = [self __cacheURL:videoURL.pathExtension];
     [JPProgressHUD show];
     @jp_weakify(self);
-    [self.imageresizerView cropVideoWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
+    [self.imageresizerView cropVideoFromStartSecond:(duration > 0 ? self.imageresizerView.currentSecond : 0)
+                                           duration:duration
+                                         presetName:AVAssetExportPresetHighestQuality
+                                           cacheURL:cacheURL
+                                         errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
         weak_self.isExporting = NO;
         [JPProgressHUD showImageresizerError:reason pathExtension:[cacheURL pathExtension]];
     } progressBlock:^(float progress) {
