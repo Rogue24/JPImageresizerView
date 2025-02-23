@@ -17,6 +17,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="JPImageresizerView" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dq9-g8-0TQ">
+                                <rect key="frame" x="48" y="248" width="318.5" height="91.5"/>
+                                <fontDescription key="fontDescription" name="Zapfino" family="Zapfino" pointSize="27"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bazhuawan_icon.png" translatesAutoresizingMaskIntoConstraints="NO" id="SeW-fe-uQz">
                                 <rect key="frame" x="16" y="535" width="382" height="361"/>
                                 <constraints>
@@ -29,7 +35,9 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="SeW-fe-uQz" secondAttribute="trailing" constant="16" id="7bg-iR-6p3"/>
                             <constraint firstAttribute="bottom" secondItem="SeW-fe-uQz" secondAttribute="bottom" id="GQI-Z2-W1u"/>
+                            <constraint firstItem="Dq9-g8-0TQ" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="acb-h8-dET"/>
                             <constraint firstItem="SeW-fe-uQz" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="16" id="nHO-gl-h2q"/>
+                            <constraint firstItem="Dq9-g8-0TQ" firstAttribute="top" secondItem="vBq-9y-VMe" secondAttribute="top" constant="200" id="uyg-fd-rqS"/>
                             <constraint firstItem="SeW-fe-uQz" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vBq-9y-VMe" secondAttribute="top" id="xJF-mC-Gln"/>
                         </constraints>
                     </view>
