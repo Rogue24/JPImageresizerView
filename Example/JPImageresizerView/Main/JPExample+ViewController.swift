@@ -167,9 +167,8 @@ extension JPExample.ViewController {
     }
 }
 
+// MARK: - Router
 extension JPExample.ViewController {
-    // MARK: - Router
-    
     func pushImageresizerVC(with model: JPExample.ConfigureModel) {
         guard let navCtr = navigationController else { return }
         let vc = JPImageresizerViewController.build(with: model.statusBarStyle, configure: model.configure)

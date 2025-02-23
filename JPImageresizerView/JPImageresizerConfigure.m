@@ -21,6 +21,7 @@
     .jp_strokeColor(UIColor.whiteColor)
     .jp_bgColor(UIColor.blackColor)
     .jp_maskAlpha(0.75)
+    .jp_resizeScaledBounds(CGRectZero)
     .jp_resizeWHScale(0.0)
     .jp_isRoundResize(NO)
     .jp_maskImage(nil)
@@ -296,6 +297,13 @@
 - (JPImageresizerConfigure *(^)(UIColor *))jp_strokeColor {
     return ^(UIColor *strokeColor) {
         self.strokeColor = strokeColor;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure * _Nonnull (^)(CGRect))jp_resizeScaledBounds {
+    return ^(CGRect resizeScaledBounds) {
+        self.resizeScaledBounds = resizeScaledBounds;
         return self;
     };
 }

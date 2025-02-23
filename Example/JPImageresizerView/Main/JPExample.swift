@@ -27,6 +27,7 @@ enum JPExample {
         case singleImageOnlyDrawOutline = "绘制图像内容的轮廓"
         case colorMeasurement = "获取图片的像素颜色值"
         
+        case cropFace = "人脸裁剪"
         case replaceFace = "趣味换脸"
         case girlsGIF = "自制GIF"
         case compatibleSwift = "适配 Swift"
@@ -65,6 +66,7 @@ enum JPExample {
         ]),
         
         Section(title: "🦄 其他", items: [
+            .cropFace,
             .replaceFace,
             .girlsGIF,
             .compatibleSwift,

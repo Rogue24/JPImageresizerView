@@ -123,6 +123,39 @@ extension JPExample.Item {
             }
             
         // MARK: - Section3
+        case .cropFace:
+            let handler: (UIImage) async -> Void = { image in
+                let configure = JPImageresizerConfigure.defaultConfigure(with: image)
+                
+                JPProgressHUD.show(withStatus: "检测ing...", userInteractionEnabled: false)
+                if let scaledBounds = await UIImage.detectFaces(in: image).first {
+                    configure.resizeScaledBounds = scaledBounds
+                    JPProgressHUD.dismiss()
+                } else {
+                    JPProgressHUD.showInfo(withStatus: "未能识别到人脸", userInteractionEnabled: true)
+                }
+                
+                let model = JPExample.ConfigureModel(.lightContent, configure)
+                await mainVC.pushImageresizerVC(with: model)
+            }
+            
+            await UIAlertController.build(.actionSheet, title: "人脸裁剪")
+                .addAction("随机图片") {
+                    Task {
+                        let imgName = ["Girl1.jpg", "Girl2.jpg", "Girl3.jpg", "Girl4.jpg", "Girl6.jpg"].randomElement()!
+                        let image = UIImage.bundleImage(imgName)
+                        await handler(image)
+                    }
+                }
+                .addAction("打开相册") {
+                    Task {
+                        guard let image: UIImage = try? await ImagePicker.openAlbum() else { return }
+                        await handler(image)
+                    }
+                }
+                .addCancel()
+                .present(from: mainVC)
+            
         case .replaceFace:
             await MainActor.run {
                 mainVC.pushChooseFaceVC()

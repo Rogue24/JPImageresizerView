@@ -42,9 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
                     gridCount:(NSUInteger)gridCount
     imageresizerIsCanRecovery:(JPImageresizerIsCanRecoveryBlock)imageresizerIsCanRecovery
  imageresizerIsPrepareToScale:(JPImageresizerIsPrepareToScaleBlock)imageresizerIsPrepareToScale
-          isVerticalityMirror:(BOOL(^)(void))isVerticalityMirror
-           isHorizontalMirror:(BOOL(^)(void))isHorizontalMirror
-             resizeObjWhScale:(CGFloat(^)(void))resizeObjWhScale;
+          isVerticalityMirror:(BOOL (^)(void))isVerticalityMirror
+           isHorizontalMirror:(BOOL (^)(void))isHorizontalMirror
+             resizeObjWhScale:(CGFloat (^)(void))resizeObjWhScale;
 
 @property (nonatomic, copy) BOOL (^isVerticalityMirror)(void);
 @property (nonatomic, copy) BOOL (^isHorizontalMirror)(void);
@@ -136,7 +136,9 @@ NS_ASSUME_NONNULL_BEGIN
                        initialResizeWHScale:(CGFloat)initialResizeWHScale
                           isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 
-- (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
+- (void)setupAfterAddedToSuperview:(CGRect)resizeScaledBounds;
+
+- (void)superviewUpdateFrame:(CGRect)superviewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration;
 
 @property (nonatomic, weak) UIView *_Nullable playerView;
 @property (nonatomic, weak) JPImageresizerSlider *_Nullable slider;

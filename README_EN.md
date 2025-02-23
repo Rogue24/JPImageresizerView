@@ -12,7 +12,7 @@
 
 *本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
 
-## Brief introduction (Current version: 1.12.0)
+## Brief introduction (Current version: 1.13.0)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -28,8 +28,9 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         ✅ Supports circular clipping;
         ✅ Custom gaussian blur style, border color, background color, mask opacity;
         ✅ Custom border image;
-        ✅ It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
         ✅ Can customize the mask image clipping;
+        ✅ Customizable initial cropping area;
+        ✅ It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
         ✅ Can crop GIF;
         ✅ Process Images for GIF: background color, corner radius, border, outline stroke, and content padding;
         ✅ You can crop a local video either as a whole or a specific frame;
@@ -50,9 +51,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
     
 ## Newest
-    1.Configurable properties for GIF: background color, corner radius, border, outline stroke, and content padding;
-    2.Assemble GIF using local images;
-    3.Retrieve color values of target pixels in images.
+    1. Now, while cropping the video, you can also customize the segment of the video to be trimmed (at least 1 second);
+    2. Customizable initial cropping area.
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
@@ -232,6 +232,22 @@ view.insertSubview(imageresizerView, at: 0)
 self.imageresizerView = imageresizerView
 ```
 For specific use, refer to Demo (JPCropViewController).
+
+#### Customizable Initial Cropping Area
+
+You can modify the initial cropping area by setting the `resizeScaledBounds` property of `JPImageresizerConfigure` (by default, the entire crop element's size is displayed).
+
+```objc
+configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8)
+```
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/initial_resizeScaledBounds.jpg)
+
+- The value of this property is represented as a **percentage of the original size**. For example, the above setting means the initial cropping area will cover `80%` of the crop element's center.
+- This property is mutually exclusive with another property of `JPImageresizerConfigure`, `resizeWHScale`. When `resizeScaledBounds` is set, the `resizeWHScale` of `imageresizerView` will be automatically calculated as `resizeScaledBounds.size.width / resizeScaledBounds.size.height`.
+- This property will only be used once during initialization. Therefore, if it has been set or if you later configure `imageresizerView` with `resizeWHScale`, `isRoundResize`, or `maskImage`, the `resizeScaledBounds` will be cleared.
+
+For detailed usage, please refer to the **人脸裁剪** section in the Demo.
 
 ### Crop
     Explain: 

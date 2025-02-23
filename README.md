@@ -10,7 +10,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.12.0）
+## 简介（当前版本：1.13.0）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -24,10 +24,11 @@
         ✅ 水平和垂直的镜像翻转；
         ✅ 两种边框样式；
         ✅ 支持圆框裁剪；
-        ✅ 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
-        ✅ 自定义边框图片；
-        ✅ 可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
+        ✅ 可自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
+        ✅ 可自定义边框图片；
         ✅ 可自定义蒙版图片裁剪；
+        ✅ 可自定义初始裁剪区域；
+        ✅ 可动态修改视图区域和裁剪区域间距，支持横竖屏切换;
         ✅ 可裁剪GIF；
         ✅ 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；
         ✅ 可裁剪本地视频整段画面或某一帧画面；
@@ -48,9 +49,8 @@
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
     
 ## 最新改动
-    1.可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；
-    2.可使用本地图片组装GIF；
-    3.可获取图片目标像素的颜色值。
+    1.现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）；
+    2.可自定义初始裁剪区域。
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
@@ -230,6 +230,22 @@ view.insertSubview(imageresizerView, at: 0)
 self.imageresizerView = imageresizerView
 ```
 具体使用可以参考Demo（JPCropViewController）。
+
+#### 自定义初始裁剪区域
+
+可以设置`JPImageresizerConfigure`的`resizeScaledBounds`属性修改初始裁剪区域（默认以整个裁剪元素的尺寸展示）
+
+```objc
+configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8)
+```
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/initial_resizeScaledBounds.jpg)
+
+- 该属性的值是以【原尺寸的百分比形式】表示，例如以上设置表示初始为裁剪元素中间`80%`区域；
+- 该属性和`JPImageresizerConfigure`的另一个属性`resizeWHScale`互斥，当有值时`imageresizerView`的`resizeWHScale`将会自动设置为`resizeScaledBounds.size.width / resizeScaledBounds.size.height`；
+- 该属性只会在初始化时使用一次，因此如果已经使用了该属性，或者后续对`imageresizerView`设置了`resizeWHScale`、`isRoundResize`、`maskImage`，`resizeScaledBounds`都会被清空。
+
+具体使用可以参考Demo的**人脸裁剪**。
 
 ### 裁剪
     裁剪说明：
@@ -718,6 +734,7 @@ self.imageresizerView.isAutoScale = NO;
 
 版本 | 更新内容
 ----|------
+1.13.0 | 1. 新增可自定义设置的初始裁剪区域，使用`JPImageresizerConfigure`的`resizeScaledBounds`属性进行配置（原尺寸的百分比形式）。
 1.12.0 | 1. 现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）。
 1.11.1~1.11.4 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题；<br>3. 支持Swift Package Manager安装；<br>4. 修复「初始化/横竖屏切换」蒙版展示失效的问题。
 1.11.0 | 1. 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；<br>2. 可使用本地图片组装GIF；<br>3. 可获取图片目标像素的颜色值；<br>4. 修复引起内存泄漏的漏洞。

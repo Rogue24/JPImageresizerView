@@ -335,6 +335,7 @@
 		002E78BB295ADB5A0071E30C /* Photos */ = {
 			isa = PBXGroup;
 			children = (
+				00B3FAF12968227E00F48389 /* ImagePicker */,
 				1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */,
 			);
 			path = Photos;
@@ -392,8 +393,7 @@
 				00B3FAF32968227E00F48389 /* ImagePicker.swift */,
 				00B3FAF22968227E00F48389 /* ImagePickerObject.swift */,
 			);
-			name = ImagePicker;
-			path = Photos/ImagePicker;
+			path = ImagePicker;
 			sourceTree = "<group>";
 		};
 		1A0AB2DC22B22B0F00B6B6AB /* JPPhoto */ = {
@@ -494,7 +494,6 @@
 		1A10433623A495AD00D1B2DF /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				00B3FAF12968227E00F48389 /* ImagePicker */,
 				002E78BB295ADB5A0071E30C /* Photos */,
 				1AA468C1249A0CFE0081452F /* ReplaceFace */,
 				1AA468C0249A0CFE0081452F /* ShapeList */,

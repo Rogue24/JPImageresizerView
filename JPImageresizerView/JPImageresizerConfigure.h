@@ -21,8 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
     - bgColor = UIColor.blackColor;
     - maskAlpha = 0.75;
     - strokeColor = UIColor.whiteColor;
+    - resizeScaledBounds = CGRectZero;
     - resizeWHScale = 0.0;
     - isRoundResize = NO;
+    - maskImage = nil;
     - isArbitrarily = YES;
     - contentInsets = UIEdgeInsetsMake(16, 16, 16, 16);
     - borderImage = nil;
@@ -33,8 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
     - isShowGridlinesWhenIdle = NO;
     - isShowGridlinesWhenDragging = YES;
     - gridCount = 3;
-    - maskImage = nil;
-    - isArbitrarilyMask = NO;
     - isLoopPlaybackGIF = NO;
     - gifSettings = nil;
     - isCleanHistoryAfterInitial = YES;
@@ -190,6 +190,14 @@ NS_ASSUME_NONNULL_BEGIN
 /** 裁剪线颜色 */
 @property (nonatomic, strong) UIColor *_Nullable strokeColor;
 
+/**
+ * 初始裁剪区域（只会在初始化时使用一次）
+ *  - 该值表示裁剪区域的 x, y, width, height，以【原尺寸的百分比形式】表示，例如 CGRectMake(0.1, 0.1, 0.8, 0.8) 表示裁剪区域为图片的中间 80% 区域
+ *  - 该属性和另一个属性 resizeWHScale 互斥，当有值时 imageresizerView.resizeWHScale = resizeScaledBounds.size.width / resizeScaledBounds.size.height
+ *  - 只会在初始化时使用一次，因此如果已经使用了该属性，或者后续对 imageresizerView 设置了 resizeWHScale、isRoundResize 、maskImage，resizeScaledBounds 都会被清空。
+ */
+@property (nonatomic, assign) CGRect resizeScaledBounds;
+
 /** 初始化裁剪宽高比（0 为元素的宽高比，若 isRoundResize 为  YES，或 maskImage 不为空，该属性无效） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
@@ -260,6 +268,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *_Nullable bgColor);
 @property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
 @property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *_Nullable strokeColor);
+@property (readonly) JPImageresizerConfigure *(^jp_resizeScaledBounds)(CGRect resizeScaledBounds);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *_Nullable maskImage);

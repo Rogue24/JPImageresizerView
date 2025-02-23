@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreImage
+import Vision
 
 extension UIImage {
     static func bundleImage(_ name: String, ofType ext: String? = nil) -> UIImage {
@@ -53,7 +55,7 @@ extension UIImage {
         default:
             imageName = "flowers.jpg"
         }
-        return bundleImage(imageName, ofType: nil)
+        return bundleImage(imageName)
     }
     
     private static var cuteOctoGIFImg: UIImage? = nil
@@ -125,5 +127,66 @@ extension UIImage {
         }
         
         return UIImage.animatedImage(with: images, duration: 4)!
+    }
+}
+
+// MARK: - Detect Faces
+extension UIImage {
+    /// CoreImage方式
+    static func detectFaces(in image: UIImage?) async -> [CGRect] {
+        guard let image, let ciImage = CIImage(image: image),
+              let detector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyLow]) else {
+            print("not found the faces.")
+            return []
+        }
+        
+        let features = detector.features(in: ciImage)
+        let size = image.size
+        return features.map {
+            let faceBounds = $0.bounds
+            // 转换成以【原尺寸的百分比形式】表示，取值为0~1。
+            return CGRect(x: faceBounds.minX / size.width,
+                          // 图像的原点在【左下角】，而手机屏幕是在【左上角】，所以要把Y轴颠倒
+                          y: (size.height - faceBounds.minY - faceBounds.height) / size.height,
+                          width: faceBounds.width / size.width,
+                          height: faceBounds.height / size.height)
+        }
+    }
+    
+    /// Vision方式
+    /// 📢📢📢：模拟机无法使用`Vision`，只能真机使用
+    static func detectFacesWithVision(in image: UIImage?) async -> [CGRect] {
+        await withCheckedContinuation { (continuation: CheckedContinuation<[CGRect], Never>) in
+            guard let image, let ciImage = CIImage(image: image) else {
+                continuation.resume(returning: [])
+                return
+            }
+            
+            let request = VNDetectFaceRectanglesRequest { (request, error) in
+                if let error {
+                    print("Error detecting faces: \(error)")
+                    continuation.resume(returning: [])
+                    return
+                }
+                
+                let results = request.results as? [VNFaceObservation] ?? []
+                let allScaledBounds: [CGRect] = results.map {
+                    // boundingBox已经是以【原尺寸的百分比形式】表示的，取值为0~1。
+                    var faceBounds = $0.boundingBox
+                    // 图像的原点在【左下角】，而手机屏幕是在【左上角】，所以要把Y轴颠倒
+                    faceBounds.origin.y = 1 - faceBounds.minY - faceBounds.height
+                    return faceBounds
+                }
+                
+                continuation.resume(returning: allScaledBounds)
+            }
+            
+            let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
+            do {
+                try handler.perform([request])
+            } catch {
+                print("Request Error: \(error)")
+            }
+        }
     }
 }

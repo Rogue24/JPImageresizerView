@@ -786,7 +786,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 - (void)__timerHandle {
     [self __removeTimer];
-    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:_defaultDuration];
+    [self __adjustImageresizerFrameTobeZoom:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:_defaultDuration];
 }
 
 #pragma mark 边框UI
@@ -978,11 +978,51 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.maxResizeFrame = CGRectMake(x, y, w, h);
 }
 
+#pragma mark 缩放前边框变化的调整
+
+- (void)__adjustImageresizerFrameBeforeZoom:(CGRect)imageresizerFrame {
+    CGFloat zoomScale = self.scrollView.zoomScale;
+    CGFloat wZoomScale = 0;
+    CGFloat hZoomScale = 0;
+    if (imageresizerFrame.size.width > _startResizeW) {
+        wZoomScale = imageresizerFrame.size.width / _baseImageW;
+    }
+    if (imageresizerFrame.size.height > _startResizeH) {
+        hZoomScale = imageresizerFrame.size.height / _baseImageH;
+    }
+    CGFloat maxZoomScale = MAX(wZoomScale, hZoomScale);
+    if (maxZoomScale > zoomScale) {
+        zoomScale = maxZoomScale;
+    }
+    if (zoomScale != self.scrollView.zoomScale) {
+        [self.scrollView setZoomScale:zoomScale animated:NO];
+    }
+    
+    CGPoint contentOffset = self.scrollView.contentOffset;
+    CGSize contentSize = self.scrollView.contentSize;
+    CGRect convertFrame = [self convertRect:imageresizerFrame toView:self.scrollView];
+    if (convertFrame.origin.x < 0) {
+        contentOffset.x -= convertFrame.origin.x;
+    } else if (CGRectGetMaxX(convertFrame) > contentSize.width) {
+        contentOffset.x -= CGRectGetMaxX(convertFrame) - contentSize.width;
+    }
+    if (convertFrame.origin.y < 0) {
+        contentOffset.y -= convertFrame.origin.y;
+    } else if (CGRectGetMaxY(convertFrame) > contentSize.height) {
+        contentOffset.y -= CGRectGetMaxY(convertFrame) - contentSize.height;
+    }
+    if (!CGPointEqualToPoint(contentOffset, self.scrollView.contentOffset)) {
+        [self.scrollView setContentOffset:contentOffset animated:NO];
+    }
+    
+    self.imageresizerFrame = imageresizerFrame;
+}
+
 #pragma mark 边框变化后缩放调整
 
-- (void)__adjustImageresizerFrame:(CGRect)adjustResizeFrame
-            isAdvanceUpdateOffset:(BOOL)isAdvanceUpdateOffset
-                  animateDuration:(NSTimeInterval)duration {
+- (void)__adjustImageresizerFrameTobeZoom:(CGRect)adjustResizeFrame
+                    isAdvanceUpdateOffset:(BOOL)isAdvanceUpdateOffset
+                          animateDuration:(NSTimeInterval)duration {
     CGRect imageresizerFrame = self.imageresizerFrame;
     UIScrollView *scrollView = self.scrollView;
     UIImageView *imageView = self.imageView;
@@ -1182,7 +1222,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         NSTimeInterval duration = isAnimated ? _defaultDuration : -1.0;
         CGRect adjustResizeFrame = [self __adjustResizeFrame];
         _imageresizerFrame = adjustResizeFrame;
-        [self __adjustImageresizerFrame:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:duration];
+        [self __adjustImageresizerFrameTobeZoom:adjustResizeFrame isAdvanceUpdateOffset:NO animateDuration:duration];
     } else {
         _isToBeArbitrarily = NO;
         _isArbitrarily = isToBeArbitrarily;
@@ -1456,7 +1496,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.layer.transform = CATransform3DIdentity;
     [self __updateImageOriginFrameWithDirection:JPImageresizerVerticalUpDirection];
     _imageresizerFrame = [self __baseImageresizerFrame];
-    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
+    [self __adjustImageresizerFrameTobeZoom:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 
 #pragma mark 开始/结束拖拽
@@ -1498,7 +1538,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return delay;
 }
 - (void)rotatingWithDuration:(NSTimeInterval)duration {
-    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
+    [self __adjustImageresizerFrameTobeZoom:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:duration];
 }
 - (void)rotationDone {
     if (self.maskBlurView) {
@@ -1611,7 +1651,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     self.scrollView.contentOffset = contentOffset;
 }
 - (void)recoveryDone:(BOOL)isUpdateMaskImage {
-    [self __adjustImageresizerFrame:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
+    [self __adjustImageresizerFrameTobeZoom:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1.0];
     if (self.maskBlurView != nil && _maskImage != nil) {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
@@ -1643,24 +1683,57 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self __checkIsCanRecovery];
 }
 
-#pragma mark 更新UI布局
-- (void)superViewUpdateFrame:(CGRect)superViewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration {
+#pragma mark 添加到父视图 -> 初始化UI布局
+- (void)setupAfterAddedToSuperview:(CGRect)resizeScaledBounds {
+    if (resizeScaledBounds.size.width <= 0 || resizeScaledBounds.size.height <= 0) {
+        [self updateImageOriginFrameWithDuration:-1.0];
+        return;
+    }
+    
+    // resizeScaledBounds 和【初始化设置】的 resizeWHScale 互斥。
+    
+    // 1.把 resizeWHScale 设置为裁剪元素的宽高比（初始化设置的值无效）
+    if (_resizeObjWhScale) _resizeWHScale = _resizeObjWhScale();
+    
+    // 2.按整个裁剪元素的区域进行基础布局配置
+    [self updateImageOriginFrameWithDuration:-1.0];
+    
+    CGFloat x = _imageresizerFrame.origin.x;
+    CGFloat y = _imageresizerFrame.origin.y;
+    CGFloat w = _imageresizerFrame.size.width;
+    CGFloat h = _imageresizerFrame.size.height;
+    
+    x += w * resizeScaledBounds.origin.x;
+    y += h * resizeScaledBounds.origin.y;
+    w *= resizeScaledBounds.size.width;
+    h *= resizeScaledBounds.size.height;
+    
+    // 3.将 resizeWHScale 设置为 resizeScaledBounds 的宽高比
+    _resizeWHScale = w / h;
+    
+    // 4.从整个裁剪元素的区域 -缩放-> 初始裁剪区域
+    [self __adjustImageresizerFrameBeforeZoom:CGRectMake(x, y, w, h)];
+    [self __adjustImageresizerFrameTobeZoom:[self __adjustResizeFrame] isAdvanceUpdateOffset:YES animateDuration:-1];
+}
+
+#pragma mark 父视图布局变化 -> 更新UI布局
+- (void)superviewUpdateFrame:(CGRect)superviewFrame contentInsets:(UIEdgeInsets)contentInsets duration:(NSTimeInterval)duration {
     self.superview.userInteractionEnabled = NO;
     [self __removeTimer];
     self.isPrepareToScale = YES;
     
-    CGFloat superViewW = superViewFrame.size.width;
-    CGFloat superViewH = superViewFrame.size.height;
-    CGRect superViewBounds = CGRectMake(0, 0, superViewW, superViewH);
+    CGFloat superviewW = superviewFrame.size.width;
+    CGFloat superviewH = superviewFrame.size.height;
+    CGRect superviewBounds = CGRectMake(0, 0, superviewW, superviewH);
     
-    CGFloat contentWidth = superViewW - contentInsets.left - contentInsets.right;
-    CGFloat contentHeight = superViewH - contentInsets.top - contentInsets.bottom;
+    CGFloat contentWidth = superviewW - contentInsets.left - contentInsets.right;
+    CGFloat contentHeight = superviewH - contentInsets.top - contentInsets.bottom;
     
     CGFloat viewWH;
-    if (superViewH > superViewW) {
-        viewWH = superViewH * 2;
+    if (superviewH > superviewW) {
+        viewWH = superviewH * 2;
     } else {
-        viewWH = superViewW * 2;
+        viewWH = superviewW * 2;
     }
     BOOL isVerMirror = self.isVerticalityMirror();
     BOOL isHorMirror = self.isHorizontalMirror();
@@ -1749,8 +1822,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         self.superview.userInteractionEnabled = YES;
     };
     
-    self.superview.superview.bounds = superViewBounds;
-    self.superview.superview.frame = superViewFrame;
+    self.superview.superview.bounds = superviewBounds;
+    self.superview.superview.frame = superviewFrame;
     self.scrollView.frame = self.frame = viewFrame;
     
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:duration];
@@ -2320,43 +2393,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             break;
     }
     
-    CGRect imageresizerFrame = CGRectMake(x, y, w, h);
-    
-    CGFloat zoomScale = self.scrollView.zoomScale;
-    CGFloat wZoomScale = 0;
-    CGFloat hZoomScale = 0;
-    if (w > _startResizeW) {
-        wZoomScale = w / _baseImageW;
-    }
-    if (h > _startResizeH) {
-        hZoomScale = h / _baseImageH;
-    }
-    CGFloat maxZoomScale = MAX(wZoomScale, hZoomScale);
-    if (maxZoomScale > zoomScale) {
-        zoomScale = maxZoomScale;
-    }
-    if (zoomScale != self.scrollView.zoomScale) {
-        [self.scrollView setZoomScale:zoomScale animated:NO];
-    }
-    
-    CGPoint contentOffset = self.scrollView.contentOffset;
-    CGSize contentSize = self.scrollView.contentSize;
-    CGRect convertFrame = [self convertRect:imageresizerFrame toView:self.scrollView];
-    if (convertFrame.origin.x < 0) {
-        contentOffset.x -= convertFrame.origin.x;
-    } else if (CGRectGetMaxX(convertFrame) > contentSize.width) {
-        contentOffset.x -= CGRectGetMaxX(convertFrame) - contentSize.width;
-    }
-    if (convertFrame.origin.y < 0) {
-        contentOffset.y -= convertFrame.origin.y;
-    } else if (CGRectGetMaxY(convertFrame) > contentSize.height) {
-        contentOffset.y -= CGRectGetMaxY(convertFrame) - contentSize.height;
-    }
-    if (!CGPointEqualToPoint(contentOffset, self.scrollView.contentOffset)) {
-        [self.scrollView setContentOffset:contentOffset animated:NO];
-    }
-    
-    self.imageresizerFrame = imageresizerFrame;
+    [self __adjustImageresizerFrameBeforeZoom:CGRectMake(x, y, w, h)];
 }
 
 #pragma mark - override method

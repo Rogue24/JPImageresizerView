@@ -31,6 +31,7 @@
 
 @implementation JPImageresizerView
 {
+    BOOL _isInitialized;
     UIEdgeInsets _contentInsets;
     UIViewAnimationOptions _animationOption;
 }
@@ -737,6 +738,7 @@
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
+    self.configure.resizeScaledBounds = CGRectZero;
     [self.frameView setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 - (CGFloat)resizeWHScale {
@@ -758,6 +760,7 @@
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
+    self.configure.resizeScaledBounds = CGRectZero;
     [self.frameView setIsRoundResize:isRoundResize isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 - (BOOL)isRoundResize {
@@ -772,6 +775,7 @@
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
+    self.configure.resizeScaledBounds = CGRectZero;
     [self.frameView setMaskImage:maskImage isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 - (UIImage *)maskImage {
@@ -1123,7 +1127,7 @@
         }
     }
     _contentInsets = contentInsets;
-    [self.frameView superViewUpdateFrame:frame contentInsets:contentInsets duration:duration];
+    [self.frameView superviewUpdateFrame:frame contentInsets:contentInsets duration:duration];
 }
 
 #pragma mark - 重置
@@ -1803,42 +1807,49 @@
 
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
-    if (self.superview) {
-        JPCropHistory history = self.configure.history;
-        // 没有保存过，则按以前的方式初始化
-        if (JPCropHistoryIsNull(history)) {
-            [self.frameView updateImageOriginFrameWithDuration:-1.0];
-        } else {
-            JPImageresizerRotationDirection direction = history.direction;
-            for (NSInteger i = 0; i < self.allDirections.count; i++) {
-                JPImageresizerRotationDirection kDirection = [self.allDirections[i] integerValue];
-                if (kDirection == direction) {
-                    self.directionIndex = i;
-                    break;
-                }
-            }
-            _verticalityMirror = history.isVerMirror;
-            _horizontalMirror = history.isHorMirror;
-            
-            [CATransaction begin];
-            [CATransaction setDisableActions:YES];
-            self.containerView.layer.transform = history.containerViewTransform;
-            self.scrollView.layer.transform = history.contentViewTransform;
-            self.frameView.layer.transform = history.contentViewTransform;
-            [CATransaction commit];
-            
-            self.scrollView.minimumZoomScale = history.scrollViewMinimumZoomScale;
-            self.scrollView.zoomScale = history.scrollViewCurrentZoomScale;
-            self.scrollView.contentInset = history.scrollViewContentInsets;
-            self.scrollView.contentOffset = history.scrollViewContentOffset;
-            
-            [self.frameView recoveryToSavedHistoryWithDirection:direction
-                                              imageresizerFrame:history.imageresizerFrame
-                                           initialResizeWHScale:history.initialResizeWHScale
-                                              isToBeArbitrarily:self.configure.isArbitrarily];
-        }
-        if (self.configure.isCleanHistoryAfterInitial) [self.configure cleanHistory];
+    
+    if (_isInitialized || !self.superview) return;
+    _isInitialized = YES;
+    
+    CGRect scaledBounds = self.configure.resizeScaledBounds;
+    self.configure.resizeScaledBounds = CGRectZero;
+    
+    JPCropHistory history = self.configure.history;
+    if (self.configure.isCleanHistoryAfterInitial) [self.configure cleanHistory];
+    
+    // 没有保存过，则按以前的方式初始化
+    if (JPCropHistoryIsNull(history)) {
+        [self.frameView setupAfterAddedToSuperview:scaledBounds];
+        return;
     }
+    
+    JPImageresizerRotationDirection direction = history.direction;
+    for (NSInteger i = 0; i < self.allDirections.count; i++) {
+        JPImageresizerRotationDirection kDirection = [self.allDirections[i] integerValue];
+        if (kDirection == direction) {
+            self.directionIndex = i;
+            break;
+        }
+    }
+    _verticalityMirror = history.isVerMirror;
+    _horizontalMirror = history.isHorMirror;
+    
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    self.containerView.layer.transform = history.containerViewTransform;
+    self.scrollView.layer.transform = history.contentViewTransform;
+    self.frameView.layer.transform = history.contentViewTransform;
+    [CATransaction commit];
+    
+    self.scrollView.minimumZoomScale = history.scrollViewMinimumZoomScale;
+    self.scrollView.zoomScale = history.scrollViewCurrentZoomScale;
+    self.scrollView.contentInset = history.scrollViewContentInsets;
+    self.scrollView.contentOffset = history.scrollViewContentOffset;
+    
+    [self.frameView recoveryToSavedHistoryWithDirection:direction
+                                      imageresizerFrame:history.imageresizerFrame
+                                   initialResizeWHScale:history.initialResizeWHScale
+                                      isToBeArbitrarily:self.configure.isArbitrarily];
 }
 
 @end
