@@ -236,7 +236,7 @@ self.imageresizerView = imageresizerView
 可以设置`JPImageresizerConfigure`的`resizeScaledBounds`属性修改初始裁剪区域（默认以整个裁剪元素的尺寸展示）
 
 ```objc
-configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8)
+configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 ```
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/initial_resizeScaledBounds.jpg)

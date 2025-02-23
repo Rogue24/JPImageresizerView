@@ -238,7 +238,7 @@ For specific use, refer to Demo (JPCropViewController).
 You can modify the initial cropping area by setting the `resizeScaledBounds` property of `JPImageresizerConfigure` (by default, the entire crop element's size is displayed).
 
 ```objc
-configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8)
+configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 ```
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/initial_resizeScaledBounds.jpg)
