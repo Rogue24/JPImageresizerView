@@ -500,7 +500,9 @@ PS: Since the width and height of the video must be an integer multiple of 16, o
 ```
 
 - **Cut a video segment and transfer it to GIF**
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
+
 ```objc
 // 1.Video from the current time to capture a specified number of seconds screen to GIF (fps = 10, rate = 1, maximumSize = 500 * 500)
 // duration --- How many seconds are intercepted

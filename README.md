@@ -500,7 +500,9 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
 ```
 
 - **裁剪视频并截取指定秒数片段转成GIF**
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideotogif.gif)
+
 ```objc
 // 1.裁剪视频并从当前时间开始截取指定秒数片段转成GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
 // duration --- 截取多少秒
