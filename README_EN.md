@@ -321,8 +321,13 @@ For detailed usage, please refer to the **人脸裁剪** section in the Demo.
 ```
 
 #### Crop GIF
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgif.gif)
+
+↓↓↓
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgifdone.gif)
+
 ```objc
 // 1.Original size clipping GIF
 [self.imageresizerView cropGIFWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
@@ -359,6 +364,7 @@ For detailed usage, please refer to the **人脸裁剪** section in the Demo.
 - **Process Images for GIF**
 
 Original GIF:
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
 
 ```objc
@@ -374,6 +380,7 @@ self.imageresizerView.gifSettings = settings;
 ```
 
 Processed GIF:
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
 - **Crop one of the GIF frames**
@@ -407,8 +414,11 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 
 #### Crop local video
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
+
 PS: At present, it is only for local video, and remote video is not suitable for the moment.
+
 ```objc
 // Clip the entire video
 // cacheURL: If it is nil, it will be cached in the NSTemporaryDirectory folder of the system by default. The video name is the current timestamp, and the format is MP4

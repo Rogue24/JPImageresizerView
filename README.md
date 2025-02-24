@@ -319,8 +319,13 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 ```
 
 #### 裁剪GIF
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgif.gif)
+
+↓↓↓
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropgifdone.gif)
+
 ```objc
 // 1.原图尺寸裁剪GIF
 [self.imageresizerView cropGIFWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
@@ -358,6 +363,7 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 - **对GIF的图像进行处理**
 
 原GIF：
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawan_origin.gif)
 
 ```objc
@@ -373,6 +379,7 @@ self.imageresizerView.gifSettings = settings;
 ```
 
 处理后的GIF：
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
 - **裁剪GIF的其中一帧**
@@ -406,8 +413,11 @@ self.imageresizerView.isLoopPlaybackGIF = NO;
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 
 #### 裁剪本地视频
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cropvideo.gif)
+
 PS：目前只针对本地视频，远程视频暂未适配。
+
 ```objc
 // 裁剪整段视频
 // cacheURL：如果为nil，会默认缓存到系统的NSTemporaryDirectory文件夹下，视频名为当前时间戳，格式为mp4
