@@ -10,7 +10,7 @@
 [Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.cn/post/6958803759073853447) |
 [Little Red Book App Crop](https://github.com/Rogue24/JPCrop)
 
-*本人英语小白，这里基本都是用百度翻译出来的，Sorry。*
+*本人英语小白，这里基本都是机翻，见笑了，Sorry。*
 
 ## Brief introduction (Current version: 1.13.0)
 
