@@ -154,3 +154,40 @@ extension View {
     }
     
 }
+
+// MARK: - 截图
+extension View {
+    private func _buildRenderer() -> (UIGraphicsImageRenderer, UIGraphicsImageRenderer.DrawingActions) {
+        // View -> UIView（注意：要忽略安全区域，否则顶部会有空白）
+        let controller = UIHostingController(rootView: self.edgesIgnoringSafeArea(.all))
+        
+        // 设置视图的大小
+        let targetSize = controller.sizeThatFits(in: UIScreen.main.bounds.size)
+        controller.view.bounds = CGRect(origin: .zero, size: targetSize)
+        controller.view.backgroundColor = .clear
+
+        // 渲染时指定屏幕比例
+        let renderer = UIGraphicsImageRenderer(
+            size: targetSize,
+            format: UIGraphicsImageRendererFormat(for: .current)
+        )
+        
+        return (renderer, { _ in
+            // 这里使用`layer.render(in:)`方法，截图内容为空白或部分缺失；
+            // 这里得用`drawHierarchy`方法，该方法通常用于捕获当前的视图层次结构，而`afterScreenUpdates: true`会等待屏幕更新完成后再进行渲染，确保所有更新完成后再绘制，保证截图包含最新的内容。
+            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        })
+    }
+    
+    func takeSnapshot() -> UIImage {
+        let (renderer, action) = _buildRenderer()
+        return renderer.image(actions: action)
+    }
+    
+    func takeSnapshot(_ isPNG: Bool) -> Data {
+        let (renderer, action) = _buildRenderer()
+        return isPNG ?
+            renderer.pngData(actions: action) :
+            renderer.jpegData(withCompressionQuality: 0.9, actions: action)
+    }
+}

@@ -28,7 +28,7 @@ struct CropView: View {
     var body: some View {
         VStack(spacing: 20) {
             sizeBar
-            oneDayView
+            oneDayView(20)
             operationBar
             switchCrop
         }
@@ -69,15 +69,15 @@ extension CropView {
     }
     
     @ViewBuilder
-    var oneDayView: some View {
+    func oneDayView(_ cornerRadius: CGFloat) -> some View {
         Group {
             switch oneDaySize {
             case .small:
-                OneDaySmallView(namespace: namespace, image: $smallImage)
+                OneDaySmallView(namespace: namespace, image: $smallImage, cornerRadius: cornerRadius)
             case .medium:
-                OneDayMediumView(namespace: namespace, image: $mediumImage)
+                OneDayMediumView(namespace: namespace, image: $mediumImage, cornerRadius: cornerRadius)
             case .large:
-                OneDayLargeView(namespace: namespace, image: $largeImage)
+                OneDayLargeView(namespace: namespace, image: $largeImage, cornerRadius: cornerRadius)
             }
         }
         .readFrame(.global, key: OneDayPreferenceKey.self) { value in
@@ -118,7 +118,7 @@ extension CropView {
             .accentColor(.yellow)
             .padding(20)
             .frame(minHeight: 40)
-            .background(isUseJPCrop ? Color.teal.opacity(0.8) : Color.blue.opacity(0.8), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(isUseJPCrop ? Color.teal.opacity(0.8) : Color.blue.opacity(0.8), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .baseShadow()
             .onTapGesture {
                 withAnimation {
@@ -183,15 +183,21 @@ extension CropView {
     
     func saveOneDay() {
         guard let saveOneDayImage = saveOneDayImage else { return }
-        let layer = rootVC.view.layer
-        let path = UIBezierPath(roundedRect: oneDayFrame, cornerRadius: 20)
-        let renderer = UIGraphicsImageRenderer(bounds: oneDayFrame)
-        let image = renderer.image { rendererContext in
-            let context = rendererContext.cgContext
-            context.addPath(path.cgPath)
-            context.clip()
-            layer.render(in: context)
-        }
+        
+        // 方法1：在整个屏幕上，对着小组件的区域进行裁剪再绘制
+//        let layer = rootVC.view.layer
+//        let path = UIBezierPath(roundedRect: oneDayFrame, cornerRadius: 20)
+//        let renderer = UIGraphicsImageRenderer(bounds: oneDayFrame)
+//        let image = renderer.image { rendererContext in
+//            let context = rendererContext.cgContext
+//            context.addPath(path.cgPath)
+//            context.clip()
+//            layer.render(in: context)
+//        }
+//        saveOneDayImage(image)
+        
+        // 方法2：重新构建小组件，转成UIView类型，再进行绘制
+        let image = oneDayView(0).takeSnapshot()
         saveOneDayImage(image)
     }
 }

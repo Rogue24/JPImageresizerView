@@ -17,6 +17,7 @@ struct OneDaySmallView: View {
     let size: OneDaySize = .small
     var namespace: Namespace.ID
     @Binding var image: UIImage
+    let cornerRadius: CGFloat
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -57,7 +58,7 @@ struct OneDaySmallView: View {
                 .matchedGeometryEffect(id: "image", in: namespace)
         )
         .mask(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .matchedGeometryEffect(id: "mask", in: namespace)
         )
         .baseShadow()
@@ -70,6 +71,7 @@ struct OneDayMediumView: View {
     let size: OneDaySize = .medium
     var namespace: Namespace.ID
     @Binding var image: UIImage
+    let cornerRadius: CGFloat
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -110,7 +112,7 @@ struct OneDayMediumView: View {
                 .matchedGeometryEffect(id: "image", in: namespace)
         )
         .mask(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .matchedGeometryEffect(id: "mask", in: namespace)
         )
         .baseShadow()
@@ -124,6 +126,7 @@ struct OneDayLargeView: View {
     var namespace: Namespace.ID
     @Environment(\.colorScheme) var colorScheme
     @Binding var image: UIImage
+    let cornerRadius: CGFloat
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -176,7 +179,7 @@ struct OneDayLargeView: View {
         .frame(width: size.viewWidth, height: size.viewHeight)
         .background(colorScheme == .dark ? Color(red: 0.2, green: 0.2, blue: 0.25) : Color.white)
         .mask(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .matchedGeometryEffect(id: "mask", in: namespace)
         )
         .baseShadow()
@@ -189,13 +192,13 @@ struct OneDayView_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
             VStack(spacing: 0) {
-                OneDaySmallView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl1", ofType: "jpg")))
+                OneDaySmallView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl1", ofType: "jpg")), cornerRadius: 20)
                     .padding(8)
                 
-                OneDayMediumView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl8", ofType: "jpg")))
+                OneDayMediumView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl8", ofType: "jpg")), cornerRadius: 20)
                     .padding(8)
 
-                OneDayLargeView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl4", ofType: "jpg")))
+                OneDayLargeView(namespace: namespace, image: .constant(UIImage.bundleImage("Girl4", ofType: "jpg")), cornerRadius: 20)
                     .padding(8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
