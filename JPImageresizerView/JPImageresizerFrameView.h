@@ -99,6 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) JPImageresizerIsPrepareToScaleBlock imageresizerIsPrepareToScale;
 
 @property (nonatomic, assign, readonly) JPImageresizerRotationDirection direction;
+@property (nonatomic, assign) BOOL isFlipResizeWHScaleOnVerHorSwitch;
 
 @property (nonatomic, strong) UIImage *_Nullable borderImage;
 @property (nonatomic, assign) CGPoint borderImageRectInset;

@@ -10,7 +10,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.13.0）
+## 简介（当前版本：1.13.1）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -736,17 +736,13 @@ self.imageresizerView = imageresizerView;
 ```objc
 // 锁定裁剪区域，锁定后无法拖动裁剪区域，NO则解锁
 self.imageresizerView.isLockResizeFrame = YES;
-
-// 旋转至水平方向时是否自适应裁剪区域大小
-// 当图片宽度比图片高度小时，该属性默认YES，可手动设为NO
-self.imageresizerView.isAutoScale = NO;
 ```
 
 ## 各版本的主要更新
 
 版本 | 更新内容
 ----|------
-1.13.0 | 1. 新增可自定义设置的初始裁剪区域，使用`JPImageresizerConfigure`的`resizeScaledBounds`属性进行配置（原尺寸的百分比形式）。
+1.13.0~1.13.1 | 1. 新增可自定义设置的初始裁剪区域，使用`JPImageresizerConfigure`的`resizeScaledBounds`属性进行配置（原尺寸的百分比形式）；<br>2. 新增`isFlipResizeWHScaleOnVerHorSwitch`属性，用于横竖方向发生切换时也翻转裁剪宽高比（若设置了蒙版图片该属性将无效）。
 1.12.0 | 1. 现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）。
 1.11.1~1.11.4 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题；<br>3. 支持Swift Package Manager安装；<br>4. 修复「初始化/横竖屏切换」蒙版展示失效的问题。
 1.11.0 | 1. 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距；<br>2. 可使用本地图片组装GIF；<br>3. 可获取图片目标像素的颜色值；<br>4. 修复引起内存泄漏的漏洞。

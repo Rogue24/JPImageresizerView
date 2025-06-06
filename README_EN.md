@@ -12,7 +12,7 @@
 
 *本人英语小白，这里基本都是机翻，见笑了，Sorry。*
 
-## Brief introduction (Current version: 1.13.0)
+## Brief introduction (Current version: 1.13.1)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 
@@ -732,10 +732,6 @@ self.imageresizerView = imageresizerView;
 ```objc
 // Lock the clipping area. After locking, the clipping area cannot be dragged. NO unlocks the clipping area.
 self.imageresizerView.isLockResizeFrame = YES;
-
-// Whether to Adapt the Cutting Area Size when Rotating to Horizontal Direction
-// When the width of the picture is smaller than the height of the picture, this property defaults to YES and can be manually set to NO.
-self.imageresizerView.isAutoScale = NO;
 ```
 
 ## Install

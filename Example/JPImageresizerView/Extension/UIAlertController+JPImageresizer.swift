@@ -88,8 +88,8 @@ extension UIAlertController {
     static func rotation(_ handler1: @escaping (_ isClockwise: Bool) -> Void, toDirection handler2: @escaping (_ direction: JPImageresizerRotationDirection) -> Void, fromVC: UIViewController? = nil) {
         UIAlertController
             .build(.actionSheet)
-            .addAction("顺时针旋转 🔃") { handler1(true) }
-            .addAction("逆时针旋转 🔄") { handler1(false) }
+            .addAction("顺时针旋转 ⤵️") { handler1(true) }
+            .addAction("逆时针旋转 ⤴️") { handler1(false) }
             .addAction("垂直向上 ⬆️") { handler2(.verticalUpDirection) }
             .addAction("水平向右 ➡️") { handler2(.horizontalRightDirection) }
             .addAction("垂直向下 ⬇️") { handler2(.verticalDownDirection) }

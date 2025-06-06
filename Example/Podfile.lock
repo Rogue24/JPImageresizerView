@@ -9,15 +9,15 @@ PODS:
   - JPBasic/JPConst (0.1.8)
   - JPBasic/JPProgressHUD (0.1.8):
     - SVProgressHUD
-  - JPCrop (0.2.3)
-  - JPImageresizerView (1.12.0)
+  - JPCrop (0.2.5)
+  - JPImageresizerView (1.13.0)
   - JPLiquidLayout (0.1.1)
-  - LookinServer (1.1.5):
-    - LookinServer/Core (= 1.1.5)
-  - LookinServer/Core (1.1.5)
+  - LookinServer (1.2.8):
+    - LookinServer/Core (= 1.2.8)
+  - LookinServer/Core (1.2.8)
   - Masonry (1.1.0)
   - pop (1.0.12)
-  - ScreenRotator (0.1.0)
+  - ScreenRotator (0.1.1)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
@@ -51,13 +51,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   FunnyButton: e8202ece176aaa5f7ead1e5c8eb0f29d28fc5ad4
   JPBasic: 5a0459823fd51d7a02aea924227e971a0d8778b3
-  JPCrop: d260e4456ee0b281214642f6abd96b76b3e17971
-  JPImageresizerView: 5b56be3d69d5b7fa214547409748a7530607cbb1
+  JPCrop: 5f73c422dde5f61ecf741b4843d9aab9e813df4b
+  JPImageresizerView: 1ab921d80ea0d229f907efffeca885e9b832f9e3
   JPLiquidLayout: 2d6cce593553db9f85cdc031c749ad6f8b8b8cfc
-  LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
+  LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
-  ScreenRotator: 94d1496f0c3bc3ce87ca80705f2f9b10782628c0
+  ScreenRotator: 2ca2f074f144e12dc95f49ba18b91872d4a2a0d0
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
 PODFILE CHECKSUM: 245e9c09e475f7e519c86054f3dde2c539779764

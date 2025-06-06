@@ -961,7 +961,11 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self __updateMaxResizeFrameWithDirection:direction];
     if (!_isArbitrarily) {
         BOOL isSwitchVerHor = JPIRRotationDirectionIsHorizontal(_direction) != JPIRRotationDirectionIsHorizontal(direction);
-        if (isSwitchVerHor) _resizeWHScale = 1.0 / _resizeWHScale;
+        if (isSwitchVerHor) {
+            if (!_isFlipResizeWHScaleOnVerHorSwitch || _maskImage) {
+                _resizeWHScale = 1.0 / _resizeWHScale;
+            }
+        }
     }
     _direction = direction;
 }
@@ -1447,7 +1451,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (_isArbitrarily == isArbitrarily) return;
     if (!isArbitrarily) {
         if (_maskImage || _isRoundResize) {
-            CGFloat resizeWHScale = _maskImage ? ( _maskImage.size.width / _maskImage.size.height) : 1;
+            CGFloat resizeWHScale = _maskImage ? (_maskImage.size.width / _maskImage.size.height) : 1;
             [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isArbitrarily animated:isAnimated];
         } else {
             _isArbitrarily = NO;

@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
 @method
 @brief 设置是否可以任意比例拖拽
 @param isAnimated --- 是否带动画效果
-@discussion 若为NO，以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale；如果是 isRoundResize，则 resizeWHScale = 1；如果有 maskImage，则以蒙版图片的宽高比固定比例 resizeWHScale = maskImage.size.width / maskImage.size.height
+@discussion 若设置 isArbitrarily 为 NO，以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale；如果是 isRoundResize，则 resizeWHScale = 1；如果有 maskImage，则以蒙版图片的宽高比固定比例 resizeWHScale = maskImage.size.width / maskImage.size.height
 */
 - (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
 
@@ -319,6 +319,13 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 旋转、镜像翻转相关
 /** 是否顺时针旋转（默认逆时针） */
 @property (nonatomic, assign) BOOL isClockwiseRotation;
+
+/**
+ * 是否翻转裁剪宽高比当横竖方向切换（若设置了蒙版图片该属性将无效）
+ * 🌰 若为 YES，此时 resizeWHScale 为 16 / 9，且固定比例（即 isArbitrarily 为 NO），当横竖方向发生切换则变为 9 / 16
+ * PS：注意是「横竖」方向的切换，像水平向左旋旋转到水平向右这种都是横向的话就不会有改变。
+ */
+@property (nonatomic) BOOL isFlipResizeWHScaleOnVerHorSwitch;
 
 /*!
  @method

@@ -934,6 +934,13 @@
     }
 }
 
+- (void)setIsFlipResizeWHScaleOnVerHorSwitch:(BOOL)isFlipResizeWHScaleOnVerHorSwitch {
+    _frameView.isFlipResizeWHScaleOnVerHorSwitch = isFlipResizeWHScaleOnVerHorSwitch;
+}
+- (BOOL)isFlipResizeWHScaleOnVerHorSwitch {
+    return _frameView.isFlipResizeWHScaleOnVerHorSwitch;
+}
+
 #pragma mark 旋转
 - (void)rotation {
     if (self.frameView.isPrepareToScale) {

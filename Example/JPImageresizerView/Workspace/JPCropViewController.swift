@@ -80,7 +80,7 @@ extension JPCropViewController {
         }
         
         // 2.创建croper
-        let croper = Croper(frame: frame, configure)
+        let croper = Croper(frame: frame, configure: configure)
         // 当设置裁剪宽高比超出可设置范围时的回调
         croper.cropWHRatioRangeOverstep = { isUpper, _ in
             JPProgressHUD.showInfo(withStatus: isUpper ? "最大裁剪宽高比是 2 : 1" : "最小裁剪宽高比是 3 : 4", userInteractionEnabled: true)
