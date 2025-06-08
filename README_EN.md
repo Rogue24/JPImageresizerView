@@ -656,13 +656,13 @@ self.imageresizerView.isClockwiseRotation = YES;
 [self.imageresizerView rotationToDirection:JPImageresizerVerticalDownDirection];
 ```
 
-If a fixed resizeWHScale is set and you want it to automatically flip when switching between portrait and landscape orientation (e.g., resizeWHScale = 3 / 5 in portrait becomes resizeWHScale = 5 / 3 in landscape), set isFlipResizeWHScaleOnVerHorSwitch = YES.
+If a fixed `resizeWHScale` is set and you want it to automatically flip when switching between portrait and landscape orientation (e.g., `resizeWHScale = 3 / 5` in portrait becomes `resizeWHScale = 5 / 3` in landscape), set `isFlipResizeWHScaleOnVerHorSwitch = YES`.
 
 ![flip_resizeWHScale_onVerHorSwitch](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/flip_resizeWHScale_onVerHorSwitch.gif)
 
-Note 1: By default, resizeWHScale is based on the view's orientation from the user's perspective, not the image's orientation. For example, if resizeWHScale = 16 / 9 is set, rotating the view 90° will still display a 16:9 ratio from the user's point of view, though the image's internal orientation would effectively be 9:16. Setting isFlipResizeWHScaleOnVerHorSwitch = YES makes the resizeWHScale follow the image's orientation instead.
+**Note 1:** By default, `resizeWHScale` is based on the view's orientation from the user's perspective, not the image's orientation. For example, if `resizeWHScale = 16 / 9` is set, rotating the view 90° will still display a 16:9 ratio from the user's point of view, though the image's internal orientation would effectively be 9:16. Setting `isFlipResizeWHScaleOnVerHorSwitch = YES` makes the `resizeWHScale` follow the image's orientation instead.
 
-Note 2: If a mask image (maskImage) is set, isFlipResizeWHScaleOnVerHorSwitch will be ignored.
+**Note 2:** If a mask image (`maskImage`) is set, `isFlipResizeWHScaleOnVerHorSwitch` will be ignored.
 
 ### Reset
 Reset the target state, the direction is vertical upward, can be reset to different resizeWHScale, circle cut, mask
