@@ -661,6 +661,14 @@ self.imageresizerView.isClockwiseRotation = YES;
 [self.imageresizerView rotationToDirection:JPImageresizerVerticalDownDirection];
 ```
 
+如果设置了固定裁剪宽高比，并且希望横竖方向进行切换后裁剪宽高比也能同时反转，例如竖屏时`resizeWHScale = 3 / 5`，当旋转到横屏后则为`resizeWHScale = 5 / 3`，可以设置`isFlipResizeWHScaleOnVerHorSwitch = YES`即可：
+
+![flip_resizeWHScale_onVerHorSwitch](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/flip_resizeWHScale_onVerHorSwitch.gif)
+
+PS1：默认裁剪宽高比是以我们的视角方向作为基准并非以图片方向，例如设置了`16 / 9`，旋转90°后从我们视角上看还是`16 / 9`，但对于图片来说则是`9 / 16`，如果设置了`isFlipResizeWHScaleOnVerHorSwitch = YES`相当于变成以图片方向作为基准了。
+
+PS2：如果设置了蒙版图片`maskImage`，那`isFlipResizeWHScaleOnVerHorSwitch`将无效。
+
 ### 重置
 重置目标状态，方向垂直向上，可重置为不同的resizeWHScale、圆切、蒙版
 #### 1. 一切按当前状态重置
