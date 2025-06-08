@@ -52,7 +52,8 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
     
 ## Newest
     1. Now, while cropping the video, you can also customize the segment of the video to be trimmed (at least 1 second);
-    2. Customizable initial cropping area.
+    2. Customizable initial cropping area;
+    3. If a fixed resizeWHScale is set and you want it to automatically flip when switching between portrait and landscape orientation, simply set isFlipResizeWHScaleOnVerHorSwitch = YES.
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 

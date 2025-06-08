@@ -50,7 +50,8 @@
     
 ## 最新改动
     1.现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）；
-    2.可自定义初始裁剪区域。
+    2.可自定义初始裁剪区域；
+    3.如果设置了固定裁剪宽高比，并且希望横竖方向进行切换后裁剪宽高比也能同时反转，只要设置 isFlipResizeWHScaleOnVerHorSwitch = YES 即可。
     
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
