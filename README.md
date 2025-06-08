@@ -665,9 +665,9 @@ self.imageresizerView.isClockwiseRotation = YES;
 
 ![flip_resizeWHScale_onVerHorSwitch](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/flip_resizeWHScale_onVerHorSwitch.gif)
 
-**PS1：**默认裁剪宽高比是以我们的视角方向作为基准并非以图片方向，例如设置了`16 / 9`，旋转90°后从我们视角上看还是`16 / 9`，但对于图片来说则是`9 / 16`；因此如果设置了`isFlipResizeWHScaleOnVerHorSwitch = YES`就相当于变成以图片方向作为基准了。
+- PS1：默认裁剪宽高比是以我们的视角方向作为基准并非以图片方向，例如设置了`16 / 9`，旋转90°后从我们视角上看还是`16 / 9`，但对于图片来说则是`9 / 16`；因此如果设置了`isFlipResizeWHScaleOnVerHorSwitch = YES`就相当于变成以图片方向作为基准了。
 
-**PS2：**如果设置了蒙版图片`maskImage`，那`isFlipResizeWHScaleOnVerHorSwitch`将无效。
+- PS2：如果设置了蒙版图片`maskImage`，那`isFlipResizeWHScaleOnVerHorSwitch`将无效。
 
 ### 重置
 重置目标状态，方向垂直向上，可重置为不同的resizeWHScale、圆切、蒙版
