@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration;
 - (void)setBlurEffect:(UIBlurEffect *_Nullable)blurEffect duration:(NSTimeInterval)duration;
 - (void)setBgColor:(UIColor *_Nullable)bgColor duration:(NSTimeInterval)duration;
-- (void)setMaskAlpha:(BOOL)maskAlpha duration:(NSTimeInterval)duration;
+- (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration;
 - (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration;
 
 - (void)setupIsBlur:(BOOL)isBlur

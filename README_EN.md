@@ -12,7 +12,7 @@
 
 *本人英语小白，这里基本都是机翻，见笑了，Sorry。*
 
-## Brief introduction (Current version: 1.13.1)
+## Brief introduction (Current version: 1.13.2)
 
 A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
 

@@ -81,7 +81,7 @@
     _bgColor = bgColor;
     [self __blurEffectAnimation:duration];
 }
-- (void)setMaskAlpha:(BOOL)maskAlpha duration:(NSTimeInterval)duration {
+- (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration {
     _maskAlpha = maskAlpha;
     [self __maskAlphaAnimation:duration];
 }
