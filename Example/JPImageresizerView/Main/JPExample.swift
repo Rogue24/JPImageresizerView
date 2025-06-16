@@ -34,6 +34,8 @@ enum JPExample {
         case compatibleSwiftUI = "适配 SwiftUI"
         case JPCroper = "JPCroper - 高仿小红书的裁剪功能"
         
+        case GlassEffect = "玻璃效果"
+        
         var title: String { rawValue }
     }
     
@@ -72,6 +74,7 @@ enum JPExample {
             .compatibleSwift,
             .compatibleSwiftUI,
             .JPCroper,
+            .GlassEffect,
         ]),
     ]
 }

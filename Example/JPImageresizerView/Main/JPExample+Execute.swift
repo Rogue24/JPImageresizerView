@@ -184,6 +184,11 @@ extension JPExample.Item {
                 mainVC.pushCropVC(isJPCroper: true)
             }
             
+        case .GlassEffect:
+            await MainActor.run {
+                mainVC.pushGlassEffectVC()
+            }
+            
         // MARK: - Section0 & Section1
         default:
             guard let model = try await JPExample.ConfigureModel.build(with: self) else { return }

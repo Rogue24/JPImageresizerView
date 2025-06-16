@@ -231,6 +231,7 @@
 }
 
 - (void)startAnimation {
+    if (self.state == JPDynamicPageAnimating) return;
     [self stopAnimation];
     
     CGPoint position = self.contentLayer.position;

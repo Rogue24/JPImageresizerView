@@ -50,6 +50,10 @@ extension JPExample {
         override func viewDidLoad() {
             super.viewDidLoad()
             setupNavigationBar()
+            
+//            if #available(iOS 26.0, *) {
+//                tableView.topEdgeEffect.isHidden = true
+//            }
         }
         
         override func viewWillAppear(_ animated: Bool) {
@@ -225,6 +229,12 @@ extension JPExample.ViewController {
     func pushColorMeasurementVC(_ image: UIImage) {
         guard let navCtr = navigationController else { return }
         let vc = JPColorMeasurementViewController(image: image)
+        navCtr.pushViewController(vc, animated: true)
+    }
+    
+    func pushGlassEffectVC() {
+        guard let navCtr = navigationController else { return }
+        let vc = JPGlassEffectViewController()
         navCtr.pushViewController(vc, animated: true)
     }
 }

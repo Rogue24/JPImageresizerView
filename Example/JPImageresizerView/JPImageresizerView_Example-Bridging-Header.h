@@ -12,3 +12,4 @@
 #import "JPPhotoTool.h"
 #import "JPPhotoViewController.h"
 #import "JPDynamicPage.h"
+#import "JPGlassEffectViewController.h"

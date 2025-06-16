@@ -51,6 +51,7 @@
 		00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF32968227E00F48389 /* ImagePicker.swift */; };
 		00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF42968227E00F48389 /* ImagePicker.API.swift */; };
 		00B3FAF92968306A00F48389 /* Error+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF82968306A00F48389 /* Error+.swift */; };
+		00B84DB52DF8A50600A7C9CB /* JPGlassEffectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00B84DB42DF8A50600A7C9CB /* JPGlassEffectViewController.m */; };
 		00E5D9D3296EB82E006A6FDD /* JPExample+Execute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E5D9D2296EB82E006A6FDD /* JPExample+Execute.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
@@ -176,6 +177,8 @@
 		00B3FAF32968227E00F48389 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		00B3FAF42968227E00F48389 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
 		00B3FAF82968306A00F48389 /* Error+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+.swift"; sourceTree = "<group>"; };
+		00B84DB32DF8A50600A7C9CB /* JPGlassEffectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPGlassEffectViewController.h; sourceTree = "<group>"; };
+		00B84DB42DF8A50600A7C9CB /* JPGlassEffectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPGlassEffectViewController.m; sourceTree = "<group>"; };
 		00E5D9D2296EB82E006A6FDD /* JPExample+Execute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+Execute.swift"; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
@@ -323,6 +326,8 @@
 			children = (
 				6003F5A5195388D20070C39A /* JPImageresizerViewController.h */,
 				6003F5A6195388D20070C39A /* JPImageresizerViewController.m */,
+				00B84DB32DF8A50600A7C9CB /* JPGlassEffectViewController.h */,
+				00B84DB42DF8A50600A7C9CB /* JPGlassEffectViewController.m */,
 				1A4406AD1FFBC0AB009345D5 /* JPPreviewViewController.h */,
 				1A4406AE1FFBC0AB009345D5 /* JPPreviewViewController.m */,
 				1A658768262AEE0C00846689 /* JPCropViewController.swift */,
@@ -860,6 +865,7 @@
 			files = (
 				006A9E282A77CD1200AD86BA /* UIAlertController+.swift in Sources */,
 				00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */,
+				00B84DB52DF8A50600A7C9CB /* JPGlassEffectViewController.m in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				00746A8C2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift in Sources */,
 				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
