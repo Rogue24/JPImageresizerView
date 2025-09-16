@@ -219,7 +219,13 @@
     scrollView.autoresizingMask = UIViewAutoresizingNone;
     scrollView.clipsToBounds = NO;
     scrollView.scrollsToTop = NO;
-    if (@available(iOS 11.0, *)) scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    if (@available(iOS 26.0, *)) {
+        scrollView.topEdgeEffect.hidden = YES;
+        scrollView.leftEdgeEffect.hidden = YES;
+        scrollView.bottomEdgeEffect.hidden = YES;
+        scrollView.rightEdgeEffect.hidden = YES;
+    }
     [_containerView addSubview:scrollView];
     _scrollView = scrollView;
 }

@@ -78,14 +78,24 @@ extension JPExample {
             cameraBtn.setImage(UIImage(systemName: "camera"), for: .normal)
             cameraBtn.addTarget(self, action: #selector(cameraAction), for: .touchUpInside)
             
-            cacheBtn.isHidden = true
             cacheBtn.setImage(UIImage(systemName: "arrow.uturn.backward"), for: .normal)
             cacheBtn.addTarget(self, action: #selector(backCacheAction), for: .touchUpInside)
             cacheCanceler = publisher(for: \.cacheModel, options: .new).sink { [weak self] newValue in
-                self?.cacheBtn.isHidden = newValue == nil
+                guard let self else { return }
+                if #available(iOS 16.0, *) {
+                    self.navigationItem.leftBarButtonItem?.isHidden = newValue == nil
+                } else {
+                    self.cacheBtn.isHidden = newValue == nil
+                }
             }
             
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cacheBtn)
+            if #available(iOS 16.0, *) {
+                navigationItem.leftBarButtonItem?.isHidden = true
+            } else {
+                cacheBtn.isHidden = true
+            }
+            
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cameraBtn)
         }
     }
