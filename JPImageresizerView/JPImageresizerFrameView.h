@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
            baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                   blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                       effect:(UIVisualEffect *_Nullable)effect
                       bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
@@ -61,11 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
 @property (nonatomic, strong) UIColor *_Nullable strokeColor;
-@property (nonatomic) UIBlurEffect *_Nullable blurEffect;
+@property (nonatomic) UIVisualEffect *_Nullable effect;
 @property (nonatomic) UIColor *_Nullable bgColor;
 @property (nonatomic) CGFloat maskAlpha;
 - (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
-              blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                  effect:(UIVisualEffect *_Nullable)effect
                  bgColor:(UIColor *_Nullable)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated;

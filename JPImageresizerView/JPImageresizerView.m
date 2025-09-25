@@ -137,7 +137,7 @@
                                     baseContentMaxSize:baseContentMaxSize
                                              frameType:configure.frameType
                                         animationCurve:configure.animationCurve
-                                            blurEffect:configure.blurEffect
+                                                effect:configure.effect
                                                bgColor:configure.bgColor
                                              maskAlpha:configure.maskAlpha
                                            strokeColor:configure.strokeColor
@@ -877,41 +877,57 @@
 }
 
 #pragma mark - 裁剪框、背景、遮罩颜色相关
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect {
-    [self.frameView setupStrokeColor:self.strokeColor blurEffect:blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha animated:YES];
+- (void)setStrokeColor:(UIColor *)strokeColor {
+    [self.frameView setupStrokeColor:strokeColor
+                              effect:self.effect
+                             bgColor:self.bgColor
+                           maskAlpha:self.maskAlpha
+                            animated:YES];
 }
-- (UIBlurEffect *)blurEffect {
-    return _frameView.blurEffect;
+- (UIColor *)strokeColor {
+    return _frameView.strokeColor;
+}
+
+- (void)setEffect:(UIVisualEffect *)effect {
+    [self.frameView setupStrokeColor:self.strokeColor
+                              effect:effect
+                             bgColor:self.bgColor
+                           maskAlpha:self.maskAlpha
+                            animated:YES];
+}
+- (UIVisualEffect *)effect {
+    return _frameView.effect;
 }
 
 - (void)setBgColor:(UIColor *)bgColor {
-    [self.frameView setupStrokeColor:self.strokeColor blurEffect:self.blurEffect bgColor:bgColor maskAlpha:self.maskAlpha animated:YES];
+    [self.frameView setupStrokeColor:self.strokeColor
+                              effect:self.effect
+                             bgColor:bgColor
+                           maskAlpha:self.maskAlpha
+                            animated:YES];
 }
 - (UIColor *)bgColor {
     return _frameView.bgColor;
 }
 
 - (void)setMaskAlpha:(CGFloat)maskAlpha {
-    [self.frameView setupStrokeColor:self.strokeColor blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:maskAlpha animated:YES];
+    [self.frameView setupStrokeColor:self.strokeColor
+                              effect:self.effect
+                             bgColor:self.bgColor
+                           maskAlpha:maskAlpha
+                            animated:YES];
 }
 - (CGFloat)maskAlpha {
     return _frameView.maskAlpha;
 }
 
-- (void)setStrokeColor:(UIColor *)strokeColor {
-    [self.frameView setupStrokeColor:strokeColor blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha animated:YES];
-}
-- (UIColor *)strokeColor {
-    return _frameView.strokeColor;
-}
-
 - (void)setupStrokeColor:(UIColor *)strokeColor
-              blurEffect:(UIBlurEffect *)blurEffect
+                  effect:(UIVisualEffect *)effect
                  bgColor:(UIColor *)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated {
     [self.frameView setupStrokeColor:strokeColor
-                          blurEffect:blurEffect
+                              effect:effect
                              bgColor:bgColor
                            maskAlpha:maskAlpha
                             animated:isAnimated];
@@ -1780,7 +1796,7 @@
     configure.videoAsset = self.videoAsset;
     configure.frameType = self.frameType;
     configure.animationCurve = self.animationCurve;
-    configure.blurEffect = self.blurEffect;
+    configure.effect = self.effect;
     configure.bgColor = self.bgColor;
     configure.maskAlpha = self.maskAlpha;
     configure.strokeColor = self.strokeColor;

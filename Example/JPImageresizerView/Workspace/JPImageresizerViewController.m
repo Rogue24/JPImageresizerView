@@ -461,8 +461,8 @@ static UIViewController *tmpVC_;
 
 #pragma mark 设置毛玻璃
 - (IBAction)changeBlurEffect:(id)sender {
-    [UIAlertController changeBlurEffect:^(UIBlurEffect *blurEffect) {
-        self.imageresizerView.blurEffect = blurEffect;
+    [UIAlertController changeEffect:^(UIVisualEffect *effect) {
+        self.imageresizerView.effect = effect;
     } fromVC:self];
 }
 
@@ -494,7 +494,11 @@ static UIViewController *tmpVC_;
         strokeColor = JPRandomColor;
         bgColor = JPRandomColor;
     }
-    [self.imageresizerView setupStrokeColor:strokeColor blurEffect:self.imageresizerView.blurEffect bgColor:bgColor maskAlpha:maskAlpha animated:YES];
+    [self.imageresizerView setupStrokeColor:strokeColor
+                                     effect:self.imageresizerView.effect
+                                    bgColor:bgColor
+                                  maskAlpha:maskAlpha
+                                   animated:YES];
     
     // 随机网格数
     self.imageresizerView.gridCount = JPRandomNumber(2, 20);

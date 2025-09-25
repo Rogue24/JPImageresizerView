@@ -27,30 +27,36 @@ extension UIAlertController {
             .present(from: fromVC ?? rootVC)
     }
     
-    static func changeBlurEffect(_ handler: @escaping (_ blurEffect: UIBlurEffect?) -> Void, fromVC: UIViewController? = nil) {
-        UIAlertController
+    static func changeEffect(_ handler: @escaping (_ effect: UIVisualEffect?) -> Void, fromVC: UIViewController? = nil) {
+        let alertCtr = UIAlertController
             .build(.actionSheet)
             .addDestructive("移除模糊效果") { handler(nil) }
-            .addAction("ExtraLight") { handler(.init(style: .extraLight)) }
-            .addAction("Light") { handler(.init(style: .light)) }
-            .addAction("Dark") { handler(.init(style: .dark)) }
-            .addAction("Regular") { handler(.init(style: .regular)) }
-            .addAction("Prominent") { handler(.init(style: .prominent)) }
-            .addAction("SystemUltraThinMaterial") { handler(.init(style: .systemUltraThinMaterial)) }
-            .addAction("SystemThinMaterial") { handler(.init(style: .systemThinMaterial)) }
-            .addAction("SystemMaterial") { handler(.init(style: .systemMaterial)) }
-            .addAction("SystemThickMaterial") { handler(.init(style: .systemThickMaterial)) }
-            .addAction("SystemChromeMaterial") { handler(.init(style: .systemChromeMaterial)) }
-            .addAction("SystemUltraThinMaterialLight") { handler(.init(style: .systemUltraThinMaterialLight)) }
-            .addAction("SystemThinMaterialLight") { handler(.init(style: .systemThinMaterialLight)) }
-            .addAction("SystemMaterialLight") { handler(.init(style: .systemMaterialLight)) }
-            .addAction("SystemThickMaterialLight") { handler(.init(style: .systemThickMaterialLight)) }
-            .addAction("SystemChromeMaterialLight") { handler(.init(style: .systemChromeMaterialLight)) }
-            .addAction("SystemUltraThinMaterialDark") { handler(.init(style: .systemUltraThinMaterialDark)) }
-            .addAction("SystemThinMaterialDark") { handler(.init(style: .systemThinMaterialDark)) }
-            .addAction("SystemMaterialDark") { handler(.init(style: .systemMaterialDark)) }
-            .addAction("SystemThickMaterialDark") { handler(.init(style: .systemThickMaterialDark)) }
-            .addAction("SystemChromeMaterialDark") { handler(.init(style: .systemChromeMaterialDark)) }
+        if #available(iOS 26.0, *) {
+            alertCtr
+                .addAction("Glass Regular") { handler(UIGlassEffect(style: .regular)) }
+                .addAction("Glass Clear") { handler(UIGlassEffect(style: .clear)) }
+        }
+        alertCtr
+            .addAction("ExtraLight") { handler(UIBlurEffect(style: .extraLight)) }
+            .addAction("Light") { handler(UIBlurEffect(style: .light)) }
+            .addAction("Dark") { handler(UIBlurEffect(style: .dark)) }
+            .addAction("Regular") { handler(UIBlurEffect(style: .regular)) }
+            .addAction("Prominent") { handler(UIBlurEffect(style: .prominent)) }
+            .addAction("SystemUltraThinMaterial") { handler(UIBlurEffect(style: .systemUltraThinMaterial)) }
+            .addAction("SystemThinMaterial") { handler(UIBlurEffect(style: .systemThinMaterial)) }
+            .addAction("SystemMaterial") { handler(UIBlurEffect(style: .systemMaterial)) }
+            .addAction("SystemThickMaterial") { handler(UIBlurEffect(style: .systemThickMaterial)) }
+            .addAction("SystemChromeMaterial") { handler(UIBlurEffect(style: .systemChromeMaterial)) }
+            .addAction("SystemUltraThinMaterialLight") { handler(UIBlurEffect(style: .systemUltraThinMaterialLight)) }
+            .addAction("SystemThinMaterialLight") { handler(UIBlurEffect(style: .systemThinMaterialLight)) }
+            .addAction("SystemMaterialLight") { handler(UIBlurEffect(style: .systemMaterialLight)) }
+            .addAction("SystemThickMaterialLight") { handler(UIBlurEffect(style: .systemThickMaterialLight)) }
+            .addAction("SystemChromeMaterialLight") { handler(UIBlurEffect(style: .systemChromeMaterialLight)) }
+            .addAction("SystemUltraThinMaterialDark") { handler(UIBlurEffect(style: .systemUltraThinMaterialDark)) }
+            .addAction("SystemThinMaterialDark") { handler(UIBlurEffect(style: .systemThinMaterialDark)) }
+            .addAction("SystemMaterialDark") { handler(UIBlurEffect(style: .systemMaterialDark)) }
+            .addAction("SystemThickMaterialDark") { handler(UIBlurEffect(style: .systemThickMaterialDark)) }
+            .addAction("SystemChromeMaterialDark") { handler(UIBlurEffect(style: .systemChromeMaterialDark)) }
             .addCancel()
             .present(from: fromVC ?? rootVC)
     }

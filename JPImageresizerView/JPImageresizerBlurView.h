@@ -11,24 +11,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JPImageresizerBlurView : UIView
 - (instancetype)initWithFrame:(CGRect)frame
-                   blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                       effect:(UIVisualEffect *_Nullable)effect
                       bgColor:(UIColor *_Nullable)bgColor
                     maskAlpha:(CGFloat)maskAlpha;
 
 - (BOOL)isBlur;
-- (UIBlurEffect *_Nullable)blurEffect;
+- (UIVisualEffect *_Nullable)effect;
 - (UIColor *_Nullable)bgColor;
 - (CGFloat)maskAlpha;
 - (BOOL)isMaskAlpha;
 
 - (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration;
-- (void)setBlurEffect:(UIBlurEffect *_Nullable)blurEffect duration:(NSTimeInterval)duration;
+- (void)setEffect:(UIVisualEffect *_Nullable)effect duration:(NSTimeInterval)duration;
 - (void)setBgColor:(UIColor *_Nullable)bgColor duration:(NSTimeInterval)duration;
 - (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration;
 - (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration;
 
 - (void)setupIsBlur:(BOOL)isBlur
-         blurEffect:(UIBlurEffect *_Nullable)blurEffect
+             effect:(UIVisualEffect *_Nullable)effect
             bgColor:(UIColor *_Nullable)bgColor
           maskAlpha:(CGFloat)maskAlpha
         isMaskAlpha:(BOOL)isMaskAlpha

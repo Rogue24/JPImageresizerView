@@ -113,9 +113,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self __updateShapeLayersStrokeColor];
 }
 
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect {
-    [self.blurView setBlurEffect:blurEffect duration:0];
-    [self.maskBlurView setBlurEffect:blurEffect duration:0];
+- (void)setEffect:(UIVisualEffect *)effect {
+    [self.blurView setEffect:effect duration:0];
+    [self.maskBlurView setEffect:effect duration:0];
 }
 
 - (void)setBgColor:(UIColor *)bgColor {
@@ -406,8 +406,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return CGRectZero;
 }
 
-- (UIBlurEffect *)blurEffect {
-    return self.blurView.blurEffect;
+- (UIVisualEffect *)effect {
+    return self.blurView.effect;
 }
 
 - (UIColor *)bgColor {
@@ -424,7 +424,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
            baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                   blurEffect:(UIBlurEffect *)blurEffect
+                       effect:(UIVisualEffect *)effect
                       bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
@@ -475,7 +475,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _isHorizontalMirror = [isHorizontalMirror copy];
         _resizeObjWhScale = [resizeObjWhScale copy];
         
-        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha];
+        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds effect:effect bgColor:bgColor maskAlpha:maskAlpha];
         blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
@@ -1279,7 +1279,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     UIImageView *maskImgView = [[UIImageView alloc] init];
     maskImgView.image = [JPImageresizerTool convertBlackImage:_maskImage];
     
-    JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame blurEffect:self.blurEffect bgColor:self.bgColor maskAlpha:self.maskAlpha];
+    JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame effect:self.effect bgColor:self.bgColor maskAlpha:self.maskAlpha];
     [maskBlurView setIsBlur:isBlur duration:0];
     maskBlurView.userInteractionEnabled = NO;
     maskBlurView.maskView = maskImgView;
@@ -1465,15 +1465,15 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark 设置线框颜色、模糊样式、背景颜色、遮罩透明度
 - (void)setupStrokeColor:(UIColor *)strokeColor
-              blurEffect:(UIBlurEffect *)blurEffect
+                  effect:(UIVibrancyEffect *)effect
                  bgColor:(UIColor *)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated {
     BOOL isBlur = self.blurView.isBlur;
     BOOL isMaskAlpha = self.blurView.isMaskAlpha;
     NSTimeInterval duration = isAnimated ? _defaultDuration : 0;
-    [self.blurView setupIsBlur:isBlur blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
-    [self.maskBlurView setupIsBlur:isBlur blurEffect:blurEffect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
+    [self.blurView setupIsBlur:isBlur effect:effect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
+    [self.maskBlurView setupIsBlur:isBlur effect:effect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
     void (^animations)(void) = ^{
         self.strokeColor = strokeColor;
         self.superview.layer.backgroundColor = bgColor.CGColor;

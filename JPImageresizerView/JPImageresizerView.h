@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
     frame --- 相对父视图的区域
     frameType --- 边框样式
     animationCurve --- 动画曲线
-    blurEffect --- 模糊效果
+    effect --- 模糊效果
     bgColor --- 背景颜色
     maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
     strokeColor ---裁剪线颜色
@@ -282,36 +282,40 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 裁剪框、背景、遮罩颜色相关
 /**
  * 裁剪线颜色
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) UIColor *_Nullable strokeColor;
+
 /**
  * 模糊效果
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
-@property (nonatomic) UIBlurEffect *_Nullable blurEffect;
+@property (nonatomic) UIVisualEffect *_Nullable effect;
+
 /**
  * 背景颜色
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) UIColor *_Nullable bgColor;
+
 /**
  * 遮罩颜色的透明度（背景颜色 * 透明度）
- * 设置该值会调用 -setupStrokeColor: blurEffect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
+ * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) CGFloat maskAlpha;
+
 /*!
  @method
  @brief 设置颜色
  @param strokeColor --- 裁剪线颜色
- @param blurEffect --- 模糊效果
+ @param effect --- 模糊效果
  @param bgColor --- 背景颜色
  @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
  @param isAnimated --- 是否带动画效果
  @discussion 同时修改UI元素
  */
 - (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
-              blurEffect:(UIBlurEffect *_Nullable)blurEffect
+                  effect:(UIVisualEffect *_Nullable)effect
                  bgColor:(UIColor *_Nullable)bgColor
                maskAlpha:(CGFloat)maskAlpha
                 animated:(BOOL)isAnimated;

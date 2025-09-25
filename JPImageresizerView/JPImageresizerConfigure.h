@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
     - viewFrame = [UIScreen mainScreen].bounds;
     - frameType = JPConciseFrameType;
     - animationCurve = JPAnimationCurveLinear;
-    - blurEffect = nil;
+    - effect = nil;
     - bgColor = UIColor.blackColor;
     - maskAlpha = 0.75;
     - strokeColor = UIColor.whiteColor;
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)defaultConfigure;
 
 /* 默认参数的基础上：
-    - blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    - effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     - bgColor = UIColor.whiteColor;
     - maskAlpha = 0.3;
     - strokeColor = R: 56, G: 121, B: 242 */
@@ -179,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
 /** 模糊效果 */
-@property (nonatomic, strong) UIBlurEffect *_Nullable blurEffect;
+@property (nonatomic, strong) UIVisualEffect *_Nullable effect;
 
 /** 背景颜色 */
 @property (nonatomic, strong) UIColor *_Nullable bgColor;
@@ -264,7 +264,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_viewFrame)(CGRect viewFrame);
 @property (readonly) JPImageresizerConfigure *(^jp_frameType)(JPImageresizerFrameType frameType);
 @property (readonly) JPImageresizerConfigure *(^jp_animationCurve)(JPAnimationCurve animationCurve);
-@property (readonly) JPImageresizerConfigure *(^jp_blurEffect)(UIBlurEffect *_Nullable blurEffect);
+@property (readonly) JPImageresizerConfigure *(^jp_effect)(UIVisualEffect *_Nullable effect);
 @property (readonly) JPImageresizerConfigure *(^jp_bgColor)(UIColor *_Nullable bgColor);
 @property (readonly) JPImageresizerConfigure *(^jp_maskAlpha)(CGFloat maskAlpha);
 @property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *_Nullable strokeColor);

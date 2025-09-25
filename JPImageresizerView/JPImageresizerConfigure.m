@@ -15,7 +15,7 @@
     JPImageresizerConfigure *configure = [[self alloc] init];
     configure
     .jp_viewFrame([UIScreen mainScreen].bounds)
-    .jp_blurEffect(nil)
+    .jp_effect(nil)
     .jp_frameType(JPConciseFrameType)
     .jp_animationCurve(JPAnimationCurveEaseOut)
     .jp_strokeColor(UIColor.whiteColor)
@@ -45,7 +45,7 @@
 + (JPImageresizerConfigure *)lightBlurMaskTypeConfigure {
     JPImageresizerConfigure *configure = [self defaultConfigure];
     configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
+        .jp_effect([UIBlurEffect effectWithStyle:UIBlurEffectStyleLight])
         .jp_bgColor(UIColor.whiteColor)
         .jp_maskAlpha(0.25)
         .jp_strokeColor([UIColor colorWithRed:(56.0 / 255.0) green:(121.0 / 255.0) blue:(242.0 / 255.0) alpha:1.0]);
@@ -55,7 +55,7 @@
 + (JPImageresizerConfigure *)darkBlurMaskTypeConfigure {
     JPImageresizerConfigure *configure = [self defaultConfigure];
     configure
-        .jp_blurEffect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
+        .jp_effect([UIBlurEffect effectWithStyle:UIBlurEffectStyleDark])
         .jp_bgColor(UIColor.blackColor)
         .jp_maskAlpha(0.25);
     return configure;
@@ -273,9 +273,9 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(UIBlurEffect *))jp_blurEffect {
-    return ^(UIBlurEffect *blurEffect) {
-        self.blurEffect = blurEffect;
+- (JPImageresizerConfigure *(^)(UIVisualEffect *))jp_effect {
+    return ^(UIVisualEffect *effect) {
+        self.effect = effect;
         return self;
     };
 }

@@ -8,35 +8,35 @@
 #import "JPImageresizerBlurView.h"
 
 @interface JPImageresizerBlurView ()
-@property (nonatomic, weak) UIVisualEffectView *visualEffectView;
+@property (nonatomic, weak) UIVisualEffectView *effectView;
 @property (nonatomic, weak) UIView *fillView;
 @end
 
 @implementation JPImageresizerBlurView
 {
     BOOL _isBlur;
-    UIBlurEffect *_blurEffect;
+    UIVisualEffect *_effect;
     UIColor *_bgColor;
     CGFloat _maskAlpha;
     BOOL _isMaskAlpha;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
-                   blurEffect:(UIBlurEffect *)blurEffect
+                       effect:(UIVisualEffect *)effect
                       bgColor:(UIColor *)bgColor
                     maskAlpha:(CGFloat)maskAlpha {
     if (self = [super initWithFrame:frame]) {
-        _blurEffect = blurEffect;
+        _effect = effect;
         _bgColor = bgColor;
         _maskAlpha = maskAlpha;
-        _isBlur = blurEffect != nil;
+        _isBlur = effect != nil;
         _isMaskAlpha = YES;
 
-        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        visualEffectView.frame = self.bounds;
-        visualEffectView.userInteractionEnabled = NO;
-        [self addSubview:visualEffectView];
-        _visualEffectView = visualEffectView;
+        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        effectView.frame = self.bounds;
+        effectView.userInteractionEnabled = NO;
+        [self addSubview:effectView];
+        _effectView = effectView;
 
         UIView *fillView = [[UIView alloc] initWithFrame:self.bounds];
         fillView.userInteractionEnabled = NO;
@@ -50,14 +50,14 @@
 
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
-    _visualEffectView.frame = _fillView.frame = (CGRect){CGPointZero, frame.size};
+    _effectView.frame = _fillView.frame = (CGRect){CGPointZero, frame.size};
 }
 
 - (BOOL)isBlur {
     return _isBlur;
 }
-- (UIBlurEffect *)blurEffect {
-    return _blurEffect;
+- (UIVisualEffect *)effect {
+    return _effect;
 }
 - (UIColor *)bgColor {
     return _bgColor;
@@ -71,15 +71,15 @@
 
 - (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration {
     _isBlur = isBlur;
-    [self __blurEffectAnimation:duration];
+    [self __effectAnimation:duration];
 }
-- (void)setBlurEffect:(UIBlurEffect *)blurEffect duration:(NSTimeInterval)duration {
-    _blurEffect = blurEffect;
-    [self __blurEffectAnimation:duration];
+- (void)setEffect:(UIVisualEffect *)effect duration:(NSTimeInterval)duration {
+    _effect = effect;
+    [self __effectAnimation:duration];
 }
 - (void)setBgColor:(UIColor *)bgColor duration:(NSTimeInterval)duration {
     _bgColor = bgColor;
-    [self __blurEffectAnimation:duration];
+    [self __effectAnimation:duration];
 }
 - (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration {
     _maskAlpha = maskAlpha;
@@ -91,21 +91,20 @@
 }
 
 - (void)setupIsBlur:(BOOL)isBlur
-         blurEffect:(UIBlurEffect *)blurEffect
+             effect:(UIVisualEffect *)effect
             bgColor:(UIColor *)bgColor
           maskAlpha:(CGFloat)maskAlpha
         isMaskAlpha:(BOOL)isMaskAlpha
            duration:(NSTimeInterval)duration {
     _isBlur = isBlur;
-    _blurEffect = blurEffect;
+    _effect = effect;
     _bgColor = bgColor;
     _maskAlpha = maskAlpha;
     _isMaskAlpha = isMaskAlpha;
-    CGFloat visualEffectAlpha = _isBlur ? 1 : 0;
-    maskAlpha = _isMaskAlpha ? ((_blurEffect || !_isBlur) ? 0 : _maskAlpha) : 1;
+    effect = _isBlur ? _effect : nil;
+    maskAlpha = _isMaskAlpha ? ((_effect || !_isBlur) ? 0 : _maskAlpha) : 1;
     void (^animations)(void) = ^{
-        self.visualEffectView.effect = blurEffect;
-        self.visualEffectView.alpha = visualEffectAlpha;
+        self.effectView.effect = effect;
         self.fillView.layer.backgroundColor = bgColor.CGColor;
         self.fillView.alpha = maskAlpha;
     };
@@ -116,11 +115,11 @@
     }
  }
 
-- (void)__blurEffectAnimation:(NSTimeInterval)duration {
+- (void)__effectAnimation:(NSTimeInterval)duration {
     void (^animations)(void) = ^{
-        self.visualEffectView.alpha = self->_isBlur ? 1 : 0;
+        self.effectView.effect = self->_isBlur ? self->_effect : nil;
         if (self->_isMaskAlpha) {
-            self.fillView.alpha = (self->_blurEffect || !self->_isBlur) ? 0 : self->_maskAlpha;
+            self.fillView.alpha = (self->_effect || !self->_isBlur) ? 0 : self->_maskAlpha;
         } else {
             self.fillView.alpha = 1;
         }
@@ -135,7 +134,7 @@
 - (void)__maskAlphaAnimation:(NSTimeInterval)duration {
     void (^animations)(void) = ^{
         if (self->_isMaskAlpha) {
-            self.fillView.alpha = (self->_blurEffect || !self->_isBlur) ? 0 : self->_maskAlpha;
+            self.fillView.alpha = (self->_effect || !self->_isBlur) ? 0 : self->_maskAlpha;
         } else {
             self.fillView.alpha = 1;
         }
