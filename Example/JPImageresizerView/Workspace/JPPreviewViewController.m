@@ -163,7 +163,8 @@
 - (void)__setupNavigationBar {
     UIButton *camceraBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     camceraBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    [camceraBtn setTitle:@"保存相册" forState:UIControlStateNormal];
+    camceraBtn.tintColor = [UIColor whiteColor];
+    [camceraBtn setImage:[UIImage systemImageNamed:@"square.and.arrow.down"] forState:UIControlStateNormal];
     [camceraBtn addTarget:self action:@selector(__savePhotoToAppAlbum) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:camceraBtn];
 }
