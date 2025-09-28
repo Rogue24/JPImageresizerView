@@ -35,12 +35,14 @@
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
         effectView.frame = self.bounds;
         effectView.userInteractionEnabled = NO;
+        effectView.layer.masksToBounds = YES;
         [self addSubview:effectView];
         _effectView = effectView;
 
         UIView *fillView = [[UIView alloc] initWithFrame:self.bounds];
         fillView.userInteractionEnabled = NO;
         fillView.layer.backgroundColor = bgColor.CGColor;
+        fillView.layer.masksToBounds = YES;
         fillView.alpha = _isMaskAlpha ? (_isBlur ? 0 : maskAlpha) : 1;
         [self addSubview:fillView];
         _fillView = fillView;
@@ -50,8 +52,12 @@
 
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
-    _effectView.frame = _fillView.frame = (CGRect){CGPointZero, frame.size};
+    _effectView.frame = self.bounds;
+    _fillView.frame = self.bounds;
+    self.maskView.frame = self.bounds;
 }
+
+#pragma mark - getter
 
 - (BOOL)isBlur {
     return _isBlur;
@@ -67,6 +73,25 @@
 }
 - (BOOL)isMaskAlpha {
     return _isMaskAlpha;
+}
+
+#pragma mark - setter
+
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    // 已经确保了赋值的地方做好了限制，这里就不重复判断了
+//    if (cornerRadius < 0) {
+//        cornerRadius = 0;
+//    } else {
+//        if (cornerRadius > (self.bounds.size.width * 0.5)) {
+//            cornerRadius = self.bounds.size.width * 0.5;
+//        }
+//        if (cornerRadius > (self.bounds.size.height * 0.5)) {
+//            cornerRadius = self.bounds.size.height * 0.5;
+//        }
+//    }
+    if (_cornerRadius == cornerRadius) return;
+    _cornerRadius = cornerRadius;
+    _effectView.layer.cornerRadius = _fillView.layer.cornerRadius = cornerRadius;
 }
 
 - (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration {

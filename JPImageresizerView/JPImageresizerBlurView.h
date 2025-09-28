@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
                       bgColor:(UIColor *_Nullable)bgColor
                     maskAlpha:(CGFloat)maskAlpha;
 
+@property (nonatomic, assign) CGFloat cornerRadius;
+
 - (BOOL)isBlur;
 - (UIVisualEffect *_Nullable)effect;
 - (UIColor *_Nullable)bgColor;

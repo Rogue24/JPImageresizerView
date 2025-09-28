@@ -455,7 +455,12 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         
         _defaultDuration = 0.27;
         _blurDuration = 0.3;
+        _dotWH = 12.0;
+        _halfDotWH = _dotWH * 0.5;
         _arrLineW = 2.5;
+        _halfArrLineW = _arrLineW * 0.5;
+        _arrLength = 20.0;
+        _midArrLength = _arrLength * 0.85;
         _scopeWH = 50.0;
         _halfScopeWH = _scopeWH * 0.5;
         _minImageWH = 70.0;
@@ -508,12 +513,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             _resizeWHScale = resizeWHScale == 0 ? 1 : resizeWHScale;
             [self __setIsRound:YES animated:NO];
         } else {
-            _dotWH = 12.0;
-            _halfDotWH = _dotWH * 0.5;
-            _halfArrLineW = _arrLineW * 0.5;
-            _arrLength = 20.0;
-            _midArrLength = _arrLength * 0.85;
-            
             if (maskImage) {
                 _maskImage = maskImage;
                 [self __createMaskBlurView:YES];
@@ -546,11 +545,9 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return shapeLayer;
 }
 
-- (UIBezierPath *)__conciseDotsPathWithFrame:(CGRect)frame {
+- (UIBezierPath *)__conciseDotsPathWithFrame:(CGRect)frame cornerRadius:(CGFloat)cornerRadius {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    CGFloat halfDotWH = _halfDotWH;
-    CGFloat dotWH = _dotWH;
-    void (^appendPathBlock)(CGPoint point) = ^(CGPoint point){
+    void (^appendPathBlock)(CGPoint point, CGFloat halfDotWH, CGFloat dotWH) = ^(CGPoint point, CGFloat halfDotWH, CGFloat dotWH){
         [path appendPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(point.x - halfDotWH, point.y - halfDotWH, dotWH, dotWH)]];
     };
     
@@ -558,31 +555,42 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGPoint midPoint = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     CGPoint maxPoint = CGPointMake(CGRectGetMaxX(frame), CGRectGetMaxY(frame));
     
+    CGFloat halfDotWH = 0;
+    CGFloat dotWH = 0;
+    
     if (_isRoundResize) {
         CGFloat radius = frame.size.width * 0.5;
         CGFloat rightAngleSide = sqrt((pow(radius, 2) * 0.5));
-        appendPathBlock(CGPointMake(midPoint.x - rightAngleSide, midPoint.y - rightAngleSide));
-        appendPathBlock(CGPointMake(midPoint.x - rightAngleSide, midPoint.y + rightAngleSide));
-        appendPathBlock(CGPointMake(midPoint.x + rightAngleSide, midPoint.y - rightAngleSide));
-        appendPathBlock(CGPointMake(midPoint.x + rightAngleSide, midPoint.y + rightAngleSide));
+        appendPathBlock(CGPointMake(midPoint.x - rightAngleSide, midPoint.y - rightAngleSide), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(midPoint.x - rightAngleSide, midPoint.y + rightAngleSide), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(midPoint.x + rightAngleSide, midPoint.y - rightAngleSide), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(midPoint.x + rightAngleSide, midPoint.y + rightAngleSide), halfDotWH, dotWH);
     } else {
-        appendPathBlock(originPoint);
-        appendPathBlock(CGPointMake(originPoint.x, maxPoint.y));
-        appendPathBlock(CGPointMake(maxPoint.x, originPoint.y));
-        appendPathBlock(CGPointMake(maxPoint.x, maxPoint.y));
+        if (cornerRadius <= 0) {
+            halfDotWH = _halfDotWH;
+            dotWH = _dotWH;
+        }
+        appendPathBlock(originPoint, halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(originPoint.x, maxPoint.y), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(maxPoint.x, originPoint.y), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(maxPoint.x, maxPoint.y), halfDotWH, dotWH);
     }
     
     if (_isShowMidDots) {
-        appendPathBlock(CGPointMake(originPoint.x, midPoint.y));
-        appendPathBlock(CGPointMake(maxPoint.x, midPoint.y));
-        appendPathBlock(CGPointMake(midPoint.x, originPoint.y));
-        appendPathBlock(CGPointMake(midPoint.x, maxPoint.y));
+        if (!_isRoundResize) {
+            halfDotWH = _halfDotWH;
+            dotWH = _dotWH;
+        }
+        appendPathBlock(CGPointMake(originPoint.x, midPoint.y), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(maxPoint.x, midPoint.y), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(midPoint.x, originPoint.y), halfDotWH, dotWH);
+        appendPathBlock(CGPointMake(midPoint.x, maxPoint.y), halfDotWH, dotWH);
     }
     
     return path;
 }
 
-- (UIBezierPath *)__classicDotsPathWithFrame:(CGRect)frame {
+- (UIBezierPath *)__classicDotsPathWithFrame:(CGRect)frame cornerRadius:(CGFloat)cornerRadius {
     UIBezierPath *path = [UIBezierPath bezierPath];
     void (^appendPathBlock)(CGPoint point, CGPoint startPoint, CGPoint endPoint) = ^(CGPoint point, CGPoint startPoint, CGPoint endPoint) {
         [path moveToPoint:startPoint];
@@ -593,10 +601,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     CGPoint originPoint = frame.origin;
     CGPoint midPoint = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     CGPoint maxPoint = CGPointMake(CGRectGetMaxX(frame), CGRectGetMaxY(frame));
-    CGFloat halfArrLineW = _halfArrLineW;
-    CGFloat arrLength = _arrLength;
-    CGFloat minLength = MIN(midPoint.x - originPoint.x, midPoint.y - originPoint.y);
-    if (arrLength > minLength) arrLength = minLength;
+    
     CGPoint point;
     CGPoint startPoint;
     CGPoint endPoint;
@@ -606,25 +611,34 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         CGFloat rightAngleSide = sqrt((pow(radius, 2) * 0.5));
 
         point = CGPointMake(midPoint.x - rightAngleSide, midPoint.y - rightAngleSide);
-        startPoint = CGPointMake(point.x, point.y + arrLength);
-        endPoint = CGPointMake(point.x + arrLength, point.y);
+        startPoint = CGPointMake(point.x, point.y);
+        endPoint = CGPointMake(point.x, point.y);
         appendPathBlock(point, startPoint, endPoint);
         
         point = CGPointMake(midPoint.x - rightAngleSide, midPoint.y + rightAngleSide);
-        startPoint = CGPointMake(point.x, point.y - arrLength);
-        endPoint = CGPointMake(point.x + arrLength, point.y);
+        startPoint = CGPointMake(point.x, point.y);
+        endPoint = CGPointMake(point.x, point.y);
         appendPathBlock(point, startPoint, endPoint);
         
         point = CGPointMake(midPoint.x + rightAngleSide, midPoint.y - rightAngleSide);
-        startPoint = CGPointMake(point.x - arrLength, point.y);
-        endPoint = CGPointMake(point.x, point.y + arrLength);
+        startPoint = CGPointMake(point.x, point.y);
+        endPoint = CGPointMake(point.x, point.y);
         appendPathBlock(point, startPoint, endPoint);
         
         point = CGPointMake(midPoint.x + rightAngleSide, midPoint.y + rightAngleSide);
-        startPoint = CGPointMake(point.x - arrLength, point.y);
-        endPoint = CGPointMake(point.x, point.y - arrLength);
+        startPoint = CGPointMake(point.x, point.y);
+        endPoint = CGPointMake(point.x, point.y);
         appendPathBlock(point, startPoint, endPoint);
     } else {
+        CGFloat halfArrLineW = 0;
+        CGFloat arrLength = 0;
+        if (cornerRadius <= 0) {
+            halfArrLineW = _halfArrLineW;
+            arrLength = _arrLength;
+            CGFloat minLength = MIN(midPoint.x - originPoint.x, midPoint.y - originPoint.y);
+            if (arrLength > minLength) arrLength = minLength;
+        }
+        
         point = CGPointMake(originPoint.x - halfArrLineW, originPoint.y - halfArrLineW);
         startPoint = CGPointMake(point.x, point.y + arrLength);
         endPoint = CGPointMake(point.x + arrLength, point.y);
@@ -646,29 +660,95 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         appendPathBlock(point, startPoint, endPoint);
     }
     
-    if (_isShowMidDots) {
-        arrLength = _midArrLength;
-        if (arrLength > minLength) arrLength = minLength;
-        
-        point = CGPointMake(originPoint.x - halfArrLineW, midPoint.y);
-        startPoint = CGPointMake(point.x, point.y - arrLength);
-        endPoint = CGPointMake(point.x, point.y + arrLength);
-        appendPathBlock(point, startPoint, endPoint);
-        
-        point = CGPointMake(maxPoint.x + halfArrLineW, midPoint.y);
-        startPoint = CGPointMake(point.x, point.y - arrLength);
-        endPoint = CGPointMake(point.x, point.y + arrLength);
-        appendPathBlock(point, startPoint, endPoint);
-        
-        point = CGPointMake(midPoint.x, originPoint.y - halfArrLineW);
-        startPoint = CGPointMake(point.x - arrLength, point.y);
-        endPoint = CGPointMake(point.x + arrLength, point.y);
-        appendPathBlock(point, startPoint, endPoint);
+    // 凸块圆角路径（目前还做不到自然的过渡动画，先注释吧）
+//    if (cornerRadius > 0) {
+//        halfArrLineW = _halfArrLineW;
+//        arrLength = cornerRadius;
+//
+//        point = CGPointMake(originPoint.x - halfArrLineW, originPoint.y - halfArrLineW);
+//        startPoint = CGPointMake(point.x, point.y + arrLength);
+//        endPoint = CGPointMake(point.x + arrLength, point.y);
+//        point = CGPointMake(originPoint.x + halfArrLineW, originPoint.y + halfArrLineW);
+//        [path moveToPoint:startPoint];
+//        [path addQuadCurveToPoint:endPoint controlPoint:point];
+//
+//        point = CGPointMake(originPoint.x - halfArrLineW, maxPoint.y + halfArrLineW);
+//        startPoint = CGPointMake(point.x, point.y - arrLength);
+//        endPoint = CGPointMake(point.x + arrLength, point.y);
+//        point = CGPointMake(originPoint.x + halfArrLineW, maxPoint.y - halfArrLineW);
+//        [path moveToPoint:startPoint];
+//        [path addQuadCurveToPoint:endPoint controlPoint:point];
+//
+//        point = CGPointMake(maxPoint.x + halfArrLineW, originPoint.y - halfArrLineW);
+//        startPoint = CGPointMake(point.x - arrLength, point.y);
+//        endPoint = CGPointMake(point.x, point.y + arrLength);
+//        point = CGPointMake(maxPoint.x - halfArrLineW, originPoint.y + halfArrLineW);
+//        [path moveToPoint:startPoint];
+//        [path addQuadCurveToPoint:endPoint controlPoint:point];
+//
+//        point = CGPointMake(maxPoint.x + halfArrLineW, maxPoint.y + halfArrLineW);
+//        startPoint = CGPointMake(point.x - arrLength, point.y);
+//        endPoint = CGPointMake(point.x, point.y - arrLength);
+//        point = CGPointMake(maxPoint.x - halfArrLineW, maxPoint.y - halfArrLineW);
+//        [path moveToPoint:startPoint];
+//        [path addQuadCurveToPoint:endPoint controlPoint:point];
+//    }
     
-        point = CGPointMake(midPoint.x, maxPoint.y + halfArrLineW);
-        startPoint = CGPointMake(point.x - arrLength, point.y);
-        endPoint = CGPointMake(point.x + arrLength, point.y);
-        appendPathBlock(point, startPoint, endPoint);
+    if (_isShowMidDots) {
+        if (_isRoundResize) {
+            point = CGPointMake(originPoint.x, midPoint.y);
+            startPoint = CGPointMake(point.x, point.y);
+            endPoint = CGPointMake(point.x, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+            
+            point = CGPointMake(maxPoint.x, midPoint.y);
+            startPoint = CGPointMake(point.x, point.y);
+            endPoint = CGPointMake(point.x, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+            
+            point = CGPointMake(midPoint.x, originPoint.y);
+            startPoint = CGPointMake(point.x, point.y);
+            endPoint = CGPointMake(point.x, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+        
+            point = CGPointMake(midPoint.x, maxPoint.y);
+            startPoint = CGPointMake(point.x, point.y);
+            endPoint = CGPointMake(point.x, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+        } else {
+            CGFloat halfArrLineW = _halfArrLineW;
+            CGFloat horArrLength = _midArrLength;
+            CGFloat verArrLength = _midArrLength;
+            if (cornerRadius > 0) {
+                CGFloat minHorLength = frame.size.width * 0.5 - cornerRadius;
+                if (horArrLength > minHorLength) horArrLength = minHorLength;
+                CGFloat minVerLength = frame.size.height * 0.5 - cornerRadius;
+                if (verArrLength > minVerLength) verArrLength = minVerLength;
+            } else {
+                CGFloat minLength = MIN(midPoint.x - originPoint.x, midPoint.y - originPoint.y);
+                if (horArrLength > minLength) horArrLength = verArrLength = minLength;
+            }
+            
+            point = CGPointMake(originPoint.x - halfArrLineW, midPoint.y);
+            startPoint = CGPointMake(point.x, point.y - verArrLength);
+            endPoint = CGPointMake(point.x, point.y + verArrLength);
+            appendPathBlock(point, startPoint, endPoint);
+            
+            point = CGPointMake(maxPoint.x + halfArrLineW, midPoint.y);
+            startPoint = CGPointMake(point.x, point.y - verArrLength);
+            endPoint = CGPointMake(point.x, point.y + verArrLength);
+            appendPathBlock(point, startPoint, endPoint);
+            
+            point = CGPointMake(midPoint.x, originPoint.y - halfArrLineW);
+            startPoint = CGPointMake(point.x - horArrLength, point.y);
+            endPoint = CGPointMake(point.x + horArrLength, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+        
+            point = CGPointMake(midPoint.x, maxPoint.y + halfArrLineW);
+            startPoint = CGPointMake(point.x - horArrLength, point.y);
+            endPoint = CGPointMake(point.x + horArrLength, point.y);
+            appendPathBlock(point, startPoint, endPoint);
+        }
     }
     
     return path;
@@ -854,22 +934,34 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (void)__updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
-    CGFloat radius = _isRoundResize ? (MIN(imageresizerFrame.size.width, imageresizerFrame.size.height) * 0.5) : 0.1;
-    UIBezierPath *framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:radius];
+    CGFloat cornerRadius = 0;
+    if (_isRoundResize || _resizeCornerRadius > 0) {
+        cornerRadius = MIN(imageresizerFrame.size.width, imageresizerFrame.size.height) * 0.5;
+        if (!_isRoundResize) {
+            cornerRadius = MIN(cornerRadius, _resizeCornerRadius);
+        }
+    }
+    
+    UIBezierPath *framePath;
+    if (cornerRadius > 0) {
+        framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:cornerRadius];
+    } else {
+        // framePath = [UIBezierPath bezierPathWithRect:imageresizerFrame]; // 路径要使用相同的构建方法，否则无法做自然的过渡动画
+        framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:0.1];
+    }
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
     [maskPath appendPath:framePath];
     
     if (self.maskBlurView != nil) {
-        CGRect maskViewFrame = (CGRect){CGPointZero, imageresizerFrame.size};
         if (duration > 0) {
             [UIView animateWithDuration:duration delay:0 options:[self animationOptions] animations:^{
                 self.maskBlurView.frame = imageresizerFrame;
-                self.maskBlurView.maskView.frame = maskViewFrame;
+                self.maskBlurView.cornerRadius = cornerRadius;
             } completion:nil];
         } else {
             self.maskBlurView.frame = imageresizerFrame;
-            self.maskBlurView.maskView.frame = maskViewFrame;
+            self.maskBlurView.cornerRadius = cornerRadius;
         }
     }
     
@@ -901,10 +993,10 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         
         BOOL isClassicFrameType = _frameType == JPClassicFrameType;
         if (isClassicFrameType) {
-            dotsPath = [self __classicDotsPathWithFrame:imageresizerFrame];
+            dotsPath = [self __classicDotsPathWithFrame:imageresizerFrame cornerRadius:cornerRadius];
             gridlinesPath = [self __gridlineWithFrame:imageresizerFrame];
         } else {
-            dotsPath = [self __conciseDotsPathWithFrame:imageresizerFrame];
+            dotsPath = [self __conciseDotsPathWithFrame:imageresizerFrame cornerRadius:cornerRadius];
         }
         
         if (duration > 0) {
@@ -1239,18 +1331,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (void)__setIsRound:(BOOL)isRound animated:(BOOL)isAnimated {
     if (isRound) {
         _frameLayerLineW = 1.5;
-        _dotWH =  0.0;
-        _halfDotWH = 0.0;
-        _halfArrLineW = 0.0;
-        _arrLength = 0.0;
-        _midArrLength = 0.0;
     } else {
         _frameLayerLineW = _borderImage ? 0.0 : 1.2;
-        _dotWH =  12.0;
-        _halfDotWH = _dotWH * 0.5;
-        _halfArrLineW = _arrLineW * 0.5;
-        _arrLength = 20.0;
-        _midArrLength = _arrLength * 0.85;
     }
     
     if (_borderImage) {
@@ -1277,7 +1359,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (self.maskBlurView != nil || _maskImage == nil) return;
     
     UIImageView *maskImgView = [[UIImageView alloc] init];
-    maskImgView.image = [JPImageresizerTool convertBlackImage:_maskImage];
+    maskImgView.image = [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:_maskImage];
     
     JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame effect:self.effect bgColor:self.bgColor maskAlpha:self.maskAlpha];
     [maskBlurView setIsBlur:isBlur duration:0];
@@ -1348,7 +1430,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark - puild method
 
-#pragma mark 修改裁剪宽高比
+#pragma mark 设置裁剪宽高比
 - (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
     if (initialResizeWHScale < 0.0) initialResizeWHScale = 0.0;
     _initialResizeWHScale = initialResizeWHScale;
@@ -1395,7 +1477,18 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 
-#pragma mark 蒙版图片设置
+#pragma mark 设置裁剪圆角
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius {
+    [self setResizeCornerRadius:resizeCornerRadius animated:NO];
+}
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated {
+    if (resizeCornerRadius < 0) resizeCornerRadius = 0;
+    if (_resizeCornerRadius == resizeCornerRadius) return;
+    _resizeCornerRadius = resizeCornerRadius;
+    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
+}
+
+#pragma mark 设置蒙版图片
 - (void)setMaskImage:(UIImage *)maskImage {
     [self setMaskImage:maskImage isToBeArbitrarily:_isArbitrarily animated:NO];
 }
@@ -1416,7 +1509,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         }
         resizeWHScale = maskImage.size.width / maskImage.size.height;
         if (self.maskBlurView) {
-            UIImage *image = [JPImageresizerTool convertBlackImage:maskImage];
+            UIImage *image = [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:maskImage];
             UIImageView *maskImgView = (UIImageView *)self.maskBlurView.maskView;
             if (isAnimated) {
                 [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
@@ -1660,7 +1753,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         [self __updateMaskViewTransform];
-        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[JPImageresizerTool convertBlackImage:_maskImage]];
+        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[JPImageresizerTool convertToAlphaInvertedBlackMaskImage:_maskImage]];
         [CATransaction commit];
         [self.maskBlurView setIsBlur:YES duration:_defaultDuration];
     } else {
@@ -1874,10 +1967,22 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
     
     CGRect imageViewBounds = self.imageView.bounds;
-    CGRect cropFrame = (self.isCanRecovery || self.resizeWHScale > 0) ? [self convertRect:self.imageresizerFrame toView:self.imageView] : imageViewBounds;
+    
+    CGRect cropFrame = imageViewBounds;
+    if (self.isCanRecovery || self.resizeWHScale > 0) {
+        cropFrame = [self convertRect:self.imageresizerFrame toView:self.imageView];
+    }
+    
+    CGFloat cornerRadius = 0;
+    if (_resizeCornerRadius > 0) {
+        cornerRadius = _resizeCornerRadius * (cropFrame.size.width / self.imageresizerFrame.size.width);
+    }
+    
     CGFloat resizeWHScale = _isArbitrarily ? self.imageresizerWHScale : self.resizeWHScale;
     
-    return JPCropConfigureMake(direction, isVerMirror, isHorMirror, _isRoundResize, imageViewBounds.size, resizeWHScale, cropFrame);
+    return JPCropConfigureMake(direction, isVerMirror, isHorMirror,
+                               _isRoundResize, cornerRadius, resizeWHScale,
+                               imageViewBounds.size, cropFrame);
 }
 
 #pragma mark - UIPanGestureRecognizer

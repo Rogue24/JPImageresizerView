@@ -758,12 +758,28 @@
     return resizeWHScale;
 }
 
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius {
+    [self setResizeCornerRadius:resizeCornerRadius animated:YES];
+}
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated {
+    if (self.frameView.isPrepareToScale) {
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，圆角暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        return;
+    }
+    // TODO: configure resizeCornerRadius
+//    self.configure.rad = CGRectZero;
+    [self.frameView setResizeCornerRadius:resizeCornerRadius animated:isAnimated];
+}
+- (CGFloat)resizeCornerRadius {
+    return _frameView.resizeCornerRadius;
+}
+
 - (void)setIsRoundResize:(BOOL)isRoundResize {
     [self setIsRoundResize:isRoundResize isToBeArbitrarily:(isRoundResize ? NO : self.isArbitrarily) animated:YES];
 }
 - (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
-        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，圆切暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
     self.configure.resizeScaledBounds = CGRectZero;
@@ -778,7 +794,7 @@
 }
 - (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
-        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，裁剪宽高比暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，蒙版图片暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
     self.configure.resizeScaledBounds = CGRectZero;

@@ -205,6 +205,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
 /**
+ * 设置裁剪圆角（与 isRoundResize 相互独立，且优先级比 isRoundResize 低；最终裁剪的圆角不会超出「裁剪宽高最小边」的一半）
+ * 设置该值会调用 -setResizeCornerRadius: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic) CGFloat resizeCornerRadius;
+/*!
+@method
+@brief 设置裁剪圆角
+@param isAnimated --- 是否带动画效果
+@discussion 与 isRoundResize 相互独立，且优先级比 isRoundResize 低；最终裁剪的圆角不会超出「裁剪宽高最小边」的一半
+*/
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated;
+
+/**
  * 是否圆切（直接设置：YES --> self.isArbitrarily = NO，固定以 1:1 比例拖拽）
  * 设置该值会调用 -setIsRoundResize: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (isRoundResize ? NO : self.isArbitrarily)，isAnimated = YES）
  */
@@ -276,7 +289,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否锁定裁剪区域（锁定后无法拖动裁剪区域） */
 @property (nonatomic) BOOL isLockResizeFrame;
 
-/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为yes） */
+/** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为YES） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
 
 #pragma mark - 裁剪框、背景、遮罩颜色相关

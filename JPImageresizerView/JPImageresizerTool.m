@@ -327,8 +327,9 @@ static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex,
     return a;
 }
 
-static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize) {
+static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize, CGFloat *scale) {
     if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
+        if (scale) *scale = 1;
         return (CGRect){CGPointZero, originSize};
     }
     // 获取裁剪区域
@@ -348,6 +349,7 @@ static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGF
     }
     if (CGRectGetMaxX(cropFrame) > originWidth) cropFrame.origin.x = originWidth - cropFrame.size.width;
     if (CGRectGetMaxY(cropFrame) > originHeight) cropFrame.origin.y = originHeight - cropFrame.size.height;
+    if (scale) *scale = relativeScale;
     return cropFrame;
 }
 
@@ -556,7 +558,7 @@ static NSTimeInterval JPImageSourceGetGIFFrameDelayAtIndex(CGImageSourceRef sour
     return delay;
 };
 
-static CGImageRef _Nullable JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, UIImage *maskImage, BOOL isRoundClip, CGRect renderRect, CGAffineTransform transform, CGSize imageSize) {
+static CGImageRef _Nullable JPCreateNewCGImage(CGImageRef imageRef, CGContextRef context, UIImage *maskImage, BOOL isRoundClip, CGFloat cornerRadius, CGRect renderRect, CGAffineTransform transform, CGSize imageSize) {
     if (!imageRef || !context) {
         return NULL;
     }
@@ -566,8 +568,14 @@ static CGImageRef _Nullable JPCreateNewCGImage(CGImageRef imageRef, CGContextRef
         CGContextClipToMask(context, renderRect, maskImageRef);
     }
     
-    if (isRoundClip) {
-        CGFloat radius = MIN(renderRect.size.width, renderRect.size.height) * 0.5;
+    CGFloat radius = 0;
+    if (isRoundClip || cornerRadius > 0) {
+        radius = MIN(renderRect.size.width, renderRect.size.height) * 0.5;
+        if (!isRoundClip) {
+            radius = MIN(radius, cornerRadius);
+        }
+    }
+    if (radius > 0) {
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:renderRect cornerRadius:radius];
         CGContextAddPath(context, path.CGPath);
         CGContextClip(context);
@@ -1144,13 +1152,14 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     CGSize resizeContentSize = configure.resizeContentSize;
     CGFloat resizeWHScale = configure.resizeWHScale;
     CGRect cropFrame = configure.cropFrame;
+    CGFloat cornerRadius = configure.cornerRadius;
     if (compressScale > 1) compressScale = 1;
     
     CGImageRef imageRef = image.CGImage;
     
     // 是否带透明度
     BOOL hasAlpha = NO;
-    if (maskImage || isRoundClip) {
+    if (maskImage || isRoundClip || cornerRadius > 0) {
         hasAlpha = YES;
     } else {
         hasAlpha = JPIsHasAlpha(imageRef);
@@ -1232,7 +1241,9 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     // 获取裁剪尺寸和裁剪区域
     CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef) * compressScale, CGImageGetHeight(imageRef) * compressScale);
     
-    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, imageSize);
+    CGFloat scale = 1;
+    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, imageSize, &scale);
+    cornerRadius *= scale;
     
     CGRect renderRect = (CGRect){CGPointZero, cropFrame.size};
     if (direction == JPImageresizerHorizontalLeftDirection || direction == JPImageresizerHorizontalRightDirection) {
@@ -1274,6 +1285,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
                               count:count
                           maskImage:maskImage
                         isRoundClip:isRoundClip
+                       cornerRadius:cornerRadius
                          renderRect:renderRect
                           transform:transform
                           imageSize:imageSize
@@ -1282,7 +1294,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
                            cacheURL:cacheURL
                          finalImage:&finalImage];
     } else {
-        CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+        CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, cornerRadius, renderRect, transform, imageSize);
         if (source != NULL) {
             CGImageRelease(imageRef);
         }
@@ -1440,6 +1452,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
                         count:(size_t)count
                     maskImage:(UIImage *)maskImage
                   isRoundClip:(BOOL)isRoundClip
+                 cornerRadius:(CGFloat)cornerRadius
                    renderRect:(CGRect)renderRect
                     transform:(CGAffineTransform)transform
                     imageSize:(CGSize)imageSize
@@ -1485,7 +1498,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
             
             // 绘制裁剪后的图片
             CGImageRef imageRef = getCurrentImageRef(i);
-            CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, renderRect, transform, imageSize);
+            CGImageRef newImageRef = JPCreateNewCGImage(imageRef, context, maskImage, isRoundClip, cornerRadius, renderRect, transform, imageSize);
             if (source != NULL) {
                 CGImageRelease(imageRef);
             }
@@ -1536,8 +1549,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
 
 #pragma mark - 公开方法
 
-#pragma mark 转换成黑色轮廓的图片（镂空图片区域：透明->黑色+不透明->透明）
-+ (UIImage *)convertBlackImage:(UIImage *)image {
+#pragma mark 转换成 alpha 反转的黑色蒙版图片（图片区域：透明->黑色 + 不透明->透明）
++ (UIImage *)convertToAlphaInvertedBlackMaskImage:(UIImage *)image {
     if (!image) return nil;
     CGRect rect = (CGRect){CGPointZero, image.size};
     UIGraphicsBeginImageContextWithOptions(image.size, NO, 0);
@@ -2187,7 +2200,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     
     // 获取准确裁剪区域
     CGSize videoSize = videoTrack.naturalSize;
-    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, videoSize);
+    cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, videoSize, nil);
     
     // 获取裁剪尺寸
     CGSize renderSize = cropFrame.size;

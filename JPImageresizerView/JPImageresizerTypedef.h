@@ -82,8 +82,9 @@ struct JPCropConfigure {
     BOOL isVerMirror;
     BOOL isHorMirror;
     BOOL isRoundClip;
-    CGSize resizeContentSize;
+    CGFloat cornerRadius;
     CGFloat resizeWHScale;
+    CGSize resizeContentSize;
     CGRect cropFrame;
 };
 typedef struct CG_BOXABLE JPCropConfigure JPCropConfigure;
@@ -117,16 +118,18 @@ CG_INLINE JPCropConfigure JPCropConfigureMake(JPImageresizerRotationDirection di
                                               BOOL isVerMirror,
                                               BOOL isHorMirror,
                                               BOOL isRoundClip,
-                                              CGSize resizeContentSize,
+                                              CGFloat cornerRadius,
                                               CGFloat resizeWHScale,
+                                              CGSize resizeContentSize,
                                               CGRect cropFrame) {
     JPCropConfigure configure;
     configure.direction = direction;
     configure.isVerMirror = isVerMirror;
     configure.isHorMirror = isHorMirror;
     configure.isRoundClip = isRoundClip;
-    configure.resizeContentSize = resizeContentSize;
+    configure.cornerRadius = cornerRadius;
     configure.resizeWHScale = resizeWHScale;
+    configure.resizeContentSize = resizeContentSize;
     configure.cropFrame = cropFrame;
     return configure;
 }

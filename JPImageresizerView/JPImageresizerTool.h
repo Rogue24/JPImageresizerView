@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JPImageresizerTool : NSObject
 /**
- * 转换成黑色轮廓的图片
+ * 转换成 alpha 反转的黑色蒙版图片
  */
-+ (UIImage *)convertBlackImage:(UIImage *)image;
++ (UIImage *)convertToAlphaInvertedBlackMaskImage:(UIImage *)image;
 
 /**
  * 是否GIF
