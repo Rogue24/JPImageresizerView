@@ -151,7 +151,7 @@
         if (i == _targetResetIndex) {
             if (_rowTotal % 2 == 0) {
                 CGRect screenFrame = CGRectMake(0, contentLayer.frame.size.height - _screenH, _screenW, _screenH);
-                CGRect intersectionF =  CGRectIntersection(screenFrame,  textLayer.frame);
+                CGRect intersectionF = CGRectIntersection(screenFrame, textLayer.frame);
                 _diffX = intersectionF.size.width;
                 _diffY = intersectionF.size.height;
             } else {

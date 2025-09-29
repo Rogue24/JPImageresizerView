@@ -277,7 +277,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _memCache = [[NSCache alloc] init];
     _initializedIndex = kWMUndefinedIndex;
     _markedSelectIndex = kWMUndefinedIndex;
-    _controllerCount  = kWMControllerCountUndefined;
+    _controllerCount = kWMControllerCountUndefined;
     _scrollEnable = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
