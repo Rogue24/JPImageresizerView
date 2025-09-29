@@ -1975,6 +1975,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     
     CGFloat cornerRadius = 0;
     if (_resizeCornerRadius > 0) {
+        // cornerRadius_#1：裁剪框映射到`imageView`上的尺寸会比原来的小（例如对`imageView`进行了放大操作后），
+        // 圆角半径需要乘以这个缩放比例，以保证映射后的圆角跟裁剪框上看到的圆角大小一致。
         cornerRadius = _resizeCornerRadius * (cropFrame.size.width / self.imageresizerFrame.size.width);
     }
     

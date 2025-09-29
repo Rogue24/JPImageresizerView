@@ -1186,6 +1186,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
         rate == 1 &&
         index < 0 &&
         compressScale == 1 &&
+        cornerRadius == 0 &&
         (settings == nil || settings.isNeedProcessing == NO)) {
         if (cacheURL) {
             if (imageData) {
@@ -1243,6 +1244,8 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     
     CGFloat scale = 1;
     cropFrame = JPConfirmCropFrame(cropFrame, resizeContentSize, resizeWHScale, imageSize, &scale);
+    // cornerRadius_#2：`resizeContentSize`为`imageView.bounds.size`，与实际裁剪尺寸（原图大小x缩放比例）会不一样，
+    // 圆角半径需要乘以这个缩放比例，确保最终裁剪的圆角跟裁剪框上看到的圆角大小一致。
     cornerRadius *= scale;
     
     CGRect renderRect = (CGRect){CGPointZero, cropFrame.size};
