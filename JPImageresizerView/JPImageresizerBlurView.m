@@ -29,7 +29,7 @@
         _effect = effect;
         _bgColor = bgColor;
         _maskAlpha = maskAlpha;
-        _isBlur = effect != nil;
+        _isBlur = YES;
         _isMaskAlpha = YES;
 
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
@@ -43,7 +43,7 @@
         fillView.userInteractionEnabled = NO;
         fillView.layer.backgroundColor = bgColor.CGColor;
         fillView.layer.masksToBounds = YES;
-        fillView.alpha = _isMaskAlpha ? (_isBlur ? 0 : maskAlpha) : 1;
+        fillView.alpha = _isMaskAlpha ? ((_effect || !_isBlur) ? 0 : maskAlpha) : 1;
         [self addSubview:fillView];
         _fillView = fillView;
     }
