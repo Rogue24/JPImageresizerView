@@ -303,6 +303,13 @@ CG_INLINE CGFloat JPIRRotationDirectionDiffAngle(JPImageresizerRotationDirection
 typedef void(^_Nullable JPVoidBlock)(void);
 
 /**
+ * 用于蒙版图片的显示处理Block
+ * 裁剪要使用蒙版原图，默认会生成 alpha 反转的黑色蒙版图片用来显示，如果需要其他显示样式，可使用该Block另行处理而不影响原图
+    - originMaskImage：蒙版原图
+ */
+typedef UIImage *_Nonnull (^_Nullable JPMaskImageDisplayHandler)(UIImage *_Nonnull originMaskImage);
+
+/**
  * 用于 JPImageresizerConfigure 初始化时配置初始化参数的回调
     - configure：初始化后的实例
  */

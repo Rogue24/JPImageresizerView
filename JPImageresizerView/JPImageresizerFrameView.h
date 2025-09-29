@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *_Nullable)maskImage
+      maskImageDisplayHandler:(JPMaskImageDisplayHandler)maskImageDisplayHandler
                 isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
@@ -89,6 +90,8 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 @property (nonatomic, strong) UIImage *_Nullable maskImage;
 - (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+@property (nonatomic, copy) JPMaskImageDisplayHandler maskImageDisplayHandler;
 
 @property (nonatomic, assign) BOOL isArbitrarily;
 - (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;

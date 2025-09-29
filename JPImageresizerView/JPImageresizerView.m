@@ -77,6 +77,8 @@
         self.animationCurve = configure.animationCurve;
         
         _resizeObjWhScale = 1;
+        
+        _ignoresMaskImageForCrop = configure.ignoresMaskImageForCrop;
         _isLoopPlaybackGIF = configure.isLoopPlaybackGIF;
         _gifSettings = configure.gifSettings;
         
@@ -146,6 +148,7 @@
                          ignoresCornerRadiusForDisplay:configure.ignoresCornerRadiusForDisplay
                                          isRoundResize:configure.isRoundResize
                                              maskImage:configure.maskImage
+                               maskImageDisplayHandler:configure.maskImageDisplayHandler
                                          isArbitrarily:configure.isArbitrarily
                                             scrollView:_scrollView
                                              imageView:_imageView
@@ -818,6 +821,13 @@
     return _frameView.maskImage;
 }
 
+- (void)setMaskImageDisplayHandler:(JPMaskImageDisplayHandler)maskImageDisplayHandler {
+    self.frameView.maskImageDisplayHandler = maskImageDisplayHandler;
+}
+- (JPMaskImageDisplayHandler)maskImageDisplayHandler {
+    return _frameView.maskImageDisplayHandler;
+}
+
 - (void)setIsArbitrarily:(BOOL)isArbitrarily {
     [self setIsArbitrarily:isArbitrarily animated:YES];
 }
@@ -1334,19 +1344,24 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (self.videoObj || self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非图片");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     if (self.imageData) {
         [JPImageresizerTool cropPictureWithImageData:self.imageData
-                                           maskImage:self.frameView.maskImage
+                                           maskImage:maskImage
                                            configure:self.frameView.currentCropConfigure
                                        compressScale:compressScale
                                             cacheURL:cacheURL
@@ -1354,7 +1369,7 @@
                                        completeBlock:completeBlock];
     } else {
         [JPImageresizerTool cropPictureWithImage:self.image
-                                       maskImage:self.frameView.maskImage
+                                       maskImage:maskImage
                                        configure:self.frameView.currentCropConfigure
                                    compressScale:compressScale
                                         cacheURL:cacheURL
@@ -1376,27 +1391,33 @@
         !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
+    
     if (columnCount == 0 || rowCount == 0) {
         JPIRLog(@"jp_tip: %@要大于0", columnCount == 0 ? @"列数" : @"行数");
         !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
+    
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
+    
     if (self.videoObj || self.isGIF) {
         JPIRLog(@"jp_tip: 九宫格目前只能作用于图片");
         !completeBlock ? : completeBlock(nil, nil, columnCount, rowCount);
         return;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     if (self.imageData) {
         [JPImageresizerTool cropGirdPicturesWithImageData:self.imageData
                                               columnCount:columnCount
                                                  rowCount:rowCount
                                                   bgColor:bgColor
-                                                maskImage:self.frameView.maskImage
+                                                maskImage:maskImage
                                                 configure:self.frameView.currentCropConfigure
                                             compressScale:compressScale
                                                  cacheURL:cacheURL
@@ -1407,7 +1428,7 @@
                                           columnCount:columnCount
                                              rowCount:rowCount
                                               bgColor:bgColor
-                                            maskImage:self.frameView.maskImage
+                                            maskImage:maskImage
                                             configure:self.frameView.currentCropConfigure
                                         compressScale:compressScale
                                              cacheURL:cacheURL
@@ -1466,21 +1487,26 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (self.videoObj || !self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非GIF");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     if (self.imageData) {
         [JPImageresizerTool cropGIFWithGifData:self.imageData
                                 isReverseOrder:isReverseOrder
                                           rate:rate
-                                     maskImage:self.frameView.maskImage
+                                     maskImage:maskImage
                                      configure:self.frameView.currentCropConfigure
                                  compressScale:compressScale
                                  otherSettings:self.gifSettings
@@ -1491,7 +1517,7 @@
         [JPImageresizerTool cropGIFWithGifImage:self.image
                                  isReverseOrder:isReverseOrder
                                            rate:rate
-                                      maskImage:self.frameView.maskImage
+                                      maskImage:maskImage
                                       configure:self.frameView.currentCropConfigure
                                   compressScale:compressScale
                                   otherSettings:self.gifSettings
@@ -1539,20 +1565,25 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (self.videoObj || !self.isGIF) {
         JPIRLog(@"jp_tip: 当前裁剪元素非GIF");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     if (self.imageData) {
         [JPImageresizerTool cropGIFWithGifData:self.imageData
                                          index:index
-                                     maskImage:self.frameView.maskImage
+                                     maskImage:maskImage
                                      configure:self.frameView.currentCropConfigure
                                  compressScale:compressScale
                                       cacheURL:cacheURL
@@ -1560,7 +1591,8 @@
                                  completeBlock:completeBlock];
     } else {
         [JPImageresizerTool cropGIFWithGifImage:self.image
-                                          index:index maskImage:self.frameView.maskImage
+                                          index:index
+                                      maskImage:maskImage
                                       configure:self.frameView.currentCropConfigure
                                   compressScale:compressScale
                                        cacheURL:cacheURL
@@ -1604,24 +1636,30 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (compressScale <= 0) {
         JPIRLog(@"jp_tip: 压缩比例不能小于或等于0");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (!self.videoObj) {
         JPIRLog(@"jp_tip: 当前裁剪元素非视频");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (second < 0) {
         second = 0;
     } else if (second > self.slider.seconds) {
         second = self.slider.seconds;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     [JPImageresizerTool cropVideoWithAsset:self.videoObj.asset
                                   atSecond:second
-                                 maskImage:self.frameView.maskImage
+                                 maskImage:maskImage
                                  configure:self.frameView.currentCropConfigure
                              compressScale:compressScale
                                   cacheURL:cacheURL
@@ -1658,11 +1696,13 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (!self.videoObj) {
         JPIRLog(@"jp_tip: 当前裁剪元素非视频");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (startSecond < 0) {
         startSecond = 0;
     } else if (startSecond > self.slider.seconds) {
@@ -1670,13 +1710,16 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
+    UIImage *maskImage = self.ignoresMaskImageForCrop ? nil : self.frameView.maskImage;
+    
     [JPImageresizerTool cropVideoToGIFWithAsset:self.videoObj.asset
                                     startSecond:startSecond
                                        duration:duration
                                             fps:fps
                                            rate:rate
                                     maximumSize:maximumSize
-                                      maskImage:self.frameView.maskImage
+                                      maskImage:maskImage
                                       configure:self.frameView.currentCropConfigure
                                        cacheURL:cacheURL
                                      errorBlock:errorBlock
@@ -1739,11 +1782,13 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (!self.videoObj) {
         JPIRLog(@"jp_tip: 当前裁剪内容非视频");
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     if (startSecond < 0) {
         startSecond = 0;
     } else if (startSecond > self.slider.seconds) {
@@ -1751,6 +1796,7 @@
         !completeBlock ? : completeBlock(nil);
         return;
     }
+    
     __weak typeof(self) wSelf = self;
     [JPImageresizerTool cropVideoWithAsset:self.videoObj.asset
                                startSecond:startSecond
@@ -1835,6 +1881,8 @@
     configure.ignoresCornerRadiusForDisplay = self.ignoresCornerRadiusForDisplay;
     configure.isRoundResize = self.isRoundResize;
     configure.maskImage = self.maskImage;
+    configure.maskImageDisplayHandler = self.maskImageDisplayHandler;
+    configure.ignoresMaskImageForCrop = self.ignoresMaskImageForCrop;
     configure.isArbitrarily = self.isArbitrarily;
     configure.edgeLineIsEnabled = self.edgeLineIsEnabled;
     configure.isClockwiseRotation = self.isClockwiseRotation;

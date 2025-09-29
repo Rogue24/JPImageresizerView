@@ -27,6 +27,8 @@
 //    .jp_ignoresCornerRadiusForDisplay(NO)
 //    .jp_isRoundResize(NO)
 //    .jp_maskImage(nil)
+//    .jp_maskImageDisplayHandler(nil)
+//    .jp_ignoresMaskImageForCrop(NO)
     .jp_isArbitrarily(YES)
     .jp_edgeLineIsEnabled(YES)
     .jp_contentInsets(UIEdgeInsetsMake(16, 16, 16, 16))
@@ -341,6 +343,20 @@
 - (JPImageresizerConfigure *(^)(UIImage *))jp_maskImage {
     return ^(UIImage *maskImage) {
         self.maskImage = maskImage;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(JPMaskImageDisplayHandler))jp_maskImageDisplayHandler {
+    return ^(JPMaskImageDisplayHandler maskImageDisplayHandler) {
+        self.maskImageDisplayHandler = maskImageDisplayHandler;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_ignoresMaskImageForCrop {
+    return ^(BOOL ignoresMaskImageForCrop) {
+        self.ignoresMaskImageForCrop = ignoresMaskImageForCrop;
         return self;
     };
 }

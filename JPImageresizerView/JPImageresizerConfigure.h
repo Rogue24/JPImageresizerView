@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
     - isIgnoresResizeCornerRadiusForDisplay = NO;
     - isRoundResize = NO;
     - maskImage = nil;
+    - maskImageDisplayHandler = nil;
+    - ignoresMaskImageForCrop = NO;
     - isArbitrarily = YES;
     - contentInsets = UIEdgeInsetsMake(16, 16, 16, 16);
     - borderImage = nil;
@@ -215,6 +217,12 @@ NS_ASSUME_NONNULL_BEGIN
 /** 初始化蒙版图片 */
 @property (nonatomic, strong) UIImage *_Nullable maskImage;
 
+/** 自定义蒙版图片的显示处理（默认为nil，若为空会生成 alpha 反转的黑色蒙版图片用来显示） */
+@property (nonatomic, copy) JPMaskImageDisplayHandler maskImageDisplayHandler;
+
+/** 裁剪时是否忽略蒙版图片（默认为NO，若为YES裁剪时会忽略蒙版） */
+@property (nonatomic, assign) BOOL ignoresMaskImageForCrop;
+
 /** 初始化后是否可以任意比例拖拽 */
 @property (nonatomic, assign) BOOL isArbitrarily;
 
@@ -240,13 +248,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isShowMidDots;
 
 /** 拖拽时是否遮罩裁剪区域以外的区域 */
-@property (nonatomic) BOOL isBlurWhenDragging;
+@property (nonatomic, assign) BOOL isBlurWhenDragging;
 
 /** 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
-@property (nonatomic) BOOL isShowGridlinesWhenIdle;
+@property (nonatomic, assign) BOOL isShowGridlinesWhenIdle;
 
 /** 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
-@property (nonatomic) BOOL isShowGridlinesWhenDragging;
+@property (nonatomic, assign) BOOL isShowGridlinesWhenDragging;
 
 /** 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格） */
 @property (nonatomic, assign) NSUInteger gridCount;
@@ -282,6 +290,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_ignoresCornerRadiusForDisplay)(BOOL ignoresCornerRadiusForDisplay);
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *_Nullable maskImage);
+@property (readonly) JPImageresizerConfigure *(^jp_maskImageDisplayHandler)(JPMaskImageDisplayHandler maskImageDisplayHandler);
+@property (readonly) JPImageresizerConfigure *(^jp_ignoresMaskImageForCrop)(BOOL ignoresMaskImageForCrop);
 @property (readonly) JPImageresizerConfigure *(^jp_isArbitrarily)(BOOL isArbitrarily);
 @property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);
 @property (readonly) JPImageresizerConfigure *(^jp_contentInsets)(UIEdgeInsets contentInsets);

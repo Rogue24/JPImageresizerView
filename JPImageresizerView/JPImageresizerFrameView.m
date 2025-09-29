@@ -433,6 +433,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *)maskImage
+      maskImageDisplayHandler:(JPMaskImageDisplayHandler)maskImageDisplayHandler
                 isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
@@ -448,7 +449,6 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
           isVerticalityMirror:(BOOL (^)(void))isVerticalityMirror
            isHorizontalMirror:(BOOL (^)(void))isHorizontalMirror
              resizeObjWhScale:(CGFloat (^)(void))resizeObjWhScale {
-    
     if (self = [super initWithFrame:frame]) {
         self.clipsToBounds = NO;
         self.animationCurve = animationCurve;
@@ -473,6 +473,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         _strokeColor = strokeColor;
         _resizeCornerRadius = resizeCornerRadius;
         _ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
+        _maskImageDisplayHandler = [maskImageDisplayHandler copy];
         _isShowMidDots = isShowMidDots;
         _isBlurWhenDragging = isBlurWhenDragging;
         _isShowGridlinesWhenIdle = isShowGridlinesWhenIdle;
@@ -958,13 +959,14 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     [maskPath appendPath:framePath];
     
     if (self.maskBlurView != nil) {
+        CGRect maskBlurFrame = CGRectInset(imageresizerFrame, -0.1, -0.1); // 苹果的渲染问题，会有些许缝隙，只能粗略填充一下
         if (duration > 0) {
             [UIView animateWithDuration:duration delay:0 options:[self animationOptions] animations:^{
-                self.maskBlurView.frame = imageresizerFrame;
+                self.maskBlurView.frame = maskBlurFrame;
                 self.maskBlurView.cornerRadius = cornerRadius;
             } completion:nil];
         } else {
-            self.maskBlurView.frame = imageresizerFrame;
+            self.maskBlurView.frame = maskBlurFrame;
             self.maskBlurView.cornerRadius = cornerRadius;
         }
     }
@@ -1359,11 +1361,19 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 #pragma mark 蒙版
 
+- (UIImage *)__processMaskImageForDisplay:(UIImage *)maskImage {
+    if (self.maskImageDisplayHandler) {
+        return self.maskImageDisplayHandler(maskImage);
+    }
+    return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:maskImage];
+}
+
 - (void)__createMaskBlurView:(BOOL)isBlur {
     if (self.maskBlurView != nil || _maskImage == nil) return;
     
     UIImageView *maskImgView = [[UIImageView alloc] init];
-    maskImgView.image = [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:_maskImage];
+    maskImgView.contentMode = UIViewContentModeScaleToFill;
+    maskImgView.image = [self __processMaskImageForDisplay:_maskImage];
     
     JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame effect:self.effect bgColor:self.bgColor maskAlpha:self.maskAlpha];
     [maskBlurView setIsBlur:isBlur duration:0];
@@ -1522,7 +1532,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         }
         resizeWHScale = maskImage.size.width / maskImage.size.height;
         if (self.maskBlurView) {
-            UIImage *image = [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:maskImage];
+            UIImage *image = [self __processMaskImageForDisplay:maskImage];
             UIImageView *maskImgView = (UIImageView *)self.maskBlurView.maskView;
             if (isAnimated) {
                 [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
@@ -1766,7 +1776,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         [self __updateMaskViewTransform];
-        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[JPImageresizerTool convertToAlphaInvertedBlackMaskImage:_maskImage]];
+        if (isUpdateMaskImage) [(UIImageView *)self.maskBlurView.maskView setImage:[self __processMaskImageForDisplay:_maskImage]];
         [CATransaction commit];
         [self.maskBlurView setIsBlur:YES duration:_defaultDuration];
     } else {

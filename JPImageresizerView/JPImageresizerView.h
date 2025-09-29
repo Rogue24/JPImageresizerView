@@ -260,6 +260,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
+/** 自定义蒙版图片的显示处理（默认为nil，若为空会生成 alpha 反转的黑色蒙版图片用来显示） */
+@property (nonatomic) JPMaskImageDisplayHandler maskImageDisplayHandler;
+
+/** 裁剪时是否忽略蒙版图片（默认为NO，若为YES裁剪时会忽略蒙版） */
+@property (nonatomic, assign) BOOL ignoresMaskImageForCrop;
+
 /**
  * 是否可以任意比例拖拽
  * 设置该值会调用 -setIsArbitrarily: animated: 方法（isAnimated = YES）
