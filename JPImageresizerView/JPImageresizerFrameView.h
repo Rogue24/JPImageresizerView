@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
                 resizeWHScale:(CGFloat)resizeWHScale
+           resizeCornerRadius:(CGFloat)resizeCornerRadius
+ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *_Nullable)maskImage
                 isArbitrarily:(BOOL)isArbitrarily
@@ -78,6 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) CGFloat resizeCornerRadius;
 - (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated;
+
+@property (nonatomic, assign) BOOL ignoresCornerRadiusForDisplay;
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign) BOOL isRoundResize;
 - (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;

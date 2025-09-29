@@ -15,29 +15,31 @@
     JPImageresizerConfigure *configure = [[self alloc] init];
     configure
     .jp_viewFrame([UIScreen mainScreen].bounds)
-    .jp_effect(nil)
+//    .jp_effect(nil)
     .jp_frameType(JPConciseFrameType)
     .jp_animationCurve(JPAnimationCurveEaseOut)
     .jp_strokeColor(UIColor.whiteColor)
     .jp_bgColor(UIColor.blackColor)
     .jp_maskAlpha(0.75)
-    .jp_resizeScaledBounds(CGRectZero)
-    .jp_resizeWHScale(0.0)
-    .jp_isRoundResize(NO)
-    .jp_maskImage(nil)
+//    .jp_resizeScaledBounds(CGRectZero)
+//    .jp_resizeWHScale(0.0)
+//    .jp_resizeCornerRadius(0.0)
+//    .jp_ignoresCornerRadiusForDisplay(NO)
+//    .jp_isRoundResize(NO)
+//    .jp_maskImage(nil)
     .jp_isArbitrarily(YES)
     .jp_edgeLineIsEnabled(YES)
     .jp_contentInsets(UIEdgeInsetsMake(16, 16, 16, 16))
-    .jp_borderImage(nil)
-    .jp_borderImageRectInset(CGPointZero)
+//    .jp_borderImage(nil)
+//    .jp_borderImageRectInset(CGPointZero)
     .jp_maximumZoomScale(10.0)
     .jp_isShowMidDots(YES)
-    .jp_isBlurWhenDragging(NO)
-    .jp_isShowGridlinesWhenIdle(NO)
+//    .jp_isBlurWhenDragging(NO)
+//    .jp_isShowGridlinesWhenIdle(NO)
     .jp_isShowGridlinesWhenDragging(YES)
     .jp_gridCount(3)
-    .jp_isLoopPlaybackGIF(NO)
-    .jp_gifSettings(nil)
+//    .jp_isLoopPlaybackGIF(NO)
+//    .jp_gifSettings(nil)
     .jp_isCleanHistoryAfterInitial(YES);
     return configure;
 }
@@ -311,6 +313,20 @@
 - (JPImageresizerConfigure *(^)(CGFloat))jp_resizeWHScale {
     return ^(CGFloat resizeWHScale) {
         self.resizeWHScale = resizeWHScale;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(CGFloat))jp_resizeCornerRadius {
+    return ^(CGFloat resizeCornerRadius) {
+        self.resizeCornerRadius = resizeCornerRadius;
+        return self;
+    };
+}
+
+- (JPImageresizerConfigure *(^)(BOOL))jp_ignoresCornerRadiusForDisplay {
+    return ^(BOOL ignoresCornerRadiusForDisplay) {
+        self.ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
         return self;
     };
 }

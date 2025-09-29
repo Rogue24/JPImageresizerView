@@ -45,8 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
     maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
     strokeColor ---裁剪线颜色
     resizeWHScale --- 裁剪宽高比（设置为0则为任意比例）
-    maskImage --- 蒙版图片
+    resizeCornerRadius --- 设置裁剪圆角（与 isRoundResize 相互独立，且优先级比 isRoundResize 低）
+    ignoresCornerRadiusForDisplay --- 裁剪框的显示是否忽略裁剪圆角
     isRoundResize --- 是否初始化圆切
+    maskImage --- 蒙版图片
     isArbitrarily --- 是否可以任意比例拖拽
     contentInsets --- 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
     isClockwiseRotation --- 是否顺时针旋转
@@ -182,7 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否可重置（该属性仅针对[旋转]、[缩放]、[镜像]的变化情况，其他如裁剪宽高比、圆切等变化情况需用户自行判定能否重置） */
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 
-#pragma mark - 裁剪宽高比相关
+#pragma mark - 裁剪宽高比、圆角、蒙版相关
 /**
  * 初始裁剪宽高比（默认为初始化时的resizeWHScalem）
  * 调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
@@ -210,12 +212,25 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) CGFloat resizeCornerRadius;
 /*!
-@method
-@brief 设置裁剪圆角
-@param isAnimated --- 是否带动画效果
-@discussion 与 isRoundResize 相互独立，且优先级比 isRoundResize 低；最终裁剪的圆角不会超出「裁剪宽高最小边」的一半
-*/
+ @method
+ @brief 设置裁剪圆角
+ @param isAnimated --- 是否带动画效果
+ @discussion 与 isRoundResize 相互独立，且优先级比 isRoundResize 低；最终裁剪的圆角不会超出「裁剪宽高最小边」的一半
+ */
 - (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated;
+
+/**
+ * 裁剪框的显示是否忽略裁剪圆角（默认为NO）
+ * 设置该值会调用 -setIgnoresCornerRadiusForDisplay: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic) BOOL ignoresCornerRadiusForDisplay;
+/*!
+ @method
+ @brief 设置裁剪框的显示是否忽略裁剪圆角
+ @param isAnimated --- 是否带动画效果
+ @discussion 若设置 ignoresCornerRadiusForDisplay 为 YES，裁剪框将不受 resizeCornerRadius 的影响，也就是不会显示圆角，但最终裁剪会带上 resizeCornerRadius 设置的圆角
+ */
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated;
 
 /**
  * 是否圆切（直接设置：YES --> self.isArbitrarily = NO，固定以 1:1 比例拖拽）
@@ -251,11 +266,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) BOOL isArbitrarily;
 /*!
-@method
-@brief 设置是否可以任意比例拖拽
-@param isAnimated --- 是否带动画效果
-@discussion 若设置 isArbitrarily 为 NO，以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale；如果是 isRoundResize，则 resizeWHScale = 1；如果有 maskImage，则以蒙版图片的宽高比固定比例 resizeWHScale = maskImage.size.width / maskImage.size.height
-*/
+ @method
+ @brief 设置是否可以任意比例拖拽
+ @param isAnimated --- 是否带动画效果
+ @discussion 若设置 isArbitrarily 为 NO，以裁剪框当前的宽高比固定比例 resizeWHScale = imageresizerWHScale；如果是 isRoundResize，则 resizeWHScale = 1；如果有 maskImage，则以蒙版图片的宽高比固定比例 resizeWHScale = maskImage.size.width / maskImage.size.height
+ */
 - (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
 
 /** 裁剪框当前的宽高比 */
@@ -443,7 +458,7 @@ NS_ASSUME_NONNULL_BEGIN
  @method
  @brief 按初始裁剪宽高比（initialResizeWHScale）进行重置
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale =  initialResizeWHScale，否则为 0
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = initialResizeWHScale，否则为 0
  */
 - (void)recoveryByInitialResizeWHScale:(BOOL)isToBeArbitrarily;
 
@@ -457,7 +472,7 @@ NS_ASSUME_NONNULL_BEGIN
  @method
  @brief 按当前裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 YES，则重置之后 resizeWHScale =  0
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 YES，则重置之后 resizeWHScale = 0
  */
 - (void)recoveryByCurrentResizeWHScale:(BOOL)isToBeArbitrarily;
 /*!
@@ -465,7 +480,7 @@ NS_ASSUME_NONNULL_BEGIN
  @brief 按目标裁剪宽高比进行重置（如果resizeWHScale为0，则重置到整个裁剪元素区域）
  @param targetResizeWHScale --- 目标裁剪宽高比
  @param isToBeArbitrarily --- 重置之后 resizeWHScale 是否为任意比例（若为YES，最后 resizeWHScale = 0）
- @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale  = targetResizeWHScale，否则为 0
+ @discussion 回到最初状态，会移除圆切、蒙版，若 isToBeArbitrarily 为 NO，则重置之后 resizeWHScale = targetResizeWHScale，否则为 0
  */
 - (void)recoveryToTargetResizeWHScale:(CGFloat)targetResizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily;
 

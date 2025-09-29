@@ -328,14 +328,14 @@ static CGFloat JPGetAlphaFromRGBAAtPixel(const UInt8 *bytePtr, size_t byteIndex,
 }
 
 static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGFloat resizeWHScale, CGSize originSize, CGFloat *scale) {
-    if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
-        if (scale) *scale = 1;
-        return (CGRect){CGPointZero, originSize};
-    }
-    // 获取裁剪区域
     CGFloat originWidth = originSize.width;
     CGFloat originHeight = originSize.height;
     CGFloat relativeScale = originWidth / resizeContentSize.width;
+    if (scale) *scale = relativeScale;
+    if (JPIsSameSize(cropFrame.size, resizeContentSize)) {
+        return (CGRect){CGPointZero, originSize};
+    }
+    // 获取裁剪区域
     if (cropFrame.origin.x < 0) cropFrame.origin.x = 0;
     if (cropFrame.origin.y < 0) cropFrame.origin.y = 0;
     cropFrame.origin.x *= relativeScale;
@@ -349,7 +349,6 @@ static CGRect JPConfirmCropFrame(CGRect cropFrame, CGSize resizeContentSize, CGF
     }
     if (CGRectGetMaxX(cropFrame) > originWidth) cropFrame.origin.x = originWidth - cropFrame.size.width;
     if (CGRectGetMaxY(cropFrame) > originHeight) cropFrame.origin.y = originHeight - cropFrame.size.height;
-    if (scale) *scale = relativeScale;
     return cropFrame;
 }
 

@@ -429,6 +429,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
                     maskAlpha:(CGFloat)maskAlpha
                   strokeColor:(UIColor *)strokeColor
                 resizeWHScale:(CGFloat)resizeWHScale
+           resizeCornerRadius:(CGFloat)resizeCornerRadius
+ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *)maskImage
                 isArbitrarily:(BOOL)isArbitrarily
@@ -469,6 +471,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         _direction = JPImageresizerVerticalUpDirection;
         _baseContentMaxSize = baseContentMaxSize;
         _strokeColor = strokeColor;
+        _resizeCornerRadius = resizeCornerRadius;
+        _ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
         _isShowMidDots = isShowMidDots;
         _isBlurWhenDragging = isBlurWhenDragging;
         _isShowGridlinesWhenIdle = isShowGridlinesWhenIdle;
@@ -938,7 +942,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     if (_isRoundResize || _resizeCornerRadius > 0) {
         cornerRadius = MIN(imageresizerFrame.size.width, imageresizerFrame.size.height) * 0.5;
         if (!_isRoundResize) {
-            cornerRadius = MIN(cornerRadius, _resizeCornerRadius);
+            cornerRadius = _ignoresCornerRadiusForDisplay ? 0 : MIN(cornerRadius, _resizeCornerRadius);
         }
     }
     
@@ -1452,6 +1456,26 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
 }
 
+#pragma mark 设置裁剪圆角
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius {
+    [self setResizeCornerRadius:resizeCornerRadius animated:NO];
+}
+- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated {
+    if (resizeCornerRadius < 0) resizeCornerRadius = 0;
+    if (_resizeCornerRadius == resizeCornerRadius) return;
+    _resizeCornerRadius = resizeCornerRadius;
+    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
+}
+
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay {
+    [self setIgnoresCornerRadiusForDisplay:ignoresCornerRadiusForDisplay animated:NO];
+}
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated {
+    if (_ignoresCornerRadiusForDisplay == ignoresCornerRadiusForDisplay) return;
+    _ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
+    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
+}
+
 #pragma mark 圆切
 - (void)setIsRoundResize:(BOOL)isRoundResize {
     [self setIsRoundResize:isRoundResize isToBeArbitrarily:_isArbitrarily animated:NO];
@@ -1475,17 +1499,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     }
     _resizeWHScale = resizeWHScale + 1; // 防止_resizeWHScale和resizeWHScale相同，这里修改一下以执行更新代码
     [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
-}
-
-#pragma mark 设置裁剪圆角
-- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius {
-    [self setResizeCornerRadius:resizeCornerRadius animated:NO];
-}
-- (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated {
-    if (resizeCornerRadius < 0) resizeCornerRadius = 0;
-    if (_resizeCornerRadius == resizeCornerRadius) return;
-    _resizeCornerRadius = resizeCornerRadius;
-    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
 }
 
 #pragma mark 设置蒙版图片

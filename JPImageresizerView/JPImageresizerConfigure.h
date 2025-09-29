@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
     - strokeColor = UIColor.whiteColor;
     - resizeScaledBounds = CGRectZero;
     - resizeWHScale = 0.0;
+    - resizeCornerRadius = 0.0;
+    - isIgnoresResizeCornerRadiusForDisplay = NO;
     - isRoundResize = NO;
     - maskImage = nil;
     - isArbitrarily = YES;
@@ -201,6 +203,12 @@ NS_ASSUME_NONNULL_BEGIN
 /** 初始化裁剪宽高比（0 为元素的宽高比，若 isRoundResize 为  YES，或 maskImage 不为空，该属性无效） */
 @property (nonatomic, assign) CGFloat resizeWHScale;
 
+/** 初始化裁剪圆角（与 isRoundResize 相互独立，且优先级比 isRoundResize 低；最终裁剪的圆角不会超出「裁剪宽高最小边」的一半） */
+@property (nonatomic, assign) CGFloat resizeCornerRadius;
+
+/** 裁剪框的显示是否忽略裁剪圆角（默认为NO） */
+@property (nonatomic, assign) BOOL ignoresCornerRadiusForDisplay;
+
 /** 初始化是否圆切（若为 YES 则 resizeWHScale 为 1，若  maskImage 不为空，该属性无效） */
 @property (nonatomic, assign) BOOL isRoundResize;
 
@@ -270,6 +278,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_strokeColor)(UIColor *_Nullable strokeColor);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeScaledBounds)(CGRect resizeScaledBounds);
 @property (readonly) JPImageresizerConfigure *(^jp_resizeWHScale)(CGFloat resizeWHScale);
+@property (readonly) JPImageresizerConfigure *(^jp_resizeCornerRadius)(CGFloat resizeCornerRadius);
+@property (readonly) JPImageresizerConfigure *(^jp_ignoresCornerRadiusForDisplay)(BOOL ignoresCornerRadiusForDisplay);
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *_Nullable maskImage);
 @property (readonly) JPImageresizerConfigure *(^jp_isArbitrarily)(BOOL isArbitrarily);

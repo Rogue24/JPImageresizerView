@@ -142,6 +142,8 @@
                                              maskAlpha:configure.maskAlpha
                                            strokeColor:configure.strokeColor
                                          resizeWHScale:configure.resizeWHScale
+                                    resizeCornerRadius:configure.resizeCornerRadius
+                         ignoresCornerRadiusForDisplay:configure.ignoresCornerRadiusForDisplay
                                          isRoundResize:configure.isRoundResize
                                              maskImage:configure.maskImage
                                          isArbitrarily:configure.isArbitrarily
@@ -728,7 +730,7 @@
     return _frameView.isCanRecovery;
 }
 
-#pragma mark - 裁剪宽高比相关
+#pragma mark - 裁剪宽高比、圆角、蒙版相关
 - (void)setInitialResizeWHScale:(CGFloat)initialResizeWHScale {
     self.frameView.initialResizeWHScale = initialResizeWHScale;
 }
@@ -766,12 +768,24 @@
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，圆角暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
-    // TODO: configure resizeCornerRadius
-//    self.configure.rad = CGRectZero;
     [self.frameView setResizeCornerRadius:resizeCornerRadius animated:isAnimated];
 }
 - (CGFloat)resizeCornerRadius {
     return _frameView.resizeCornerRadius;
+}
+
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay {
+    [self setIgnoresCornerRadiusForDisplay:ignoresCornerRadiusForDisplay animated:YES];
+}
+- (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated {
+    if (self.frameView.isPrepareToScale) {
+        JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，忽略圆角显示暂不可设置，此时应该将设置按钮设为不可点或隐藏");
+        return;
+    }
+    [self.frameView setIgnoresCornerRadiusForDisplay:ignoresCornerRadiusForDisplay animated:isAnimated];
+}
+- (BOOL)ignoresCornerRadiusForDisplay {
+    return _frameView.ignoresCornerRadiusForDisplay;
 }
 
 - (void)setIsRoundResize:(BOOL)isRoundResize {
@@ -1817,6 +1831,8 @@
     configure.maskAlpha = self.maskAlpha;
     configure.strokeColor = self.strokeColor;
     configure.resizeWHScale = self.resizeWHScale;
+    configure.resizeCornerRadius = self.resizeCornerRadius;
+    configure.ignoresCornerRadiusForDisplay = self.ignoresCornerRadiusForDisplay;
     configure.isRoundResize = self.isRoundResize;
     configure.maskImage = self.maskImage;
     configure.isArbitrarily = self.isArbitrarily;
