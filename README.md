@@ -280,8 +280,8 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 
 
 // 2.自定义压缩比例裁剪图片
-// compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// compressScale: 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropPictureWithCompressScale:(CGFloat)compressScale
                             cacheURL:(NSURL *)cacheURL
                           errorBlock:(JPImageresizerErrorBlock)errorBlock
@@ -296,8 +296,8 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 // 1.自定义N宫格裁剪
 // columnCount：N宫格的列数（最小1列）
 // rowCount：N宫格的行数（最小1行）
-// compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
-// bgColor --- N宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
+// compressScale: 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+// bgColor: N宫格的背景色（如果图片有透明区域，或者设置了蒙版的情况才生效，设置隐藏（透明）区域的背景色）
 [self.imageresizerView cropGirdPicturesWithColumnCount:4 rowCount:2 compressScale:1 bgColor:UIColor.redColor cacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
     // 错误的回调
     // reason：错误原因
@@ -343,16 +343,16 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 }];
 
 // 2.自定义压缩比例裁剪GIF
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                         cacheURL:(NSURL *)cacheURL
                       errorBlock:(JPImageresizerErrorBlock)errorBlock
                    completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.自定义裁剪GIF
-// isReverseOrder --- 是否倒放
-// rate --- 速率
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
+// isReverseOrder: 是否倒放
+// rate: 速率
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
 - (void)cropGIFWithCompressScale:(CGFloat)compressScale
                   isReverseOrder:(BOOL)isReverseOrder
                             rate:(float)rate
@@ -386,21 +386,21 @@ self.imageresizerView.gifSettings = settings;
 - **裁剪GIF的其中一帧**
 ```objc
 // 1.原图尺寸裁剪GIF当前帧画面
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropGIFCurrentIndexWithCacheURL:(NSURL *)cacheURL
                              errorBlock:(JPImageresizerErrorBlock)errorBlock
                           completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.自定义压缩比例裁剪GIF当前帧画面
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropGIFCurrentIndexWithCompressScale:(CGFloat)compressScale
                                     cacheURL:(NSURL *)cacheURL
                                   errorBlock:(JPImageresizerErrorBlock)errorBlock
                                completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.自定义压缩比例裁剪GIF指定帧画面
-// index --- 第几帧画面
-// compressScale --- 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
+// index: 第几帧画面
+// compressScale: 压缩比例，大于等于1按原图尺寸裁剪，小于等于0则返回nil（例：compressScale = 0.5，1000 x 500 --> 500 x 250）
 - (void)cropGIFWithIndex:(NSUInteger)index
            compressScale:(CGFloat)compressScale
                 cacheURL:(NSURL *)cacheURL
@@ -439,7 +439,7 @@ PS：目前只针对本地视频，远程视频暂未适配。
 }];
 
 // 可设置视频导出质量
-// presetName --- 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
+// presetName: 系统的视频导出质量，如：AVAssetExportPresetLowQuality，AVAssetExportPresetMediumQuality，AVAssetExportPresetHighestQuality等
 - (void)cropVideoWithPresetName:(NSString *)presetName
                        cacheURL:(NSURL *_Nullable)cacheURL
                      errorBlock:(JPImageresizerErrorBlock)errorBlock
@@ -447,7 +447,7 @@ PS：目前只针对本地视频，远程视频暂未适配。
                   completeBlock:(JPCropDoneBlock)completeBlock;
                   
 // 裁剪视频并从当前时间开始截取指定秒数
-// duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+// duration: 截取多少秒（至少1s，如果为0则代表直至视频结尾）
 - (void)cropVideoFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                     presetName:(NSString *)presetName
                                       cacheURL:(NSURL *_Nullable)cacheURL
@@ -456,8 +456,8 @@ PS：目前只针对本地视频，远程视频暂未适配。
                                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 裁剪视频并自定义截取指定秒数
-// startSecond --- 从第几秒开始截取
-// duration --- 截取多少秒（至少1s，如果为0则代表直至视频结尾）
+// startSecond: 从第几秒开始截取
+// duration: 截取多少秒（至少1s，如果为0则代表直至视频结尾）
 - (void)cropVideoFromStartSecond:(NSTimeInterval)startSecond
                         duration:(NSTimeInterval)duration
                       presetName:(NSString *)presetName
@@ -475,24 +475,24 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
 - **裁剪视频的其中一帧**
 ```ojbc
 // 1.原图尺寸裁剪视频当前帧画面
-// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// cacheURL: 缓存路径（可设置为nil，则不会缓存）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropVideoCurrentFrameWithCacheURL:(NSURL *)cacheURL
                                errorBlock:(JPImageresizerErrorBlock)errorBlock
                             completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.自定义压缩比例裁剪视频当前帧画面
-// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// cacheURL: 缓存路径（可设置为nil，则不会缓存）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropVideoCurrentFrameWithCompressScale:(CGFloat)compressScale
                                       cacheURL:(NSURL *)cacheURL
                                     errorBlock:(JPImageresizerErrorBlock)errorBlock
                                  completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 3.自定义压缩比例裁剪视频指定帧画面
-// second --- 第几秒画面
-// cacheURL --- 缓存路径（可设置为nil，则不会缓存）
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
+// second: 第几秒画面
+// cacheURL: 缓存路径（可设置为nil，则不会缓存）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的图片、缓存路径）
 - (void)cropVideoOneFrameWithSecond:(float)second
                       compressScale:(CGFloat)compressScale
                            cacheURL:(NSURL *)cacheURL
@@ -506,19 +506,19 @@ PS：由于视频的宽高都必须是16的整数倍，否则导出后系统会�
 
 ```objc
 // 1.裁剪视频并从当前时间开始截取指定秒数片段转成GIF（fps = 10，rate = 1，maximumSize = 500 * 500）
-// duration --- 截取多少秒
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
+// duration: 截取多少秒
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
 - (void)cropVideoToGIFFromCurrentSecondWithDuration:(NSTimeInterval)duration
                                            cacheURL:(NSURL *)cacheURL
                                          errorBlock:(JPImageresizerErrorBlock)errorBlock
                                       completeBlock:(JPCropDoneBlock)completeBlock;
 
 // 2.裁剪视频并自定义截取指定秒数片段转成GIF
-// duration --- 截取多少秒
-// fps --- 帧率（设置为0则以视频真身帧率）
-// rate --- 速率
-// maximumSize --- 截取的尺寸（设置为0则以视频真身尺寸）
-// completeBlock --- 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
+// duration: 截取多少秒
+// fps: 帧率（设置为0则以视频真身帧率）
+// rate: 速率
+// maximumSize: 截取的尺寸（设置为0则以视频真身尺寸）
+// completeBlock: 裁剪完成的回调（返回裁剪后的结果，包含已解码好的GIF、缓存路径）
 - (void)cropVideoToGIFFromStartSecond:(NSTimeInterval)startSecond
                              duration:(NSTimeInterval)duration
                                   fps:(float)fps

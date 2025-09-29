@@ -34,37 +34,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * 可配置初始化（configure）：
-    image --- 裁剪的图片/GIF（UIImage）
-    imageData --- 裁剪的图片/GIF（NSData）
-    videoURL --- 裁剪的视频URL
-    frame --- 相对父视图的区域
-    frameType --- 边框样式
-    animationCurve --- 动画曲线
-    effect --- 模糊效果
-    bgColor --- 背景颜色
-    maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
-    strokeColor ---裁剪线颜色
-    resizeWHScale --- 裁剪宽高比（设置为0则为任意比例）
-    resizeCornerRadius --- 设置裁剪圆角（与 isRoundResize 相互独立，且优先级比 isRoundResize 低）
-    ignoresCornerRadiusForDisplay --- 裁剪框的显示是否忽略裁剪圆角
-    isRoundResize --- 是否初始化圆切
-    maskImage --- 蒙版图片
-    isArbitrarily --- 是否可以任意比例拖拽
-    contentInsets --- 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
-    isClockwiseRotation --- 是否顺时针旋转
-    borderImage --- 边框图片（若为nil则使用frameType的边框）
-    borderImageRectInset --- 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
-    maximumZoomScale --- 最大缩放比例
-    isShowMidDots --- 是否显示中间的4个点（上、下、左、右的中点）
-    isBlurWhenDragging --- 拖拽时是否遮罩裁剪区域以外的区域
-    isShowGridlinesWhenIdle --- 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
-    isShowGridlinesWhenDragging --- 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
-    gridCount --- 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
-    isLoopPlaybackGIF --- 是否重复循环GIF播放（NO则有拖动条控制）
-    fixErrorBlock --- 修正视频方向的错误回调
-    fixStartBlock --- 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
-    fixProgressBlock --- 修正视频方向的进度回调
-    fixCompleteBlock --- 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
+    image: 裁剪的图片/GIF（UIImage）
+    imageData: 裁剪的图片/GIF（NSData）
+    videoURL: 裁剪的视频URL
+    frame: 相对父视图的区域
+    frameType: 边框样式
+    animationCurve: 动画曲线
+    effect: 模糊效果
+    bgColor: 背景颜色
+    maskAlpha: 遮罩颜色的透明度（背景颜色 * 透明度）
+    strokeColor: 裁剪线颜色
+    resizeWHScale: 裁剪宽高比（设置为0则为任意比例）
+    resizeCornerRadius: 设置裁剪圆角（与 isRoundResize 相互独立，且优先级比 isRoundResize 低）
+    ignoresCornerRadiusForDisplay: 裁剪框的显示是否忽略裁剪圆角
+    isRoundResize: 是否初始化圆切
+    maskImage: 蒙版图片
+    isArbitrarily: 是否可以任意比例拖拽
+    contentInsets: 裁剪区域与主视图的内边距（可以通过 -updateFrame:contentInsets:duration: 方法进行修改）
+    isClockwiseRotation: 是否顺时针旋转
+    borderImage: 边框图片（若为nil则使用frameType的边框）
+    borderImageRectInset: 边框图片与边线的偏移量（即CGRectInset，用于调整边框图片与边线的差距）
+    maximumZoomScale: 最大缩放比例
+    isShowMidDots: 是否显示中间的4个点（上、下、左、右的中点）
+    isBlurWhenDragging: 拖拽时是否遮罩裁剪区域以外的区域
+    isShowGridlinesWhenIdle: 闲置时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
+    isShowGridlinesWhenDragging: 拖拽时是否能继续显示网格线（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
+    gridCount: 每行/列的网格数（frameType 为 JPClassicFrameType 且 gridCount > 1 且 maskImage 为 nil 才显示网格）
+    isLoopPlaybackGIF: 是否重复循环GIF播放（NO则有拖动条控制）
+    fixErrorBlock: 修正视频方向的错误回调
+    fixStartBlock: 修正视频方向的开始回调（如果视频不需要修正，该Block和fixProgressBlock、fixErrorBlock均不会调用）
+    fixProgressBlock: 修正视频方向的进度回调
+    fixCompleteBlock: 修正视频方向的完成回调（如果视频不需要修正，会直接调用该Block，返回原路径）
  */
 
 #pragma mark - 工厂
