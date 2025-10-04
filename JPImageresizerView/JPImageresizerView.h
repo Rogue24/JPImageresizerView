@@ -333,7 +333,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIColor *_Nullable bgColor;
 
 /**
- * 遮罩颜色的透明度（背景颜色 * 透明度）
+ * 遮罩颜色的透明度（遮罩颜色 = 背景颜色 * 此透明度）
  * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
  */
 @property (nonatomic) CGFloat maskAlpha;

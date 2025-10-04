@@ -188,7 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 背景颜色 */
 @property (nonatomic, strong) UIColor *_Nullable bgColor;
 
-/** 遮罩颜色的透明度（背景颜色 * 透明度） */
+/** 遮罩颜色的透明度（遮罩颜色 = 背景颜色 * 此透明度） */
 @property (nonatomic, assign) CGFloat maskAlpha;
 
 /** 裁剪线颜色 */
