@@ -59,7 +59,7 @@
         self.configure = configure;
         
         _containerView = [[UIView alloc] initWithFrame:self.bounds];
-        _containerView.layer.backgroundColor = configure.bgColor.CGColor;
+        _containerView.layer.backgroundColor = configure.mainAppearance.bgColor.CGColor;
         [self addSubview:_containerView];
         
         _contentInsets = configure.contentInsets;
@@ -139,16 +139,14 @@
                                     baseContentMaxSize:baseContentMaxSize
                                              frameType:configure.frameType
                                         animationCurve:configure.animationCurve
-                                                effect:configure.effect
-                                               bgColor:configure.bgColor
-                                             maskAlpha:configure.maskAlpha
-                                           strokeColor:configure.strokeColor
+                                        mainAppearance:configure.mainAppearance
                                          resizeWHScale:configure.resizeWHScale
                                     resizeCornerRadius:configure.resizeCornerRadius
                          ignoresCornerRadiusForDisplay:configure.ignoresCornerRadiusForDisplay
                                          isRoundResize:configure.isRoundResize
                                              maskImage:configure.maskImage
                                maskImageDisplayHandler:configure.maskImageDisplayHandler
+                                        maskAppearance:configure.maskAppearance
                                          isArbitrarily:configure.isArbitrarily
                                             scrollView:_scrollView
                                              imageView:_imageView
@@ -807,15 +805,23 @@
 }
 
 - (void)setMaskImage:(UIImage *)maskImage {
-    [self setMaskImage:maskImage isToBeArbitrarily:(maskImage ? NO : YES) animated:YES];
+    [self setMaskImage:maskImage animated:YES];
+}
+- (void)setMaskImage:(UIImage *)maskImage animated:(BOOL)isAnimated {
+    BOOL isToBeArbitrarily = maskImage ? NO : self.isArbitrarily;
+    [self setMaskImage:maskImage isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 - (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
+    JPImageresizerAppearance *appearance = maskImage ? self.maskAppearance : nil;
+    [self setMaskImage:maskImage maskAppearance:appearance isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+}
+- (void)setMaskImage:(UIImage *)maskImage maskAppearance:(JPImageresizerAppearance *)maskAppearance isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     if (self.frameView.isPrepareToScale) {
         JPIRLog(@"jp_tip: 裁剪区域预备缩放至适合位置，蒙版图片暂不可设置，此时应该将设置按钮设为不可点或隐藏");
         return;
     }
     self.configure.resizeScaledBounds = CGRectZero;
-    [self.frameView setMaskImage:maskImage isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+    [self.frameView setMaskImage:maskImage maskAppearance:maskAppearance isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 - (UIImage *)maskImage {
     return _frameView.maskImage;
@@ -916,61 +922,26 @@
     self.frameView.edgeLineIsEnabled = edgeLineIsEnabled;
 }
 
-#pragma mark - 裁剪框、背景、遮罩颜色相关
-- (void)setStrokeColor:(UIColor *)strokeColor {
-    [self.frameView setupStrokeColor:strokeColor
-                              effect:self.effect
-                             bgColor:self.bgColor
-                           maskAlpha:self.maskAlpha
-                            animated:YES];
+#pragma mark - 模糊效果、背景、遮罩颜色相关
+
+- (JPImageresizerAppearance *)mainAppearance {
+    return _frameView.mainAppearance;
 }
-- (UIColor *)strokeColor {
-    return _frameView.strokeColor;
+- (void)updateMainAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated {
+    [self.frameView updateMainAppearance:setting animated:isAnimated];
 }
 
-- (void)setEffect:(UIVisualEffect *)effect {
-    [self.frameView setupStrokeColor:self.strokeColor
-                              effect:effect
-                             bgColor:self.bgColor
-                           maskAlpha:self.maskAlpha
-                            animated:YES];
+- (void)setMaskAppearance:(JPImageresizerAppearance *)maskAppearance {
+    [self setMaskAppearance:maskAppearance animated:YES];
 }
-- (UIVisualEffect *)effect {
-    return _frameView.effect;
+- (void)setMaskAppearance:(JPImageresizerAppearance *)maskAppearance animated:(BOOL)isAnimated {
+    [self.frameView setMaskAppearance:maskAppearance animated:isAnimated];
 }
-
-- (void)setBgColor:(UIColor *)bgColor {
-    [self.frameView setupStrokeColor:self.strokeColor
-                              effect:self.effect
-                             bgColor:bgColor
-                           maskAlpha:self.maskAlpha
-                            animated:YES];
+- (JPImageresizerAppearance *)maskAppearance {
+    return _frameView.maskAppearance;
 }
-- (UIColor *)bgColor {
-    return _frameView.bgColor;
-}
-
-- (void)setMaskAlpha:(CGFloat)maskAlpha {
-    [self.frameView setupStrokeColor:self.strokeColor
-                              effect:self.effect
-                             bgColor:self.bgColor
-                           maskAlpha:maskAlpha
-                            animated:YES];
-}
-- (CGFloat)maskAlpha {
-    return _frameView.maskAlpha;
-}
-
-- (void)setupStrokeColor:(UIColor *)strokeColor
-                  effect:(UIVisualEffect *)effect
-                 bgColor:(UIColor *)bgColor
-               maskAlpha:(CGFloat)maskAlpha
-                animated:(BOOL)isAnimated {
-    [self.frameView setupStrokeColor:strokeColor
-                              effect:effect
-                             bgColor:bgColor
-                           maskAlpha:maskAlpha
-                            animated:isAnimated];
+- (void)updateMaskAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated {
+    [self.frameView updateMaskAppearance:setting animated:isAnimated];
 }
 
 #pragma mark - 旋转、镜像翻转相关
@@ -1872,16 +1843,14 @@
     configure.videoAsset = self.videoAsset;
     configure.frameType = self.frameType;
     configure.animationCurve = self.animationCurve;
-    configure.effect = self.effect;
-    configure.bgColor = self.bgColor;
-    configure.maskAlpha = self.maskAlpha;
-    configure.strokeColor = self.strokeColor;
+    configure.mainAppearance = self.mainAppearance;
     configure.resizeWHScale = self.resizeWHScale;
     configure.resizeCornerRadius = self.resizeCornerRadius;
     configure.ignoresCornerRadiusForDisplay = self.ignoresCornerRadiusForDisplay;
     configure.isRoundResize = self.isRoundResize;
     configure.maskImage = self.maskImage;
     configure.maskImageDisplayHandler = self.maskImageDisplayHandler;
+    configure.maskAppearance = self.maskAppearance;
     configure.ignoresMaskImageForCrop = self.ignoresMaskImageForCrop;
     configure.isArbitrarily = self.isArbitrarily;
     configure.edgeLineIsEnabled = self.edgeLineIsEnabled;

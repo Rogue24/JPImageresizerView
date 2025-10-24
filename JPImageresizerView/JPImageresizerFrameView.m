@@ -108,27 +108,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 
 #pragma mark - setter
 
-- (void)setStrokeColor:(UIColor *)strokeColor {
-    _strokeColor = strokeColor;
-    [self __updateShapeLayersStrokeColor];
-}
-
-- (void)setEffect:(UIVisualEffect *)effect {
-    [self.blurView setEffect:effect duration:0];
-    [self.maskBlurView setEffect:effect duration:0];
-}
-
-- (void)setBgColor:(UIColor *)bgColor {
-    [self.blurView setBgColor:bgColor duration:0];
-    [self.maskBlurView setBgColor:bgColor duration:0];
-    self.superview.layer.backgroundColor = bgColor.CGColor;
-}
-
-- (void)setMaskAlpha:(CGFloat)maskAlpha {
-    [self.blurView setMaskAlpha:maskAlpha duration:0];
-    [self.maskBlurView setMaskAlpha:maskAlpha duration:0];
-}
-
 - (void)setImageresizerFrame:(CGRect)imageresizerFrame {
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1.0];
 }
@@ -164,8 +143,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
         NSTimeInterval duration = _defaultDuration;
         CAMediaTimingFunctionName timingFunctionName = _kCAMediaTimingFunction;
         [UIView animateWithDuration:duration delay:0 options:[self animationOptions] animations:^{
-            [self.blurView setIsMaskAlpha:!isPreview duration:0];
-            [self.maskBlurView setIsMaskAlpha:!isPreview duration:0];
+            self.blurView.isMaskAlpha = !isPreview;
+            self.maskBlurView.isMaskAlpha = !isPreview;
             self.slider.alpha = opacity;
         } completion:nil];
         if (_borderImage) {
@@ -187,8 +166,8 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
             }
         }
     } else {
-        [self.blurView setIsMaskAlpha:!isPreview duration:0];
-        [self.maskBlurView setIsMaskAlpha:!isPreview duration:0];
+        self.blurView.isMaskAlpha = !isPreview;
+        self.maskBlurView.isMaskAlpha = !isPreview;
         _borderImageView.alpha = _isRoundResize ? 0 : opacity;
         self.slider.alpha = opacity;
     }
@@ -219,27 +198,27 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 - (void)setFrameType:(JPImageresizerFrameType)frameType {
     _frameType = frameType;
     
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     self.frameLayer.lineWidth = _frameLayerLineW;
-    
     if (_borderImage) {
         [_dotsLayer removeFromSuperlayer];
         [_gridlinesLayer removeFromSuperlayer];
         [self __updateShapeLayersStrokeColor];
-        return;
-    }
-    
-    if (frameType == JPConciseFrameType) {
-        [_gridlinesLayer removeFromSuperlayer];
-        self.dotsLayer.lineWidth = 0;
     } else {
-        [self gridlinesLayer];
-        self.dotsLayer.lineWidth = _arrLineW;
+        if (frameType == JPConciseFrameType) {
+            [_gridlinesLayer removeFromSuperlayer];
+            self.dotsLayer.lineWidth = 0;
+        } else {
+            [self gridlinesLayer];
+            self.dotsLayer.lineWidth = _arrLineW;
+        }
+        [self __updateShapeLayersStrokeColor];
+        [self __updateShapeLayersOpacity];
     }
+    [CATransaction commit];
     
-    [self __updateShapeLayersStrokeColor];
-    [self __updateShapeLayersOpacity];
-    
-    if (!CGRectIsEmpty(_imageresizerFrame)) {
+    if (!_borderImage && !CGRectIsEmpty(_imageresizerFrame)) {
         [self __updateImageresizerFrame:_imageresizerFrame animateDuration:0];
     }
 }
@@ -406,17 +385,6 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     return CGRectZero;
 }
 
-- (UIVisualEffect *)effect {
-    return self.blurView.effect;
-}
-
-- (UIColor *)bgColor {
-    return self.blurView.bgColor;
-}
-
-- (CGFloat)maskAlpha {
-    return self.blurView.maskAlpha;
-}
 
 #pragma mark - init
 
@@ -424,16 +392,14 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
            baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                       effect:(UIVisualEffect *)effect
-                      bgColor:(UIColor *)bgColor
-                    maskAlpha:(CGFloat)maskAlpha
-                  strokeColor:(UIColor *)strokeColor
+               mainAppearance:(JPImageresizerAppearance *)mainAppearance
                 resizeWHScale:(CGFloat)resizeWHScale
            resizeCornerRadius:(CGFloat)resizeCornerRadius
 ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *)maskImage
       maskImageDisplayHandler:(JPMaskImageDisplayHandler)maskImageDisplayHandler
+               maskAppearance:(JPImageresizerAppearance *)maskAppearance
                 isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
@@ -470,7 +436,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         _edgeLineIsEnabled = YES;
         _direction = JPImageresizerVerticalUpDirection;
         _baseContentMaxSize = baseContentMaxSize;
-        _strokeColor = strokeColor;
+        _mainAppearance = mainAppearance;
         _resizeCornerRadius = resizeCornerRadius;
         _ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
         _maskImageDisplayHandler = [maskImageDisplayHandler copy];
@@ -485,7 +451,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         _isHorizontalMirror = [isHorizontalMirror copy];
         _resizeObjWhScale = [resizeObjWhScale copy];
         
-        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds effect:effect bgColor:bgColor maskAlpha:maskAlpha];
+        JPImageresizerBlurView *blurView = [[JPImageresizerBlurView alloc] initWithFrame:self.bounds appearance:mainAppearance isBlur:YES isMaskAlpha:YES cornerRadius:0];
         blurView.userInteractionEnabled = NO;
         [self addSubview:blurView];
         self.blurView = blurView;
@@ -520,6 +486,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         } else {
             if (maskImage) {
                 _maskImage = maskImage;
+                _maskAppearance = maskAppearance;
                 [self __createMaskBlurView:YES];
                 _gridlinesLayer.opacity = 0;
                 _resizeWHScale = resizeWHScale == 0 ? (maskImage.size.width / maskImage.size.height) : resizeWHScale;
@@ -614,7 +581,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     if (_isRoundResize) {
         CGFloat radius = frame.size.width * 0.5;
         CGFloat rightAngleSide = sqrt((pow(radius, 2) * 0.5));
-
+        
         point = CGPointMake(midPoint.x - rightAngleSide, midPoint.y - rightAngleSide);
         startPoint = CGPointMake(point.x, point.y);
         endPoint = CGPointMake(point.x, point.y);
@@ -715,7 +682,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
             startPoint = CGPointMake(point.x, point.y);
             endPoint = CGPointMake(point.x, point.y);
             appendPathBlock(point, startPoint, endPoint);
-        
+            
             point = CGPointMake(midPoint.x, maxPoint.y);
             startPoint = CGPointMake(point.x, point.y);
             endPoint = CGPointMake(point.x, point.y);
@@ -748,7 +715,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
             startPoint = CGPointMake(point.x - horArrLength, point.y);
             endPoint = CGPointMake(point.x + horArrLength, point.y);
             appendPathBlock(point, startPoint, endPoint);
-        
+            
             point = CGPointMake(midPoint.x, maxPoint.y + halfArrLineW);
             startPoint = CGPointMake(point.x - horArrLength, point.y);
             endPoint = CGPointMake(point.x + horArrLength, point.y);
@@ -876,16 +843,51 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 #pragma mark 边框UI
 
+- (void)__updateShapeLayersStrokeColor:(BOOL)isAnimated {
+    if (isAnimated) {
+        UIColor *strokeColor = self.mainAppearance.strokeColor;
+        CAMediaTimingFunctionName timingFunction = _kCAMediaTimingFunction;
+        NSTimeInterval duration = _defaultDuration;
+        [_frameLayer jpir_addBackwardsAnimationWithKeyPath:@"strokeColor"
+                                                 fromValue:(id)_frameLayer.strokeColor
+                                                   toValue:strokeColor
+                                        timingFunctionName:timingFunction
+                                                  duration:duration];
+        if (!_borderImage) {
+            BOOL isConciseFrame = _frameType == JPConciseFrameType;
+            [_dotsLayer jpir_addBackwardsAnimationWithKeyPath:@"fillColor"
+                                                    fromValue:(id)_dotsLayer.fillColor
+                                                      toValue:isConciseFrame ? strokeColor : [UIColor clearColor]
+                                           timingFunctionName:timingFunction
+                                                     duration:duration];
+            [_dotsLayer jpir_addBackwardsAnimationWithKeyPath:@"strokeColor"
+                                                    fromValue:(id)_dotsLayer.strokeColor
+                                                      toValue:isConciseFrame ? [UIColor clearColor] : strokeColor
+                                           timingFunctionName:timingFunction
+                                                     duration:duration];
+            [_gridlinesLayer jpir_addBackwardsAnimationWithKeyPath:@"strokeColor"
+                                                         fromValue:(id)_gridlinesLayer.strokeColor
+                                                           toValue:strokeColor
+                                                timingFunctionName:timingFunction
+                                                          duration:duration];
+        }
+    }
+    
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [self __updateShapeLayersStrokeColor];
+    [CATransaction commit];
+}
+
 - (void)__updateShapeLayersStrokeColor {
-    CGColorRef strokeCGColor = _strokeColor.CGColor;
+    CGColorRef strokeCGColor = self.mainAppearance.strokeColor.CGColor;
     _frameLayer.strokeColor = strokeCGColor;
     if (_borderImage) return;
-    CGColorRef clearCGColor = [UIColor clearColor].CGColor;
     if (_frameType == JPConciseFrameType) {
         _dotsLayer.fillColor = strokeCGColor;
-        _dotsLayer.strokeColor = clearCGColor;
+        _dotsLayer.strokeColor = [UIColor clearColor].CGColor;
     } else {
-        _dotsLayer.fillColor = clearCGColor;
+        _dotsLayer.fillColor = [UIColor clearColor].CGColor;
         _dotsLayer.strokeColor = strokeCGColor;
     }
     _gridlinesLayer.strokeColor = strokeCGColor;
@@ -894,7 +896,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 - (void)__updateShapeLayersOpacity {
     [self __setupShapeLayersOpacity:(_isPreview ? 0 : 1)];
 }
-    
+
 - (void)__setupShapeLayersOpacity:(CGFloat)opacity {
     _frameLayer.opacity = opacity;
     if (_borderImage || _isRoundResize) opacity = 0;
@@ -1375,8 +1377,13 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     maskImgView.contentMode = UIViewContentModeScaleToFill;
     maskImgView.image = [self __processMaskImageForDisplay:_maskImage];
     
-    JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame effect:self.effect bgColor:self.bgColor maskAlpha:self.maskAlpha];
-    [maskBlurView setIsBlur:isBlur duration:0];
+    JPImageresizerAppearance *appearance = _maskAppearance;
+    if (!appearance) {
+        JPImageresizerAppearance *mainAppearance = self.mainAppearance;
+        appearance = [[JPImageresizerAppearance alloc] initWithStrokeColor:nil bgEffect:mainAppearance.bgEffect bgColor:mainAppearance.bgColor maskAlpha:mainAppearance.maskAlpha];
+    }
+    
+    JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame appearance:appearance isBlur:isBlur isMaskAlpha:self.blurView.isMaskAlpha cornerRadius:_resizeCornerRadius];
     maskBlurView.userInteractionEnabled = NO;
     maskBlurView.maskView = maskImgView;
     [self insertSubview:maskBlurView belowSubview:self.blurView];
@@ -1424,12 +1431,16 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 - (void)__removeMaskBlurView:(BOOL)isAnimated completeBlock:(void(^)(void))completeBlock {
     _maskImage = nil;
+    _maskAppearance = nil;
+    
     if (self.maskBlurView == nil) {
         !completeBlock ? : completeBlock();
         return;
     }
+    
     JPImageresizerBlurView *maskBlurView = self.maskBlurView;
     self.maskBlurView = nil;
+    
     if (isAnimated) {
         [maskBlurView setIsBlur:NO duration:_defaultDuration];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_defaultDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1455,15 +1466,17 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     [self setResizeWHScale:resizeWHScale isToBeArbitrarily:_isArbitrarily animated:NO];
 }
 - (void)setResizeWHScale:(CGFloat)resizeWHScale isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
-    if (_maskImage) {
-        _resizeWHScale = resizeWHScale;
-        [self setMaskImage:nil isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
-    } else if (_isRoundResize) {
-        _resizeWHScale = resizeWHScale;
-        [self setIsRoundResize:NO isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
-    } else {
-        [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
-    }
+//    if (_maskImage) {
+//        _resizeWHScale = resizeWHScale;
+//        [self setMaskImage:nil isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+//    } else if (_isRoundResize) {
+//        _resizeWHScale = resizeWHScale;
+//        [self setIsRoundResize:NO isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+//    } else {
+//        [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
+//    }
+    // 即便有蒙版图片或正在圆切，同样也可以设置裁剪宽高比
+    [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isToBeArbitrarily animated:isAnimated];
 }
 
 #pragma mark 设置裁剪圆角
@@ -1486,7 +1499,27 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
 }
 
-#pragma mark 圆切
+#pragma mark 是否可以任意拖拽
+- (void)setIsArbitrarily:(BOOL)isArbitrarily {
+    [self setIsArbitrarily:isArbitrarily animated:NO];
+}
+- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated {
+    if (_isArbitrarily == isArbitrarily) return;
+    if (!isArbitrarily) {
+        if (_maskImage || _isRoundResize) {
+            CGFloat resizeWHScale = _maskImage ? (_maskImage.size.width / _maskImage.size.height) : 1;
+            [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isArbitrarily animated:isAnimated];
+        } else {
+            _isArbitrarily = NO;
+            _resizeWHScale = self.imageresizerWHScale;
+        }
+    } else {
+        _isArbitrarily = YES;
+        _resizeWHScale = 0;
+    }
+}
+
+#pragma mark 设置圆切
 - (void)setIsRoundResize:(BOOL)isRoundResize {
     [self setIsRoundResize:isRoundResize isToBeArbitrarily:_isArbitrarily animated:NO];
 }
@@ -1512,11 +1545,9 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 }
 
 #pragma mark 设置蒙版图片
-- (void)setMaskImage:(UIImage *)maskImage {
-    [self setMaskImage:maskImage isToBeArbitrarily:_isArbitrarily animated:NO];
-}
-- (void)setMaskImage:(UIImage *)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
+- (void)setMaskImage:(UIImage *)maskImage maskAppearance:(JPImageresizerAppearance *)maskAppearance isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated {
     _maskImage = maskImage;
+    _maskAppearance = maskAppearance;
     
     void (^updateBlock)(CGFloat whScale) = ^(CGFloat whScale) {
         self->_resizeWHScale = whScale + 1; // 防止_resizeWHScale和resizeWHScale相同，这里修改一下以执行更新代码
@@ -1538,12 +1569,14 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 [self.maskBlurView setIsBlur:NO duration:_defaultDuration];
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_defaultDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     maskImgView.image = image;
+                    self.maskBlurView.appearance = maskAppearance;
                     [self.maskBlurView setIsBlur:YES duration:self->_defaultDuration];
                     updateBlock(resizeWHScale);
                 });
                 return;
             } else {
                 maskImgView.image = image;
+                self.maskBlurView.appearance = maskAppearance;
             }
         } else {
             [self __createMaskBlurView:!isAnimated];
@@ -1559,49 +1592,73 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     }
 }
 
-#pragma mark 是否可以任意拖拽
-- (void)setIsArbitrarily:(BOOL)isArbitrarily {
-    [self setIsArbitrarily:isArbitrarily animated:NO];
+- (void)setMaskAppearance:(JPImageresizerAppearance *)maskAppearance {
+    [self setMaskAppearance:maskAppearance animated:NO];
 }
-- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated {
-    if (_isArbitrarily == isArbitrarily) return;
-    if (!isArbitrarily) {
-        if (_maskImage || _isRoundResize) {
-            CGFloat resizeWHScale = _maskImage ? (_maskImage.size.width / _maskImage.size.height) : 1;
-            [self __setResizeWHScale:resizeWHScale isToBeArbitrarily:isArbitrarily animated:isAnimated];
-        } else {
-            _isArbitrarily = NO;
-            _resizeWHScale = self.imageresizerWHScale;
-        }
+- (void)setMaskAppearance:(JPImageresizerAppearance *)maskAppearance animated:(BOOL)isAnimated {
+    if (!self.maskImage || !self.maskBlurView) {
+        _maskAppearance = nil;
+        return;
+    }
+    
+    _maskAppearance = maskAppearance;
+    
+    NSTimeInterval duration = isAnimated ? _defaultDuration : -1.0;
+    if (maskAppearance) {
+        [self.maskBlurView setAppearance:maskAppearance duration:duration];
     } else {
-        _isArbitrarily = YES;
-        _resizeWHScale = 0;
+        JPImageresizerAppearance *mAppearance = self.maskBlurView.appearance;
+        mAppearance.bgEffect = self.mainAppearance.bgEffect;
+        mAppearance.bgColor = self.mainAppearance.bgColor;
+        mAppearance.maskAlpha = self.mainAppearance.maskAlpha;
+        [self.maskBlurView setAppearance:mAppearance duration:duration];
+    }
+}
+- (void)updateMaskAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated {
+    if (!setting) return;
+    
+    JPImageresizerAppearance *appearance = _maskAppearance;
+    if (!appearance) return;
+    
+    setting(appearance);
+    
+    if (isAnimated) {
+        [UIView animateWithDuration:_defaultDuration delay:0 options:[self animationOptions] animations:^{
+            self.maskBlurView.appearance = appearance;
+        } completion:nil];
+    } else {
+        self.maskBlurView.appearance = appearance;
     }
 }
 
-#pragma mark 设置线框颜色、模糊样式、背景颜色、遮罩透明度
-- (void)setupStrokeColor:(UIColor *)strokeColor
-                  effect:(UIVibrancyEffect *)effect
-                 bgColor:(UIColor *)bgColor
-               maskAlpha:(CGFloat)maskAlpha
-                animated:(BOOL)isAnimated {
-    BOOL isBlur = self.blurView.isBlur;
-    BOOL isMaskAlpha = self.blurView.isMaskAlpha;
-    NSTimeInterval duration = isAnimated ? _defaultDuration : 0;
-    [self.blurView setupIsBlur:isBlur effect:effect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
-    [self.maskBlurView setupIsBlur:isBlur effect:effect bgColor:bgColor maskAlpha:maskAlpha isMaskAlpha:isMaskAlpha duration:duration];
+#pragma mark 更新主要外观配置
+- (void)updateMainAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated {
+    if (!setting) return;
+    
+    JPImageresizerAppearance *appearance = self.mainAppearance;
+    setting(appearance);
+    
+    [self __updateShapeLayersStrokeColor:isAnimated];
+    
     void (^animations)(void) = ^{
-        self.strokeColor = strokeColor;
-        self.superview.layer.backgroundColor = bgColor.CGColor;
+        self.superview.layer.backgroundColor = appearance.bgColor.CGColor;
+        self.blurView.appearance = appearance;
+        if (!self.maskAppearance && self.maskBlurView) {
+            JPImageresizerAppearance *mAppearance = self.maskBlurView.appearance;
+            mAppearance.bgEffect = appearance.bgEffect;
+            mAppearance.bgColor = appearance.bgColor;
+            mAppearance.maskAlpha = appearance.maskAlpha;
+            self.maskBlurView.appearance = mAppearance;
+        }
     };
     if (isAnimated) {
-        [UIView animateWithDuration:duration delay:0 options:[self animationOptions] animations:animations completion:nil];
+        [UIView animateWithDuration:_defaultDuration delay:0 options:[self animationOptions] animations:animations completion:nil];
     } else {
         animations();
     }
 }
 
-#pragma mark 更换裁剪样式
+#pragma mark 更换裁剪框样式
 - (void)updateFrameType:(JPImageresizerFrameType)frameType {
     if (self.frameType == frameType) return;
     [CATransaction begin];
@@ -1742,6 +1799,8 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         } else {
             [self __createMaskBlurView:!isAnimated];
         }
+    } else {
+        _maskAppearance = nil;
     }
     
     if (self.slider && isAnimated) {
@@ -2534,8 +2593,13 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 #ifdef __IPHONE_13_0
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    self.strokeColor = _strokeColor;
-    self.bgColor = self.blurView.bgColor;
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (@available(iOS 13.0, *)) {
+        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+            [self updateMainAppearance:^(JPImageresizerAppearance *appearance) {} animated:NO];
+            [self updateMaskAppearance:^(JPImageresizerAppearance *appearance) {} animated:NO];
+        }
+    }
 }
 #endif
 

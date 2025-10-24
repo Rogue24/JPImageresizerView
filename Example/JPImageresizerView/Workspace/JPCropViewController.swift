@@ -104,7 +104,7 @@ extension JPCropViewController {
         let configure = JPImageresizerConfigure.defaultConfigure(with: image) { c in
             _ = c
                 .jp_viewFrame(frame)
-                .jp_bgColor(.black)
+                .jp_mainAppearance { $0.bgColor = .black }
                 .jp_frameType(.classicFrameType)
                 .jp_contentInsets(.init(top: 16, left: 16, bottom: 16, right: 16))
                 .jp_animationCurve(.easeInOut)

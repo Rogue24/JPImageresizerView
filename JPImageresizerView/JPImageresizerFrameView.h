@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JPImageresizerTypedef.h"
+#import "JPImageresizerAppearance.h"
 @class JPImageresizerSlider;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,16 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
            baseContentMaxSize:(CGSize)baseContentMaxSize
                     frameType:(JPImageresizerFrameType)frameType
                animationCurve:(JPAnimationCurve)animationCurve
-                       effect:(UIVisualEffect *_Nullable)effect
-                      bgColor:(UIColor *)bgColor
-                    maskAlpha:(CGFloat)maskAlpha
-                  strokeColor:(UIColor *)strokeColor
+               mainAppearance:(JPImageresizerAppearance *)mainAppearance
                 resizeWHScale:(CGFloat)resizeWHScale
            resizeCornerRadius:(CGFloat)resizeCornerRadius
 ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                 isRoundResize:(BOOL)isRoundResize
                     maskImage:(UIImage *_Nullable)maskImage
       maskImageDisplayHandler:(JPMaskImageDisplayHandler)maskImageDisplayHandler
+               maskAppearance:(JPImageresizerAppearance *_Nullable)maskAppearance
                 isArbitrarily:(BOOL)isArbitrarily
                    scrollView:(UIScrollView *)scrollView
                     imageView:(UIImageView *)imageView
@@ -63,15 +62,8 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 
 @property (nonatomic, assign) JPAnimationCurve animationCurve;
 
-@property (nonatomic, strong) UIColor *_Nullable strokeColor;
-@property (nonatomic) UIVisualEffect *_Nullable effect;
-@property (nonatomic) UIColor *_Nullable bgColor;
-@property (nonatomic) CGFloat maskAlpha;
-- (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
-                  effect:(UIVisualEffect *_Nullable)effect
-                 bgColor:(UIColor *_Nullable)bgColor
-               maskAlpha:(CGFloat)maskAlpha
-                animated:(BOOL)isAnimated;
+@property (nonatomic, strong, readonly) JPImageresizerAppearance *mainAppearance;
+- (void)updateMainAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign, readonly) CGRect imageresizerFrame;
 @property (readonly) CGFloat imageresizerWHScale;
@@ -85,16 +77,20 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 @property (nonatomic, assign) BOOL ignoresCornerRadiusForDisplay;
 - (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated;
 
+@property (nonatomic, assign) BOOL isArbitrarily;
+- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
+
 @property (nonatomic, assign) BOOL isRoundResize;
 - (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
 
-@property (nonatomic, strong) UIImage *_Nullable maskImage;
-- (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+@property (nonatomic, strong, readonly) UIImage *_Nullable maskImage;
+- (void)setMaskImage:(UIImage *_Nullable)maskImage maskAppearance:(JPImageresizerAppearance *_Nullable)maskAppearance isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+@property (nonatomic, strong) JPImageresizerAppearance *_Nullable maskAppearance;
+- (void)setMaskAppearance:(JPImageresizerAppearance *_Nullable)maskAppearance animated:(BOOL)isAnimated;
+- (void)updateMaskAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated;
 
 @property (nonatomic, copy) JPMaskImageDisplayHandler maskImageDisplayHandler;
-
-@property (nonatomic, assign) BOOL isArbitrarily;
-- (void)setIsArbitrarily:(BOOL)isArbitrarily animated:(BOOL)isAnimated;
 
 @property (nonatomic, assign) BOOL isPreview;
 - (void)setIsPreview:(BOOL)isPreview animated:(BOOL)isAnimated;

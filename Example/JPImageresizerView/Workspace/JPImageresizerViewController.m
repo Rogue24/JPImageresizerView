@@ -23,10 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
 
-@property (nonatomic, assign) JPImageresizerFrameType frameType;
-@property (nonatomic, strong) UIImage *maskImage;
-@property (nonatomic, assign) BOOL isToBeArbitrarily;
-
 @property (weak, nonatomic) IBOutlet UIButton *replaceMaskImgBtn;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnLeftConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnTopConstraint;
@@ -40,9 +36,29 @@
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
 
 @property (nonatomic, assign) BOOL isExporting;
+@property (nonatomic, strong) UIColor *strokeColor;
+@property (nonatomic, strong) UIVisualEffect *bgEffect;
+@property (nonatomic, strong) UIColor *bgColor;
+@property (nonatomic, assign) CGFloat maskAlpha;
+@property (nonatomic, strong) UIImage *glassMaskImage;
+@property (readonly) BOOL isGlassMask;
 @end
 
 @implementation JPImageresizerViewController
+
+#pragma mark - getter
+
+- (UIImage *)glassMaskImage {
+    if (!_glassMaskImage) {
+        _glassMaskImage = [[UIImage imageNamed:@"mask_rounded_fade"] resizableImageWithCapInsets:UIEdgeInsetsMake(100, 100, 100, 100) resizingMode:UIImageResizingModeStretch];
+    }
+    return _glassMaskImage;
+}
+
+- (BOOL)isGlassMask {
+    UIImage *maskImage = self.imageresizerView.maskImage;
+    return _glassMaskImage && maskImage && _glassMaskImage == maskImage;
+}
 
 #pragma mark - 生命周期
 
@@ -77,7 +93,7 @@
 #pragma mark - 初始化
 
 - (void)__setupBase {
-    self.view.backgroundColor = self.configure.bgColor;
+    self.view.backgroundColor = self.configure.mainAppearance.bgColor;
     
     // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
     if (@available(iOS 11.0, *)) {
@@ -88,9 +104,6 @@
         self.automaticallyAdjustsScrollViewInsets = NO;
 #pragma clang diagnostic pop
     }
-    
-    self.frameType = self.configure.frameType;
-    self.maskImage = self.configure.maskImage;
 }
 
 - (void)__setupConstraints {
@@ -160,6 +173,13 @@
     
     // 配置重置按钮
     self.recoveryBtn.enabled = self.imageresizerView.isCanRecovery;
+    
+    // 蒙版图片处理
+    self.imageresizerView.maskImageDisplayHandler = ^UIImage *(UIImage *originMaskImage) {
+        @jp_strongify(self);
+        if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
+        return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
+    };
 }
 
 #pragma mark - 监听屏幕旋转
@@ -377,9 +397,18 @@ static UIViewController *tmpVC_;
         }];
     }
     
+    if (@available(iOS 26.0, *)) {
+        [alertCtr addAction:@"玻璃样式" handler:^{
+            @jp_strongify(self);
+            if (!self) return;
+            [self __addGlassMask];
+        }];
+    }
+    
     [alertCtr addAction:@"简洁样式" handler:^{
         @jp_strongify(self);
         if (!self) return;
+        [self __removeGlassMask];
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPConciseFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
@@ -389,6 +418,7 @@ static UIViewController *tmpVC_;
     [alertCtr addAction:@"经典样式" handler:^{
         @jp_strongify(self);
         if (!self) return;
+        [self __removeGlassMask];
         self.imageresizerView.borderImage = nil;
         self.imageresizerView.frameType = JPClassicFrameType;
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
@@ -398,6 +428,7 @@ static UIViewController *tmpVC_;
     [alertCtr addAction:@"拉伸的边框图片" handler:^{
         @jp_strongify(self);
         if (!self) return;
+        [self __removeGlassMask];
         self.imageresizerView.borderImageRectInset = UIImage.stretchBorderRectInset;
         self.imageresizerView.borderImage = [UIImage getStretchBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
@@ -407,6 +438,7 @@ static UIViewController *tmpVC_;
     [alertCtr addAction:@"平铺的边框图片" handler:^{
         @jp_strongify(self);
         if (!self) return;
+        [self __removeGlassMask];
         self.imageresizerView.borderImageRectInset = UIImage.tileBorderRectInset;
         self.imageresizerView.borderImage = [UIImage getTileBorderImage];
         self.imageresizerView.isShowGridlinesWhenIdle = NO;
@@ -417,6 +449,7 @@ static UIViewController *tmpVC_;
         [alertCtr addAction:@"九宫格风格" handler:^{
             @jp_strongify(self);
             if (!self) return;
+            [self __removeGlassMask];
             self.imageresizerView.maskImage = nil;
             self.imageresizerView.borderImage = nil;
             self.imageresizerView.frameType = JPClassicFrameType;
@@ -429,6 +462,49 @@ static UIViewController *tmpVC_;
     
     [alertCtr addCancel:@"取消" handler:nil];
     [alertCtr presentFrom:self];
+}
+
+- (void)__addGlassMask {
+    if (self.isGlassMask) return;
+    
+    self.strokeColor = self.imageresizerView.mainAppearance.strokeColor;
+    self.bgEffect = self.imageresizerView.mainAppearance.bgEffect;
+    self.bgColor = self.imageresizerView.mainAppearance.bgColor;
+    self.maskAlpha = self.imageresizerView.mainAppearance.maskAlpha;
+    
+    if (@available(iOS 26.0, *)) {
+        UIGlassEffect *glassEffect = [UIGlassEffect effectWithStyle:UIGlassEffectStyleClear];
+        JPImageresizerAppearance *appearance = [[JPImageresizerAppearance alloc] initWithStrokeColor:nil bgEffect:glassEffect bgColor:[UIColor clearColor] maskAlpha:0];
+        [self.imageresizerView setMaskImage:self.glassMaskImage
+                             maskAppearance:appearance
+                          isToBeArbitrarily:YES
+                                   animated:YES];
+    }
+    
+    [self.imageresizerView updateMainAppearance:^(JPImageresizerAppearance *appearance) {
+        appearance.strokeColor = [UIColor clearColor];
+        appearance.bgEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterialDark];
+        appearance.bgColor = [UIColor blackColor];
+    } animated:YES];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.imageresizerView.borderImage = nil;
+        self.imageresizerView.resizeCornerRadius = 20;
+    });
+}
+
+- (void)__removeGlassMask {
+    if (!self.isGlassMask) return;
+    self.imageresizerView.maskImage = nil;
+    [self.imageresizerView updateMainAppearance:^(JPImageresizerAppearance *appearance) {
+        appearance.strokeColor = self.strokeColor;
+        appearance.bgEffect = self.bgEffect;
+        appearance.bgColor = self.bgColor;
+        appearance.maskAlpha = self.maskAlpha;
+    } animated:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.imageresizerView.resizeCornerRadius = 0;
+    });
 }
 
 #pragma mark 旋转
@@ -462,7 +538,9 @@ static UIViewController *tmpVC_;
 #pragma mark 设置毛玻璃
 - (IBAction)changeBlurEffect:(id)sender {
     [UIAlertController changeEffect:^(UIVisualEffect *effect) {
-        self.imageresizerView.effect = effect;
+        [self.imageresizerView updateMainAppearance:^(JPImageresizerAppearance *appearance) {
+            appearance.bgEffect = effect;
+        } animated:YES];
     } fromVC:self];
 }
 
@@ -494,11 +572,12 @@ static UIViewController *tmpVC_;
         strokeColor = JPRandomColor;
         bgColor = JPRandomColor;
     }
-    [self.imageresizerView setupStrokeColor:strokeColor
-                                     effect:self.imageresizerView.effect
-                                    bgColor:bgColor
-                                  maskAlpha:maskAlpha
-                                   animated:YES];
+    
+    [self.imageresizerView updateMainAppearance:^(JPImageresizerAppearance *appearance) {
+        appearance.strokeColor = strokeColor;
+        appearance.bgColor = bgColor;
+        appearance.maskAlpha = maskAlpha;
+    } animated:YES];
     
     // 随机网格数
     self.imageresizerView.gridCount = JPRandomNumber(2, 20);
@@ -532,6 +611,9 @@ static UIViewController *tmpVC_;
 #pragma mark 裁剪
 - (IBAction)resize:(id)sender {
     @jp_weakify(self);
+    
+    // 裁剪是否忽略蒙版图片（玻璃蒙版不处理）
+    self.imageresizerView.ignoresMaskImageForCrop = self.isGlassMask;
     
     // 裁剪视频
     if (self.imageresizerView.videoURL) {

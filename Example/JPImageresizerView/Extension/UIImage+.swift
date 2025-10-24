@@ -45,13 +45,15 @@ extension UIImage {
     
     @objc static var randomLocalImage: UIImage {
         let girlCount = 8
-        let index = Int.random(in: 1...(girlCount + 2))
+        let index = Int.random(in: 1...(girlCount + 3))
         let imageName: String
         switch index {
         case 1...girlCount:
             imageName = "Girl\(index).jpg"
         case (girlCount + 1):
             imageName = "Kobe.jpg"
+        case (girlCount + 2):
+            imageName = "KyrieIrving.jpg"
         default:
             imageName = "flowers.jpg"
         }

@@ -428,7 +428,10 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
 - (void)imageresizerWithImageView:(UIImageView *)imageView fromVC:(UIViewController *)fromVC {
     UIImage *image = imageView.image;
     
-    JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:image make:nil];
+    JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:nil];
+    configure.jp_mainAppearance(^(JPImageresizerAppearance *appearance) {
+        appearance.bgEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    });
     if (self.isReplaceFace) {
         configure
             .jp_maskImage([UIImage imageNamed:@"DanielWuFace.png"])
@@ -468,7 +471,7 @@ static NSString *const JPPhotoCellID = @"JPPhotoCell";
         [UIView animateWithDuration:0.3 animations:^{
             vc.topView.alpha = 1;
             vc.bottomView.alpha = 1;
-            vc.view.layer.backgroundColor = configure.bgColor.CGColor;
+            vc.view.layer.backgroundColor = configure.mainAppearance.bgColor.CGColor;
         }];
         [UIView animateWithDuration:0.55 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:kNilOptions animations:^{
             tmpView.frame = [vc.imageresizerView.imageView.superview convertRect:vc.imageresizerView.imageView.frame toView:JPKeyWindow];

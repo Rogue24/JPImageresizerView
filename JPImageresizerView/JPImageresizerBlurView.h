@@ -6,35 +6,25 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JPImageresizerAppearance.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JPImageresizerBlurView : UIView
 - (instancetype)initWithFrame:(CGRect)frame
-                       effect:(UIVisualEffect *_Nullable)effect
-                      bgColor:(UIColor *_Nullable)bgColor
-                    maskAlpha:(CGFloat)maskAlpha;
+                   appearance:(JPImageresizerAppearance *)appearance
+                       isBlur:(BOOL)isBlur
+                  isMaskAlpha:(BOOL)isMaskAlpha
+                 cornerRadius:(CGFloat)cornerRadius;
 
+@property (nonatomic, strong) JPImageresizerAppearance *appearance;
+@property (nonatomic, assign) BOOL isBlur;
+@property (nonatomic, assign) BOOL isMaskAlpha;
 @property (nonatomic, assign) CGFloat cornerRadius;
 
-- (BOOL)isBlur;
-- (UIVisualEffect *_Nullable)effect;
-- (UIColor *_Nullable)bgColor;
-- (CGFloat)maskAlpha;
-- (BOOL)isMaskAlpha;
-
+- (void)setAppearance:(JPImageresizerAppearance *)appearance duration:(NSTimeInterval)duration;
 - (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration;
-- (void)setEffect:(UIVisualEffect *_Nullable)effect duration:(NSTimeInterval)duration;
-- (void)setBgColor:(UIColor *_Nullable)bgColor duration:(NSTimeInterval)duration;
-- (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration;
 - (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration;
-
-- (void)setupIsBlur:(BOOL)isBlur
-             effect:(UIVisualEffect *_Nullable)effect
-            bgColor:(UIColor *_Nullable)bgColor
-          maskAlpha:(CGFloat)maskAlpha
-        isMaskAlpha:(BOOL)isMaskAlpha
-           duration:(NSTimeInterval)duration;
 @end
 
 NS_ASSUME_NONNULL_END

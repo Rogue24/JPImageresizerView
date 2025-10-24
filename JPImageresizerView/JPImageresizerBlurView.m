@@ -13,39 +13,36 @@
 @end
 
 @implementation JPImageresizerBlurView
-{
-    BOOL _isBlur;
-    UIVisualEffect *_effect;
-    UIColor *_bgColor;
-    CGFloat _maskAlpha;
-    BOOL _isMaskAlpha;
-}
 
 - (instancetype)initWithFrame:(CGRect)frame
-                       effect:(UIVisualEffect *)effect
-                      bgColor:(UIColor *)bgColor
-                    maskAlpha:(CGFloat)maskAlpha {
+                   appearance:(JPImageresizerAppearance *)appearance
+                       isBlur:(BOOL)isBlur
+                  isMaskAlpha:(BOOL)isMaskAlpha
+                 cornerRadius:(CGFloat)cornerRadius {
     if (self = [super initWithFrame:frame]) {
-        _effect = effect;
-        _bgColor = bgColor;
-        _maskAlpha = maskAlpha;
-        _isBlur = YES;
-        _isMaskAlpha = YES;
-
-        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        _appearance = appearance;
+        _isBlur = isBlur;
+        _isMaskAlpha = isMaskAlpha;
+        _cornerRadius = cornerRadius;
+        
+        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:(isBlur ? appearance.bgEffect : nil)];
         effectView.frame = self.bounds;
         effectView.userInteractionEnabled = NO;
         effectView.layer.masksToBounds = YES;
+        effectView.layer.cornerRadius = cornerRadius;
         [self addSubview:effectView];
         _effectView = effectView;
 
         UIView *fillView = [[UIView alloc] initWithFrame:self.bounds];
+        fillView.alpha = isMaskAlpha ? ((appearance.bgEffect || !isBlur) ? 0 : appearance.maskAlpha) : 1;
         fillView.userInteractionEnabled = NO;
-        fillView.layer.backgroundColor = bgColor.CGColor;
         fillView.layer.masksToBounds = YES;
-        fillView.alpha = _isMaskAlpha ? ((_effect || !_isBlur) ? 0 : maskAlpha) : 1;
+        fillView.layer.cornerRadius = cornerRadius;
+        fillView.layer.backgroundColor = appearance.bgColor.CGColor;
         [self addSubview:fillView];
         _fillView = fillView;
+        
+        _effectView.layer.cornerRadius = _fillView.layer.cornerRadius = cornerRadius;
     }
     return self;
 }
@@ -57,25 +54,48 @@
     self.maskView.frame = self.bounds;
 }
 
-#pragma mark - getter
-
-- (BOOL)isBlur {
-    return _isBlur;
-}
-- (UIVisualEffect *)effect {
-    return _effect;
-}
-- (UIColor *)bgColor {
-    return _bgColor;
-}
-- (CGFloat)maskAlpha {
-    return _maskAlpha;
-}
-- (BOOL)isMaskAlpha {
-    return _isMaskAlpha;
-}
-
 #pragma mark - setter
+
+- (void)setAppearance:(JPImageresizerAppearance *)appearance {
+    [self setAppearance:appearance duration:0];
+}
+- (void)setAppearance:(JPImageresizerAppearance *)appearance duration:(NSTimeInterval)duration {
+    _appearance = appearance;
+    
+    UIVisualEffect *effect = self.isBlur ? appearance.bgEffect : nil;
+    CGColorRef cgColor = appearance.bgColor.CGColor;
+    CGFloat alpha = self.isMaskAlpha ? ((appearance.bgEffect || !self.isBlur) ? 0 : appearance.maskAlpha) : 1;
+    
+    void (^animations)(void) = ^{
+        self.effectView.effect = effect;
+        self.fillView.layer.backgroundColor = cgColor;
+        self.fillView.alpha = alpha;
+    };
+    
+    if (duration > 0) {
+        [UIView animateWithDuration:duration animations:animations];
+    } else {
+        animations();
+    }
+}
+
+- (void)setIsBlur:(BOOL)isBlur {
+    [self setIsBlur:isBlur duration:0];
+}
+- (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration {
+    if (_isBlur == isBlur) return;
+    _isBlur = isBlur;
+    [self setAppearance:_appearance duration:duration];
+}
+
+- (void)setIsMaskAlpha:(BOOL)isMaskAlpha {
+    [self setIsMaskAlpha:isMaskAlpha duration:0];
+}
+- (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration {
+    if (_isMaskAlpha == isMaskAlpha) return;
+    _isMaskAlpha = isMaskAlpha;
+    [self setAppearance:_appearance duration:duration];
+}
 
 - (void)setCornerRadius:(CGFloat)cornerRadius {
     // 已经确保了赋值的地方做好了限制，这里就不重复判断了
@@ -92,83 +112,6 @@
     if (_cornerRadius == cornerRadius) return;
     _cornerRadius = cornerRadius;
     _effectView.layer.cornerRadius = _fillView.layer.cornerRadius = cornerRadius;
-}
-
-- (void)setIsBlur:(BOOL)isBlur duration:(NSTimeInterval)duration {
-    _isBlur = isBlur;
-    [self __effectAnimation:duration];
-}
-- (void)setEffect:(UIVisualEffect *)effect duration:(NSTimeInterval)duration {
-    _effect = effect;
-    [self __effectAnimation:duration];
-}
-- (void)setBgColor:(UIColor *)bgColor duration:(NSTimeInterval)duration {
-    _bgColor = bgColor;
-    [self __effectAnimation:duration];
-}
-- (void)setMaskAlpha:(CGFloat)maskAlpha duration:(NSTimeInterval)duration {
-    _maskAlpha = maskAlpha;
-    [self __maskAlphaAnimation:duration];
-}
-- (void)setIsMaskAlpha:(BOOL)isMaskAlpha duration:(NSTimeInterval)duration {
-    _isMaskAlpha = isMaskAlpha;
-    [self __maskAlphaAnimation:duration];
-}
-
-- (void)setupIsBlur:(BOOL)isBlur
-             effect:(UIVisualEffect *)effect
-            bgColor:(UIColor *)bgColor
-          maskAlpha:(CGFloat)maskAlpha
-        isMaskAlpha:(BOOL)isMaskAlpha
-           duration:(NSTimeInterval)duration {
-    _isBlur = isBlur;
-    _effect = effect;
-    _bgColor = bgColor;
-    _maskAlpha = maskAlpha;
-    _isMaskAlpha = isMaskAlpha;
-    effect = _isBlur ? _effect : nil;
-    maskAlpha = _isMaskAlpha ? ((_effect || !_isBlur) ? 0 : _maskAlpha) : 1;
-    void (^animations)(void) = ^{
-        self.effectView.effect = effect;
-        self.fillView.layer.backgroundColor = bgColor.CGColor;
-        self.fillView.alpha = maskAlpha;
-    };
-    if (duration > 0) {
-        [UIView animateWithDuration:duration animations:animations];
-    } else {
-        animations();
-    }
- }
-
-- (void)__effectAnimation:(NSTimeInterval)duration {
-    void (^animations)(void) = ^{
-        self.effectView.effect = self->_isBlur ? self->_effect : nil;
-        if (self->_isMaskAlpha) {
-            self.fillView.alpha = (self->_effect || !self->_isBlur) ? 0 : self->_maskAlpha;
-        } else {
-            self.fillView.alpha = 1;
-        }
-    };
-    if (duration > 0) {
-        [UIView animateWithDuration:duration animations:animations];
-    } else {
-        animations();
-    }
-}
-
-- (void)__maskAlphaAnimation:(NSTimeInterval)duration {
-    void (^animations)(void) = ^{
-        if (self->_isMaskAlpha) {
-            self.fillView.alpha = (self->_effect || !self->_isBlur) ? 0 : self->_maskAlpha;
-        } else {
-            self.fillView.alpha = 1;
-        }
-    };
-    if (duration > 0) {
-        [UIView animateWithDuration:duration animations:animations];
-    } else {
-        animations();
-    }
 }
 
 @end

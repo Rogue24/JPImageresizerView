@@ -26,36 +26,48 @@ extension JPExample.ConfigureModel {
         switch item {
         // MARK: - Section0
         case .`default`:
-            let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
-            return .init(.lightContent, configure)
+            return .init(.lightContent, .defaultConfigure(with: .randomLocalImage))
             
         case .blurBg:
+            let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
             if Bool.random() {
-                let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
-                return .init(.lightContent, configure)
+                return .init(.lightContent, configure.jp_mainAppearance {
+                    $0.bgEffect = UIBlurEffect(style: .dark)
+                })
             } else {
-                let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
-                return .init(.darkContent, configure)
+                return .init(.darkContent, configure.jp_mainAppearance {
+                    $0.strokeColor = UIColor(red: 56.0 / 255.0, green: 121.0 / 255.0, blue: 242.0 / 255.0, alpha: 1)
+                    $0.bgEffect = UIBlurEffect(style: .light)
+                    $0.bgColor = .white
+                })
             }
             
         case .customBorder:
+            let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
             if Bool.random() {
-                let configure = JPImageresizerConfigure.lightBlurMaskTypeConfigure(with: .randomLocalImage)
-                    .jp_strokeColor(UIColor(red: 205.0 / 255.0, green: 107.0 / 255.0, blue: 153.0 / 255.0, alpha: 1))
+                _ = configure
+                    .jp_mainAppearance {
+                        $0.strokeColor = UIColor(red: 56.0 / 255.0, green: 121.0 / 255.0, blue: 242.0 / 255.0, alpha: 1)
+                        $0.bgEffect = UIBlurEffect(style: .light)
+                        $0.bgColor = .white
+                    }
                     .jp_borderImage(UIImage.getStretchBorderImage())
                     .jp_borderImageRectInset(UIImage.stretchBorderRectInset)
                 return .init(.darkContent, configure)
             } else {
-                let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
-                    .jp_frameType(.classicFrameType)
+                _ = configure
+                    .jp_mainAppearance { $0.bgEffect = UIBlurEffect(style: .dark) }
                     .jp_borderImage(UIImage.getTileBorderImage())
                     .jp_borderImageRectInset(UIImage.tileBorderRectInset)
                 return .init(.lightContent, configure)
             }
             
         case .roundResize:
-            let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
-                .jp_strokeColor(UIColor(red: 250.0 / 255.0, green: 250.0 / 255.0, blue: 250.0 / 255.0, alpha: 1))
+            let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
+                .jp_mainAppearance {
+                    $0.strokeColor = UIColor(red: 250.0 / 255.0, green: 250.0 / 255.0, blue: 250.0 / 255.0, alpha: 1)
+                    $0.bgEffect = UIBlurEffect(style: .dark)
+                }
                 .jp_frameType(.classicFrameType)
                 .jp_isClockwiseRotation(true)
                 .jp_animationCurve(.easeOut)
@@ -64,7 +76,8 @@ extension JPExample.ConfigureModel {
             return .init(.lightContent, configure)
             
         case .mask:
-            let configure = JPImageresizerConfigure.darkBlurMaskTypeConfigure(with: .randomLocalImage)
+            let configure = JPImageresizerConfigure.defaultConfigure(with: .randomLocalImage)
+                .jp_mainAppearance { $0.bgEffect = UIBlurEffect(style: .dark) }
                 .jp_frameType(.classicFrameType)
                 .jp_maskImage(UIImage.bundleImage("love.png"))
                 .jp_isArbitrarily(false)
@@ -83,11 +96,12 @@ extension JPExample.ConfigureModel {
             let videoPath = Bundle.main.path(forResource: "yaorenmao", ofType: "mov")!
             let videoURL = URL(fileURLWithPath: videoPath)
             let configure = JPImageresizerConfigure
-                .lightBlurMaskTypeConfigure(withVideoURL: videoURL,
-                                            make: nil,
-                                            fixErrorBlock: nil,
-                                            fixStart: nil,
-                                            fixProgressBlock: nil)
+                .defaultConfigure(withVideoURL: videoURL, make: nil,
+                                  fixErrorBlock: nil, fixStart: nil, fixProgressBlock: nil)
+                .jp_mainAppearance {
+                    $0.bgEffect = UIBlurEffect(style: .light)
+                    $0.bgColor = .white
+                }
                 .jp_borderImage(UIImage.getStretchBorderImage())
                 .jp_borderImageRectInset(UIImage.stretchBorderRectInset)
             return .init(.darkContent, configure)

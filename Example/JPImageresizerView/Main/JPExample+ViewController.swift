@@ -41,9 +41,10 @@ extension JPExample {
             }
         }
         
-        let cacheBtn = UIButton(type: .system)
-        @objc dynamic var cacheModel: ConfigureModel? = nil
-        var cacheCanceler: AnyCancellable?
+        // Swift的属性想要支持KVC/KVO需要使用`@objc dynamic`修饰符
+        @objc dynamic fileprivate var cacheModel: ConfigureModel? = nil
+        private var cacheCanceler: AnyCancellable?
+        private let cacheBtn = UIButton(type: .system)
         
         // MARK: - Life cycle
         
@@ -136,7 +137,19 @@ extension JPExample.ViewController {
     
     @objc func backCacheAction() {
         guard let cacheModel = self.cacheModel else { return }
-        pushImageresizerVC(with: cacheModel)
+        if #available(iOS 26.0, *) {
+            let vc = JPImageresizerViewController.build(with: cacheModel.statusBarStyle, configure: cacheModel.configure)
+            vc.preferredTransition = .zoom { [weak self] context in
+                // iOS26新增，返回触发的UIBarButtonItem
+                return self?.navigationItem.leftBarButtonItem
+            }
+            vc.backBlock = {
+                $0.dismiss(animated: true)
+            }
+            present(vc, animated: true)
+        } else {
+            pushImageresizerVC(with: cacheModel)
+        }
     }
 }
 

@@ -43,6 +43,7 @@
 		00746A8C2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00746A8B2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift */; };
 		00796CC22B626D1E001F9C51 /* transparentBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 00796CC12B626D1E001F9C51 /* transparentBG.png */; };
 		00796CC42B62795E001F9C51 /* colorpicker.png in Resources */ = {isa = PBXBuildFile; fileRef = 00796CC32B62795E001F9C51 /* colorpicker.png */; };
+		00881D2D2EA218E6003474C6 /* KyrieIrving.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 00881D2C2EA218E6003474C6 /* KyrieIrving.jpg */; };
 		008BEF8729594ACE00C5A82C /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8629594ACE00C5A82C /* UIViewController+.swift */; };
 		008BEF8D29599D7D00C5A82C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage+.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample+FixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */; };
@@ -168,6 +169,7 @@
 		00746A8B2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPColorMeasurementViewController.swift; sourceTree = "<group>"; };
 		00796CC12B626D1E001F9C51 /* transparentBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = transparentBG.png; sourceTree = "<group>"; };
 		00796CC32B62795E001F9C51 /* colorpicker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colorpicker.png; sourceTree = "<group>"; };
+		00881D2C2EA218E6003474C6 /* KyrieIrving.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KyrieIrving.jpg; sourceTree = "<group>"; };
 		008BEF8629594ACE00C5A82C /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		008BEF8C29599D7D00C5A82C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+FixOrientation.swift"; sourceTree = "<group>"; };
@@ -520,6 +522,7 @@
 				1A54DA81254589A60053F75F /* supreme.png */,
 				00796CC12B626D1E001F9C51 /* transparentBG.png */,
 				00796CC32B62795E001F9C51 /* colorpicker.png */,
+				00881D2C2EA218E6003474C6 /* KyrieIrving.jpg */,
 			);
 			path = Picture;
 			sourceTree = "<group>";
@@ -787,6 +790,7 @@
 				1A54DA90254589A60053F75F /* Kobe.jpg in Resources */,
 				006A04972B395A71009D8E82 /* bazhuawan_2.png in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				00881D2D2EA218E6003474C6 /* KyrieIrving.jpg in Resources */,
 				1A54DA95254589A60053F75F /* Girl4.jpg in Resources */,
 				1A54DA91254589A60053F75F /* flowers.jpg in Resources */,
 				1A54DAA0254589A60053F75F /* yaorenmao.mov in Resources */,

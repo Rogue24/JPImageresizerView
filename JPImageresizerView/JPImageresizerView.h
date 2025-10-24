@@ -184,7 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否可重置（该属性仅针对[旋转]、[缩放]、[镜像]的变化情况，其他如裁剪宽高比、圆切等变化情况需用户自行判定能否重置） */
 @property (nonatomic, assign, readonly) BOOL isCanRecovery;
 
-#pragma mark - 裁剪宽高比、圆角、蒙版相关
+#pragma mark - 裁剪宽高比、圆角相关
 /**
  * 初始裁剪宽高比（默认为初始化时的resizeWHScalem）
  * 调用 -recoveryByInitialResizeWHScale 方法进行重置则 resizeWHScale 会重置为该属性的值
@@ -220,7 +220,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setResizeCornerRadius:(CGFloat)resizeCornerRadius animated:(BOOL)isAnimated;
 
 /**
- * 裁剪框的显示是否忽略裁剪圆角（默认为NO）
+ * 裁剪框的显示是否忽略裁剪圆角（默认为NO；若圆角不为0，如果设置为YES则裁剪框不会显示圆角，但最终裁剪会带有圆角）
  * 设置该值会调用 -setIgnoresCornerRadiusForDisplay: animated: 方法（isAnimated = YES）
  */
 @property (nonatomic) BOOL ignoresCornerRadiusForDisplay;
@@ -228,43 +228,9 @@ NS_ASSUME_NONNULL_BEGIN
  @method
  @brief 设置裁剪框的显示是否忽略裁剪圆角
  @param isAnimated --- 是否带动画效果
- @discussion 若设置 ignoresCornerRadiusForDisplay 为 YES，裁剪框将不受 resizeCornerRadius 的影响，也就是不会显示圆角，但最终裁剪会带上 resizeCornerRadius 设置的圆角
+ @discussion 若圆角 resizeCornerRadius 不为0，如果设置为YES，裁剪框将不会显示圆角，但最终裁剪会带有圆角
  */
 - (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated;
-
-/**
- * 是否圆切（直接设置：YES --> self.isArbitrarily = NO，固定以 1:1 比例拖拽）
- * 设置该值会调用 -setIsRoundResize: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (isRoundResize ? NO : self.isArbitrarily)，isAnimated = YES）
- */
-@property (nonatomic) BOOL isRoundResize;
-/*!
- @method
- @brief 设置是否圆切
- @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = 1）
- @param isAnimated --- 是否带动画效果
- @discussion 以圆形裁剪，此状态下边框图片会隐藏，并且宽高比是1:1
- */
-- (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
-
-/**
- * 蒙版图片（直接设置：不为空 --> self.isArbitrarily = NO，固定以蒙版图片的宽高比例拖拽）
- * 设置该值会调用 -setMaskImage: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (maskImage ? NO : self.isArbitrarily)，isAnimated = YES）
- */
-@property (nonatomic) UIImage *_Nullable maskImage;
-/*!
- @method
- @brief 设置蒙版图片
- @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = maskImage.size.width / maskImage.size.height）
- @param isAnimated --- 是否带动画效果
- @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
- */
-- (void)setMaskImage:(UIImage *_Nullable)maskImage isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
-
-/** 自定义蒙版图片的显示处理（默认为nil，若为空会生成 alpha 反转的黑色蒙版图片用来显示） */
-@property (nonatomic) JPMaskImageDisplayHandler maskImageDisplayHandler;
-
-/** 裁剪时是否忽略蒙版图片（默认为NO，若为YES裁剪时会忽略蒙版） */
-@property (nonatomic, assign) BOOL ignoresMaskImageForCrop;
 
 /**
  * 是否可以任意比例拖拽
@@ -281,6 +247,97 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 裁剪框当前的宽高比 */
 @property (readonly) CGFloat imageresizerWHScale;
+
+#pragma mark - 圆切相关
+/**
+ * 是否圆切（直接设置：YES --> self.isArbitrarily = NO，固定以 1:1 比例拖拽）
+ * 设置该值会调用 -setIsRoundResize: isToBeArbitrarily: animated: 方法（isToBeArbitrarily = (isRoundResize ? NO : self.isArbitrarily)，isAnimated = YES）
+ */
+@property (nonatomic) BOOL isRoundResize;
+/*!
+ @method
+ @brief 设置是否圆切
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = 1）
+ @param isAnimated --- 是否带动画效果
+ @discussion 以圆形裁剪，此状态下边框图片会隐藏，并且宽高比是1:1
+ */
+- (void)setIsRoundResize:(BOOL)isRoundResize isToBeArbitrarily:(BOOL)isToBeArbitrarily animated:(BOOL)isAnimated;
+
+#pragma mark - 蒙版相关
+/**
+ * 蒙版图片（直接设置：不为空 --> self.isArbitrarily = NO，固定以蒙版图片的宽高比例拖拽）
+ * 设置该值会调用 -setMaskImage: maskAppearance: isToBeArbitrarily: animated: 方法（maskAppearance = (maskImage ? self.maskAppearance : nil)，isToBeArbitrarily = (maskImage ? NO : self.isArbitrarily)，isAnimated = YES）
+ */
+@property (nonatomic) UIImage *_Nullable maskImage;
+/*!
+ @method
+ @brief 设置蒙版图片
+ @param isAnimated --- 是否带动画效果
+ @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
+ */
+- (void)setMaskImage:(UIImage *_Nullable)maskImage animated:(BOOL)isAnimated;
+/*!
+ @method
+ @brief 设置蒙版图片
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = maskImage.size.width / maskImage.size.height）
+ @param isAnimated --- 是否带动画效果
+ @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
+ */
+- (void)setMaskImage:(UIImage *_Nullable)maskImage
+   isToBeArbitrarily:(BOOL)isToBeArbitrarily
+            animated:(BOOL)isAnimated;
+/*!
+ @method
+ @brief 设置蒙版图片
+ @param maskAppearance --- 蒙版外观配置（包括模糊效果、背景颜色、遮罩颜色的透明度；需要 maskImage 不为空才能设置，若设置空值则与主要外观配置一致）
+ @param isToBeArbitrarily --- 设置之后是否为任意比例拖拽（若为YES，最后 resizeWHScale = 0；若为NO，则 resizeWHScale = maskImage.size.width / maskImage.size.height）
+ @param isAnimated --- 是否带动画效果
+ @discussion 设置蒙版，此状态下网格线会隐藏，并且宽高比是蒙版图片的宽高比
+ */
+- (void)setMaskImage:(UIImage *_Nullable)maskImage
+      maskAppearance:(JPImageresizerAppearance *_Nullable)maskAppearance
+   isToBeArbitrarily:(BOOL)isToBeArbitrarily
+            animated:(BOOL)isAnimated;
+
+/**
+ * 蒙版外观配置（若 maskImage 为空，该属性也即为空）
+ * 设置该值会调用 -setMaskAppearance: animated: 方法（isAnimated = YES）
+ */
+@property (nonatomic) JPImageresizerAppearance *_Nullable maskAppearance;
+/*!
+ @method
+ @brief 设置蒙版外观配置
+ @param isAnimated --- 是否带动画效果
+ @discussion 包括模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）；需要 maskImage 不为空才能设置，若设置空值则与主要外观配置一致
+ */
+- (void)setMaskAppearance:(JPImageresizerAppearance *_Nullable)maskAppearance animated:(BOOL)isAnimated;
+/*!
+ @method
+ @brief 更新蒙版外观配置（需要 maskImage 不为空且设置了非空值才起效）
+ @param isAnimated --- 是否带动画效果
+ @discussion 包括模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ */
+- (void)updateMaskAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated;
+
+/** 自定义蒙版图片的显示处理（默认为nil，若为 nil 内部会自动生成 alpha 反转的黑色蒙版图片用来显示） */
+@property (nonatomic) JPMaskImageDisplayHandler maskImageDisplayHandler;
+
+/** 裁剪时是否忽略蒙版图片（默认为NO，若为YES裁剪时会忽略蒙版） */
+@property (nonatomic, assign) BOOL ignoresMaskImageForCrop;
+
+#pragma mark - 主要外观配置
+/**
+ * 主要外观配置
+ * 包括裁剪边框线颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ */
+@property (readonly) JPImageresizerAppearance *mainAppearance;
+/*!
+ @method
+ @brief 更新主要外观配置
+ @param isAnimated --- 是否带动画效果
+ @discussion 包括裁剪边框线颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ */
+- (void)updateMainAppearance:(JPAppearanceSettingBlock)setting animated:(BOOL)isAnimated;
 
 #pragma mark - 裁剪框样式相关
 /** 边框样式 */
@@ -312,47 +369,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 裁剪框边线能否进行对边拖拽（当裁剪宽高比为0，即任意比例时才有效，默认为YES） */
 @property (nonatomic, assign) BOOL edgeLineIsEnabled;
-
-#pragma mark - 裁剪框、背景、遮罩颜色相关
-/**
- * 裁剪线颜色
- * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIColor *_Nullable strokeColor;
-
-/**
- * 模糊效果
- * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIVisualEffect *_Nullable effect;
-
-/**
- * 背景颜色
- * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) UIColor *_Nullable bgColor;
-
-/**
- * 遮罩颜色的透明度（遮罩颜色 = 背景颜色 * 此透明度）
- * 设置该值会调用 -setupStrokeColor: effect: bgColor: maskAlpha: animated: 方法（其他参数为当前值，isAnimated = YES）
- */
-@property (nonatomic) CGFloat maskAlpha;
-
-/*!
- @method
- @brief 设置颜色
- @param strokeColor --- 裁剪线颜色
- @param effect --- 模糊效果
- @param bgColor --- 背景颜色
- @param maskAlpha --- 遮罩颜色的透明度（背景颜色 * 透明度）
- @param isAnimated --- 是否带动画效果
- @discussion 同时修改UI元素
- */
-- (void)setupStrokeColor:(UIColor *_Nullable)strokeColor
-                  effect:(UIVisualEffect *_Nullable)effect
-                 bgColor:(UIColor *_Nullable)bgColor
-               maskAlpha:(CGFloat)maskAlpha
-                animated:(BOOL)isAnimated;
 
 #pragma mark - 旋转、镜像翻转相关
 /** 是否顺时针旋转（默认逆时针） */

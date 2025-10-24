@@ -10,7 +10,7 @@
 @implementation CABasicAnimation (JPImageresizer)
 
 + (CABasicAnimation *)jpir_backwardsAnimationWithKeyPath:(NSString *)keyPath
-                                                fromValue:(id)fromValue
+                                               fromValue:(id)fromValue
                                                  toValue:(id)toValue
                                       timingFunctionName:(CAMediaTimingFunctionName)timingFunctionName
                                                 duration:(NSTimeInterval)duration {
