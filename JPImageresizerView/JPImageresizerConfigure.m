@@ -222,16 +222,16 @@
     };
 }
 
-- (JPImageresizerConfigure *(^)(JPMaskImageDisplayHandler))jp_maskImageDisplayHandler {
-    return ^(JPMaskImageDisplayHandler maskImageDisplayHandler) {
-        self.maskImageDisplayHandler = maskImageDisplayHandler;
+- (JPImageresizerConfigure * (^)(JPImageresizerAppearance *))jp_maskAppearance {
+    return ^(JPImageresizerAppearance *maskAppearance) {
+        self.maskAppearance = maskAppearance;
         return self;
     };
 }
 
-- (JPImageresizerConfigure * (^)(JPImageresizerAppearance *))jp_maskAppearance {
-    return ^(JPImageresizerAppearance *maskAppearance) {
-        self.maskAppearance = maskAppearance;
+- (JPImageresizerConfigure *(^)(JPMaskImageDisplayHandler))jp_maskImageDisplayHandler {
+    return ^(JPMaskImageDisplayHandler maskImageDisplayHandler) {
+        self.maskImageDisplayHandler = maskImageDisplayHandler;
         return self;
     };
 }

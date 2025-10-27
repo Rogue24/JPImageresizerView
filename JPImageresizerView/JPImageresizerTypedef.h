@@ -294,14 +294,14 @@ typedef void(^_Nullable JPVoidBlock)(void);
 
 /**
  * 修改外观配置的Block
- *  - 包括裁剪边框线颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ *  - 包括裁剪边框颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
  */
 typedef void(^_Nullable JPAppearanceSettingBlock)(JPImageresizerAppearance *appearance);
 
 /**
- * 用于蒙版图片的显示处理Block
- * 裁剪要使用蒙版原图，默认会生成 alpha 反转的黑色蒙版图片用来显示，如果需要其他显示样式，可使用该Block另行处理而不影响原图
- *  - originMaskImage：蒙版原图
+ * 用于蒙版遮罩显示的处理Block
+ * 裁剪要使用蒙版原图，默认会另外生成 alpha 反转的黑色蒙版图片用于遮罩显示；如果需要其他显示样式，可使用该Block另行处理从而不影响原图
+ *  - originMaskImage：蒙版原图（例如可以不进行任何处理，直接返回originMaskImage，用原图进行遮罩）
  */
 typedef UIImage *_Nonnull (^_Nullable JPMaskImageDisplayHandler)(UIImage *_Nonnull originMaskImage);
 

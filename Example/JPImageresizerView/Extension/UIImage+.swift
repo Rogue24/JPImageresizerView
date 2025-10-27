@@ -17,6 +17,15 @@ extension UIImage {
 }
 
 extension UIImage {
+    // MARK: - 玻璃蒙版
+    @objc static let glassMaskImage: UIImage = {
+        let img = UIImage(named: "mask_rounded_fade")!
+        return img.resizableImage(withCapInsets: UIEdgeInsets(top: 100, left: 100, bottom: 100, right: 100),
+                                  resizingMode: .stretch)
+    }()
+}
+
+extension UIImage {
     // MARK: - Stretch border
     @objc static var stretchBorderRectInset: CGPoint { CGPoint(x: -2, y: -2) }
     @objc static func getStretchBorderImage() -> UIImage {

@@ -826,7 +826,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JPImageresizerView_Example/Pods-JPImageresizerView_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FunnyButton/FunnyButton.framework",
 				"${BUILT_PRODUCTS_DIR}/JPBasic/JPBasic.framework",
 				"${BUILT_PRODUCTS_DIR}/JPCrop/JPCrop.framework",
 				"${BUILT_PRODUCTS_DIR}/JPImageresizerView/JPImageresizerView.framework",
@@ -839,7 +838,6 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FunnyButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPBasic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPCrop.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JPImageresizerView.framework",

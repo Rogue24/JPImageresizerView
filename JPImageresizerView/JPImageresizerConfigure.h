@@ -30,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
     - isIgnoresResizeCornerRadiusForDisplay = NO;
     - isRoundResize = NO;
     - maskImage = nil;
-    - maskImageDisplayHandler = nil;
     - maskAppearance = nil;
+    - maskImageDisplayHandler = nil;
     - ignoresMaskImageForCrop = NO;
     - isArbitrarily = YES;
     - contentInsets = UIEdgeInsetsMake(16, 16, 16, 16);
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * 主要外观配置
- *  - 包括裁剪边框线颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ *  - 包括裁剪边框颜色、模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
  */
 @property (nonatomic, strong) JPImageresizerAppearance *mainAppearance;
 
@@ -133,14 +133,15 @@ NS_ASSUME_NONNULL_BEGIN
 /** 初始化蒙版图片 */
 @property (nonatomic, strong) UIImage *_Nullable maskImage;
 
-/** 自定义蒙版图片的显示处理（默认为nil，若为空会生成 alpha 反转的黑色蒙版图片用来显示） */
-@property (nonatomic, copy) JPMaskImageDisplayHandler maskImageDisplayHandler;
-
 /**
  * 蒙版外观配置
- *  - 包括模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）；需要 maskImage 不为空才能设置，若设置空值则与主要外观配置一致
+ *  - 包括模糊效果、背景颜色、遮罩颜色的透明度（背景颜色 * 透明度）
+ *  - 需要 maskImage 不为空才能设置，若设置空值则与主要外观配置一致
  */
 @property (nonatomic, strong) JPImageresizerAppearance *_Nullable maskAppearance;
+
+/** 自定义蒙版图片的遮罩显示处理（默认为nil；若为 nil 内部会自动生成 alpha 反转的黑色蒙版图片用于遮罩显示） */
+@property (nonatomic, copy) JPMaskImageDisplayHandler maskImageDisplayHandler;
 
 /** 裁剪时是否忽略蒙版图片（默认为NO，若为YES裁剪时会忽略蒙版） */
 @property (nonatomic, assign) BOOL ignoresMaskImageForCrop;
@@ -209,8 +210,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) JPImageresizerConfigure *(^jp_ignoresCornerRadiusForDisplay)(BOOL ignoresCornerRadiusForDisplay);
 @property (readonly) JPImageresizerConfigure *(^jp_isRoundResize)(BOOL isRoundResize);
 @property (readonly) JPImageresizerConfigure *(^jp_maskImage)(UIImage *_Nullable maskImage);
-@property (readonly) JPImageresizerConfigure *(^jp_maskImageDisplayHandler)(JPMaskImageDisplayHandler maskImageDisplayHandler);
 @property (readonly) JPImageresizerConfigure *(^jp_maskAppearance)(JPImageresizerAppearance *_Nullable maskAppearance);
+@property (readonly) JPImageresizerConfigure *(^jp_maskImageDisplayHandler)(JPMaskImageDisplayHandler maskImageDisplayHandler);
 @property (readonly) JPImageresizerConfigure *(^jp_ignoresMaskImageForCrop)(BOOL ignoresMaskImageForCrop);
 @property (readonly) JPImageresizerConfigure *(^jp_isArbitrarily)(BOOL isArbitrarily);
 @property (readonly) JPImageresizerConfigure *(^jp_edgeLineIsEnabled)(BOOL edgeLineIsEnabled);

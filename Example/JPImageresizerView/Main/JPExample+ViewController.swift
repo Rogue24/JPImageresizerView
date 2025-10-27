@@ -10,7 +10,6 @@ import UIKit
 import JPImageresizerView
 import JPBasic
 import Combine
-import FunnyButton
 
 var mainVC: JPExample.ViewController {
     (rootVC as! UINavigationController).viewControllers.first! as! JPExample.ViewController

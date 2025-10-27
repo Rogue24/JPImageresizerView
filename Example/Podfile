@@ -12,7 +12,6 @@ target 'JPImageresizerView_Example' do
   pod 'JPBasic/JPProgressHUD'
   pod 'JPBasic/JPBrowseImages'
   pod 'JPCrop'
-  pod 'FunnyButton'
   pod 'ScreenRotator'
   pod 'LookinServer', :configurations => ['Debug']
   

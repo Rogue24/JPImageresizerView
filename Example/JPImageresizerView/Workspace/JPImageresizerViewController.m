@@ -40,7 +40,6 @@
 @property (nonatomic, strong) UIVisualEffect *bgEffect;
 @property (nonatomic, strong) UIColor *bgColor;
 @property (nonatomic, assign) CGFloat maskAlpha;
-@property (nonatomic, strong) UIImage *glassMaskImage;
 @property (readonly) BOOL isGlassMask;
 @end
 
@@ -49,15 +48,12 @@
 #pragma mark - getter
 
 - (UIImage *)glassMaskImage {
-    if (!_glassMaskImage) {
-        _glassMaskImage = [[UIImage imageNamed:@"mask_rounded_fade"] resizableImageWithCapInsets:UIEdgeInsetsMake(100, 100, 100, 100) resizingMode:UIImageResizingModeStretch];
-    }
-    return _glassMaskImage;
+    return [UIImage glassMaskImage];
 }
 
 - (BOOL)isGlassMask {
     UIImage *maskImage = self.imageresizerView.maskImage;
-    return _glassMaskImage && maskImage && _glassMaskImage == maskImage;
+    return maskImage && self.glassMaskImage == maskImage;
 }
 
 #pragma mark - 生命周期
