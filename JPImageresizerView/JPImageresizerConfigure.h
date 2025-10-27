@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
     - resizeScaledBounds = CGRectZero;
     - resizeWHScale = 0.0;
     - resizeCornerRadius = 0.0;
-    - isIgnoresResizeCornerRadiusForDisplay = NO;
+    - ignoresCornerRadiusForDisplay = NO;
     - isRoundResize = NO;
     - maskImage = nil;
     - maskAppearance = nil;
