@@ -48,10 +48,12 @@
 		008BEF8D29599D7D00C5A82C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8C29599D7D00C5A82C /* UIImage+.swift */; };
 		008BEF8F2959B0E500C5A82C /* JPExample+FixOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */; };
 		00A201DD2947349C00692814 /* JPExample+ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A201DC2947349C00692814 /* JPExample+ViewController.swift */; };
+		00B0E9352EB0D0B900C7515E /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B0E9342EB0D0B900C7515E /* UIView+.swift */; };
 		00B3FAF52968227E00F48389 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF22968227E00F48389 /* ImagePickerObject.swift */; };
 		00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF32968227E00F48389 /* ImagePicker.swift */; };
 		00B3FAF72968227E00F48389 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF42968227E00F48389 /* ImagePicker.API.swift */; };
 		00B3FAF92968306A00F48389 /* Error+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B3FAF82968306A00F48389 /* Error+.swift */; };
+		00D1FA222EAF83C4005CBAF5 /* JPSecureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D1FA212EAF83C4005CBAF5 /* JPSecureView.swift */; };
 		00E5D9D3296EB82E006A6FDD /* JPExample+Execute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E5D9D2296EB82E006A6FDD /* JPExample+Execute.swift */; };
 		1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E022B22B0F00B6B6AB /* JPPhotoViewModel.m */; };
 		1A0AB30022B22B0F00B6B6AB /* JPAlbumViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0AB2E122B22B0F00B6B6AB /* JPAlbumViewModel.m */; };
@@ -174,10 +176,12 @@
 		008BEF8C29599D7D00C5A82C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		008BEF8E2959B0E500C5A82C /* JPExample+FixOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+FixOrientation.swift"; sourceTree = "<group>"; };
 		00A201DC2947349C00692814 /* JPExample+ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+ViewController.swift"; sourceTree = "<group>"; };
+		00B0E9342EB0D0B900C7515E /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		00B3FAF22968227E00F48389 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
 		00B3FAF32968227E00F48389 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		00B3FAF42968227E00F48389 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
 		00B3FAF82968306A00F48389 /* Error+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+.swift"; sourceTree = "<group>"; };
+		00D1FA212EAF83C4005CBAF5 /* JPSecureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPSecureView.swift; sourceTree = "<group>"; };
 		00E5D9D2296EB82E006A6FDD /* JPExample+Execute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JPExample+Execute.swift"; sourceTree = "<group>"; };
 		1A0AB2DE22B22B0F00B6B6AB /* JPAlbumViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPAlbumViewModel.h; sourceTree = "<group>"; };
 		1A0AB2DF22B22B0F00B6B6AB /* JPPhotoViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPPhotoViewModel.h; sourceTree = "<group>"; };
@@ -313,6 +317,7 @@
 				006A9E272A77CD1200AD86BA /* UIAlertController+.swift */,
 				008BEF8629594ACE00C5A82C /* UIViewController+.swift */,
 				008BEF8C29599D7D00C5A82C /* UIImage+.swift */,
+				00B0E9342EB0D0B900C7515E /* UIView+.swift */,
 				006A9E292A77CD4700AD86BA /* View+.swift */,
 				002E78C0295AE1960071E30C /* Date+.swift */,
 				00B3FAF82968306A00F48389 /* Error+.swift */,
@@ -505,6 +510,7 @@
 				1A54DA74254583790053F75F /* JPExportCancelView.m */,
 				002E78BD295ADDB40071E30C /* JPSolveTool.h */,
 				002E78BE295ADDB40071E30C /* JPSolveTool.m */,
+				00D1FA212EAF83C4005CBAF5 /* JPSecureView.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -864,6 +870,7 @@
 				00B3FAF62968227E00F48389 /* ImagePicker.swift in Sources */,
 				1A0AB30422B22B0F00B6B6AB /* WMPageController.m in Sources */,
 				00746A8C2B620AA600F0E9A8 /* JPColorMeasurementViewController.swift in Sources */,
+				00D1FA222EAF83C4005CBAF5 /* JPSecureView.swift in Sources */,
 				0024C32D292F5AD7002513DA /* JPExample.swift in Sources */,
 				1A0AB35922B247DB00B6B6AB /* JPCategoryTitleViewModel.m in Sources */,
 				006A9E2C2A77DB9C00AD86BA /* UIAlertController+JPImageresizer.swift in Sources */,
@@ -901,6 +908,7 @@
 				1A54DA75254583790053F75F /* JPExportCancelView.m in Sources */,
 				1A0AB2FF22B22B0F00B6B6AB /* JPPhotoViewModel.m in Sources */,
 				1A0AB35B22B247DB00B6B6AB /* JPCategoryTitleView.m in Sources */,
+				00B0E9352EB0D0B900C7515E /* UIView+.swift in Sources */,
 				1A0AB30B22B22B0F00B6B6AB /* JPPhotoTool.m in Sources */,
 				1A658769262AEE0C00846689 /* JPCropViewController.swift in Sources */,
 				0002A5802CBBC81D0006C80F /* SceneDelegate.m in Sources */,
