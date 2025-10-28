@@ -7,11 +7,10 @@
 //
 
 #import "JPImageresizerViewController.h"
-#import "JPPreviewViewController.h"
+#import <JPImageresizerView_Example-Swift.h>
+#import <ScreenRotator/JPScreenRotator.h>
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
-#import "JPImageresizerView_Example-Swift.h"
-#import <ScreenRotator/JPScreenRotator.h>
 
 @interface JPImageresizerViewController ()
 @property (nonatomic, assign) JPScreenOrientation orientation;

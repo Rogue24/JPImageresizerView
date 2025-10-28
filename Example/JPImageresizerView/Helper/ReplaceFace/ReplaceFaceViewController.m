@@ -7,9 +7,7 @@
 //
 
 #import "ReplaceFaceViewController.h"
-#import "JPPreviewViewController.h"
-#import "JPPhotoTool.h"
-#import "JPImageresizerView_Example-Swift.h"
+#import <JPImageresizerView_Example-Swift.h>
 
 @implementation ReplaceFaceViewController
 
