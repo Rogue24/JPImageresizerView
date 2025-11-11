@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIView {
+    /// 移除与父视图相关的约束
     func removeConstraintsInParent() {
         guard let parent = superview else { return }
         
@@ -22,14 +23,16 @@ extension UIView {
         parent.removeConstraints(parentConstraints)
     }
     
-    func moveSelfAndConstraints(to newParent: UIView) {
+    /// 移动到新父视图并且把与旧父视图相关的约束迁移过去
+    @discardableResult
+    func reparentAndMigrateConstraints(to newParent: UIView) -> [NSLayoutConstraint] {
         guard let oldParent = superview else {
             removeFromSuperview()
             newParent.addSubview(self)
-            return
+            return []
         }
         
-        // 1. 获取所有与该 view 有关的约束
+        // 1. 获取旧父视图所有与该view有关的约束
         let oldConstraints = oldParent.constraints.filter {
             // firstItem 或 secondItem 是该view
             ($0.firstItem as? UIView) == self || ($0.secondItem as? UIView) == self
@@ -66,8 +69,11 @@ extension UIView {
         newParent.addSubview(self)
         
         // 5. 添加新约束
-//        guard newConstraints.count > 0 else { return }
-//        translatesAutoresizingMaskIntoConstraints = false // 如果newConstraints不为空，说明这个属性早就设置好了
-        NSLayoutConstraint.activate(newConstraints)
+        if newConstraints.count > 0 {
+//            translatesAutoresizingMaskIntoConstraints = false // 如果newConstraints不为空，说明这个属性早就设置好了
+            NSLayoutConstraint.activate(newConstraints)
+        }
+        
+        return newConstraints
     }
 }

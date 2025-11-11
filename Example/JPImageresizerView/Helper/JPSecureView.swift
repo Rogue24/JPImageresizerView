@@ -12,9 +12,10 @@ import UIKit
 open class JPSecureView: UITextField {
     // MARK: - Private Properties
     private var isInitialized = false
-    
     private weak var _container: UIView? = nil
-    private var container: UIView? {
+    
+    // MARK: - Public Properties
+    public var container: UIView? {
         _container ?? {
             guard isInitialized else { return nil }
             for subview in subviews {
@@ -40,7 +41,6 @@ open class JPSecureView: UITextField {
         }()
     }
     
-    // MARK: - Public Properties
     public var isSecured: Bool {
         set { super.isSecureTextEntry = newValue }
         get { super.isSecureTextEntry }
@@ -58,14 +58,13 @@ open class JPSecureView: UITextField {
         _setup()
     }
     
-    
-    open override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         
         guard let container else { return }
         let subviews = self.subviews
         for subview in subviews where subview != container {
-            subview.moveSelfAndConstraints(to: container)
+            subview.reparentAndMigrateConstraints(to: container)
         }
     }
     
