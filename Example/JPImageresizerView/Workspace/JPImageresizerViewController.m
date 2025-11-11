@@ -15,24 +15,33 @@
 @interface JPImageresizerViewController ()
 @property (nonatomic, assign) JPScreenOrientation orientation;
 
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
-@property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
-@property (weak, nonatomic) IBOutlet UIButton *resizeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *replaceMaskImgBtn;
 @property (weak, nonatomic) IBOutlet UIButton *horMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
-@property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
+@property (weak, nonatomic) IBOutlet UIButton *lockBtn;
 
-@property (weak, nonatomic) IBOutlet UIButton *replaceMaskImgBtn;
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *processBtns;
+@property (weak, nonatomic) IBOutlet UIButton *rotateBtn;
+@property (weak, nonatomic) IBOutlet UIButton *recoveryBtn;
+@property (weak, nonatomic) IBOutlet UIButton *resizeBtn;
+
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnLeftConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backBtnTopConstraint;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomBtnWidthConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomBtnPortraitBottomConstraints;
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *resizeBtnRightConstraint;
 
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *portraitConstraints;
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint) NSArray *landscapeConstraints;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topViewRightConstraint; // 原本与旧父视图相关的约束
+@property (nonatomic, strong) NSLayoutConstraint *topViewRightNewConstraint; // 更替与新父视图相关的约束
+@property (nonatomic, strong) NSLayoutConstraint *topViewBottomConstraint; // 新增与新父视图相关的约束
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomViewLeftConstraint; // 原本与旧父视图相关的约束
+@property (nonatomic, strong) NSLayoutConstraint *bottomViewLeftNewConstraint; // 更替与新父视图相关的约束
+@property (nonatomic, strong) NSLayoutConstraint *bottomViewTopConstraint; // 新增与新父视图相关的约束
 
 @property (nonatomic, assign) BOOL isExporting;
 @property (nonatomic, strong) UIColor *strokeColor;
@@ -110,6 +119,28 @@
     
     self.orientation = [JPScreenRotator sharedInstance].orientation;
     JPObserveNotification(self, @selector(orientationDidChange), JPScreenRotatorOrientationDidChangeNotification, nil);
+    
+    // 由于topView和bottomView转移了父视图（operationView -> operationView.container），
+    // 因此需要将与旧父视图相关的约束，重新对新父视图进行配置。
+    BOOL isPortrait = [JPScreenRotator sharedInstance].isPortrait;
+    
+    self.topViewRightConstraint.active = NO; // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    self.topViewRightNewConstraint = [self.topView.trailingAnchor constraintEqualToAnchor:self.topView.superview.trailingAnchor constant:0];
+    self.topViewRightNewConstraint.priority = isPortrait ? 999 : 1;
+    self.topViewRightNewConstraint.active = YES;
+    
+    self.topViewBottomConstraint = [self.topView.bottomAnchor constraintEqualToAnchor:self.topView.superview.bottomAnchor constant:0];
+    self.topViewBottomConstraint.priority = isPortrait ? 1 : 999;
+    self.topViewBottomConstraint.active = YES;
+    
+    self.bottomViewLeftConstraint.active = NO; // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    self.bottomViewLeftNewConstraint = [self.bottomView.leadingAnchor constraintEqualToAnchor:self.bottomView.superview.leadingAnchor constant:0];
+    self.bottomViewLeftNewConstraint.priority = isPortrait ? 999 : 1;
+    self.bottomViewLeftNewConstraint.active = YES;
+    
+    self.bottomViewTopConstraint = [self.bottomView.topAnchor constraintEqualToAnchor:self.bottomView.superview.topAnchor constant:0];
+    self.bottomViewTopConstraint.priority = isPortrait ? 1 : 999;
+    self.bottomViewTopConstraint.active = YES;
 }
 
 - (void)__setupImageresizerView {
@@ -211,21 +242,15 @@
         
         if (orientation == JPScreenOrientationLandscapeLeft) {
             backBtnLeft = JPStatusBarH;
-            resizeBtnRight = JPDiffTabBarH;
+            resizeBtnRight = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
         } else {
-            backBtnLeft = JPDiffTabBarH;
+            backBtnLeft = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
             resizeBtnRight = JPStatusBarH;
         }
         
         contentInsets.left += self.replaceMaskImgBtn.jp_width + backBtnLeft;
         contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
-        if (JPDiffTabBarH > 0) {
-            contentInsets.top = JPDiffTabBarH;
-            contentInsets.bottom = JPDiffTabBarH;
-        } else {
-            contentInsets.top = JPMargin;
-            contentInsets.bottom = JPMargin;
-        }
+        contentInsets.top = contentInsets.bottom = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
         
     } else {
         portraitPriority = 999;
@@ -236,12 +261,18 @@
         if (orientation == JPScreenOrientationPortrait) {
             backBtnTop = JPStatusBarH;
         } else {
-            backBtnTop = JPDiffTabBarH;
+            backBtnTop = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
         }
         
         contentInsets.top += JPStatusBarH + ButtonHeight;
         contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
     }
+    
+    self.topViewRightNewConstraint.priority = portraitPriority;
+    self.topViewBottomConstraint.priority = landscapePriority;
+    
+    self.bottomViewLeftNewConstraint.priority = portraitPriority;
+    self.bottomViewTopConstraint.priority = landscapePriority;
     
     for (NSLayoutConstraint *constraint in self.portraitConstraints) {
         constraint.priority = portraitPriority;
