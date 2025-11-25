@@ -213,15 +213,32 @@
     if (_orientation == orientation) return;
     _orientation = orientation;
     
+    BOOL isPortrait = orientation == JPScreenOrientationPortrait;
+    
     float portraitPriority;
     float landscapePriority;
     CGFloat backBtnLeft;
     CGFloat backBtnTop;
     CGFloat resizeBtnRight;
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
+    // 竖屏
+    if (isPortrait) {
+        portraitPriority = 999;
+        landscapePriority = 1;
+        backBtnLeft = JPMargin;
+        resizeBtnRight = JPMargin;
+        
+        if (orientation == JPScreenOrientationPortrait) {
+            backBtnTop = JPStatusBarH;
+        } else {
+            backBtnTop = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
+        }
+        
+        contentInsets.top += JPStatusBarH + ButtonHeight;
+        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
+    }
     // 横屏
-    if (orientation == JPScreenOrientationLandscapeLeft ||
-        orientation == JPScreenOrientationLandscapeRight) {
+    else {
         portraitPriority = 1;
         landscapePriority = 999;
         backBtnTop = JPMargin;
@@ -237,22 +254,6 @@
         contentInsets.left += self.replaceMaskImgBtn.jp_width + backBtnLeft;
         contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
         contentInsets.top = contentInsets.bottom = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-    }
-    // 竖屏
-    else {
-        portraitPriority = 999;
-        landscapePriority = 1;
-        backBtnLeft = JPMargin;
-        resizeBtnRight = JPMargin;
-        
-        if (orientation == JPScreenOrientationPortrait) {
-            backBtnTop = JPStatusBarH;
-        } else {
-            backBtnTop = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-        }
-        
-        contentInsets.top += JPStatusBarH + ButtonHeight;
-        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
     }
     
     self.topViewRightNewConstraint.priority = portraitPriority;
@@ -304,12 +305,9 @@
     }
     
     //「横竖屏切换」
-    // 📢 此时还是【旋转之前】的尺寸，延时大概0.1s后就能获取【旋转之后】的屏幕尺寸。
-    // 🤯 因为此时只是告知布局要刷新，实际刷新需要到`Runloop`的下一个循环才会进行。
     if (!self.imageresizerView) return;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:self.contentInsets duration:duration];
-    });
+    CGRect frame = isPortrait ? JPPortraitScreenBounds : JPLandscapeScreenBounds;
+    [self.imageresizerView updateFrame:frame contentInsets:contentInsets duration:duration];
 }
 
 #pragma mark - 按钮点击事件
