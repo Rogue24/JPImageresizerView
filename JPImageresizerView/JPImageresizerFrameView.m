@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
 #pragma mark - setter
 
 - (void)setImageresizerFrame:(CGRect)imageresizerFrame {
-    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1.0];
+    [self __updateImageresizerFrame:imageresizerFrame];
 }
 
 - (void)setImageresizeX:(CGFloat)imageresizeX {
@@ -219,7 +219,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     [CATransaction commit];
     
     if (!_borderImage && !CGRectIsEmpty(_imageresizerFrame)) {
-        [self __updateImageresizerFrame:_imageresizerFrame animateDuration:0];
+        [self __updateImageresizerFrame:_imageresizerFrame];
     }
 }
 
@@ -260,7 +260,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     _isShowMidDots = isShowMidDots;
     if (_borderImage || _isPreview) return;
     if (!CGRectIsEmpty(_imageresizerFrame)) {
-        [self __updateImageresizerFrame:_imageresizerFrame animateDuration:0];
+        [self __updateImageresizerFrame:_imageresizerFrame];
     }
 }
 
@@ -274,7 +274,7 @@ typedef NS_ENUM(NSUInteger, JPDotRegion) {
     _gridCount = gridCount;
     if (_borderImage || _isPreview || _frameType != JPClassicFrameType) return;
     if (!CGRectIsEmpty(_imageresizerFrame)) {
-        [self __updateImageresizerFrame:_imageresizerFrame animateDuration:0];
+        [self __updateImageresizerFrame:_imageresizerFrame];
     }
 }
 
@@ -938,6 +938,9 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     }];
 }
 
+- (void)__updateImageresizerFrame:(CGRect)imageresizerFrame {
+    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1.0];
+}
 - (void)__updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
@@ -1487,7 +1490,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     if (resizeCornerRadius < 0) resizeCornerRadius = 0;
     if (_resizeCornerRadius == resizeCornerRadius) return;
     _resizeCornerRadius = resizeCornerRadius;
-    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
+    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : -1)];
 }
 
 - (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay {
@@ -1496,7 +1499,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 - (void)setIgnoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay animated:(BOOL)isAnimated {
     if (_ignoresCornerRadiusForDisplay == ignoresCornerRadiusForDisplay) return;
     _ignoresCornerRadiusForDisplay = ignoresCornerRadiusForDisplay;
-    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : 0)];
+    [self __updateImageresizerFrame:_imageresizerFrame animateDuration:(isAnimated ? _defaultDuration : -1)];
 }
 
 #pragma mark 是否可以任意拖拽
@@ -1851,7 +1854,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
                        initialResizeWHScale:(CGFloat)initialResizeWHScale
                           isToBeArbitrarily:(BOOL)isToBeArbitrarily {
     [self __updateImageOriginFrameWithDirection:direction];
-    [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1];
+    [self __updateImageresizerFrame:imageresizerFrame];
     if (isToBeArbitrarily) {
         _isArbitrarily = YES;
         _resizeWHScale = 0;
@@ -2004,6 +2007,13 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     self.superview.superview.bounds = superviewBounds;
     self.superview.superview.frame = superviewFrame;
     self.scrollView.frame = self.frame = viewFrame;
+    // 由于slider的父视图并不是self（是self.superview.superview），
+    // 此时ta的父视图更新了frame，导致slider相对于self的位置发生了变化，
+    // 因此如果有动画的话，得先将slider放回“原来位置”（相对新frame的父视图）。
+    if (self.slider && duration > 0) {
+        CGRect sliderFrame = [self convertRect:_imageresizerFrame toView:self.slider.superview];
+        [self.slider setImageresizerFrame:sliderFrame isRoundResize:self.isRoundResize];
+    }
     
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:duration];
     [self __hideOrShowGridLines:((!self.isShowGridlinesWhenIdle || self.slider) ? YES : NO) animateDuration:duration];
