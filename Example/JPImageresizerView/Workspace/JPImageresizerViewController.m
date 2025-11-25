@@ -14,6 +14,7 @@
 
 @interface JPImageresizerViewController ()
 @property (nonatomic, assign) JPScreenOrientation orientation;
+@property (nonatomic, assign) UIEdgeInsets contentInsets;
 
 @property (weak, nonatomic) IBOutlet UIButton *replaceMaskImgBtn;
 @property (weak, nonatomic) IBOutlet UIButton *horMirrorBtn;
@@ -114,54 +115,40 @@
     self.bottomBtnWidthConstraint.constant = (JPPortraitScreenWidth - JPMargin * 2 - PortraitHorBtnSpace * 3) / 4.0;
     self.bottomBtnPortraitBottomConstraints.constant = JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH;
     
-    self.backBtnLeftConstraint.constant = JPMargin;
-    self.backBtnTopConstraint.constant = JPStatusBarH;
-    
-    self.orientation = [JPScreenRotator sharedInstance].orientation;
-    JPObserveNotification(self, @selector(orientationDidChange), JPScreenRotatorOrientationDidChangeNotification, nil);
-    
     // 由于topView和bottomView转移了父视图（operationView -> operationView.container），
     // 因此需要将与旧父视图相关的约束，重新对新父视图进行配置。
-    BOOL isPortrait = [JPScreenRotator sharedInstance].isPortrait;
+    // 👇🏻👇🏻👇🏻
     
-    self.topViewRightConstraint.active = NO; // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    self.topViewRightConstraint.active = NO;
+    // 手动创建相同新约束代替旧约束
     self.topViewRightNewConstraint = [self.topView.trailingAnchor constraintEqualToAnchor:self.topView.superview.trailingAnchor constant:0];
-    self.topViewRightNewConstraint.priority = isPortrait ? 999 : 1;
-    self.topViewRightNewConstraint.active = YES;
-    
+    // 手动创建其他新约束
     self.topViewBottomConstraint = [self.topView.bottomAnchor constraintEqualToAnchor:self.topView.superview.bottomAnchor constant:0];
-    self.topViewBottomConstraint.priority = isPortrait ? 1 : 999;
-    self.topViewBottomConstraint.active = YES;
     
-    self.bottomViewLeftConstraint.active = NO; // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    // 使旧约束失效（等价于从旧父视图里remove掉该约束）
+    self.bottomViewLeftConstraint.active = NO;
+    // 手动创建相同新约束代替旧约束
     self.bottomViewLeftNewConstraint = [self.bottomView.leadingAnchor constraintEqualToAnchor:self.bottomView.superview.leadingAnchor constant:0];
-    self.bottomViewLeftNewConstraint.priority = isPortrait ? 999 : 1;
-    self.bottomViewLeftNewConstraint.active = YES;
-    
+    // 手动创建其他新约束
     self.bottomViewTopConstraint = [self.bottomView.topAnchor constraintEqualToAnchor:self.bottomView.superview.topAnchor constant:0];
-    self.bottomViewTopConstraint.priority = isPortrait ? 1 : 999;
+    
+    // 确定当前屏幕方向，同时ta的settet方法会设置好约束值
+    _orientation = -1;
+    self.orientation = [JPScreenRotator sharedInstance].orientation;
+    
+    // 使手动创建的新约束生效
+    self.topViewRightNewConstraint.active = YES;
+    self.topViewBottomConstraint.active = YES;
+    self.bottomViewLeftNewConstraint.active = YES;
     self.bottomViewTopConstraint.active = YES;
+    
+    // 监听屏幕方向变化
+    JPObserveNotification(self, @selector(orientationDidChange), JPScreenRotatorOrientationDidChangeNotification, nil);
 }
 
 - (void)__setupImageresizerView {
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
-    if ([UIScreen mainScreen].bounds.size.width > [UIScreen mainScreen].bounds.size.height) {
-        contentInsets.left += 96;
-        contentInsets.right += self.bottomBtnWidthConstraint.constant;
-        if ([UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeLeft) {
-            contentInsets.left += JPStatusBarH;
-            contentInsets.right += JPDiffTabBarH;
-        } else {
-            contentInsets.left += JPDiffTabBarH;
-            contentInsets.right += JPStatusBarH;
-        }
-        contentInsets.top = JPDiffTabBarH;
-        contentInsets.bottom = JPDiffTabBarH;
-    } else {
-        contentInsets.top += JPStatusBarH + ButtonHeight;
-        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
-    }
-    self.configure.contentInsets = contentInsets;
+    self.configure.contentInsets = self.contentInsets;
     self.configure.viewFrame = [UIScreen mainScreen].bounds;
     
     @jp_weakify(self);
@@ -231,9 +218,8 @@
     CGFloat backBtnLeft;
     CGFloat backBtnTop;
     CGFloat resizeBtnRight;
-    
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
-    
+    // 横屏
     if (orientation == JPScreenOrientationLandscapeLeft ||
         orientation == JPScreenOrientationLandscapeRight) {
         portraitPriority = 1;
@@ -251,8 +237,9 @@
         contentInsets.left += self.replaceMaskImgBtn.jp_width + backBtnLeft;
         contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
         contentInsets.top = contentInsets.bottom = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-        
-    } else {
+    }
+    // 竖屏
+    else {
         portraitPriority = 999;
         landscapePriority = 1;
         backBtnLeft = JPMargin;
@@ -284,6 +271,8 @@
     self.backBtnLeftConstraint.constant = backBtnLeft;
     self.backBtnTopConstraint.constant = backBtnTop;
     self.resizeBtnRightConstraint.constant = resizeBtnRight;
+    
+    self.contentInsets = contentInsets;
     
     if (duration) {
         UIViewAnimationOptions options;
@@ -317,8 +306,9 @@
     //「横竖屏切换」
     // 📢 此时还是【旋转之前】的尺寸，延时大概0.1s后就能获取【旋转之后】的屏幕尺寸。
     // 🤯 因为此时只是告知布局要刷新，实际刷新需要到`Runloop`的下一个循环才会进行。
+    if (!self.imageresizerView) return;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:contentInsets duration:duration];
+        [self.imageresizerView updateFrame:[UIScreen mainScreen].bounds contentInsets:self.contentInsets duration:duration];
     });
 }
 
