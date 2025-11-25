@@ -74,10 +74,6 @@ extension JPExample {
             navigationController?.navigationItem.largeTitleDisplayMode = .always
             navigationController?.navigationBar.topItem?.title = "Examples 🌰"
             
-            let cameraBtn = UIButton(type: .system)
-            cameraBtn.setImage(UIImage(systemName: "camera"), for: .normal)
-            cameraBtn.addTarget(self, action: #selector(cameraAction), for: .touchUpInside)
-            
             cacheBtn.setImage(UIImage(systemName: "arrow.uturn.backward"), for: .normal)
             cacheBtn.addTarget(self, action: #selector(backCacheAction), for: .touchUpInside)
             cacheCanceler = publisher(for: \.cacheModel, options: .new).sink { [weak self] newValue in
@@ -96,6 +92,9 @@ extension JPExample {
                 cacheBtn.isHidden = true
             }
             
+            let cameraBtn = UIButton(type: .system)
+            cameraBtn.setImage(UIImage(systemName: "camera"), for: .normal)
+            cameraBtn.addTarget(self, action: #selector(cameraAction), for: .touchUpInside)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cameraBtn)
         }
     }
