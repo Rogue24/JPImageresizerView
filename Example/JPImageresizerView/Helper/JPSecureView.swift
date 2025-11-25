@@ -53,17 +53,21 @@ open class JPSecureView: UITextField {
     }
     
     public required init?(coder: NSCoder) {
-        // 📢：故事版和xib上的tf，通过拖线放入的子view，父视图只能是self，
+        /// 📢：故事版和xib上的textField，通过拖线放入的那些子view，
+        /// 执行`super.init(coder: coder)`时就已经将这些子view放到self上，
         super.init(coder: coder)
+        /// 因此不能通过重写父类方法修改初始化的父视图，此时的父视图只会是self。
         _setup()
     }
     
     public override func awakeFromNib() {
         super.awakeFromNib()
         
+        /// 既然不能在初始化时就将xib的子view将self上转移，那就在这里转移吧~
         guard let container else { return }
         let subviews = self.subviews
         for subview in subviews where subview != container {
+            // 转移到新父视图，并将与旧父视图关联约束也转移到新的父视图
             subview.reparentAndMigrateConstraints(to: container)
         }
     }
@@ -122,5 +126,31 @@ open class JPSecureView: UITextField {
             return
         }
         container?.insertSubview(view, belowSubview: siblingSubview)
+    }
+    
+    // MARK: 拦截点击 => 自己不响应，触碰的子视图响应。
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard !isHidden, alpha > 0.01, subviews.count > 0 else {
+            // 自身不响应
+            return nil
+        }
+        
+        // 子视图从【顶层】开始遍历
+        for subview in subviews.reversed() {
+            // 判断一个`View`是否能响应的条件：
+            guard subview.isUserInteractionEnabled, // 1.能否交互
+                  !subview.isHidden, // 2.非隐藏
+                  subview.alpha > 0.01, // 3.非透明
+                  subview.frame.contains(point) // 4.触碰点是否属于视图区域内
+            else { continue }
+            
+            // 转换为相对于子视图上的触碰点
+            let subPoint = convert(point, to: subview)
+            guard let rspView = subview.hitTest(subPoint, with: event) else { continue }
+            return rspView
+        }
+        
+        // 自身不响应
+        return nil
     }
 }
