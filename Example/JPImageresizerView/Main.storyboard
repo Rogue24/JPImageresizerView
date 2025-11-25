@@ -48,10 +48,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ktf-Qh-zL1" customClass="JPSecureView" customModule="JPImageresizerView_Example" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ktf-Qh-zL1" customClass="SecureView" customModule="JPImageresizerView_Example" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0j-lu-XGP">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0j-lu-XGP" customClass="PenetrableView" customModule="JPImageresizerView_Example" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-gv-FqT" userLabel="返回按钮">
@@ -180,7 +180,7 @@
                                             <constraint firstItem="PPx-fE-9xq" firstAttribute="leading" secondItem="XaN-bE-0my" secondAttribute="trailing" priority="999" constant="5" id="z6G-IY-fdR"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LCW-oZ-8f9">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LCW-oZ-8f9" customClass="PenetrableView" customModule="JPImageresizerView_Example" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="801" width="414" height="95"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gfg-EW-TwQ">
