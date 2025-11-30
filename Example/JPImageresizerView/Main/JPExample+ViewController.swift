@@ -194,7 +194,7 @@ extension JPExample.ViewController {
         guard let navCtr = navigationController else { return }
         let vc = JPImageresizerViewController.build(with: model.statusBarStyle, configure: model.configure)
         navCtr.addCubeAnimation()
-        navCtr.pushViewController(vc, animated: false)
+        navCtr.pushViewController(vc, animated: true)
     }
     
     func pushCropVC(isJPCroper: Bool) {
@@ -221,7 +221,7 @@ extension JPExample.ViewController {
                 }
             }
             navCtr.addCubeAnimation()
-            navCtr.pushViewController(vc, animated: false)
+            navCtr.pushViewController(vc, animated: true)
             
         } else {
             JPProgressHUD.showInfo(withStatus: "请更新到iOS15以上版本", userInteractionEnabled: true)

@@ -338,18 +338,19 @@ static UIViewController *tmpVC_;
         return;
     }
     
-    CATransition *cubeAnim = [CATransition animation];
-    cubeAnim.duration = 0.45;
-    cubeAnim.type = @"cube";
-    cubeAnim.subtype = kCATransitionFromLeft;
-    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
+    // TODO: 在iOS26中cube动画效果有问题，不会覆盖整个要push的界面（大概只一半），等后续修复吧。
+//    CATransition *cubeAnim = [CATransition animation];
+//    cubeAnim.duration = 0.45;
+//    cubeAnim.type = @"cube";
+//    cubeAnim.subtype = kCATransitionFromLeft;
+//    cubeAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    [self.navigationController.view.layer addAnimation:cubeAnim forKey:@"cube"];
     
     tmpVC_ = self; // 晚一些再死，不然视频画面会立即消失
     if (self.navigationController.viewControllers.count <= 1) {
-        [self dismissViewControllerAnimated:NO completion:nil];
+        [self dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [self.navigationController popViewControllerAnimated:NO];
+        [self.navigationController popViewControllerAnimated:YES];
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.45 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         tmpVC_ = nil;

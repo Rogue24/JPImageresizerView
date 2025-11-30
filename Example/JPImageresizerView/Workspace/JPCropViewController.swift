@@ -200,18 +200,11 @@ extension JPCropViewController {
         }
         
         guard let navCtr = navigationController else { return }
-        
-        let transition = CATransition()
-        transition.type = .init(rawValue: "cube")
-        transition.subtype = .fromLeft
-        transition.duration = 0.45
-        transition.timingFunction = .init(name: .easeInEaseOut)
-        navCtr.view.layer.add(transition, forKey: "cube")
-        
+        navCtr.addCubeAnimation(subtype: .fromLeft)
         if navCtr.viewControllers.count <= 1 {
-            dismiss(animated: false, completion: nil)
+            dismiss(animated: true, completion: nil)
         } else {
-            navCtr.popViewController(animated: false)
+            navCtr.popViewController(animated: true)
         }
     }
     

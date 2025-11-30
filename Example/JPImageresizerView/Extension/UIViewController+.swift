@@ -15,12 +15,13 @@ var rootVC: UIViewController {
 
 extension UIViewController {
     func addCubeAnimation(duration: TimeInterval = 0.45, subtype: CATransitionSubtype = .fromRight, timingFunName: CAMediaTimingFunctionName = .easeInEaseOut, animKey: String = "cube") {
-        let cubeAnim = CATransition()
-        cubeAnim.duration = duration
-        cubeAnim.type = CATransitionType(rawValue: "cube")
-        cubeAnim.subtype = subtype
-        cubeAnim.timingFunction = CAMediaTimingFunction(name: timingFunName)
-        view.layer.add(cubeAnim, forKey: animKey)
+        // TODO: 在iOS26中cube动画效果有问题，不会覆盖整个要push的界面（大概只一半），等后续修复吧。
+//        let cubeAnim = CATransition()
+//        cubeAnim.duration = duration
+//        cubeAnim.type = CATransitionType(rawValue: "cube")
+//        cubeAnim.subtype = subtype
+//        cubeAnim.timingFunction = CAMediaTimingFunction(name: timingFunName)
+//        view.layer.add(cubeAnim, forKey: animKey)
     }
 }
 
