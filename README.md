@@ -10,7 +10,7 @@
 [英文文档（English document）](https://github.com/Rogue24/JPImageresizerView/blob/master/README_EN.md) | [掘金](https://juejin.cn/post/6958761756978053150) |
 [高仿小红书App可拖拽任意角度的裁剪功能](https://github.com/Rogue24/JPCrop)
 
-## 简介（当前版本：1.13.2）
+## 简介（当前版本：1.14.0）
 
 一个专门裁剪图片、GIF、视频的轮子，简单易用，功能丰富（高自由度的参数设定、支持旋转和镜像翻转、蒙版、压缩等），能满足绝大部分裁剪的需求。
 
@@ -24,7 +24,8 @@
         ✅ 水平和垂直的镜像翻转；
         ✅ 两种边框样式；
         ✅ 支持圆框裁剪；
-        ✅ 可自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度；
+        ✅ 可自定义裁剪圆角；
+        ✅ 可自定义模糊效果、边框颜色、背景颜色、遮罩透明度；
         ✅ 可自定义边框图片；
         ✅ 可自定义蒙版图片裁剪；
         ✅ 可自定义初始裁剪区域；
@@ -49,13 +50,18 @@
     注意：由于autoLayout不利于手势控制，所以目前使用的是frame布局，暂不支持autoLayout。
     
 ## 最新改动
-    1.现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）；
-    2.可自定义初始裁剪区域；
-    3.如果设置了固定裁剪宽高比，并且希望横竖方向进行切换后裁剪宽高比也能同时反转，只要设置 isFlipResizeWHScaleOnVerHorSwitch = YES 即可。
+    1. 统一外观配置（裁剪边框颜色、模糊效果、背景颜色、遮罩颜色的透明度）；
+    2. 新增自定义裁剪圆角，也可设置裁剪框不显示圆角只在最终裁剪才有圆角；
+    3. 新增蒙版自定义外观配置，可设置裁剪时忽略蒙版；
+    4. 使用蒙版或圆切时均可设置裁剪宽高比和可否任意拖拽。
     
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
+新增iOS26风格的玻璃裁剪框😏，看着效果不错，可以直接截图当立体空间壁纸了（如需可参考Demo设置）~：
 
-- 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距。
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/xxxx.gif)
+
+可设置GIF的背景色、圆角、边框、轮廓描边、内容边距：
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
 ## 如何使用
 
@@ -69,12 +75,15 @@
         - videoAsset：裁剪的本地视频（以AVURLAsset传入）
         
     其他部分可配置参数（更多可查看JPImageresizerView的头文件）：
-        - blurEffect：毛玻璃样式
+        - mainAppearance：主要外管配置
+            - strokeColor：边框颜色
+            - bgEffect：模糊效果
+            - bgColor：背景色
+            - maskAlpha：遮罩透明度
         - borderImage：边框图片
-        - frameType & strokeColor：边框样式&颜色
-        - bgColor：背景色
-        - maskAlpha：遮罩透明度
+        - frameType：边框样式
         - resizeWHScale：裁剪的宽高比
+        - resizeCornerRadius: 裁剪圆角
         - contentInsets：裁剪区域与视图的间距
         - maskImage：蒙版图片
         - gifSettings：GIF图像处理设置
@@ -615,7 +624,25 @@ self.imageresizerView.isArbitrarily = !self.imageresizerView.isArbitrarily;
 // 更多API可查看 JPImageresizerView.h 上的注释
 ```
 
-### 自定义毛玻璃样式、边框颜色、背景颜色、遮罩透明度
+### 自定义裁剪圆角
+
+设置裁剪圆角：
+ 
+```objc
+self.imageresizerView.resizeCornerRadius = 20;
+```
+
+- 与`isRoundResize`相互独立，且优先级比`isRoundResize`低；最终裁剪的圆角不会超出**裁剪宽高最小边**的一半。
+
+设置了裁剪圆角，裁剪框也会显示对应圆角，若希望裁剪框不显示圆角，可以设置该属性：
+
+```objc
+self.imageresizerView.ignoresCornerRadiusForDisplay = YES;
+```
+
+- 默认为`NO`，若设置为`YES`，圆角不为0时裁剪框也不会显示圆角，最终裁剪才会带上圆角。
+
+### 自定义模糊样式、边框颜色、背景颜色、遮罩透明度
 ```objc
 // 设置毛玻璃样式（默认带动画效果）
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -797,12 +824,28 @@ self.imageresizerView.isLockResizeFrame = YES;
 
 ### CocoaPods
 
-- 只需添加下面一行到你的podfile：
+只需添加下面一行到你的podfile：
 
 ```ruby
 pod 'JPImageresizerView'
 
 版本更新指令：pod update --no-repo-update
+```
+
+### Swift Package Manager
+
+本库现已支持 Swift Package Manager（需要安装 **Xcode 11** 或更高版本）：
+
+```swift
+.dependencies: [
+    .package(url: "https://github.com/Rogue24/JPImageresizerView.git", .upToNextMajor(from: "1.14.0"))
+]
+```
+
+或者在 Xcode 中添加以下仓库地址：
+
+```swift
+https://github.com/Rogue24/JPImageresizerView.git
 ```
 
 ## 反馈地址
