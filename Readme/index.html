@@ -10,117 +10,492 @@
 
   <style>
     :root {
-      --bgColor-default: #f3f5f9;
-      --surface: #ffffff;
-      --fgColor-default: #172033;
-      --fgColor-muted: #5c667a;
-      --line-soft: #d6dbe5;
-      --link: #2a5bd7;
-      --link-hover: #1f4fc7;
-      --code-bg: #eef2f8;
-      --quote: #8ea0c4;
-      --selection: rgba(53, 104, 255, 0.18);
+      --bg-0: #020304;
+      --bg-1: #07090d;
+      --bg-2: #0b0f17;
+      --panel: rgba(15, 19, 28, 0.7);
+      --panel-line: rgba(255, 255, 255, 0.08);
+      --text: #edf1ff;
+      --text-soft: #a8b1c7;
+      --line: #2a3142;
+      --link: #6ea8ff;
+      --link-hover: #9cc3ff;
+      --accent: #5d8dff;
+      --code-bg: #060b14;
+      --code-line: #2e3d59;
+      --code-text: #dbe8ff;
     }
 
     * { box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(1200px 500px at 50% -200px, #ffffff 0%, rgba(255, 255, 255, 0) 70%),
-        linear-gradient(180deg, #f5f7fb 0%, #eef2f8 100%);
-      color: var(--fgColor-default);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        radial-gradient(900px 460px at 50% -10%, rgba(80, 110, 170, 0.22) 0%, rgba(80, 110, 170, 0) 65%),
+        radial-gradient(780px 400px at 90% 20%, rgba(73, 130, 255, 0.12) 0%, rgba(73, 130, 255, 0) 70%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 38%, var(--bg-2) 100%);
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.07;
+      background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
+      background-size: 3px 3px;
+      mix-blend-mode: soft-light;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: saturate(140%) blur(20px);
+      -webkit-backdrop-filter: saturate(140%) blur(20px);
+      background: rgba(8, 10, 15, 0.58);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .topbar-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 14px 24px 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .title {
+      margin: 0;
+      color: #cdd5e9;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .progress {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #4b7fff, #8db5ff 55%, #d9e7ff 100%);
+      box-shadow: 0 0 14px rgba(120, 160, 255, 0.6);
+      transition: width 0.08s linear;
     }
 
     .page {
-      width: 100%;
-      max-width: 1280px;
+      position: relative;
+      z-index: 1;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 24px 32px 40px;
+      padding: 36px 24px 72px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      padding: 0 clamp(26px, 5vw, 56px);
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      min-height: clamp(250px, 36vw, 350px);
+      background: linear-gradient(165deg, rgba(16, 22, 34, 0.92), rgba(10, 14, 22, 0.88));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 18px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-visual {
+      position: absolute;
+      inset: -16% -14% -24% -14%;
+      background:
+        radial-gradient(40% 32% at 18% 24%, rgba(144, 178, 255, 0.28), rgba(144, 178, 255, 0)),
+        radial-gradient(46% 40% at 80% 22%, rgba(113, 153, 255, 0.24), rgba(113, 153, 255, 0)),
+        radial-gradient(62% 54% at 56% 96%, rgba(72, 112, 196, 0.20), rgba(72, 112, 196, 0)),
+        linear-gradient(120deg, rgba(36, 52, 88, 0.48), rgba(14, 24, 44, 0.38));
+      transform: translate3d(0, 0, 0) scale(1.04);
+      transition: transform 0.08s linear;
+      will-change: transform;
+      pointer-events: none;
+      animation: heroGradient 26s ease-in-out infinite alternate;
+    }
+
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      inset: -8% -6%;
+      background:
+        radial-gradient(34% 28% at 74% 24%, rgba(183, 208, 255, 0.18), rgba(183, 208, 255, 0)),
+        radial-gradient(24% 20% at 26% 74%, rgba(126, 161, 236, 0.16), rgba(126, 161, 236, 0));
+      pointer-events: none;
+      animation: heroGlow 20s ease-in-out infinite alternate;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 100%;
+      width: 100%;
+      text-align: center;
+      padding-top: clamp(14px, 2.2vw, 24px);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(42px, 5.8vw, 92px);
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      color: rgba(250, 253, 255, 0.96);
+      font-weight: 500;
+      text-wrap: balance;
+      max-width: 100%;
+      white-space: nowrap;
+      font-family: "Zapfino", "Snell Roundhand", "Apple Chancery", cursive;
+      text-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.14),
+        0 10px 24px rgba(9, 18, 38, 0.22);
+    }
+
+    .hero-meta {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: rgba(190, 210, 255, 0.13);
+      border: 1px solid rgba(196, 215, 255, 0.24);
+      color: #cfdbf4;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    @keyframes heroGradient {
+      0% {
+        filter: saturate(104%) brightness(100%);
+        transform: translate3d(-8px, 2px, 0) scale(1.03);
+      }
+      50% {
+        filter: saturate(112%) brightness(106%);
+        transform: translate3d(10px, -8px, 0) scale(1.05);
+      }
+      100% {
+        filter: saturate(108%) brightness(103%);
+        transform: translate3d(-4px, 8px, 0) scale(1.04);
+      }
+    }
+
+    @keyframes heroGlow {
+      0% { transform: translate3d(-1%, 0, 0) scale(1); opacity: 0.72; }
+      100% { transform: translate3d(2%, -2%, 0) scale(1.03); opacity: 0.96; }
+    }
+
+    .doc {
+      border-radius: 24px;
+      border: 1px solid var(--panel-line);
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 24px 56px rgba(0, 0, 0, 0.34);
+      padding: 32px clamp(16px, 4vw, 44px);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 84px;
+      border-radius: 16px;
+      border: 1px solid var(--panel-line);
+      background: rgba(12, 16, 24, 0.66);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 12px 12px 14px;
+      max-height: calc(100vh - 112px);
+      overflow: auto;
+    }
+
+    .toc.hidden {
+      display: none;
+    }
+
+    .toc-title {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8e9bb8;
+      font-weight: 600;
+    }
+
+    .toc-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toc-link {
+      display: block;
+      color: #a8b5d1;
+      font-size: 13px;
+      line-height: 1.35;
+      padding: 7px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
+      border: 1px solid transparent;
+    }
+
+    .toc-link:hover {
+      color: #d3e0ff;
+      background: rgba(120, 154, 231, 0.13);
+      border-color: rgba(140, 169, 237, 0.24);
+      transform: translateX(1px);
+    }
+
+    .toc-link.active {
+      color: #eaf1ff;
+      background: rgba(103, 145, 255, 0.24);
+      border-color: rgba(141, 176, 255, 0.34);
+    }
+
+    .toc-link.level-3 {
+      padding-left: 18px;
+      color: #93a1bf;
+      font-size: 12px;
     }
 
     .markdown-body {
-      color-scheme: light;
-      --color-canvas-default: var(--surface);
-      --color-fg-default: var(--fgColor-default);
-      --color-canvas-subtle: #f1f4fa;
-      --color-border-default: var(--line-soft);
       margin: 0;
-      font-size: 16px;
-      line-height: 1.5;
-      color: var(--fgColor-default);
-      background: var(--surface);
-      border-radius: 14px;
-      padding: 28px 32px;
-      box-shadow:
-        0 1px 1px rgba(16, 24, 40, 0.03),
-        0 12px 28px rgba(16, 24, 40, 0.06);
+      color-scheme: dark;
+      --color-canvas-default: transparent;
+      --color-fg-default: var(--text);
+      --color-canvas-subtle: #111723;
+      --color-border-default: var(--line);
+      background: transparent;
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.76;
+      font-weight: 400;
     }
 
-    .markdown-body img { max-width: 100%; height: auto; }
-    .markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; }
-    .markdown-body ::selection { background: var(--selection); }
+    .markdown-body > * {
+      opacity: 0;
+      transform: translateY(18px) scale(0.995);
+      filter: blur(3px);
+      transition:
+        opacity 0.65s cubic-bezier(.2,.72,.2,1),
+        transform 0.65s cubic-bezier(.2,.72,.2,1),
+        filter 0.65s cubic-bezier(.2,.72,.2,1);
+      will-change: opacity, transform, filter;
+    }
+
+    .markdown-body > *.reveal {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
 
     .markdown-body h1,
     .markdown-body h2,
     .markdown-body h3,
     .markdown-body h4 {
-      color: #10182a;
-      border-bottom-color: var(--line-soft);
+      color: #f4f7ff;
+      border-bottom-color: #2e364a;
+      letter-spacing: -0.02em;
     }
 
-    .markdown-body p,
-    .markdown-body li { color: #202b3f; }
+    .markdown-body h1 { font-size: clamp(34px, 6vw, 64px); line-height: 1.04; }
+    .markdown-body h2 { font-size: clamp(26px, 4vw, 40px); line-height: 1.12; }
+    .markdown-body h3 { font-size: clamp(20px, 3vw, 28px); }
 
-    .markdown-body a { color: var(--link); text-decoration: none; }
-    .markdown-body a:hover { color: var(--link-hover); text-decoration: underline; }
-    .markdown-body hr { border-color: var(--line-soft); }
+    .markdown-body p,
+    .markdown-body li { color: #d6def1; }
+
+    .markdown-body a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .markdown-body a:hover {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+
+    .markdown-body hr { border-color: #2c3549; }
 
     .markdown-body blockquote {
-      color: #44506a;
-      border-left-color: var(--quote);
-      background: #f6f8fc;
-      border-radius: 0 8px 8px 0;
-      padding-top: 8px;
-      padding-bottom: 8px;
+      color: #b0bed9;
+      border-left-color: #7082a9;
+      background: rgba(20, 28, 44, 0.55);
+      border-radius: 0 10px 10px 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .markdown-body table {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      overflow: auto;
+      border-radius: 10px;
     }
 
     .markdown-body code,
     .markdown-body tt {
-      background-color: var(--code-bg);
-      color: #27324a;
+      background: rgba(130, 161, 255, 0.16);
+      color: #e3edff;
+      border-radius: 6px;
     }
 
     .markdown-body pre {
-      background: #0f172a;
-      border: 1px solid #2b3a57;
+      background: var(--code-bg);
+      border: 1px solid var(--code-line);
+      border-radius: 14px;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .markdown-body pre code {
+      color: var(--code-text);
       background: transparent;
-      color: #d8e4ff;
+    }
+
+    .markdown-body ::selection {
+      background: rgba(92, 141, 255, 0.28);
     }
 
     .note {
       margin: 12px 4px 0;
-      color: var(--fgColor-muted);
+      color: #9caac8;
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.6;
       display: none;
       white-space: pre-line;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .progress { transition: none; }
+      .hero-visual {
+        transform: none !important;
+        transition: none;
+        animation: none;
+      }
+      .hero-visual::after {
+        animation: none;
+      }
+      .markdown-body > * {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
+      }
+    }
+
     @media (max-width: 768px) {
-      .page { padding: 14px 14px 24px; }
-      .markdown-body { font-size: 15px; padding: 18px 16px; border-radius: 10px; }
+      .topbar-inner { padding: 12px 14px 10px; }
+      .page { padding: 16px 14px 30px; }
+      .hero {
+        border-radius: 16px;
+        margin-bottom: 10px;
+        min-height: 200px;
+        padding: 0 18px;
+      }
+      .hero h1 {
+        font-size: clamp(34px, 11vw, 58px);
+        white-space: normal;
+        line-height: 0.95;
+      }
+      .hero-meta { margin-top: 10px; }
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .doc { border-radius: 16px; padding: 16px; }
+      .toc {
+        position: static;
+        max-height: none;
+        border-radius: 12px;
+      }
+      .markdown-body { font-size: 15px; line-height: 1.68; }
+    }
+
+    @media (max-width: 1080px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .toc {
+        position: static;
+        max-height: none;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="title">JPImageresizerView</p>
+    </div>
+    <div class="progress-track"><div id="progress" class="progress"></div></div>
+  </header>
+
   <main class="page">
-    <article id="content" class="markdown-body"></article>
+    <section class="hero">
+      <div id="heroVisual" class="hero-visual" aria-hidden="true"></div>
+      <div class="hero-content">
+        <h1>JPImageresizerView</h1>
+        <div class="hero-meta">Version <span id="heroVersion">--</span></div>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <section class="doc">
+        <article id="content" class="markdown-body"></article>
+      </section>
+      <aside id="toc" class="toc hidden" aria-label="章节导航">
+        <p class="toc-title">On This Page</p>
+        <nav id="tocList" class="toc-list"></nav>
+      </aside>
+    </section>
     <p id="note" class="note"></p>
   </main>
 
@@ -171,7 +546,7 @@
         frame.onload = () => {
           try {
             const doc = frame.contentDocument || frame.contentWindow.document;
-            const text = (doc && doc.body && doc.body.innerText) ? doc.body.innerText : "";
+            const text = doc && doc.body && doc.body.innerText ? doc.body.innerText : "";
             frame.remove();
             if (!text.trim()) {
               reject(new Error("Empty iframe content"));
@@ -191,6 +566,179 @@
       });
     }
 
+    function setupProgress() {
+      const progress = document.getElementById("progress");
+      const update = () => {
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const p = Math.min(100, (window.scrollY / max) * 100);
+        progress.style.width = p.toFixed(2) + "%";
+      };
+      update();
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+    }
+
+    function setupReveal() {
+      const targets = Array.from(document.querySelectorAll(".markdown-body > *"));
+      if (!targets.length) return;
+
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal");
+            io.unobserve(entry.target);
+          }
+        }
+      }, { rootMargin: "0px 0px -8% 0px", threshold: 0.02 });
+
+      targets.forEach((el, idx) => {
+        el.style.transitionDelay = Math.min(idx * 16, 220) + "ms";
+        io.observe(el);
+      });
+    }
+
+    function setupHeroParallax() {
+      const visual = document.getElementById("heroVisual");
+      const hero = document.querySelector(".hero");
+      if (!visual || !hero) return;
+
+      let ticking = false;
+      const update = () => {
+        const r = hero.getBoundingClientRect();
+        const vh = window.innerHeight || 1;
+        const progress = Math.max(-1, Math.min(1, (r.top + r.height * 0.5 - vh * 0.5) / vh));
+        const y = progress * -26;
+        const s = 1.04 + Math.abs(progress) * 0.03;
+        visual.style.transform = "translate3d(0," + y.toFixed(2) + "px,0) scale(" + s.toFixed(3) + ")";
+        ticking = false;
+      };
+
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      };
+
+      update();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+    }
+
+    function ensureHeadingIds() {
+      const headings = Array.from(document.querySelectorAll(".markdown-body h2, .markdown-body h3"));
+      const used = new Set();
+      headings.forEach((h, idx) => {
+        if (h.id) {
+          used.add(h.id);
+          return;
+        }
+        const base = (h.textContent || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^\w\u4e00-\u9fa5- ]/g, "")
+          .replace(/\s+/g, "-")
+          .slice(0, 80) || ("section-" + (idx + 1));
+        let id = base;
+        let i = 2;
+        while (used.has(id) || document.getElementById(id)) {
+          id = base + "-" + i;
+          i += 1;
+        }
+        h.id = id;
+        used.add(id);
+      });
+      return headings;
+    }
+
+    function buildToc() {
+      const toc = document.getElementById("toc");
+      const tocList = document.getElementById("tocList");
+      if (!toc || !tocList) return [];
+
+      const headings = ensureHeadingIds();
+      tocList.innerHTML = "";
+
+      if (!headings.length) {
+        toc.classList.add("hidden");
+        return [];
+      }
+
+      headings.forEach((h) => {
+        const a = document.createElement("a");
+        a.className = "toc-link level-" + h.tagName.toLowerCase().replace("h", "");
+        a.href = "#" + h.id;
+        a.dataset.target = h.id;
+        a.textContent = h.textContent || h.id;
+        tocList.appendChild(a);
+      });
+
+      toc.classList.remove("hidden");
+      return headings;
+    }
+
+    function setupTocSpy(headings) {
+      const links = Array.from(document.querySelectorAll(".toc-link"));
+      if (!links.length || !headings.length) return;
+
+      const byId = new Map(links.map((l) => [l.dataset.target, l]));
+      const setActive = (id) => {
+        links.forEach((l) => l.classList.toggle("active", l.dataset.target === id));
+      };
+
+      const update = () => {
+        const marker = window.scrollY + 124;
+        let current = headings[0].id;
+        for (const h of headings) {
+          if (h.offsetTop <= marker) current = h.id;
+          else break;
+        }
+        if (byId.has(current)) setActive(current);
+      };
+
+      links.forEach((link) => {
+        link.addEventListener("click", () => {
+          const id = link.dataset.target;
+          if (!id) return;
+          setActive(id);
+        });
+      });
+
+      update();
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+    }
+
+    function extractVersion(markdown) {
+      const patterns = [
+        /当前版本[：:]\s*([0-9]+(?:\.[0-9]+){1,3})/i,
+        /version[：:]\s*([0-9]+(?:\.[0-9]+){1,3})/i,
+        /\b([0-9]+(?:\.[0-9]+){2,3})\b/
+      ];
+      for (const p of patterns) {
+        const m = markdown.match(p);
+        if (m && m[1]) return m[1];
+      }
+      return null;
+    }
+
+    function updateHeroVersion(markdown) {
+      const el = document.getElementById("heroVersion");
+      if (!el) return;
+      const version = extractVersion(markdown);
+      el.textContent = version ? ("v" + version) : "Unknown";
+    }
+
+    function removeDuplicateMainTitle() {
+      const contentEl = document.getElementById("content");
+      if (!contentEl) return;
+      const firstH1 = contentEl.querySelector("h1");
+      if (!firstH1) return;
+      const text = (firstH1.textContent || "").trim().toLowerCase();
+      if (text === "jpimageresizerview") {
+        firstH1.remove();
+      }
+    }
+
     (async function init() {
       const contentEl = document.getElementById("content");
 
@@ -202,7 +750,8 @@
           markdown = await loadReadmeTextFromIframe();
         } catch (_) {
           contentEl.textContent = "无法直接读取 README.md";
-          showNote("当前很可能是以 file:// 方式打开，浏览器会拦截本地 fetch。\n请在 Readme 目录启动本地服务后访问：\npython3 -m http.server 8080\nhttp://127.0.0.1:8080/index.html");
+          showNote("当前很可能是以 file:// 方式打开，浏览器会拦截本地 fetch。\n请使用 Readme/preview.command 打开。\n或者在项目根目录运行：\npython3 -m http.server 8080\n然后访问：\nhttp://127.0.0.1:8080/Readme/index.html");
+          setupProgress();
           return;
         }
       }
@@ -211,6 +760,7 @@
       if (!hasMarked) {
         contentEl.textContent = markdown;
         showNote("未能加载 Markdown 渲染库，当前为纯文本显示。请检查网络后刷新。");
+        setupProgress();
         return;
       }
 
@@ -220,7 +770,15 @@
         mangle: false,
         headerIds: true
       });
+
+      updateHeroVersion(markdown);
       contentEl.innerHTML = window.marked.parse(markdown);
+      removeDuplicateMainTitle();
+      setupReveal();
+      const tocHeadings = buildToc();
+      setupTocSpy(tocHeadings);
+      setupHeroParallax();
+      setupProgress();
     })();
   </script>
 </body>
