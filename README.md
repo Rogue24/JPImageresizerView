@@ -778,6 +778,7 @@ self.imageresizerView.isLockResizeFrame = YES;
 
 版本 | 更新内容
 ----|------
+1.14.0 | 1. 统一外观配置（裁剪边框颜色、模糊效果、背景颜色、遮罩颜色的透明度）；<br>2. 新增自定义裁剪圆角，也可设置裁剪框不显示圆角只在最终裁剪才有圆角；<br>3. 新增蒙版自定义外观配置，可设置裁剪时忽略蒙版；<br>4. 使用蒙版或圆切时均可设置裁剪宽高比和可否任意拖拽。
 1.13.0~1.13.2 | 1. 新增可自定义设置的初始裁剪区域，使用`JPImageresizerConfigure`的`resizeScaledBounds`属性进行配置（原尺寸的百分比形式）；<br>2. 新增`isFlipResizeWHScaleOnVerHorSwitch`属性，用于横竖方向发生切换时也翻转裁剪宽高比（若设置了蒙版图片该属性将无效）；<br>3. 修复`JPImageresizerBlurView`中`-setMaskAlpha:duration:`方法的参数类型使用错误的问题。
 1.12.0 | 1. 现在裁剪视频的同时也可以自定义截取指定秒数的视频片段（至少1s）。
 1.11.1~1.11.4 | 1. 添加隐私清单PrivacyInfo；<br>2. 修复裁剪gif后JPImageresizerResult对象的image属性为空的问题；<br>3. 支持Swift Package Manager安装；<br>4. 修复「初始化/横竖屏切换」蒙版展示失效的问题。
