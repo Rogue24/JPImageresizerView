@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SERVER_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SERVER_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$SERVER_ROOT"
 
 PORT=8080

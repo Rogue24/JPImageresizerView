@@ -3,221 +3,234 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JPImageresizerView README</title>
+  <title></title>
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
 
   <style>
     :root {
-      --bg-0: #020304;
-      --bg-1: #07090d;
-      --bg-2: #0b0f17;
-      --panel: rgba(15, 19, 28, 0.7);
-      --panel-line: rgba(255, 255, 255, 0.08);
-      --text: #edf1ff;
-      --text-soft: #a8b1c7;
-      --line: #2a3142;
-      --link: #6ea8ff;
-      --link-hover: #9cc3ff;
-      --accent: #5d8dff;
+      --bg-0: #000000;
+      --bg-1: #07080c;
+      --bg-2: #111319;
+      --text: #f5f5f7;
+      --muted: #a1a1a6;
+      --line: rgba(255, 255, 255, 0.14);
+      --apple-blue: #0a84ff;
+      --panel-bg: rgba(14, 18, 27, 0.76);
+      --panel-line: rgba(255, 255, 255, 0.12);
+      --panel-text: #edf1ff;
+      --panel-subtle: #a8b1c7;
+      --panel-border: #2a3142;
       --code-bg: #060b14;
       --code-line: #2e3d59;
       --code-text: #dbe8ff;
+      --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+      color-scheme: dark;
       color: var(--text);
+      font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Segoe UI", sans-serif;
       background:
-        radial-gradient(900px 460px at 50% -10%, rgba(80, 110, 170, 0.22) 0%, rgba(80, 110, 170, 0) 65%),
-        radial-gradient(780px 400px at 90% 20%, rgba(73, 130, 255, 0.12) 0%, rgba(73, 130, 255, 0) 70%),
-        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 38%, var(--bg-2) 100%);
+        radial-gradient(1180px 520px at 50% -14%, rgba(66, 146, 255, 0.33), rgba(66, 146, 255, 0) 72%),
+        radial-gradient(780px 380px at 88% 24%, rgba(88, 142, 255, 0.24), rgba(88, 142, 255, 0) 74%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 42%, var(--bg-2) 100%);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .grain {
+    .noise {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.07;
-      background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
-      background-size: 3px 3px;
+      opacity: 0.06;
+      background-image: radial-gradient(#fff 0.45px, transparent 0.45px);
+      background-size: 2.4px 2.4px;
       mix-blend-mode: soft-light;
     }
 
-    .topbar {
+    .global-nav {
       position: sticky;
       top: 0;
-      z-index: 30;
-      backdrop-filter: saturate(140%) blur(20px);
-      -webkit-backdrop-filter: saturate(140%) blur(20px);
-      background: rgba(8, 10, 15, 0.58);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      z-index: 40;
+      backdrop-filter: saturate(160%) blur(20px);
+      -webkit-backdrop-filter: saturate(160%) blur(20px);
+      background: rgba(10, 10, 12, 0.64);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .topbar-inner {
-      max-width: 1220px;
+    .nav-inner {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 14px 24px 11px;
+      height: 48px;
+      padding: 0 16px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
+      gap: 14px;
+      overflow: hidden;
     }
 
-    .title {
+    .nav-title {
       margin: 0;
-      color: #cdd5e9;
-      font-size: 13px;
-      letter-spacing: 0.12em;
+      font-size: 12px;
+      color: #f5f5f7;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      font-weight: 600;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 48%;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+      transition: color 180ms var(--ease);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #fff;
     }
 
     .progress-track {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.06);
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .progress {
       width: 0;
       height: 100%;
-      background: linear-gradient(90deg, #4b7fff, #8db5ff 55%, #d9e7ff 100%);
-      box-shadow: 0 0 14px rgba(120, 160, 255, 0.6);
-      transition: width 0.08s linear;
+      background: linear-gradient(90deg, #0a84ff 0%, #5ac8fa 100%);
+      box-shadow: 0 0 14px rgba(41, 151, 255, 0.66);
+      transition: width 90ms linear;
     }
 
     .page {
       position: relative;
       z-index: 1;
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 36px 24px 72px;
     }
 
     .hero {
       position: relative;
       overflow: hidden;
+      min-height: clamp(280px, 50vw, 620px);
+      padding: clamp(46px, 8vw, 92px) 16px clamp(36px, 6vw, 70px);
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 24px;
-      padding: 0 clamp(26px, 5vw, 56px);
-      margin-bottom: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      min-height: clamp(250px, 36vw, 350px);
-      background: linear-gradient(165deg, rgba(16, 22, 34, 0.92), rgba(10, 14, 22, 0.88));
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 18px 40px rgba(0, 0, 0, 0.28);
     }
 
-    .hero-visual {
+    .hero-bg {
       position: absolute;
-      inset: -16% -14% -24% -14%;
-      background:
-        radial-gradient(40% 32% at 18% 24%, rgba(144, 178, 255, 0.28), rgba(144, 178, 255, 0)),
-        radial-gradient(46% 40% at 80% 22%, rgba(113, 153, 255, 0.24), rgba(113, 153, 255, 0)),
-        radial-gradient(62% 54% at 56% 96%, rgba(72, 112, 196, 0.20), rgba(72, 112, 196, 0)),
-        linear-gradient(120deg, rgba(36, 52, 88, 0.48), rgba(14, 24, 44, 0.38));
-      transform: translate3d(0, 0, 0) scale(1.04);
-      transition: transform 0.08s linear;
-      will-change: transform;
+      inset: -24% -14% auto;
+      height: 130%;
       pointer-events: none;
-      animation: heroGradient 26s ease-in-out infinite alternate;
+      background:
+        radial-gradient(38% 42% at 26% 28%, rgba(137, 201, 255, 0.62), rgba(137, 201, 255, 0) 70%),
+        radial-gradient(44% 42% at 75% 26%, rgba(92, 148, 255, 0.54), rgba(92, 148, 255, 0) 74%),
+        radial-gradient(56% 46% at 52% 82%, rgba(92, 108, 255, 0.28), rgba(92, 108, 255, 0) 74%);
+      filter: blur(16px);
+      opacity: 0.75;
+      animation: heroFloat 16s var(--ease) infinite alternate;
     }
 
-    .hero-visual::after {
-      content: "";
-      position: absolute;
-      inset: -8% -6%;
-      background:
-        radial-gradient(34% 28% at 74% 24%, rgba(183, 208, 255, 0.18), rgba(183, 208, 255, 0)),
-        radial-gradient(24% 20% at 26% 74%, rgba(126, 161, 236, 0.16), rgba(126, 161, 236, 0));
-      pointer-events: none;
-      animation: heroGlow 20s ease-in-out infinite alternate;
-    }
-
-    .hero-content {
+    .hero-inner {
       position: relative;
-      z-index: 3;
-      max-width: 100%;
-      width: 100%;
+      width: min(1200px, 100%);
       text-align: center;
-      padding-top: clamp(14px, 2.2vw, 24px);
     }
 
-    .hero h1 {
+    .hero-title {
       margin: 0;
-      font-size: clamp(42px, 5.8vw, 92px);
+      font-size: clamp(50px, 11vw, 132px);
       line-height: 0.9;
-      letter-spacing: -0.03em;
-      color: rgba(250, 253, 255, 0.96);
-      font-weight: 500;
-      text-wrap: balance;
-      max-width: 100%;
-      white-space: nowrap;
-      font-family: "Zapfino", "Snell Roundhand", "Apple Chancery", cursive;
-      text-shadow:
-        0 2px 0 rgba(0, 0, 0, 0.14),
-        0 10px 24px rgba(9, 18, 38, 0.22);
-    }
-
-    .hero-meta {
-      margin-top: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 13px;
-      border-radius: 999px;
-      background: rgba(190, 210, 255, 0.13);
-      border: 1px solid rgba(196, 215, 255, 0.24);
-      color: #cfdbf4;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: -0.045em;
       font-weight: 600;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      text-wrap: balance;
     }
 
-    @keyframes heroGradient {
-      0% {
-        filter: saturate(104%) brightness(100%);
-        transform: translate3d(-8px, 2px, 0) scale(1.03);
-      }
-      50% {
-        filter: saturate(112%) brightness(106%);
-        transform: translate3d(10px, -8px, 0) scale(1.05);
-      }
-      100% {
-        filter: saturate(108%) brightness(103%);
-        transform: translate3d(-4px, 8px, 0) scale(1.04);
-      }
+    .hero-lead {
+      margin: clamp(14px, 2.6vw, 24px) auto 0;
+      width: min(820px, 100%);
+      color: #d3d3d8;
+      font-size: clamp(18px, 2.2vw, 32px);
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
     }
 
-    @keyframes heroGlow {
-      0% { transform: translate3d(-1%, 0, 0) scale(1); opacity: 0.72; }
-      100% { transform: translate3d(2%, -2%, 0) scale(1.03); opacity: 0.96; }
+    .hero-lead:empty {
+      display: none;
     }
 
-    .doc {
-      border-radius: 24px;
+    .hero-badges {
+      margin-top: clamp(14px, 2.2vw, 24px);
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .hero-badges:empty {
+      display: none;
+    }
+
+    .hero-badges p {
+      margin: 0;
+    }
+
+    .hero-badges img {
+      height: 20px;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .content-wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 16px 54px;
+    }
+
+    .content-shell {
+      border-radius: clamp(20px, 3vw, 36px);
+      background: var(--panel-bg);
       border: 1px solid var(--panel-line);
-      background: var(--panel);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.06),
-        0 24px 56px rgba(0, 0, 0, 0.34);
-      padding: 32px clamp(16px, 4vw, 44px);
+      box-shadow: 0 28px 84px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: clamp(14px, 2.4vw, 30px);
     }
 
     .content-grid {
@@ -229,15 +242,12 @@
 
     .toc {
       position: sticky;
-      top: 84px;
-      border-radius: 16px;
-      border: 1px solid var(--panel-line);
-      background: rgba(12, 16, 24, 0.66);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      padding: 12px 12px 14px;
-      max-height: calc(100vh - 112px);
+      top: 72px;
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      background: rgba(10, 14, 22, 0.74);
+      padding: 10px;
+      max-height: calc(100vh - 92px);
       overflow: auto;
     }
 
@@ -245,83 +255,78 @@
       display: none;
     }
 
-    .toc-title {
-      margin: 0 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #8e9bb8;
-      font-weight: 600;
-    }
-
     .toc-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
 
     .toc-link {
       display: block;
+      text-decoration: none;
       color: #a8b5d1;
       font-size: 13px;
       line-height: 1.35;
-      padding: 7px 10px;
+      padding: 6px 8px;
       border-radius: 8px;
-      text-decoration: none;
-      transition: background-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
       border: 1px solid transparent;
+      transition: color 180ms var(--ease), background-color 180ms var(--ease), border-color 180ms var(--ease);
     }
 
     .toc-link:hover {
-      color: #d3e0ff;
+      color: #d9e7ff;
       background: rgba(120, 154, 231, 0.13);
       border-color: rgba(140, 169, 237, 0.24);
-      transform: translateX(1px);
     }
 
     .toc-link.active {
-      color: #eaf1ff;
+      color: #fff;
       background: rgba(103, 145, 255, 0.24);
       border-color: rgba(141, 176, 255, 0.34);
     }
 
     .toc-link.level-3 {
-      padding-left: 18px;
-      color: #93a1bf;
       font-size: 12px;
+      color: #93a1bf;
+      padding-left: 16px;
     }
 
     .markdown-body {
       margin: 0;
       color-scheme: dark;
       --color-canvas-default: transparent;
-      --color-fg-default: var(--text);
+      --color-fg-default: var(--panel-text);
+      --color-fg-muted: var(--panel-subtle);
       --color-canvas-subtle: #111723;
-      --color-border-default: var(--line);
+      --color-border-default: var(--panel-border);
+      --color-border-muted: var(--panel-border);
+      --color-accent-fg: #6ea8ff;
+      --bgColor-default: transparent;
+      --bgColor-muted: #111723;
+      --fgColor-default: var(--panel-text);
+      --fgColor-muted: var(--panel-subtle);
+      --fgColor-accent: #6ea8ff;
+      --borderColor-default: var(--panel-border);
+      --borderColor-muted: var(--panel-border);
       background: transparent;
-      color: var(--text);
-      font-size: 17px;
-      line-height: 1.76;
+      color: var(--panel-text);
+      font-size: clamp(16px, 1.5vw, 19px);
+      line-height: 1.8;
+      letter-spacing: -0.003em;
       font-weight: 400;
+      overflow-wrap: break-word;
     }
 
     .markdown-body > * {
       opacity: 0;
-      transform: translateY(18px) scale(0.995);
+      transform: translateY(14px);
       filter: blur(3px);
-      transition:
-        opacity 0.65s cubic-bezier(.2,.72,.2,1),
-        transform 0.65s cubic-bezier(.2,.72,.2,1),
-        filter 0.65s cubic-bezier(.2,.72,.2,1);
-      will-change: opacity, transform, filter;
+      transition: opacity 560ms var(--ease), transform 560ms var(--ease), filter 560ms var(--ease);
     }
 
     .markdown-body > *.reveal {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
       filter: blur(0);
     }
 
@@ -329,32 +334,44 @@
     .markdown-body h2,
     .markdown-body h3,
     .markdown-body h4 {
-      color: #f4f7ff;
-      border-bottom-color: #2e364a;
-      letter-spacing: -0.02em;
+      color: var(--panel-text);
+      border-bottom-color: var(--panel-border);
+      letter-spacing: -0.03em;
     }
 
-    .markdown-body h1 { font-size: clamp(34px, 6vw, 64px); line-height: 1.04; }
-    .markdown-body h2 { font-size: clamp(26px, 4vw, 40px); line-height: 1.12; }
-    .markdown-body h3 { font-size: clamp(20px, 3vw, 28px); }
+    .markdown-body h1 {
+      font-size: clamp(38px, 6vw, 78px);
+      line-height: 0.98;
+      margin-top: 0;
+    }
+
+    .markdown-body h2 {
+      font-size: clamp(30px, 4.6vw, 54px);
+      line-height: 1.03;
+    }
+
+    .markdown-body h3 {
+      font-size: clamp(24px, 3.6vw, 36px);
+      line-height: 1.12;
+    }
 
     .markdown-body p,
-    .markdown-body li { color: #d6def1; }
+    .markdown-body li {
+      color: #d6def1;
+    }
 
     .markdown-body a {
-      color: var(--link);
+      color: #7ab2ff;
       text-decoration: none;
     }
 
     .markdown-body a:hover {
-      color: var(--link-hover);
+      color: #a8cdff;
       text-decoration: underline;
     }
 
-    .markdown-body hr { border-color: #2c3549; }
-
     .markdown-body blockquote {
-      color: #b0bed9;
+      color: #b7c4dc;
       border-left-color: #7082a9;
       background: rgba(20, 28, 44, 0.55);
       border-radius: 0 10px 10px 0;
@@ -362,33 +379,48 @@
       padding-bottom: 10px;
     }
 
-    .markdown-body img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+    .markdown-body hr {
+      border-color: var(--panel-border);
     }
 
     .markdown-body table {
-      display: block;
-      width: max-content;
-      max-width: 100%;
-      overflow: auto;
-      border-radius: 10px;
+      background: rgba(10, 14, 22, 0.62);
+      border-radius: 12px;
+      overflow: hidden;
     }
 
-    .markdown-body code,
-    .markdown-body tt {
-      background: rgba(130, 161, 255, 0.16);
-      color: #e3edff;
-      border-radius: 6px;
+    .markdown-body table tr {
+      background: rgba(10, 14, 22, 0.72) !important;
+      border-top-color: var(--panel-border) !important;
+    }
+
+    .markdown-body table tr:nth-child(2n) {
+      background: rgba(17, 23, 35, 0.92) !important;
+    }
+
+    .markdown-body table th,
+    .markdown-body table td {
+      color: #d6def1 !important;
+      border-color: var(--panel-border) !important;
+      background: transparent !important;
+    }
+
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 30px 72px rgba(0, 0, 0, 0.62),
+        0 10px 26px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      background: transparent;
     }
 
     .markdown-body pre {
       background: var(--code-bg);
       border: 1px solid var(--code-line);
-      border-radius: 14px;
+      border-radius: 16px;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
@@ -397,118 +429,132 @@
       background: transparent;
     }
 
-    .markdown-body ::selection {
-      background: rgba(92, 141, 255, 0.28);
+    .markdown-body code,
+    .markdown-body tt {
+      color: #e3edff;
+      background: rgba(130, 161, 255, 0.16);
+      border-radius: 7px;
+      padding: 0.16em 0.34em;
+      font-size: 0.88em;
     }
 
-    .note {
-      margin: 12px 4px 0;
-      color: #9caac8;
-      font-size: 13px;
-      line-height: 1.6;
-      display: none;
-      white-space: pre-line;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .progress { transition: none; }
-      .hero-visual {
-        transform: none !important;
-        transition: none;
-        animation: none;
+    @keyframes heroFloat {
+      0% {
+        transform: translateY(0) scale(1);
       }
-      .hero-visual::after {
-        animation: none;
+      100% {
+        transform: translateY(-12px) scale(1.04);
       }
-      .markdown-body > * {
-        opacity: 1;
-        transform: none;
-        filter: none;
-        transition: none;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .topbar-inner { padding: 12px 14px 10px; }
-      .page { padding: 16px 14px 30px; }
-      .hero {
-        border-radius: 16px;
-        margin-bottom: 10px;
-        min-height: 200px;
-        padding: 0 18px;
-      }
-      .hero h1 {
-        font-size: clamp(34px, 11vw, 58px);
-        white-space: normal;
-        line-height: 0.95;
-      }
-      .hero-meta { margin-top: 10px; }
-      .content-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-      .doc { border-radius: 16px; padding: 16px; }
-      .toc {
-        position: static;
-        max-height: none;
-        border-radius: 12px;
-      }
-      .markdown-body { font-size: 15px; line-height: 1.68; }
     }
 
     @media (max-width: 1080px) {
       .content-grid {
         grid-template-columns: 1fr;
       }
+
       .toc {
         position: static;
         max-height: none;
       }
     }
+
+    @media (max-width: 760px) {
+      .nav-title {
+        max-width: 42%;
+      }
+
+      .hero {
+        min-height: 0;
+        padding-top: 42px;
+        padding-bottom: 34px;
+      }
+
+      .hero-title {
+        font-size: clamp(42px, 12vw, 84px);
+      }
+
+      .hero-lead {
+        font-size: clamp(16px, 5.5vw, 22px);
+      }
+
+      .content-wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .content-shell {
+        border-radius: 18px;
+        padding: 14px;
+      }
+
+      .markdown-body {
+        font-size: 15px;
+        line-height: 1.75;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .hero-bg {
+        animation: none;
+      }
+
+      .progress,
+      .toc-link,
+      .nav-link,
+      .markdown-body > * {
+        transition: none;
+      }
+
+      .markdown-body > * {
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <p class="title">JPImageresizerView</p>
+  <header class="global-nav">
+    <div class="nav-inner">
+      <p id="navTitle" class="nav-title"></p>
+      <nav id="navLinks" class="nav-links"></nav>
     </div>
     <div class="progress-track"><div id="progress" class="progress"></div></div>
   </header>
 
   <main class="page">
     <section class="hero">
-      <div id="heroVisual" class="hero-visual" aria-hidden="true"></div>
-      <div class="hero-content">
-        <h1>JPImageresizerView</h1>
-        <div class="hero-meta">Version <span id="heroVersion">--</span></div>
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <h1 id="heroTitle" class="hero-title"></h1>
+        <div id="heroLead" class="hero-lead"></div>
+        <div id="heroBadges" class="hero-badges"></div>
       </div>
     </section>
 
-    <section class="content-grid">
-      <section class="doc">
-        <article id="content" class="markdown-body"></article>
-      </section>
-      <aside id="toc" class="toc hidden" aria-label="章节导航">
-        <p class="toc-title">On This Page</p>
-        <nav id="tocList" class="toc-list"></nav>
-      </aside>
+    <section class="content-wrap">
+      <div class="content-shell">
+        <div class="content-grid">
+          <article id="content" class="markdown-body" data-color-mode="dark" data-light-theme="dark" data-dark-theme="dark" aria-live="polite"></article>
+          <aside id="toc" class="toc hidden">
+            <nav id="tocList" class="toc-list"></nav>
+          </aside>
+        </div>
+      </div>
     </section>
-    <p id="note" class="note"></p>
   </main>
 
+  <script src="./js/readme_resource.js"></script>
   <script>
-    function showNote(text) {
-      const noteEl = document.getElementById("note");
-      noteEl.textContent = text;
-      noteEl.style.display = "block";
-    }
-
     function loadScript(url) {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
+      return new Promise(function(resolve, reject) {
+        var script = document.createElement("script");
         script.src = url;
         script.async = true;
         script.onload = resolve;
@@ -519,13 +565,13 @@
 
     async function ensureMarked() {
       if (window.marked) return true;
-      const urls = [
+      var urls = [
         "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
         "https://unpkg.com/marked/marked.min.js"
       ];
-      for (const url of urls) {
+      for (var i = 0; i < urls.length; i += 1) {
         try {
-          await loadScript(url);
+          await loadScript(urls[i]);
           if (window.marked) return true;
         } catch (_) {}
       }
@@ -533,20 +579,21 @@
     }
 
     async function loadReadmeText() {
-      const resp = await fetch("../README.md", { cache: "no-store" });
+      var resp = await fetch("../README.md", { cache: "no-store" });
       if (!resp.ok) throw new Error("HTTP " + resp.status);
       return resp.text();
     }
 
     function loadReadmeTextFromIframe() {
-      return new Promise((resolve, reject) => {
-        const frame = document.createElement("iframe");
+      return new Promise(function(resolve, reject) {
+        var frame = document.createElement("iframe");
         frame.style.display = "none";
         frame.src = "../README.md";
-        frame.onload = () => {
+
+        frame.onload = function() {
           try {
-            const doc = frame.contentDocument || frame.contentWindow.document;
-            const text = doc && doc.body && doc.body.innerText ? doc.body.innerText : "";
+            var doc = frame.contentDocument || frame.contentWindow.document;
+            var text = doc && doc.body && doc.body.innerText ? doc.body.innerText : "";
             frame.remove();
             if (!text.trim()) {
               reject(new Error("Empty iframe content"));
@@ -558,104 +605,175 @@
             reject(e);
           }
         };
-        frame.onerror = (e) => {
+
+        frame.onerror = function(e) {
           frame.remove();
           reject(e);
         };
+
         document.body.appendChild(frame);
       });
     }
 
+    function loadReadmeTextFromResource() {
+      if (typeof window.__README_MD__ === "string") {
+        var text = window.__README_MD__;
+        if (text.trim()) return text;
+      }
+      return "";
+    }
+
+    function ensureHeadingIds(headings) {
+      var used = new Set();
+      headings.forEach(function(h, idx) {
+        if (h.id) {
+          used.add(h.id);
+          return;
+        }
+        var base = (h.textContent || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^\w\u4e00-\u9fa5- ]/g, "")
+          .replace(/\s+/g, "-")
+          .slice(0, 80) || ("section-" + (idx + 1));
+
+        var id = base;
+        var n = 2;
+        while (used.has(id) || document.getElementById(id)) {
+          id = base + "-" + n;
+          n += 1;
+        }
+        h.id = id;
+        used.add(id);
+      });
+    }
+
     function setupProgress() {
-      const progress = document.getElementById("progress");
-      const update = () => {
-        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        const p = Math.min(100, (window.scrollY / max) * 100);
+      var progress = document.getElementById("progress");
+      if (!progress) return;
+
+      var update = function() {
+        var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        var p = Math.min(100, (window.scrollY / max) * 100);
         progress.style.width = p.toFixed(2) + "%";
       };
+
       update();
       window.addEventListener("scroll", update, { passive: true });
       window.addEventListener("resize", update);
     }
 
     function setupReveal() {
-      const targets = Array.from(document.querySelectorAll(".markdown-body > *"));
+      var targets = Array.from(document.querySelectorAll(".markdown-body > *"));
       if (!targets.length) return;
 
-      const io = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add("reveal");
             io.unobserve(entry.target);
           }
-        }
-      }, { rootMargin: "0px 0px -8% 0px", threshold: 0.02 });
+        });
+      }, {
+        rootMargin: "0px 0px -8% 0px",
+        threshold: 0.04
+      });
 
-      targets.forEach((el, idx) => {
-        el.style.transitionDelay = Math.min(idx * 16, 220) + "ms";
+      targets.forEach(function(el, idx) {
+        el.style.transitionDelay = Math.min(idx * 18, 220) + "ms";
         io.observe(el);
       });
     }
 
-    function setupHeroParallax() {
-      const visual = document.getElementById("heroVisual");
-      const hero = document.querySelector(".hero");
-      if (!visual || !hero) return;
-
-      let ticking = false;
-      const update = () => {
-        const r = hero.getBoundingClientRect();
-        const vh = window.innerHeight || 1;
-        const progress = Math.max(-1, Math.min(1, (r.top + r.height * 0.5 - vh * 0.5) / vh));
-        const y = progress * -26;
-        const s = 1.04 + Math.abs(progress) * 0.03;
-        visual.style.transform = "translate3d(0," + y.toFixed(2) + "px,0) scale(" + s.toFixed(3) + ")";
-        ticking = false;
-      };
-
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(update);
-      };
-
-      update();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
+    function setTopTitle(text) {
+      var title = text || "";
+      var navTitle = document.getElementById("navTitle");
+      var heroTitle = document.getElementById("heroTitle");
+      if (title) document.title = title;
+      if (navTitle) navTitle.textContent = title;
+      if (heroTitle) heroTitle.textContent = title;
     }
 
-    function ensureHeadingIds() {
-      const headings = Array.from(document.querySelectorAll(".markdown-body h2, .markdown-body h3"));
-      const used = new Set();
-      headings.forEach((h, idx) => {
-        if (h.id) {
-          used.add(h.id);
-          return;
-        }
-        const base = (h.textContent || "")
-          .trim()
-          .toLowerCase()
-          .replace(/[^\w\u4e00-\u9fa5- ]/g, "")
-          .replace(/\s+/g, "-")
-          .slice(0, 80) || ("section-" + (idx + 1));
-        let id = base;
-        let i = 2;
-        while (used.has(id) || document.getElementById(id)) {
-          id = base + "-" + i;
-          i += 1;
-        }
-        h.id = id;
-        used.add(id);
+    var heroMenuLinks = [];
+
+    function pickHeroContent(tempRoot) {
+      var heroLead = document.getElementById("heroLead");
+      var heroBadges = document.getElementById("heroBadges");
+      if (!heroLead || !heroBadges) return;
+
+      heroMenuLinks = [];
+      heroLead.textContent = "";
+      heroBadges.innerHTML = "";
+
+      var children = Array.from(tempRoot.children);
+      var h1Index = children.findIndex(function(node) {
+        return node.tagName && node.tagName.toLowerCase() === "h1";
       });
-      return headings;
+
+      if (h1Index < 0) {
+        heroLead.textContent = "";
+        return;
+      }
+
+      var h1 = children[h1Index];
+      setTopTitle((h1.textContent || "").trim());
+      h1.remove();
+
+      var hasTakenMenuLinks = false;
+      var after = Array.from(tempRoot.children);
+      for (var i = 0; i < after.length; i += 1) {
+        var node = after[i];
+        var tag = node.tagName ? node.tagName.toLowerCase() : "";
+        if (tag === "h2") break;
+        if (tag !== "p") continue;
+
+        var text = (node.textContent || "").trim();
+        var hasImg = node.querySelector("img") !== null;
+        var anchors = Array.from(node.querySelectorAll("a[href]"));
+
+        if (hasImg) {
+          heroBadges.appendChild(node.cloneNode(true));
+          node.remove();
+          continue;
+        }
+
+        if (!hasTakenMenuLinks && anchors.length >= 2) {
+          var topAnchors = anchors.slice(0, 2);
+          heroMenuLinks = topAnchors.map(function(src) {
+            return {
+              href: src.getAttribute("href") || src.href || "",
+              text: (src.textContent || "").trim()
+            };
+          }).filter(function(item) {
+            return item.href && item.text;
+          });
+
+          if (anchors.length > 2 && !heroLead.textContent) {
+            var subtitle = (anchors[2].textContent || "").trim();
+            if (subtitle) heroLead.textContent = subtitle;
+          }
+
+          hasTakenMenuLinks = true;
+          node.remove();
+          continue;
+        }
+
+        if (text && !heroLead.textContent) {
+          heroLead.textContent = text;
+          node.remove();
+        }
+      }
     }
 
-    function buildToc() {
-      const toc = document.getElementById("toc");
-      const tocList = document.getElementById("tocList");
-      if (!toc || !tocList) return [];
+    function buildNavAndToc() {
+      var navLinks = document.getElementById("navLinks");
+      var toc = document.getElementById("toc");
+      var tocList = document.getElementById("tocList");
+      if (!navLinks || !toc || !tocList) return [];
 
-      const headings = ensureHeadingIds();
+      var headings = Array.from(document.querySelectorAll(".markdown-body h2, .markdown-body h3"));
+      ensureHeadingIds(headings);
+      navLinks.innerHTML = "";
       tocList.innerHTML = "";
 
       if (!headings.length) {
@@ -663,104 +781,125 @@
         return [];
       }
 
-      headings.forEach((h) => {
-        const a = document.createElement("a");
-        a.className = "toc-link level-" + h.tagName.toLowerCase().replace("h", "");
-        a.href = "#" + h.id;
-        a.dataset.target = h.id;
-        a.textContent = h.textContent || h.id;
-        tocList.appendChild(a);
+      var navSeeds = headings.filter(function(h) {
+        return h.tagName.toLowerCase() === "h2";
+      }).slice(0, 4);
+
+      navSeeds.forEach(function(h) {
+        var link = document.createElement("a");
+        link.className = "nav-link";
+        link.href = "#" + h.id;
+        link.dataset.target = h.id;
+        link.textContent = h.textContent || h.id;
+        navLinks.appendChild(link);
+      });
+
+      heroMenuLinks.forEach(function(item) {
+        var link = document.createElement("a");
+        link.className = "nav-link";
+        link.href = item.href;
+        link.textContent = item.text;
+        if (/^https?:\/\//i.test(item.href)) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
+        navLinks.appendChild(link);
+      });
+
+      headings.forEach(function(h) {
+        var link = document.createElement("a");
+        link.className = "toc-link level-" + h.tagName.toLowerCase().replace("h", "");
+        link.href = "#" + h.id;
+        link.dataset.target = h.id;
+        link.textContent = h.textContent || h.id;
+        tocList.appendChild(link);
       });
 
       toc.classList.remove("hidden");
       return headings;
     }
 
-    function setupTocSpy(headings) {
-      const links = Array.from(document.querySelectorAll(".toc-link"));
-      if (!links.length || !headings.length) return;
+    function setupSpy(headings) {
+      var links = Array.from(document.querySelectorAll(".toc-link"));
+      var navLinks = Array.from(document.querySelectorAll(".nav-link"));
+      if (!headings.length) return;
 
-      const byId = new Map(links.map((l) => [l.dataset.target, l]));
-      const setActive = (id) => {
-        links.forEach((l) => l.classList.toggle("active", l.dataset.target === id));
+      var setActive = function(id) {
+        links.forEach(function(link) {
+          link.classList.toggle("active", link.dataset.target === id);
+        });
+        navLinks.forEach(function(link) {
+          link.classList.toggle("active", link.dataset.target === id);
+        });
       };
 
-      const update = () => {
-        const marker = window.scrollY + 124;
-        let current = headings[0].id;
-        for (const h of headings) {
-          if (h.offsetTop <= marker) current = h.id;
+      var update = function() {
+        var marker = window.scrollY + 126;
+        var current = headings[0].id;
+        for (var i = 0; i < headings.length; i += 1) {
+          if (headings[i].offsetTop <= marker) current = headings[i].id;
           else break;
         }
-        if (byId.has(current)) setActive(current);
+        setActive(current);
       };
-
-      links.forEach((link) => {
-        link.addEventListener("click", () => {
-          const id = link.dataset.target;
-          if (!id) return;
-          setActive(id);
-        });
-      });
 
       update();
       window.addEventListener("scroll", update, { passive: true });
       window.addEventListener("resize", update);
     }
 
-    function extractVersion(markdown) {
-      const patterns = [
-        /当前版本[：:]\s*([0-9]+(?:\.[0-9]+){1,3})/i,
-        /version[：:]\s*([0-9]+(?:\.[0-9]+){1,3})/i,
-        /\b([0-9]+(?:\.[0-9]+){2,3})\b/
-      ];
-      for (const p of patterns) {
-        const m = markdown.match(p);
-        if (m && m[1]) return m[1];
-      }
-      return null;
-    }
-
-    function updateHeroVersion(markdown) {
-      const el = document.getElementById("heroVersion");
-      if (!el) return;
-      const version = extractVersion(markdown);
-      el.textContent = version ? ("v" + version) : "Unknown";
-    }
-
-    function removeDuplicateMainTitle() {
-      const contentEl = document.getElementById("content");
-      if (!contentEl) return;
-      const firstH1 = contentEl.querySelector("h1");
-      if (!firstH1) return;
-      const text = (firstH1.textContent || "").trim().toLowerCase();
-      if (text === "jpimageresizerview") {
-        firstH1.remove();
-      }
-    }
-
     (async function init() {
-      const contentEl = document.getElementById("content");
+      var contentEl = document.getElementById("content");
+      if (!contentEl) return;
 
-      let markdown = "";
-      try {
-        markdown = await loadReadmeText();
-      } catch (_) {
+      document.documentElement.setAttribute("data-color-mode", "dark");
+      document.documentElement.setAttribute("data-light-theme", "dark");
+      document.documentElement.setAttribute("data-dark-theme", "dark");
+      document.body.setAttribute("data-color-mode", "dark");
+      document.body.setAttribute("data-light-theme", "dark");
+      document.body.setAttribute("data-dark-theme", "dark");
+      contentEl.setAttribute("data-color-mode", "dark");
+      contentEl.setAttribute("data-light-theme", "dark");
+      contentEl.setAttribute("data-dark-theme", "dark");
+
+      var markdown = "";
+      var protocol = window.location.protocol;
+
+      if (protocol === "file:") {
+        markdown = loadReadmeTextFromResource();
+        if (!markdown) {
+          try {
+            markdown = await loadReadmeTextFromIframe();
+          } catch (_) {
+            try {
+              markdown = await loadReadmeText();
+            } catch (e) {
+              console.error(e);
+              return;
+            }
+          }
+        }
+      } else {
         try {
-          markdown = await loadReadmeTextFromIframe();
+          markdown = await loadReadmeText();
         } catch (_) {
-          contentEl.textContent = "无法直接读取 README.md";
-          showNote("当前很可能是以 file:// 方式打开，浏览器会拦截本地 fetch。\n请使用 Readme/preview.command 打开。\n或者在项目根目录运行：\npython3 -m http.server 8080\n然后访问：\nhttp://127.0.0.1:8080/Readme/index.html");
-          setupProgress();
-          return;
+          markdown = loadReadmeTextFromResource();
+          if (!markdown) {
+            try {
+              markdown = await loadReadmeTextFromIframe();
+            } catch (e) {
+              console.error(e);
+              return;
+            }
+          }
         }
       }
 
-      const hasMarked = await ensureMarked();
+      var hasMarked = await ensureMarked();
       if (!hasMarked) {
         contentEl.textContent = markdown;
-        showNote("未能加载 Markdown 渲染库，当前为纯文本显示。请检查网络后刷新。");
         setupProgress();
+        setupReveal();
         return;
       }
 
@@ -768,17 +907,19 @@
         gfm: true,
         breaks: false,
         mangle: false,
-        headerIds: true
+        headerIds: false
       });
 
-      updateHeroVersion(markdown);
-      contentEl.innerHTML = window.marked.parse(markdown);
-      removeDuplicateMainTitle();
-      setupReveal();
-      const tocHeadings = buildToc();
-      setupTocSpy(tocHeadings);
-      setupHeroParallax();
+      var temp = document.createElement("div");
+      temp.innerHTML = window.marked.parse(markdown);
+
+      pickHeroContent(temp);
+
+      contentEl.innerHTML = temp.innerHTML;
+      var headings = buildNavAndToc();
+      setupSpy(headings);
       setupProgress();
+      setupReveal();
     })();
   </script>
 </body>
