@@ -55,7 +55,7 @@
     3. 新增蒙版自定义外观配置，可设置裁剪时忽略蒙版；
     4. 使用蒙版或圆切时均可设置裁剪宽高比和可否任意拖拽。
     
-新增iOS26风格的玻璃裁剪框，可以在Demo中选择**玻璃样式**的裁剪框（具体设置参考Demo）：
+#### 新增iOS26风格的玻璃裁剪框，可以在Demo中选择**玻璃样式**的裁剪框（具体设置参考Demo）：
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/glass_effect_border.gif)
 
@@ -63,7 +63,7 @@
 
 - PS：看着效果不错，可以直接截图生成3D壁纸了（截图时会自动隐藏其他控件）🤠
 
-可设置GIF的背景色、圆角、边框、轮廓描边、内容边距：
+#### 可设置GIF的背景色、圆角、边框、轮廓描边、内容边距：
 
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
