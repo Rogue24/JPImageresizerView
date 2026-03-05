@@ -63,12 +63,12 @@
     _appearance = appearance;
     
     UIVisualEffect *effect = self.isBlur ? appearance.bgEffect : nil;
-    CGColorRef cgColor = appearance.bgColor.CGColor;
+    CGColorRef bgColor = appearance.bgColor.CGColor;
     CGFloat alpha = self.isMaskAlpha ? ((appearance.bgEffect || !self.isBlur) ? 0 : appearance.maskAlpha) : 1;
     
     void (^animations)(void) = ^{
         self.effectView.effect = effect;
-        self.fillView.layer.backgroundColor = cgColor;
+        self.fillView.layer.backgroundColor = bgColor;
         self.fillView.alpha = alpha;
     };
     
