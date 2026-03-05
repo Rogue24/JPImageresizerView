@@ -7,61 +7,69 @@
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
 [![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-green.svg?style=flat)](https://cocoapods.org)
 
-[Chinese document(中文文档)](https://github.com/Rogue24/JPImageresizerView) | [Juejin](https://juejin.cn/post/6958803759073853447) |
-[Little Red Book App Crop](https://github.com/Rogue24/JPCrop)
+[Juejin](https://juejin.cn/post/6958761756978053150) | [Xiaohongshu-like App Cropping with Free-Angle Dragging](https://github.com/Rogue24/JPCrop)
 
-*本人英语小白，这里基本都是机翻，见笑了，Sorry。*
+## Introduction (Current version: 1.14.0)
 
-## Brief introduction (Current version: 1.13.2)
-
-A special wheel for cutting pictures, GIF and videos is simple and easy to use, with rich functions (high degree of freedom parameter setting, supporting rotation and mirror flipping, masking, compression, etc.), which can meet the needs of most cutting.
+This is a dedicated library for cropping images, GIFs, and videos. It is easy to use and feature-rich (highly flexible parameters, rotation and mirror flipping, masks, compression, etc.), and can cover most cropping scenarios.
 
 ![effect](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cover.gif)
 
     Feature:
-        ✅ Zooming of area that can be tailored adaptively;
-        ✅ The parameters are set with high degrees of freedom, include spacing of clipping area, cutting aspect ratio, whether to scale adaptively;
-        ✅ Supports up to eight drag and drop direction;
-        ✅ Support rotation;
-        ✅ Support horizontal and vertical mirror flip;
+        ✅ Adaptive zooming for the cropping area;
+        ✅ Highly flexible parameter configuration, including insets, aspect ratio, adaptive scaling, etc.;
+        ✅ Up to 8 drag directions for the crop frame;
+        ✅ Rotation in up/left/down/right directions;
+        ✅ Horizontal and vertical mirror flipping;
         ✅ Two border styles;
-        ✅ Supports circular clipping;
-        ✅ Custom gaussian blur style, border color, background color, mask opacity;
+        ✅ Round cropping;
+        ✅ Custom crop corner radius;
+        ✅ Custom blur style, border color, background color, and mask opacity;
         ✅ Custom border image;
-        ✅ Can customize the mask image clipping;
-        ✅ Customizable initial cropping area;
-        ✅ It can dynamically change the spacing between view area and crop area, and supports horizontal and vertical screen switching;
-        ✅ Can crop GIF;
-        ✅ Process Images for GIF: background color, corner radius, border, outline stroke, and content padding;
-        ✅ You can crop a local video either as a whole or a specific frame;
-        ✅ You can crop a local video and customize the extraction of a specified duration, or convert it into a GIF;
-        ✅ The current clipping state can be saved;
-        ✅ Images support n-grid clipping;
-        ✅ Compatible with Swift & SwiftUI environment(Reference Demo).
+        ✅ Custom mask-image-based cropping;
+        ✅ Custom initial cropping area;
+        ✅ Dynamic updates to view frame and content insets, supports portrait/landscape switching;
+        ✅ GIF cropping;
+        ✅ GIF image processing settings: background color, corner radius, border, outline stroke, and content insets;
+        ✅ Crop a full local video or a specific frame;
+        ✅ Crop local videos with custom time range, or convert clipped segments to GIF;
+        ✅ Save current crop state;
+        ✅ N-grid image cropping;
+        ✅ Compatible with Swift & SwiftUI (see Demo).
 
     TODO:
         🔘 Swift version;
-        🔘 Fix the clipping region without scaling;
-        🔘 The video does not need to fix the orientation before clipping;
-        🔘 Crop remote video;
-        🔘 Persistent cache pruning history;
-        🔘 The video clipping part (AVFoundation module) is separated;
-        🔘 To achieve the effect of free drag rotation and flip angle.
+        🔘 Fixed non-scalable crop frame;
+        🔘 Crop video without requiring orientation correction first;
+        🔘 Remote video cropping;
+        🔘 Persistent cached crop history;
+        🔘 Split out video-cropping logic (AVFoundation module);
+        🔘 Implement free-angle drag rotation/flip like Apple Photos.
         
     Note: Because automatic layout is not conducive to gesture control, frame layout is currently used, and automatic layout is not supported for the time being.
     
-## Newest
-    1. Now, while cropping the video, you can also customize the segment of the video to be trimmed (at least 1 second);
-    2. Customizable initial cropping area;
-    3. If a fixed resizeWHScale is set and you want it to automatically flip when switching between portrait and landscape orientation, simply set isFlipResizeWHScaleOnVerHorSwitch = YES.
-    
-![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
+## Latest Changes
+    1. Unified appearance configuration (crop border color, blur effect, background color, mask alpha);
+    2. Added custom crop corner radius, and an option to hide corner radius only during editing while keeping rounded corners in final output;
+    3. Added custom mask appearance configuration, and support for ignoring mask during crop;
+    4. When using mask or round crop, you can still set crop aspect ratio and whether free dragging is allowed.
 
-- Process Images for GIF: background color, corner radius, border, outline stroke, and content padding.
+#### Added an iOS 26 style glass crop frame, selectable as the **Glass Style** frame in Demo (see Demo for specific setup):
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/glass_effect_border.gif)
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/glass_effect_picture.jpg)
+
+- PS: The visual effect is nice. You can directly take a screenshot to generate a 3D wallpaper (other controls are automatically hidden while screenshotting) 🤠
+
+#### GIF now supports background color, corner radius, border, outline stroke, and content insets:
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/processforgif.gif)
 
 ## How to use
 
 ### Initialization
+
 #### 1. Configure initial parameters
 
     You can only select one of the clipping elements (picture, GIF, video) that can be set and cannot be nil:
@@ -70,18 +78,22 @@ A special wheel for cutting pictures, GIF and videos is simple and easy to use, 
         - videoURL: Local video to crop (sent in as NSURL)
         - videoAsset: Local video to crop (sent in as AVURLAsset)
         
-    Notes to some configurable parameters (see JPImageresizerView.h for more details):
-      - blurEffect: gaussian blur style
-      - borderImage: custom border image
-      - frameType & strokeColor: border style & color
-      - bgColor: background color
-      - maskAlpha: mask opacity
-      - resizeWHScale: width-height ratio of the clipping
-      - contentInsets: the inner margin between the crop region and the main view
-      - maskImage: customize the mask image
-      - gifSettings: GIF Image Processing Settings
+    Other configurable parameters (see header files for more details):
+        - mainAppearance: primary appearance configuration
+            - strokeColor: border color
+            - bgEffect: blur effect
+            - bgColor: background color
+            - maskAlpha: mask opacity
+        - borderImage: border image
+        - frameType: border style
+        - resizeWHScale: crop aspect ratio
+        - resizeCornerRadius: crop corner radius
+        - contentInsets: insets between crop area and view
+        - maskImage: mask image
+        - gifSettings: GIF image processing settings
      
 **Image / GIF**
+
 ```objc
 // 1.Image / GIF to crop (sent in as UIImage)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithImage:image make:^(JPImageresizerConfigure *configure) {
@@ -110,6 +122,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
 For the video obtained from the system album, the video direction may be modified (i.e. rotated and flipped in system album), revised `videoTrack.preferredTransform != CGAffineTransformIdentity`. The image will, but at least the image has an `imageOrientation` property to tell me what has been changed. Due to my shallow learning, I don't know what specific changes have been made from `preferredTransform` alone, If only the rotation is good, the value after rotation + flip is not certain, which will lead to confusion in the final cutting. At present, we have to correct the direction before cutting, and improve it in the future. We hope that we can get some advice from those who have the chance!
 
 Modify after initialization (modify after entering the page first). For specific operations, please refer to demo:
+
 ```objc
 // 1.videoURL: Local video to crop (sent in as NSURL)
 JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWithVideoURL:videoURL make:^(JPImageresizerConfigure *configure) { ...... } fixErrorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
@@ -129,9 +142,11 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure defaultConfigureWi
                                           fixStartBlock:^{ ...... } fixProgressBlock:^(float progress) { ...... } 
                                        fixCompleteBlock:^(NSURL *cacheURL) { ...... }];
 ```
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/videofixorientation.gif)
 
 Or fix it first and then initialize it (fix it first and then enter the page). You can use the API of `JPImageresizerTool` to fix it. For specific operations, please refer to demo:
+
 ```objc
 // Get video information
 AVURLAsset *videoAsset = [AVURLAsset assetWithURL:videoURL];
@@ -164,10 +179,12 @@ if (CGAffineTransformEqualToTransform(videoTrack.preferredTransform, CGAffineTra
     ......
 }];
 ```
+
 - PS1: If the video does not need to be corrected, `fixStartBlock`, `fixProgressBlock`, `fixErrorBlock` will not be called. Instead, `fixCompleteBlock` will be called directly to return to the original path; 
 - PS2: If it is determined that the video does not need to be corrected, `fixErrorBlock`、`fixStartBlock`、`fixProgressBlock`、`fixCompleteBlock` are transmitted to `nil`;
 - PS3: The same is true for replace video `-setVideoURL: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` and `-setVideoAsset: animated: fixErrorBlock: fixStartBlock: fixProgressBlock: fixCompleteBlock:` methods, internal will determine whether it needs to be corrected;
 - PS4: If you need to initialize and fix the clipping aspect ratio (such as circular cutting, masking, etc.), you need to set the `isArbitrarily` property of `JPImageresizerConfigure` to **NO** (the default is YES) :
+
 ```objc
 JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeConfigureWithImage:nil make:^(JPImageresizerConfigure *configure) {
     configure
@@ -177,6 +194,7 @@ JPImageresizerConfigure *configure = [JPImageresizerConfigure darkBlurMaskTypeCo
 ```
 
 #### 2. Create JPImageresizerView instance object and add to view
+
 ```objc
 JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
     // You can listen here to see if you can reset it.
@@ -208,6 +226,7 @@ if (@available(iOS 11.0, *)) {
 ```
 
 #### Using in Swift
+
 ```swift
 // 1.Initial configuration
 let configure = JPImageresizerConfigure.defaultConfigure(with: image) { c in
@@ -219,12 +238,12 @@ let configure = JPImageresizerConfigure.defaultConfigure(with: image) { c in
         .jp_animationCurve(.easeInOut)
 }
 
-// 2.Create imagesizerView
+// 2.Create imageresizerView
 let imageresizerView = JPImageresizerView(configure: configure) { [weak self] isCanRecovery in
-    // 当不需要重置设置按钮不可点
+    // Disable reset button when reset is not needed
     self?.recoveryBtn.isEnabled = isCanRecovery
 } imageresizerIsPrepareToScale: { [weak self] isPrepareToScale in
-    // 当预备缩放设置按钮不可点，结束后可点击
+    // Disable operation buttons while preparing to scale; re-enable after done
     self?.operationView.isUserInteractionEnabled = !isPrepareToScale
 }
 
@@ -232,6 +251,7 @@ let imageresizerView = JPImageresizerView(configure: configure) { [weak self] is
 view.insertSubview(imageresizerView, at: 0)
 self.imageresizerView = imageresizerView
 ```
+
 For specific use, refer to Demo (JPCropViewController).
 
 #### Customizable Initial Cropping Area
@@ -248,7 +268,7 @@ configure.resizeScaledBounds = CGRectMake(0.1, 0.1, 0.8, 0.8);
 - This property is mutually exclusive with another property of `JPImageresizerConfigure`, `resizeWHScale`. When `resizeScaledBounds` is set, the `resizeWHScale` of `imageresizerView` will be automatically calculated as `resizeScaledBounds.size.width / resizeScaledBounds.size.height`.
 - This property will only be used once during initialization. Therefore, if it has been set or if you later configure `imageresizerView` with `resizeWHScale`, `isRoundResize`, or `maskImage`, the `resizeScaledBounds` will be cleared.
 
-For detailed usage, please refer to the **人脸裁剪** section in the Demo.
+For detailed usage, please refer to **Face Cropping** in the Demo.
 
 ### Crop
     Explain: 
@@ -265,6 +285,7 @@ For detailed usage, please refer to the **人脸裁剪** section in the Demo.
         5.Note: the image format of the cache path will be automatically corrected. For example, it was originally written as `xxx/xxx.jpeg`. Due to the use of mask, it will be corrected to `xxx/xxx.png` after clipping. The final cache path shall be subject to `result.cacheurl` in the callback(`completeBlock`).
     
 #### Crop image
+
 ```objc
 // 1.Cut to original size
 [self.imageresizerView cropPictureWithCacheURL:cacheURL errorBlock:^(NSURL *cacheURL, JPImageresizerErrorReason reason) {
@@ -385,6 +406,7 @@ Processed GIF:
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/bazhuawa_processed.gif)
 
 - **Crop one of the GIF frames**
+
 ```objc
 // 1.The size of the original image cuts the current frame of GIF
 // completeBlock: Clipping completed callback (return JPImageresizerResult, contains the decoded image and cache path)
@@ -412,6 +434,7 @@ PS: You can set isLoopPlaybackGIF to choose which frame to crop (the default is 
 ```objc
 self.imageresizerView.isLoopPlaybackGIF = NO;
 ```
+
 ![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/noloopplaybackgif.gif)
 
 #### Crop local video
@@ -470,9 +493,11 @@ PS: At present, it is only for local video, and remote video is not suitable for
 // When the video is being exported, the call can cancel the export and trigger the errorblock callback (JPIEReason_ExportCancelled)
 - (void)videoCancelExport;
 ```
+
 PS: Since the width and height of the video must be an integer multiple of 16, otherwise the system will automatically correct the size after export, and the insufficient areas will be filled in the form of green edge. Therefore, I modified the clipping size by division of 16 in the method. Therefore, the width to height ratio of the exported video may be slightly different from the specified width height ratio.
 
 - **Clip one frame of the video**
+
 ```ojbc
 // 1.The size of the original image cuts the current frame of the video
 // cacheURL: Cache path (can be set to nil, it will not be cached)
@@ -530,7 +555,9 @@ PS: Since the width and height of the video must be an integer multiple of 16, o
 PS: The function of cutting the whole video image into circles and masking can not be used. At present, it is only effective for pictures and GIF.
 
 ### Mask image
+
 ![mask](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mask.gif)
+
 ```objc
 // Set mask picture (currently only PNG picture is supported)
 self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
@@ -540,11 +567,15 @@ self.imageresizerView.maskImage = [UIImage imageNamed:@"love.png"];
 // Remove mask image
 self.imageresizerView.maskImage = nil;
 ```
+
 ![maskdone](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/maskdone.png)
+
 - PS: If the mask image is used, the PNG image is finally cropped out, so the cropped size may be larger than the original image.
 
 ### Round Resize
+
 ![round_resize](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/roundresize.jpg)
+
 ```objc
 // Set circle cut
 // After setting, the resizeWHScale is 1:1, the radius is half of the width and height, and the top, left, bottom and right middle of the border can be dragged.
@@ -559,7 +590,9 @@ self.imageresizerView.resizeWHScale = 0.0;
 ```
 
 ### Horizontal and vertical screen switching
+
 ![screenswitching](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/screenswitching.gif)
+
 ```objc
 // This method is called to refresh when the user needs to listen to the horizontal and vertical screen switching or manually switch by himself
 // 1.updateFrame: Refresh frame (e.g. horizontal and vertical screen switching, incoming self.view.bounds Just).
@@ -570,8 +603,10 @@ self.imageresizerView.resizeWHScale = 0.0;
 ```
 
 ### Change border style
+
 ![concise](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/conciseframetype.jpg)
 ![classic](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/classicframetype.jpg)
+
 ```objc
 // Only two border styles are available, concise style(JPConciseFrameType) and classic style(JPClassicFrameTypeCurrently).
 // You can modify the border style by initializing or directly setting frameType properties
@@ -579,11 +614,13 @@ self.imageresizerView.frameType = JPClassicFrameType;
 ```
 
 ### Custom Border Image
+
 ![stretch_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder1.jpg)
 ![tile_mode](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/customborder2.jpg)
+
 ```objc
 // Use custom border pictures (example: tile mode)
-UIImage *tileBorderImage = [[UIImage imageNamed:@"jp_dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
+UIImage *tileBorderImage = [[UIImage imageNamed:@"dotted_line"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 14, 14) resizingMode:UIImageResizingModeTile];
 
 // Set the offset between the border image and the border (CGRectInset, used to adjust the gap between the border image and the border)
 self.imageresizerView.borderImageRectInset = CGPointMake(-1.75, -1.75);
@@ -593,7 +630,9 @@ self.imageresizerView.borderImage = tileBorderImage;
 ```
 
 ### Switching resizeWHScale
+
 - PS: Setting the clipping aspect ratio automatically removes the circular cuts and masks
+
 ```objc
 // 1.Custom parameter switching
 /**
@@ -611,10 +650,31 @@ self.imageresizerView.resizeWHScale = 1.0;
 // Whether it can be dragged in any proportion (including circle cutting and masking)
 self.imageresizerView.isArbitrarily = !self.imageresizerView.isArbitrarily;
 
-// For more APIs, see the comments on JPImagerestoreview.h
+// For more APIs, see comments in JPImageresizerView.h
 ```
 
+### Custom crop corner radius
+
+![](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/cornerRadius_crop.gif)
+
+Set crop corner radius:
+
+```objc
+self.imageresizerView.resizeCornerRadius = 20;
+```
+
+- It is independent of `isRoundResize`, and its priority is lower than `isRoundResize`. The final corner radius will not exceed half of the **shorter side of the crop size**.
+
+If you set crop corner radius, the crop frame will also display rounded corners. If you want the crop frame to stay sharp while only the final output has rounded corners, set:
+
+```objc
+self.imageresizerView.ignoresCornerRadiusForDisplay = YES;
+```
+
+- Default is `NO`. If set to `YES`, the frame will not display rounded corners even when `resizeCornerRadius` is not 0, but the final cropped result still keeps the corner radius.
+
 ### Custom gaussian blur style, border color, background color, mask opacity
+
 ```objc
 // Set gaussian blur style (default animated is YES)
 self.imageresizerView.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -634,7 +694,9 @@ self.imageresizerView.maskAlpha = 0.5; // Only blurEffect = nil will take effect
 ```
 
 ### Mirror reversal
+
 ![mirror](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/mirror.gif)
+
 ```objc
 // Vertical Mirror, YES -> Rotates 180 degrees along Y axis, NO -> Reduction
 BOOL isVerticalityMirror = !self.imageresizerView.verticalityMirror;
@@ -646,6 +708,7 @@ BOOL isHorizontalMirror = !self.imageresizerView.horizontalMirror;
 ```
 
 ### Rotate
+
 ```objc
 // 1.Rotate 90 ° clockwise / counterclockwise (default counterclockwise)
 [self.imageresizerView rotation];
@@ -666,13 +729,16 @@ If a fixed `resizeWHScale` is set and you want it to automatically flip when swi
 - **Note 2:** If a mask image (`maskImage`) is set, `isFlipResizeWHScaleOnVerHorSwitch` will be ignored.
 
 ### Reset
+
 Reset the target state, the direction is vertical upward, can be reset to different resizeWHScale, circle cut, mask
+
 #### 1.Everything is reset according to the current state
 ```objc
 - (void)recovery;
 ```
 
 #### 2.Reset with resizeWHScale (circle cuts and masks will be removed)
+
 ```objc
 // 2.1 Reset according to the initial clipping aspect ratio
 - (void)recoveryByInitialResizeWHScale;
@@ -689,12 +755,14 @@ Reset the target state, the direction is vertical upward, can be reset to differ
 ```
 
 #### 3.Reset with circle cut
+
 ```objc
 - (void)recoveryToRoundResize;
 - (void)recoveryToRoundResize:(BOOL)isToBeArbitrarily;
 ```
 
-#### 4.Reset with mask imag
+#### 4.Reset with mask image
+
 ```objc
 // 4.1 Reset by current mask image
 - (void)recoveryByCurrentMaskImage;
@@ -705,17 +773,19 @@ Reset the target state, the direction is vertical upward, can be reset to differ
 ```
 
 ### Preview
-```objc
-// Preview mode: Hide borders, close drag-and-drop operations, for previewing clipped areas
 
-// 1.Default with animation effect
+```objc
+// Preview mode: hide the frame and disable drag operations, used to preview the cropped area.
+
+// Default includes animation:
 self.imageresizerView.isPreview = YES;
 
-// 2.Customize whether to with animation effect or not
-[self.imageresizerView setIsPreview:YES animated:NO]
+// Equivalent:
+[self.imageresizerView setIsPreview:YES animated:YES];
 ```
 
 ### Save current crop state
+
 ```objc
 // 1.It is easy to directly call the savecurrentconfigure method to obtain the current clipping state. A global variable can be used to save the object
 JPImageresizerConfigure *savedConfigure = [self.imageresizerView saveCurrentConfigure];
@@ -732,12 +802,14 @@ self.imageresizerView = imageresizerView;
 // 3.You can set the isCleanHistoryAfterInitial property of JPImageresizerConfigure to YES, and automatically clear the history after initialization (yes by default)
 // Or call the cleanHistory method directly to clear the history
 ```
+
 ![save](https://github.com/Rogue24/JPCover/raw/master/JPImageresizerView/save.gif)
 
 - PS1: If preserved `savedConfigure.history.viewFrame` If it is inconsistent with the current `viewFrame`, the interface will be disordered, and you need to judge whether it is consistent before reopening;
 - PS2: In addition, it can only be saved during the usage of the App, and the persistent cache has not been implemented.
 
 ### Other
+
 ```objc
 // Lock the clipping area. After locking, the clipping area cannot be dragged. NO unlocks the clipping area.
 self.imageresizerView.isLockResizeFrame = YES;
@@ -749,18 +821,40 @@ self.imageresizerView.isLockResizeFrame = YES;
 
 - In Xcode, select: File -> Swift Packages -> Add Package Dependency
 - Enter the package repository URL: https://github.com/Rogue24/JPImageresizerView.git
-- Choose the appropriate version (e.g. a specific version, branch, or commit).
-- Add `JPImageresizerView` to your target dependencies.
+- Choose an appropriate version (for example, a specific version, branch, or commit)
+- Add `JPImageresizerView` to your target dependencies
 
 ### CocoaPods
 
-- just add the following line to your podfile:
+Just add the following line to your Podfile:
 
 ```ruby
 pod 'JPImageresizerView'
+
+Update command: pod update --no-repo-update
+```
+
+### Swift Package Manager
+
+This library now supports Swift Package Manager (requires **Xcode 11** or later):
+
+```swift
+.dependencies: [
+    .package(url: "https://github.com/Rogue24/JPImageresizerView.git", .upToNextMajor(from: "1.14.0"))
+]
+```
+
+Or add the repository URL in Xcode:
+
+```swift
+https://github.com/Rogue24/JPImageresizerView.git
 ```
 
 ## Feedback address
 
     E-mail: zhoujianping24@hotmail.com
     Blog: https://juejin.im/user/5e55f27bf265da575c16c187
+
+## License
+
+JPImageresizerView is available under the MIT license. See the LICENSE file for more info.
