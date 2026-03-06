@@ -7,6 +7,7 @@
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
 
   <style>
     :root {
@@ -215,6 +216,42 @@
       width: auto;
       display: inline-block;
       vertical-align: middle;
+    }
+
+    .hero-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #fff;
+      background: rgba(18,22,30,0.7);
+      transition: all 180ms var(--ease);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-btn:hover {
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(30,40,60,0.85);
+    }
+
+    .hero-btn.primary {
+      background: linear-gradient(135deg,#0a84ff,#5ac8fa);
+      border: none;
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(41,151,255,0.45);
+    }
+
+    .hero-btn.primary:hover {
+      filter: brightness(1.05);
     }
 
     .content-wrap {
@@ -535,6 +572,7 @@
         <h1 id="heroTitle" class="hero-title"></h1>
         <div id="heroLead" class="hero-lead"></div>
         <div id="heroBadges" class="hero-badges"></div>
+        <div id="heroActions" class="hero-actions"></div>
       </div>
     </section>
 
@@ -550,6 +588,7 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
   <script src="./js/readme_resource.js"></script>
   <script>
     function loadScript(url) {
@@ -579,9 +618,22 @@
     }
 
     async function loadReadmeText() {
-      var resp = await fetch("../README.md", { cache: "no-store" });
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      return resp.text();
+      var paths = [
+        "/README.md",
+        "../README.md",
+        "./README.md"
+      ];
+
+      for (var i = 0; i < paths.length; i += 1) {
+        try {
+          var resp = await fetch(paths[i], { cache: "no-store" });
+          if (resp.ok) {
+            return await resp.text();
+          }
+        } catch (_) {}
+      }
+
+      throw new Error("Unable to load README.md");
     }
 
     function loadReadmeTextFromIframe() {
@@ -685,6 +737,44 @@
       });
     }
 
+    function enhanceCodeBlocks() {
+      document.querySelectorAll("pre code").forEach(function(block) {
+        if (window.hljs) {
+          hljs.highlightElement(block);
+        }
+
+        var pre = block.parentElement;
+        if (!pre || pre.querySelector(".copy-btn")) return;
+
+        var btn = document.createElement("button");
+        btn.className = "copy-btn";
+        btn.textContent = "copy";
+
+        btn.style.position = "absolute";
+        btn.style.top = "10px";
+        btn.style.right = "10px";
+        btn.style.padding = "4px 8px";
+        btn.style.fontSize = "12px";
+        btn.style.borderRadius = "6px";
+        btn.style.border = "1px solid rgba(255,255,255,0.2)";
+        btn.style.background = "rgba(20,20,24,0.8)";
+        btn.style.color = "#fff";
+        btn.style.cursor = "pointer";
+
+        pre.style.position = "relative";
+        pre.appendChild(btn);
+
+        btn.onclick = function() {
+          navigator.clipboard.writeText(block.innerText).then(function() {
+            btn.textContent = "copied";
+            setTimeout(function() {
+              btn.textContent = "copy";
+            }, 1200);
+          });
+        };
+      });
+    }
+
     function setTopTitle(text) {
       var title = text || "";
       var navTitle = document.getElementById("navTitle");
@@ -695,6 +785,7 @@
     }
 
     var heroMenuLinks = [];
+    var heroActionLinks = [];
 
     function pickHeroContent(tempRoot) {
       var heroLead = document.getElementById("heroLead");
@@ -755,6 +846,8 @@
 
           hasTakenMenuLinks = true;
           node.remove();
+          // Insert heroActionLinks assignment after heroMenuLinks assignment
+          heroActionLinks = heroMenuLinks.slice(0);
           continue;
         }
 
@@ -817,6 +910,27 @@
 
       toc.classList.remove("hidden");
       return headings;
+    }
+
+    function renderHeroActions() {
+      var container = document.getElementById("heroActions");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      heroActionLinks.forEach(function(item, index) {
+        var link = document.createElement("a");
+        link.className = "hero-btn" + (index === 0 ? " primary" : "");
+        link.href = item.href;
+        link.textContent = item.text;
+
+        if (/^https?:\/\//i.test(item.href)) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
+
+        container.appendChild(link);
+      });
     }
 
     function setupSpy(headings) {
@@ -917,9 +1031,11 @@
 
       contentEl.innerHTML = temp.innerHTML;
       var headings = buildNavAndToc();
+      renderHeroActions();
       setupSpy(headings);
       setupProgress();
       setupReveal();
+      enhanceCodeBlocks();
     })();
   </script>
 </body>
