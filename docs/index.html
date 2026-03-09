@@ -145,7 +145,7 @@
     .hero {
       position: relative;
       overflow: hidden;
-      min-height: clamp(280px, 50vw, 620px);
+      min-height: clamp(280px, 50vw, 580px);
       padding: clamp(46px, 8vw, 92px) 16px clamp(36px, 6vw, 70px);
       display: flex;
       align-items: center;
@@ -931,6 +931,12 @@
 
         container.appendChild(link);
       });
+
+      var heroLeadEl = document.getElementById("heroLead");
+      if (heroLeadEl) {
+        heroLeadEl.textContent = "";
+        heroLeadEl.style.display = "none";
+      }
     }
 
     function setupSpy(headings) {
