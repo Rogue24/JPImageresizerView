@@ -527,6 +527,35 @@
       .markdown-body {
         font-size: 15px;
         line-height: 1.75;
+        /* 确保 Markdown 内容不超出屏幕 */
+        max-width: 100%;
+        overflow-x: hidden;
+        word-break: break-word;
+        white-space: normal;
+      }
+
+      /* 移动端彻底隐藏右侧导航栏 */
+      .toc {
+        display: none !important;
+      }
+
+      /* 代码块自适应屏幕 */
+      .markdown-body pre {
+        max-width: 100%;
+        overflow-x: auto; /* 保留水平滚动以防长代码 */
+        box-sizing: border-box;
+        word-break: break-word;
+      }
+
+      .markdown-body pre code {
+        /* 不自动换行，保持代码原样，允许水平滚动 */
+        white-space: pre;
+      }
+
+      /* 图片自适应屏幕宽度，最大宽度为屏幕的 80% */
+      .markdown-body img {
+        max-width: 80vw;
+        height: auto;
       }
     }
 
