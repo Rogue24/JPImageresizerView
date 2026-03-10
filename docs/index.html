@@ -140,12 +140,14 @@
     .page {
       position: relative;
       z-index: 1;
+      opacity: 0;
     }
 
     .hero {
       position: relative;
       overflow: hidden;
-      min-height: clamp(280px, 50vw, 580px);
+      min-height: clamp(240px, 42vw, 520px);
+      max-height: 620px; /* 防止4K屏 hero 过高 */
       padding: clamp(46px, 8vw, 92px) 16px clamp(36px, 6vw, 70px);
       display: flex;
       align-items: center;
@@ -452,6 +454,9 @@
         0 10px 26px rgba(0, 0, 0, 0.42),
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
       background: transparent;
+      display: block;
+      margin: 20px auto;
+      content-visibility: auto; /* 提升长文档渲染性能 */
     }
 
     .markdown-body pre {
@@ -733,10 +738,16 @@
       var progress = document.getElementById("progress");
       if (!progress) return;
 
+      var ticking = false;
       var update = function() {
-        var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        var p = Math.min(100, (window.scrollY / max) * 100);
-        progress.style.width = p.toFixed(2) + "%";
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function() {
+          var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+          var p = Math.min(100, (window.scrollY / max) * 100);
+          progress.style.width = p.toFixed(2) + "%";
+          ticking = false;
+        });
       };
 
       update();
@@ -1065,12 +1076,17 @@
       pickHeroContent(temp);
 
       contentEl.innerHTML = temp.innerHTML;
+      contentEl.querySelectorAll('img').forEach(function(img){
+        img.loading = 'lazy';
+        img.decoding = 'async';
+      });
       var headings = buildNavAndToc();
       renderHeroActions();
       setupSpy(headings);
       setupProgress();
       setupReveal();
       enhanceCodeBlocks();
+      document.querySelector('.page').style.opacity = '1';
     })();
   </script>
 </body>
