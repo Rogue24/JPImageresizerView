@@ -360,12 +360,14 @@ static UIViewController *tmpVC_;
 #pragma mark 设置蒙版图片
 - (IBAction)replaceMaskImage:(UIButton *)sender {
     [UIAlertController changeMaskImage:^(UIImage * _Nullable maskImage) {
+        [self __removeGlassMask];
         self.imageresizerView.maskImage = maskImage;
     } gotoMaskImageList:^{
         @jp_weakify(self);
         UINavigationController *navCtr = [[UINavigationController alloc] initWithRootViewController:[ShapeListViewController shapeListViewController:^(UIImage *shapeImage) {
             @jp_strongify(self);
             if (!self) return;
+            [self __removeGlassMask];
             self.imageresizerView.maskImage = shapeImage;
         }]];
         if (@available(iOS 13.0, *)) {
