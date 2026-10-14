@@ -756,7 +756,7 @@ static UIViewController *tmpVC_;
 }
 
 - (void)didReceiveEnvSceneDidChange:(NSNotification *)notification {
-    EnvUpdateOptions options = [notification.userInfo[@"options"] unsignedIntegerValue];
+//    EnvUpdateOptions options = [notification.userInfo[@"options"] unsignedIntegerValue];
     NSTimeInterval duration = [notification.userInfo[@"transitionDuration"] doubleValue];
     _displayMode = [Environmenter displayMode];
     _hingeStatus = [Environmenter hingeStatus];
@@ -795,7 +795,7 @@ static UIViewController *tmpVC_;
     // 只对开放状态之间的切换（对折开<->全展开）做布局刷新
     if ((nowStatus == EnvHingeStatus_PartiallyOpen && (oldStatus == EnvHingeStatus_FullyOpen || oldStatus == EnvHingeStatus_Unknown)) ||
         (oldStatus == EnvHingeStatus_PartiallyOpen && nowStatus == EnvHingeStatus_FullyOpen)) {
-//        [self updateLayoutWithDuration:duration];
+        [self updateLayoutWithDuration:duration];
     }
 }
 
@@ -815,15 +815,9 @@ static UIViewController *tmpVC_;
     if (safeAreaInsets.right == 0) {
         safeAreaInsets.right = 20;
     }
-//    if Env.isHingeActive {
-//        if Env.displayMode == .innerLandscapeFull {
-//            safeAreaInsets.left = Env.sceneWidth * 0.5 + 20
-//        }
-//        else if Env.displayMode == .innerPortraitFull {
-//            safeAreaInsets.bottom = Env.sceneHeight * 0.5 + 24
-//        }
-//    }
+    
     BOOL isHingeActive = [Environmenter isHingeActive];
+    duration = isHingeActive ? 0 : duration;
     
     CGFloat backBtnTop = safeAreaInsets.top;
     CGFloat backBtnLeft = safeAreaInsets.left;
@@ -835,16 +829,14 @@ static UIViewController *tmpVC_;
     CGFloat resizeBtnRight = safeAreaInsets.right;
     CGFloat bottomBtnWidth = 0;
     
-    CGRect viewFrame = CGRectZero;
+    CGRect viewFrame = sceneBounds;
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     
     float portraitPriority = 1;
     float landscapePriority = 1;
     switch (_displayMode) {
-        case EnvDisplayMode_OuterPortrait: // 竖屏
+        case EnvDisplayMode_OuterPortrait: // 外屏竖屏
             portraitPriority = 999;
-            
-            viewFrame = sceneBounds;
             
             bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
             
@@ -852,120 +844,92 @@ static UIViewController *tmpVC_;
             contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
             contentInsets.left = safeAreaInsets.left;
             contentInsets.right = safeAreaInsets.right;
-            
             break;
             
-        case EnvDisplayMode_OuterLandscapeLeft: // 横屏
+        case EnvDisplayMode_OuterLandscapeLeft: // 外屏横屏下巴在左
             landscapePriority = 999;
-            
-            viewFrame = sceneBounds;
             
             bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
             backBtnTop = bottomViewTop;
             
             bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
             
-            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
-            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
             contentInsets.top = safeAreaInsets.top;
+            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
             contentInsets.bottom = safeAreaInsets.bottom;
-            
+            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
             break;
             
-        case EnvDisplayMode_OuterLandscapeRight: // 横屏
+        case EnvDisplayMode_OuterLandscapeRight: // 外屏横屏下巴在右
             landscapePriority = 999;
-            
-            viewFrame = sceneBounds;
             
             bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
             backBtnTop = bottomViewTop;
             
             bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
             
-            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
-            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
             contentInsets.top = safeAreaInsets.top;
+            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
             contentInsets.bottom = safeAreaInsets.bottom;
-            
+            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
             break;
             
-        case EnvDisplayMode_InnerLandscapeFull: // 横屏
-//            if (isHingeActive) {
-//                portraitPriority = 999;
-//                
-//            } else {
-//                landscapePriority = 999;
-//
-//            }
-            
+        case EnvDisplayMode_InnerLandscapeFull: // 内屏横屏满屏
             landscapePriority = 999;
             
-            viewFrame = sceneBounds;
+            CGFloat leftW = viewFrame.size.width * (isHingeActive ? 0.5 : 0.3);
             
-            bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
-            backBtnTop = bottomViewTop;
+            bottomBtnWidth = (viewFrame.size.width * 0.4 - PortraitHorBtnSpace * 3) / 4.0;
+            bottomViewTop = JPHalfOfDiff(viewFrame.size.height, ButtonHeight * 8 + LandscapeVerBtnSpace * 7);
+            backBtnTop = bottomViewTop - LandscapeVerBtnSpace - ButtonHeight;
             
-            bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            CGFloat btnsW = self.replaceMaskImgBtn.jp_width + PortraitHorBtnSpace + bottomBtnWidth;
+            backBtnLeft = JPHalfOfDiff(leftW, btnsW);
+            resizeBtnRight = viewFrame.size.width - leftW + backBtnLeft;
             
-            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
-            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
             contentInsets.top = safeAreaInsets.top;
+            contentInsets.left = leftW + JPMargin;
             contentInsets.bottom = safeAreaInsets.bottom;
-            
-            break;
-            
-        case EnvDisplayMode_InnerPortraitFull: // 竖屏
-//            if (isHingeActive) {
-//                landscapePriority = 999;
-//                
-//            } else {
-//                portraitPriority = 999;
-//                
-//            }
-            
-            portraitPriority = 999;
-            
-            viewFrame = sceneBounds;
-            
-            backBtnTop = 34;
-            topViewRight = 150;
-            
-            bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
-            bottomViewBottom += JPMargin;
-            
-            contentInsets.top = safeAreaInsets.top + JPMargin;
-            contentInsets.bottom = bottomViewBottom + (ButtonHeight * 2 + 15) + JPMargin;
-            contentInsets.left = safeAreaInsets.left;
             contentInsets.right = safeAreaInsets.right;
-            
             break;
             
-        case EnvDisplayMode_InnerSplitLeft: // 竖屏
+        case EnvDisplayMode_InnerPortraitFull: // 内屏竖屏满屏
             portraitPriority = 999;
             
-            viewFrame = sceneBounds;
+            backBtnLeft = topViewRight = bottomViewLeft = resizeBtnRight = viewFrame.size.width * 0.2;
+            bottomBtnWidth = (viewFrame.size.width * 0.6 - PortraitHorBtnSpace * 3) / 4.0;
+            
+            CGFloat bottomH = viewFrame.size.height * (isHingeActive ? 0.5 : 0.3);
+            CGFloat btnsH = ButtonHeight + 15 + ButtonHeight * 2 + 15;
+            backBtnTop = viewFrame.size.height - bottomH + JPHalfOfDiff(bottomH, btnsH);
+            bottomViewBottom = JPHalfOfDiff(bottomH, btnsH);
+            
+            contentInsets.top = safeAreaInsets.top;
+            contentInsets.left = safeAreaInsets.left;
+            contentInsets.bottom = bottomH + JPMargin;
+            contentInsets.right = safeAreaInsets.right;
+            break;
+            
+        case EnvDisplayMode_InnerSplitLeft: // 内屏分屏左边
+            portraitPriority = 999;
             
             bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
             
             contentInsets.top = safeAreaInsets.top + ButtonHeight + JPMargin;
-            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
             contentInsets.left = safeAreaInsets.left;
+            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
             contentInsets.right = safeAreaInsets.right;
-            
             break;
             
-        case EnvDisplayMode_InnerSplitRight: // 竖屏
+        case EnvDisplayMode_InnerSplitRight: // 内屏分屏右边
             portraitPriority = 999;
-            
-            viewFrame = sceneBounds;
             
             bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
             
             contentInsets.top = safeAreaInsets.top + ButtonHeight + JPMargin;
-            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
             contentInsets.left = safeAreaInsets.left;
+            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
             contentInsets.right = safeAreaInsets.right;
-            
             break;
             
         default:
@@ -1001,7 +965,7 @@ static UIViewController *tmpVC_;
     if (duration > 0) {
         self.navigationController.view.clipsToBounds = NO;
         self.imageresizerView.clipsToBounds = NO;
-        [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:kNilOptions animations:^{
+        [UIView animateWithDuration:0.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             [self.view layoutIfNeeded];
         } completion:^(BOOL finished) {
             self.navigationController.view.clipsToBounds = YES;
