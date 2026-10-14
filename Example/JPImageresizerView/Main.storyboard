@@ -48,7 +48,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ktf-Qh-zL1" customClass="JPSecureView" customModule="JPImageresizerView_Example" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ktf-Qh-zL1">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0j-lu-XGP" customClass="PenetrableView" customModule="JPImageresizerView_Example" customModuleProvider="target">
@@ -310,7 +310,7 @@
                                             <constraint firstAttribute="trailing" secondItem="gfg-EW-TwQ" secondAttribute="trailing" constant="20" id="6ep-sg-kxq"/>
                                             <constraint firstItem="LCH-xS-0qk" firstAttribute="height" secondItem="Bmh-GN-dI9" secondAttribute="height" id="8Uw-OX-6a0"/>
                                             <constraint firstItem="Bmh-GN-dI9" firstAttribute="top" secondItem="23z-V1-CXO" secondAttribute="bottom" priority="1" constant="10" id="A4C-gt-mJt"/>
-                                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="top" secondItem="LCW-oZ-8f9" secondAttribute="top" priority="1" constant="57" id="Aa4-kX-BQw"/>
+                                            <constraint firstItem="gfg-EW-TwQ" firstAttribute="top" secondItem="LCW-oZ-8f9" secondAttribute="top" priority="1" id="Aa4-kX-BQw"/>
                                             <constraint firstItem="23z-V1-CXO" firstAttribute="centerY" secondItem="Bmh-GN-dI9" secondAttribute="centerY" priority="999" id="Dot-6M-Xgi"/>
                                             <constraint firstItem="LCH-xS-0qk" firstAttribute="top" secondItem="Bmh-GN-dI9" secondAttribute="bottom" priority="1" constant="10" id="Eer-EH-csy"/>
                                             <constraint firstItem="tRo-kT-cgg" firstAttribute="centerX" secondItem="23z-V1-CXO" secondAttribute="centerX" priority="999" id="FP4-Zo-ur7"/>

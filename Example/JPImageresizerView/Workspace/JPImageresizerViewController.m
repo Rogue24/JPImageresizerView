@@ -8,14 +8,10 @@
 
 #import "JPImageresizerViewController.h"
 #import <JPImageresizerView_Example-Swift.h>
-#import <ScreenRotator/JPScreenRotator.h>
 #import "DanielWuViewController.h"
 #import "ShapeListViewController.h"
 
 @interface JPImageresizerViewController ()
-@property (nonatomic, assign) JPScreenOrientation orientation;
-@property (nonatomic, assign) UIEdgeInsets contentInsets;
-
 @property (weak, nonatomic) IBOutlet UIButton *replaceMaskImgBtn;
 @property (weak, nonatomic) IBOutlet UIButton *horMirrorBtn;
 @property (weak, nonatomic) IBOutlet UIButton *verMirrorBtn;
@@ -50,6 +46,10 @@
 @property (nonatomic, strong) UIColor *bgColor;
 @property (nonatomic, assign) CGFloat maskAlpha;
 @property (readonly) BOOL isGlassMask;
+
+@property (nonatomic, assign) BOOL isObservingSceneChanges;
+@property (nonatomic, assign) EnvDisplayMode displayMode;
+@property (nonatomic, assign) EnvHingeStatus hingeStatus;
 @end
 
 @implementation JPImageresizerViewController
@@ -84,10 +84,17 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] setStatusBarStyle:self.statusBarStyle animated:YES];
-#pragma clang diagnostic pop
+    [self updateLayoutIfNeeded];
+    self.isObservingSceneChanges = YES;
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    self.isObservingSceneChanges = NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return self.statusBarStyle;
 }
 
 - (void)dealloc {
@@ -98,6 +105,9 @@
 #pragma mark - 初始化
 
 - (void)__setupBase {
+    _displayMode = [Environmenter displayMode];
+    _hingeStatus = [Environmenter hingeStatus];
+    
     self.view.backgroundColor = self.configure.mainAppearance.bgColor;
     
     // 注意：iOS11以下的系统，所在的controller最好设置automaticallyAdjustsScrollViewInsets为NO，不然就会随导航栏或状态栏的变化产生偏移
@@ -112,9 +122,6 @@
 }
 
 - (void)__setupConstraints {
-    self.bottomBtnWidthConstraint.constant = (JPPortraitScreenWidth - JPMargin * 2 - PortraitHorBtnSpace * 3) / 4.0;
-    self.bottomBtnPortraitBottomConstraints.constant = JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH;
-    
     // 由于topView和bottomView转移了父视图（operationView -> operationView.container），
     // 因此需要将与旧父视图相关的约束，重新对新父视图进行配置。
     // 👇🏻👇🏻👇🏻
@@ -134,23 +141,16 @@
     self.bottomViewTopConstraint = [self.bottomView.topAnchor constraintEqualToAnchor:self.bottomView.superview.topAnchor constant:0];
     
     // 确定当前屏幕方向，同时ta的settet方法会设置好约束值
-    _orientation = -1;
-    self.orientation = [JPScreenRotator sharedInstance].orientation;
+    [self updateLayoutWithDuration:0];
     
     // 使手动创建的新约束生效
     self.topViewRightNewConstraint.active = YES;
     self.topViewBottomConstraint.active = YES;
     self.bottomViewLeftNewConstraint.active = YES;
     self.bottomViewTopConstraint.active = YES;
-    
-    // 监听屏幕方向变化
-    JPObserveNotification(self, @selector(orientationDidChange), JPScreenRotatorOrientationDidChangeNotification, nil);
 }
 
 - (void)__setupImageresizerView {
-    self.configure.contentInsets = self.contentInsets;
-    self.configure.viewFrame = [UIScreen mainScreen].bounds;
-    
     @jp_weakify(self);
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
         @jp_strongify(self);
@@ -193,121 +193,6 @@
         if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
         return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
     };
-}
-
-#pragma mark - 监听屏幕旋转
-
-- (void)orientationDidChange {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSTimeInterval duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
-#pragma clang diagnostic pop
-    [self setOrientation:[JPScreenRotator sharedInstance].orientation duration:duration > 0 ? duration : 0.3];
-}
-
-- (void)setOrientation:(JPScreenOrientation)orientation {
-    [self setOrientation:orientation duration:0];
-}
-
-- (void)setOrientation:(JPScreenOrientation)orientation duration:(NSTimeInterval)duration {
-    if (_orientation == orientation) return;
-    _orientation = orientation;
-    
-    BOOL isPortrait = orientation == JPScreenOrientationPortrait;
-    
-    float portraitPriority;
-    float landscapePriority;
-    CGFloat backBtnLeft;
-    CGFloat backBtnTop;
-    CGFloat resizeBtnRight;
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(JPMargin, JPMargin, JPMargin, JPMargin);
-    // 竖屏
-    if (isPortrait) {
-        portraitPriority = 999;
-        landscapePriority = 1;
-        backBtnLeft = JPMargin;
-        resizeBtnRight = JPMargin;
-        
-        if (orientation == JPScreenOrientationPortrait) {
-            backBtnTop = JPStatusBarH;
-        } else {
-            backBtnTop = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-        }
-        
-        contentInsets.top += JPStatusBarH + ButtonHeight;
-        contentInsets.bottom += ButtonHeight * 2 + 15 + (JPis_iphoneX ? JPDiffTabBarH : JPStatusBarH);
-    }
-    // 横屏
-    else {
-        portraitPriority = 1;
-        landscapePriority = 999;
-        backBtnTop = JPMargin;
-        
-        if (orientation == JPScreenOrientationLandscapeLeft) {
-            backBtnLeft = JPStatusBarH;
-            resizeBtnRight = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-        } else {
-            backBtnLeft = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-            resizeBtnRight = JPStatusBarH;
-        }
-        
-        contentInsets.left += self.replaceMaskImgBtn.jp_width + backBtnLeft;
-        contentInsets.right += self.bottomBtnWidthConstraint.constant + resizeBtnRight;
-        contentInsets.top = contentInsets.bottom = JPDiffTabBarH > 0 ? JPDiffTabBarH : JPMargin;
-    }
-    
-    self.topViewRightNewConstraint.priority = portraitPriority;
-    self.topViewBottomConstraint.priority = landscapePriority;
-    
-    self.bottomViewLeftNewConstraint.priority = portraitPriority;
-    self.bottomViewTopConstraint.priority = landscapePriority;
-    
-    for (NSLayoutConstraint *constraint in self.portraitConstraints) {
-        constraint.priority = portraitPriority;
-    }
-    for (NSLayoutConstraint *constraint in self.landscapeConstraints) {
-        constraint.priority = landscapePriority;
-    }
-    
-    self.backBtnLeftConstraint.constant = backBtnLeft;
-    self.backBtnTopConstraint.constant = backBtnTop;
-    self.resizeBtnRightConstraint.constant = resizeBtnRight;
-    
-    self.contentInsets = contentInsets;
-    
-    if (duration) {
-        UIViewAnimationOptions options;
-        switch (self.imageresizerView.animationCurve) {
-            case JPAnimationCurveEaseInOut:
-                options = UIViewAnimationOptionCurveEaseInOut;
-                break;
-            case JPAnimationCurveEaseIn:
-                options = UIViewAnimationOptionCurveEaseIn;
-                break;
-            case JPAnimationCurveEaseOut:
-                options = UIViewAnimationOptionCurveEaseOut;
-                break;
-            case JPAnimationCurveLinear:
-                options = UIViewAnimationOptionCurveLinear;
-                break;
-        }
-        
-        self.navigationController.view.clipsToBounds = NO;
-        self.imageresizerView.clipsToBounds = NO;
-        [UIView animateWithDuration:duration delay:0 options:options animations:^{
-            [self.view layoutIfNeeded];
-        } completion:^(BOOL finished) {
-            self.navigationController.view.clipsToBounds = YES;
-            self.imageresizerView.clipsToBounds = YES;
-        }];
-    } else {
-        [self.view layoutIfNeeded];
-    }
-    
-    //「横竖屏切换」
-    if (!self.imageresizerView) return;
-    CGRect frame = isPortrait ? JPPortraitScreenBounds : JPLandscapeScreenBounds;
-    [self.imageresizerView updateFrame:frame contentInsets:contentInsets duration:duration];
 }
 
 #pragma mark - 按钮点击事件
@@ -854,6 +739,280 @@ static UIViewController *tmpVC_;
     } else {
         [JPExportCancelView hide];
     }
+}
+
+
+#pragma mark - Duo适配_监听场景、铰链状态变化的通知
+- (void)setIsObservingSceneChanges:(BOOL)isObservingSceneChanges {
+    if (_isObservingSceneChanges == isObservingSceneChanges) return;
+    _isObservingSceneChanges = isObservingSceneChanges;
+    if (isObservingSceneChanges) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveEnvSceneDidChange:) name:EnvSceneDidChange object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveEnvHingeStatusDidChange:) name:EnvHingeStatusDidChange object:nil];
+    } else {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:EnvSceneDidChange object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:EnvHingeStatusDidChange object:nil];
+    }
+}
+
+- (void)didReceiveEnvSceneDidChange:(NSNotification *)notification {
+    EnvUpdateOptions options = [notification.userInfo[@"options"] unsignedIntegerValue];
+    NSTimeInterval duration = [notification.userInfo[@"transitionDuration"] doubleValue];
+    _displayMode = [Environmenter displayMode];
+    _hingeStatus = [Environmenter hingeStatus];
+    [self updateLayoutWithDuration:duration];
+}
+
+- (void)didReceiveEnvHingeStatusDidChange:(NSNotification *)notification {
+    EnvHingeStatus oldStatus = [notification.userInfo[@"oldStatus"] integerValue];
+    EnvHingeStatus nowStatus = [notification.userInfo[@"nowStatus"] integerValue];
+    [self updateLayoutIfNeededWithOldStatus:oldStatus nowStatus:nowStatus duration:0.3];
+}
+
+#pragma mark - 更新界面布局（如果有变化）
+- (void)updateLayoutIfNeeded {
+    if (_displayMode == [Environmenter displayMode]) {
+        [self updateLayoutIfNeededWithOldStatus:_hingeStatus nowStatus:[Environmenter hingeStatus] duration:0];
+        return;
+    }
+    
+    _displayMode = [Environmenter displayMode];
+    _hingeStatus = [Environmenter hingeStatus];
+    [self updateLayoutWithDuration:0];
+}
+
+- (void)updateLayoutIfNeededWithOldStatus:(EnvHingeStatus)oldStatus
+                                nowStatus:(EnvHingeStatus)nowStatus
+                                 duration:(NSTimeInterval)duration {
+    if (_hingeStatus == nowStatus) return;
+    _hingeStatus = nowStatus;
+    
+    // 铰链变化，外屏和内屏分屏时不做处理
+    if (_displayMode == EnvDisplayMode_OuterPortrait ||
+        _displayMode == EnvDisplayMode_InnerSplitLeft ||
+        _displayMode == EnvDisplayMode_InnerSplitRight) return;
+    
+    // 只对开放状态之间的切换（对折开<->全展开）做布局刷新
+    if ((nowStatus == EnvHingeStatus_PartiallyOpen && (oldStatus == EnvHingeStatus_FullyOpen || oldStatus == EnvHingeStatus_Unknown)) ||
+        (oldStatus == EnvHingeStatus_PartiallyOpen && nowStatus == EnvHingeStatus_FullyOpen)) {
+//        [self updateLayoutWithDuration:duration];
+    }
+}
+
+- (void)updateLayoutWithDuration:(NSTimeInterval)duration {
+    CGRect sceneBounds = [Environmenter sceneBounds];
+    
+    UIEdgeInsets safeAreaInsets = [Environmenter safeAreaInsets];
+    if (safeAreaInsets.top == 0) {
+        safeAreaInsets.top = 24;
+    }
+    if (safeAreaInsets.bottom == 0) {
+        safeAreaInsets.bottom = 24;
+    }
+    if (safeAreaInsets.left == 0) {
+        safeAreaInsets.left = 20;
+    }
+    if (safeAreaInsets.right == 0) {
+        safeAreaInsets.right = 20;
+    }
+//    if Env.isHingeActive {
+//        if Env.displayMode == .innerLandscapeFull {
+//            safeAreaInsets.left = Env.sceneWidth * 0.5 + 20
+//        }
+//        else if Env.displayMode == .innerPortraitFull {
+//            safeAreaInsets.bottom = Env.sceneHeight * 0.5 + 24
+//        }
+//    }
+    BOOL isHingeActive = [Environmenter isHingeActive];
+    
+    CGFloat backBtnTop = safeAreaInsets.top;
+    CGFloat backBtnLeft = safeAreaInsets.left;
+    CGFloat topViewRight = safeAreaInsets.right;
+    
+    CGFloat bottomViewTop = safeAreaInsets.top;
+    CGFloat bottomViewLeft = safeAreaInsets.left;
+    CGFloat bottomViewBottom = safeAreaInsets.bottom;
+    CGFloat resizeBtnRight = safeAreaInsets.right;
+    CGFloat bottomBtnWidth = 0;
+    
+    CGRect viewFrame = CGRectZero;
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    
+    float portraitPriority = 1;
+    float landscapePriority = 1;
+    switch (_displayMode) {
+        case EnvDisplayMode_OuterPortrait: // 竖屏
+            portraitPriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.top = safeAreaInsets.top + ButtonHeight + JPMargin;
+            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
+            contentInsets.left = safeAreaInsets.left;
+            contentInsets.right = safeAreaInsets.right;
+            
+            break;
+            
+        case EnvDisplayMode_OuterLandscapeLeft: // 横屏
+            landscapePriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
+            backBtnTop = bottomViewTop;
+            
+            bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
+            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
+            contentInsets.top = safeAreaInsets.top;
+            contentInsets.bottom = safeAreaInsets.bottom;
+            
+            break;
+            
+        case EnvDisplayMode_OuterLandscapeRight: // 横屏
+            landscapePriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
+            backBtnTop = bottomViewTop;
+            
+            bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
+            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
+            contentInsets.top = safeAreaInsets.top;
+            contentInsets.bottom = safeAreaInsets.bottom;
+            
+            break;
+            
+        case EnvDisplayMode_InnerLandscapeFull: // 横屏
+//            if (isHingeActive) {
+//                portraitPriority = 999;
+//                
+//            } else {
+//                landscapePriority = 999;
+//
+//            }
+            
+            landscapePriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomViewTop = (viewFrame.size.height - ButtonHeight * 8 - LandscapeVerBtnSpace * 7) / 2.0;
+            backBtnTop = bottomViewTop;
+            
+            bottomBtnWidth = (viewFrame.size.height - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.left = safeAreaInsets.left + self.replaceMaskImgBtn.jp_width + JPMargin;
+            contentInsets.right = safeAreaInsets.right + bottomBtnWidth + JPMargin;
+            contentInsets.top = safeAreaInsets.top;
+            contentInsets.bottom = safeAreaInsets.bottom;
+            
+            break;
+            
+        case EnvDisplayMode_InnerPortraitFull: // 竖屏
+//            if (isHingeActive) {
+//                landscapePriority = 999;
+//                
+//            } else {
+//                portraitPriority = 999;
+//                
+//            }
+            
+            portraitPriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            backBtnTop = 34;
+            topViewRight = 150;
+            
+            bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            bottomViewBottom += JPMargin;
+            
+            contentInsets.top = safeAreaInsets.top + JPMargin;
+            contentInsets.bottom = bottomViewBottom + (ButtonHeight * 2 + 15) + JPMargin;
+            contentInsets.left = safeAreaInsets.left;
+            contentInsets.right = safeAreaInsets.right;
+            
+            break;
+            
+        case EnvDisplayMode_InnerSplitLeft: // 竖屏
+            portraitPriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.top = safeAreaInsets.top + ButtonHeight + JPMargin;
+            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
+            contentInsets.left = safeAreaInsets.left;
+            contentInsets.right = safeAreaInsets.right;
+            
+            break;
+            
+        case EnvDisplayMode_InnerSplitRight: // 竖屏
+            portraitPriority = 999;
+            
+            viewFrame = sceneBounds;
+            
+            bottomBtnWidth = (viewFrame.size.width - safeAreaInsets.left - safeAreaInsets.right - PortraitHorBtnSpace * 3) / 4.0;
+            
+            contentInsets.top = safeAreaInsets.top + ButtonHeight + JPMargin;
+            contentInsets.bottom = safeAreaInsets.bottom + (ButtonHeight * 2 + 15) + JPMargin;
+            contentInsets.left = safeAreaInsets.left;
+            contentInsets.right = safeAreaInsets.right;
+            
+            break;
+            
+        default:
+            break;
+    }
+    
+    self.topViewRightNewConstraint.priority = portraitPriority;
+    self.topViewBottomConstraint.priority = landscapePriority;
+    
+    self.bottomViewLeftNewConstraint.priority = portraitPriority;
+    self.bottomViewTopConstraint.priority = landscapePriority;
+    
+    for (NSLayoutConstraint *constraint in self.portraitConstraints) {
+        constraint.priority = portraitPriority;
+    }
+    for (NSLayoutConstraint *constraint in self.landscapeConstraints) {
+        constraint.priority = landscapePriority;
+    }
+    
+    self.backBtnTopConstraint.constant = backBtnTop;
+    self.backBtnLeftConstraint.constant = backBtnLeft;
+    self.topViewRightNewConstraint.constant = -topViewRight;
+    
+    self.bottomViewTopConstraint.constant = bottomViewTop;
+    self.bottomViewLeftNewConstraint.constant = bottomViewLeft;
+    self.bottomBtnPortraitBottomConstraints.constant = bottomViewBottom;
+    self.resizeBtnRightConstraint.constant = resizeBtnRight;
+    self.bottomBtnWidthConstraint.constant = bottomBtnWidth;
+    
+    self.configure.viewFrame = viewFrame;
+    self.configure.contentInsets = contentInsets;
+    
+    if (duration > 0) {
+        self.navigationController.view.clipsToBounds = NO;
+        self.imageresizerView.clipsToBounds = NO;
+        [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:kNilOptions animations:^{
+            [self.view layoutIfNeeded];
+        } completion:^(BOOL finished) {
+            self.navigationController.view.clipsToBounds = YES;
+            self.imageresizerView.clipsToBounds = YES;
+        }];
+    } else {
+        [self.view layoutIfNeeded];
+    }
+    
+    if (!self.imageresizerView) return;
+    [self.imageresizerView updateFrame:viewFrame contentInsets:contentInsets duration:duration];
 }
 
 @end
