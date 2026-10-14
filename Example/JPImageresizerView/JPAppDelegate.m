@@ -7,27 +7,27 @@
 //
 
 #import "JPAppDelegate.h"
-#import <ScreenRotator/JPScreenRotator.h>
+//#import <ScreenRotator/JPScreenRotator.h>
 
 @implementation JPAppDelegate
 
-- (UIWindow *)window {
-    if (@available(iOS 13.0, *)) {
-        UIScene *scene = [UIApplication sharedApplication].connectedScenes.anyObject;
-        if ([scene isKindOfClass:[UIWindowScene class]]) {
-            id<UIWindowSceneDelegate> windowSceneDelegate = (id<UIWindowSceneDelegate>)scene.delegate;
-            if ([windowSceneDelegate respondsToSelector:@selector(window)]) {
-                return windowSceneDelegate.window;
-            }
-        }
-        return nil;
-    }
-    return [UIApplication sharedApplication].delegate.window;
-}
+//- (UIWindow *)window {
+//    if (@available(iOS 13.0, *)) {
+//        UIScene *scene = [UIApplication sharedApplication].connectedScenes.anyObject;
+//        if ([scene isKindOfClass:[UIWindowScene class]]) {
+//            id<UIWindowSceneDelegate> windowSceneDelegate = (id<UIWindowSceneDelegate>)scene.delegate;
+//            if ([windowSceneDelegate respondsToSelector:@selector(window)]) {
+//                return windowSceneDelegate.window;
+//            }
+//        }
+//        return nil;
+//    }
+//    return [UIApplication sharedApplication].delegate.window;
+//}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [JPScreenRotator sharedInstance].isLockLandscapeWhenDeviceOrientationDidChange = NO;
-    [JPScreenRotator sharedInstance].isLockOrientationWhenDeviceOrientationDidChange = NO;
+//    [JPScreenRotator sharedInstance].isLockLandscapeWhenDeviceOrientationDidChange = NO;
+//    [JPScreenRotator sharedInstance].isLockOrientationWhenDeviceOrientationDidChange = NO;
     
     [JPProgressHUD setMaxSupportedWindowLevel:UIWindowLevelAlert];
     [JPProgressHUD setMinimumDismissTimeInterval:1.2];
@@ -48,9 +48,9 @@
     return YES;
 }
 
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return [JPScreenRotator sharedInstance].orientationMask;
-}
+//- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+//    return [JPScreenRotator sharedInstance].orientationMask;
+//}
 
 #pragma mark - UISceneSession lifecycle
 

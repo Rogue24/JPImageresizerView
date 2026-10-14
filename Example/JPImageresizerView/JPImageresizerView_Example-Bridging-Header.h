@@ -12,3 +12,5 @@
 #import "JPPhotoTool.h"
 #import "JPPhotoViewController.h"
 #import "JPDynamicPage.h"
+#import "Environmenter.h"
+#import "JPAppDelegate.h"
