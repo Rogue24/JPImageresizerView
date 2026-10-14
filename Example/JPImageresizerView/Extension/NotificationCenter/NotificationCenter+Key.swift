@@ -10,8 +10,10 @@ import Foundation
 /// 在这里注册`Key`
 extension Notification.Name {
     enum Key: String {
-        case EnvSceneDidChange // Duo适配_场景发生变化的通知（内外屏切换、内屏旋转、内屏分屏）
-        case EnvHingeStatusDidChange // Duo适配_铰链状态发生变化的通知
+        // Duo适配_场景发生变化的通知（内外屏切换、内屏旋转、内屏全屏分屏切换、内屏左右分屏切换）
+        case EnvSceneDidChange
+        // Duo适配_铰链状态发生变化的通知
+        case EnvHingeStatusDidChange
         
         var name: Notification.Name {
             Notification.Name(rawValue)

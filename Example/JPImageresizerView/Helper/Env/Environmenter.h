@@ -5,9 +5,23 @@
 //  Created by aa on 2026/10/14.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Notification: 场景发生变化的通知（内外屏切换、内屏旋转、内屏全屏分屏切换、内屏左右分屏切换）
+ * object: nil
+ * userInfo: @{@"options": 变化的环境变量，如 bounds、safeAreaInsets 等, @"transitionDuration": 建议的转场动画时长，0代表无需动画}
+ */
+UIKIT_EXTERN NSNotificationName const EnvSceneDidChange;
+
+/**
+ * Notification: 铰链状态发生变化的通知
+ * object: nil
+ * userInfo: @{@"oldStatus": 旧状态, @"nowStatus": 当前状态}
+ */
+UIKIT_EXTERN NSNotificationName const EnvHingeStatusDidChange;
 
 /// Env变量更新选项
 typedef NS_OPTIONS(NSUInteger, EnvUpdateOptions) {

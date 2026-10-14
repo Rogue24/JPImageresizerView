@@ -7,6 +7,9 @@
 
 #import "Environmenter.h"
 
+NSNotificationName const EnvSceneDidChange = @"EnvSceneDidChange";
+NSNotificationName const EnvHingeStatusDidChange = @"EnvHingeStatusDidChange";
+
 @implementation Environmenter
 
 @end
