@@ -31,6 +31,7 @@ extension Environmenter {
     @objc static var sceneWidth: CGFloat { Env.sceneWidth }
     @objc static var sceneHeight: CGFloat { Env.sceneHeight }
     
+    @objc static var targetSafeAreaInsets: UIEdgeInsets { Env.targetSafeAreaInsets }
     @objc static var safeAreaWithTabBarInsets: UIEdgeInsets { Env.safeAreaWithTabBarInsets }
     @objc static var safeAreaWithTopMarginInsets: UIEdgeInsets { Env.safeAreaWithTopMarginInsets }
     @objc static var safeAreaFullInsets: UIEdgeInsets { Env.safeAreaFullInsets }

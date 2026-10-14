@@ -33,6 +33,20 @@ enum Env {
     static var sceneWidth: CGFloat { sceneBounds.width }
     static var sceneHeight: CGFloat { sceneBounds.height }
     
+    static var targetSafeAreaInsets: UIEdgeInsets {
+        guard isDuo else { return safeAreaInsets }
+        switch displayMode {
+        case .outerLandscapeRight:
+            return UIEdgeInsets(top: 0.0, left: 84.0, bottom: 34.0, right: 0.0)
+        case .innerPortraitFull:
+            return UIEdgeInsets(top: 82.0, left: 0.0, bottom: 34.0, right: 0.0)
+        case .innerSplitLeft:
+            return UIEdgeInsets(top: 0.0, left: 0.0, bottom: 34.0, right: 0.0)
+        default: // .outerPortrait, .outerLandscapeLeft, .innerLandscapeFull, .innerSplitRight:
+            return UIEdgeInsets(top: 0.0, left: 0.0, bottom: 34.0, right: 84.0)
+        }
+    }
+    
     static var safeAreaWithTabBarInsets: UIEdgeInsets {
         var safeAreaInsets = self.safeAreaInsets
         guard isDuo else {
@@ -476,19 +490,6 @@ extension Env {
 
 // MARK: - 状态栏/导航栏/TabBar
 extension Env {
-    /// 状态栏高度
-    static var statusBarH: CGFloat {
-        guard _statusBarH == 0 else { return _statusBarH }
-        _statusBarH = UIApplication.jp_window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        return _statusBarH
-    }
-    private static var _statusBarH: CGFloat = 0
-    
-    /// 导航栏基本高度
-    static var navBarH: CGFloat { 44.0 }
-    /// 状态栏+导航栏高度
-    static var statusNavBarH: CGFloat { statusBarH + navBarH }
-    
     /// tabBar基本高度
     static var tabBarBaseH: CGFloat { 49.0 }
     /// tabBar+底部安全间距
