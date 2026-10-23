@@ -46,4 +46,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            print("jp_log rectOnScreen222222: \(rectOnScreen)")
 //        }
     }
+    
+    func windowScene(
+        _ windowScene: UIWindowScene,
+        didUpdate previousCoordinateSpace: any UICoordinateSpace,
+        interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation,
+        traitCollection previousTraitCollection: UITraitCollection
+    ) {
+        if #available(iOS 26.0, *) {} else {
+            Env.resetIfNeeded(windowScene)
+        }
+    }
 }
