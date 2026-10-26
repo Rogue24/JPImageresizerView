@@ -13,6 +13,9 @@ extension Environmenter {
     @objc static func resetIfNeeded(_ windowScene: UIWindowScene) { Env.resetIfNeeded(windowScene) }
     @objc static func switchSplitIfNeeded(_ window: UIWindow) { Env.switchSplitIfNeeded(window) }
     
+    @objc static var xcVersion: Int { Env.xcVersion }
+    @objc static var isFullScreenRequired: Bool { Env.isFullScreenRequired }
+    
     @objc static var displayScale: CGFloat { Env.displayScale }
     @objc static var basisSceneBounds: CGRect { Env.basisSceneBounds }
     @objc static var basisSafeAreaInsets: UIEdgeInsets { Env.basisSafeAreaInsets }
