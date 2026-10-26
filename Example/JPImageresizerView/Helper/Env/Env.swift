@@ -11,6 +11,7 @@ enum Env {
     // 常量
     private(set) static var xcVersion: Int = 0
     private(set) static var isFullScreenRequired = false
+    private(set) static var isLiquidGlassEnabled = false
     private(set) static var isDuo: Bool = false
     private(set) static var displayScale: CGFloat = 0
     private(set) static var basisSceneBounds: CGRect = .zero
@@ -129,6 +130,22 @@ extension Env {
             }
         }
         
+        // 是否使用 Liquid Glass
+        if #available(iOS 26.0, *) {
+            if xcVersion >= 2700 {
+                isLiquidGlassEnabled = true
+            } else {
+                if let isEnabled = Bundle.main.object(forInfoDictionaryKey: "UIDesignRequiresCompatibility") as? Bool, isEnabled {
+                    // 已声明「禁用液态玻璃UI」
+                    isLiquidGlassEnabled = false
+                } else {
+                    isLiquidGlassEnabled = true
+                }
+            }
+        } else {
+            isLiquidGlassEnabled = false
+        }
+        
         let trait = windowScene.traitCollection
         displayScale = trait.displayScale
         isHorRegular = trait.horizontalSizeClass == .regular
@@ -217,6 +234,7 @@ extension Env {
 //        print("jp_log Env.hingeStatus: \(self.hingeStatus.jp_log)")
 //        print("jp_log Env.xcVersion: \(self.xcVersion)")
 //        print("jp_log Env.isFullScreenRequired: \(self.isFullScreenRequired)")
+//        print("jp_log Env.isLiquidGlassEnabled: \(self.isLiquidGlassEnabled)")
 //        print("jp_log Env.isDuo: \(self.isDuo)")
 //        print("jp_log setup ------------------------------- \(lookTime())")
     }
@@ -569,6 +587,15 @@ extension Env {
 
 // MARK: - 状态栏/导航栏/TabBar
 extension Env {
+    /// 导航栏基本高度
+    static var navBarH: CGFloat {
+        if isLiquidGlassEnabled {
+            return 54.0
+        } else {
+            return 44.0
+        }
+    }
+
     /// tabBar基本高度
     static var tabBarBaseH: CGFloat { 49.0 }
     /// tabBar+底部安全间距

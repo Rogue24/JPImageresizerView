@@ -15,6 +15,7 @@ extension Environmenter {
     
     @objc static var xcVersion: Int { Env.xcVersion }
     @objc static var isFullScreenRequired: Bool { Env.isFullScreenRequired }
+    @objc static var isLiquidGlassEnabled: Bool { Env.isLiquidGlassEnabled }
     
     @objc static var displayScale: CGFloat { Env.displayScale }
     @objc static var basisSceneBounds: CGRect { Env.basisSceneBounds }
