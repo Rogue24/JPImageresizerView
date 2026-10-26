@@ -148,7 +148,7 @@ extension Env {
         safeAreaInsets = window.safeAreaInsets
         
         if isHorRegular && isVerRegular { // 内屏铺满 Regular × Regular
-            displayMode = isLandscapeScene ? .innerLandscapeFull : .innerPortraitFull
+            displayMode = (sceneBounds.width > sceneBounds.height) ? .innerLandscapeFull : .innerPortraitFull
         } else {
             // 判断屏幕和App最大边是否相等，相等是在外屏，否则就是内屏正在分屏展示中（两个App并排同时运行）
             if max(screenBounds.width, screenBounds.height) == max(sceneBounds.width, sceneBounds.height) {
