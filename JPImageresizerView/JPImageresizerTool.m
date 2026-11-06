@@ -6,7 +6,7 @@
 //
 
 #import "JPImageresizerTool.h"
-#import <MobileCoreServices/UTCoreTypes.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import "JPImageresizer+Extension.h"
 #import "JPImageresizerResult.h"
 
@@ -15,7 +15,7 @@
 #pragma mark - 计算函数
 
 static BOOL JPIsHasAlpha(CGImageRef imageRef) {
-    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef);
     if (alphaInfo == kCGImageAlphaPremultipliedLast ||
         alphaInfo == kCGImageAlphaPremultipliedFirst ||
         alphaInfo == kCGImageAlphaLast ||
@@ -702,7 +702,7 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(imageRef);
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
     if (!isHasAlpha && cornerRadius > 0) {
-        bitmapInfo = kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst;
+        bitmapInfo = kCGBitmapByteOrder32Host | (CGBitmapInfo)kCGImageAlphaPremultipliedFirst;
     }
     
     CGContextRef context = CGBitmapContextCreate(NULL,
@@ -956,16 +956,32 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
 + (CFStringRef)__contentTypeForSuffix:(NSString *)suffix quality:(CGFloat *)quality {
     CFStringRef contentType;
     if ([suffix caseInsensitiveCompare:@"jpeg"] == NSOrderedSame) {
-        contentType = kUTTypeJPEG;
+        if (@available(iOS 15.0, *)) {
+            contentType = (__bridge CFStringRef)UTTypeJPEG.identifier;
+        } else {
+            contentType = CFSTR("public.jpeg");
+        }
         if (quality) *quality = 0.9;
     } else if ([suffix caseInsensitiveCompare:@"png"] == NSOrderedSame) {
-        contentType = kUTTypePNG;
+        if (@available(iOS 15.0, *)) {
+            contentType = (__bridge CFStringRef)UTTypePNG.identifier;
+        } else {
+            contentType = CFSTR("public.png");
+        }
         if (quality) *quality = 1;
     } else if ([suffix caseInsensitiveCompare:@"gif"] == NSOrderedSame) {
-        contentType = kUTTypeGIF;
+        if (@available(iOS 15.0, *)) {
+            contentType = (__bridge CFStringRef)UTTypeGIF.identifier;
+        } else {
+            contentType = CFSTR("com.compuserve.gif");
+        }
         if (quality) *quality = 1;
     } else if ([suffix caseInsensitiveCompare:@"tiff"] == NSOrderedSame) {
-        contentType = kUTTypeTIFF;
+        if (@available(iOS 15.0, *)) {
+            contentType = (__bridge CFStringRef)UTTypeTIFF.identifier;
+        } else {
+            contentType = CFSTR("public.tiff");
+        }
         if (quality) *quality = 1;
     } else {
         contentType = NULL;
@@ -1056,7 +1072,13 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     }
     
     size_t count = images.count;
-    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, kUTTypeGIF, count, NULL);
+    CFStringRef gifType;
+    if (@available(iOS 15.0, *)) {
+        gifType = (__bridge CFStringRef)UTTypeGIF.identifier;
+    } else {
+        gifType = CFSTR("com.compuserve.gif");
+    }
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)cacheURL, gifType, count, NULL);
     if (destination == NULL) return NO;
     
     NSDictionary *gifProperty =
@@ -1586,7 +1608,6 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
     NSUInteger frames[count];
     double oneFrameTime = 1 / 50.0; // 50 fps
     NSTimeInterval totalTime = 0;
-    NSUInteger totalFrame = 0;
     NSUInteger gcdFrame = 0;
     for (size_t i = 0; i < count; i++) {
         NSTimeInterval delay = JPImageSourceGetGIFFrameDelayAtIndex(source, i);
@@ -1594,7 +1615,6 @@ static CGImageRef _Nullable JPProcessImage(CGImageRef imageRef, size_t cornerRad
         NSInteger frame = lrint(delay / oneFrameTime);
         if (frame < 1) frame = 1;
         frames[i] = frame;
-        totalFrame += frames[i];
         if (i == 0) gcdFrame = frames[i];
         else {
             NSUInteger frame = frames[i], tmp;

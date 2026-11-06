@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JPImageresizerView'
-  s.version          = '1.14.0'
+  s.version          = '1.14.1'
   s.summary          = '一个专门裁剪图片、GIF、视频的轮子😋简单易用、功能丰富☕️'
 
 # This description is used to generate tags and improve search results.

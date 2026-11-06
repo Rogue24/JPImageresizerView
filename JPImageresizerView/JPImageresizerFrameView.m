@@ -942,6 +942,9 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     [self __updateImageresizerFrame:imageresizerFrame animateDuration:-1.0];
 }
 - (void)__updateImageresizerFrame:(CGRect)imageresizerFrame animateDuration:(NSTimeInterval)duration {
+    [self __updateImageresizerFrame:imageresizerFrame viewBounds:self.bounds animateDuration:duration];
+}
+- (void)__updateImageresizerFrame:(CGRect)imageresizerFrame viewBounds:(CGRect)viewBounds animateDuration:(NSTimeInterval)duration {
     _imageresizerFrame = imageresizerFrame;
     
     CGFloat cornerRadius = 0;
@@ -960,7 +963,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         framePath = [UIBezierPath bezierPathWithRoundedRect:imageresizerFrame cornerRadius:0.1];
     }
     
-    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.blurView.bounds];
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:viewBounds];
     [maskPath appendPath:framePath];
     
     if (self.maskBlurView != nil) {
@@ -1061,7 +1064,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
 }
 
 - (void)__updateRotationDirection:(JPImageresizerRotationDirection)direction {
-    [self __updateMaxResizeFrameWithDirection:direction];
+    [self __updateMaxResizeFrameWithDirection:direction viewBounds:self.bounds];
     if (!_isArbitrarily) {
         BOOL isSwitchVerHor = JPIRRotationDirectionIsHorizontal(_direction) != JPIRRotationDirectionIsHorizontal(direction);
         if (isSwitchVerHor) {
@@ -1073,15 +1076,15 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     _direction = direction;
 }
 
-- (void)__updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction {
+- (void)__updateMaxResizeFrameWithDirection:(JPImageresizerRotationDirection)direction viewBounds:(CGRect)viewBounds {
     CGFloat w = _baseContentMaxSize.width;
     CGFloat h = _baseContentMaxSize.height;
     if (JPIRRotationDirectionIsHorizontal(direction)) {
         w = _baseContentMaxSize.height;
         h = _baseContentMaxSize.width;
     }
-    CGFloat x = (self.bounds.size.width - w) * 0.5;
-    CGFloat y = (self.bounds.size.height - h) * 0.5;
+    CGFloat x = (viewBounds.size.width - w) * 0.5;
+    CGFloat y = (viewBounds.size.height - h) * 0.5;
     self.maxResizeFrame = CGRectMake(x, y, w, h);
 }
 
@@ -1384,6 +1387,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     if (!appearance) {
         JPImageresizerAppearance *mainAppearance = self.mainAppearance;
         appearance = [[JPImageresizerAppearance alloc] initWithStrokeColor:nil bgEffect:mainAppearance.bgEffect bgColor:mainAppearance.bgColor maskAlpha:mainAppearance.maskAlpha];
+        _maskAppearance = appearance;
     }
     
     JPImageresizerBlurView *maskBlurView = [[JPImageresizerBlurView alloc] initWithFrame:self.imageresizerFrame appearance:appearance isBlur:isBlur isMaskAlpha:self.blurView.isMaskAlpha cornerRadius:_resizeCornerRadius];
@@ -1939,7 +1943,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
     _baseImageW = imgViewW;
     _baseImageH = imgViewH;
     self.originImageFrame = CGRectMake(imgViewX, imgViewY, imgViewW, imgViewH);
-    [self __updateMaxResizeFrameWithDirection:self.direction];
+    [self __updateMaxResizeFrameWithDirection:self.direction viewBounds:viewBounds];
     contentWidth = self.maxResizeW;
     contentHeight = self.maxResizeH;
     
@@ -2015,7 +2019,7 @@ ignoresCornerRadiusForDisplay:(BOOL)ignoresCornerRadiusForDisplay
         [self.slider setImageresizerFrame:sliderFrame isRoundResize:self.isRoundResize];
     }
     
-    [self __updateImageresizerFrame:imageresizerFrame animateDuration:duration];
+    [self __updateImageresizerFrame:imageresizerFrame viewBounds:viewBounds animateDuration:duration];
     [self __hideOrShowGridLines:((!self.isShowGridlinesWhenIdle || self.slider) ? YES : NO) animateDuration:duration];
     [self.blurView setIsBlur:YES duration:duration];
     
