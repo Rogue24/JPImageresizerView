@@ -49,7 +49,7 @@
 
 @property (nonatomic, assign) BOOL isObservingSceneChanges;
 @property (nonatomic, assign) EnvDisplayMode displayMode;
-@property (nonatomic, assign) EnvHingeStatus hingeStatus;
+//@property (nonatomic, assign) EnvHingeStatus hingeStatus;
 @end
 
 @implementation JPImageresizerViewController
@@ -106,7 +106,7 @@
 
 - (void)__setupBase {
     _displayMode = [Environmenter displayMode];
-    _hingeStatus = [Environmenter hingeStatus];
+//    _hingeStatus = [Environmenter hingeStatus];
     
     self.view.backgroundColor = self.configure.mainAppearance.bgColor;
     
@@ -152,6 +152,14 @@
 
 - (void)__setupImageresizerView {
     @jp_weakify(self);
+    
+    // 蒙版图片处理
+    self.configure.maskImageDisplayHandler = ^UIImage *(UIImage *originMaskImage) {
+        @jp_strongify(self);
+        if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
+        return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
+    };
+    
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
         @jp_strongify(self);
         if (!self) return;
@@ -186,13 +194,6 @@
     
     // 配置重置按钮
     self.recoveryBtn.enabled = self.imageresizerView.isCanRecovery;
-    
-    // 蒙版图片处理
-    self.imageresizerView.maskImageDisplayHandler = ^UIImage *(UIImage *originMaskImage) {
-        @jp_strongify(self);
-        if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
-        return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
-    };
 }
 
 #pragma mark - 按钮点击事件
@@ -748,10 +749,10 @@ static UIViewController *tmpVC_;
     _isObservingSceneChanges = isObservingSceneChanges;
     if (isObservingSceneChanges) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveEnvSceneDidChange:) name:EnvSceneDidChange object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveEnvHingeStatusDidChange:) name:EnvHingeStatusDidChange object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveEnvHingeStatusDidChange:) name:EnvHingeStatusDidChange object:nil];
     } else {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:EnvSceneDidChange object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:EnvHingeStatusDidChange object:nil];
+//        [[NSNotificationCenter defaultCenter] removeObserver:self name:EnvHingeStatusDidChange object:nil];
     }
 }
 
@@ -759,45 +760,45 @@ static UIViewController *tmpVC_;
 //    EnvUpdateOptions options = [notification.userInfo[@"options"] unsignedIntegerValue];
     NSTimeInterval duration = [notification.userInfo[@"transitionDuration"] doubleValue];
     _displayMode = [Environmenter displayMode];
-    _hingeStatus = [Environmenter hingeStatus];
+//    _hingeStatus = [Environmenter hingeStatus];
     [self updateLayoutWithDuration:duration];
 }
 
-- (void)didReceiveEnvHingeStatusDidChange:(NSNotification *)notification {
-    EnvHingeStatus oldStatus = [notification.userInfo[@"oldStatus"] integerValue];
-    EnvHingeStatus nowStatus = [notification.userInfo[@"nowStatus"] integerValue];
-    [self updateLayoutIfNeededWithOldStatus:oldStatus nowStatus:nowStatus duration:0.3];
-}
+//- (void)didReceiveEnvHingeStatusDidChange:(NSNotification *)notification {
+//    EnvHingeStatus oldStatus = [notification.userInfo[@"oldStatus"] integerValue];
+//    EnvHingeStatus nowStatus = [notification.userInfo[@"nowStatus"] integerValue];
+//    [self updateLayoutIfNeededWithOldStatus:oldStatus nowStatus:nowStatus duration:0.3];
+//}
 
 #pragma mark - 更新界面布局（如果有变化）
 - (void)updateLayoutIfNeeded {
     if (_displayMode == [Environmenter displayMode]) {
-        [self updateLayoutIfNeededWithOldStatus:_hingeStatus nowStatus:[Environmenter hingeStatus] duration:0];
+//        [self updateLayoutIfNeededWithOldStatus:_hingeStatus nowStatus:[Environmenter hingeStatus] duration:0];
         return;
     }
     
     _displayMode = [Environmenter displayMode];
-    _hingeStatus = [Environmenter hingeStatus];
+//    _hingeStatus = [Environmenter hingeStatus];
     [self updateLayoutWithDuration:0];
 }
 
-- (void)updateLayoutIfNeededWithOldStatus:(EnvHingeStatus)oldStatus
-                                nowStatus:(EnvHingeStatus)nowStatus
-                                 duration:(NSTimeInterval)duration {
-    if (_hingeStatus == nowStatus) return;
-    _hingeStatus = nowStatus;
-    
-    // 铰链变化，外屏和内屏分屏时不做处理
-    if (_displayMode == EnvDisplayMode_OuterPortrait ||
-        _displayMode == EnvDisplayMode_InnerSplitLeft ||
-        _displayMode == EnvDisplayMode_InnerSplitRight) return;
-    
-    // 只对开放状态之间的切换（对折开<->全展开）做布局刷新
-    if ((nowStatus == EnvHingeStatus_PartiallyOpen && (oldStatus == EnvHingeStatus_FullyOpen || oldStatus == EnvHingeStatus_Unknown)) ||
-        (oldStatus == EnvHingeStatus_PartiallyOpen && nowStatus == EnvHingeStatus_FullyOpen)) {
-        [self updateLayoutWithDuration:duration];
-    }
-}
+//- (void)updateLayoutIfNeededWithOldStatus:(EnvHingeStatus)oldStatus
+//                                nowStatus:(EnvHingeStatus)nowStatus
+//                                 duration:(NSTimeInterval)duration {
+//    if (_hingeStatus == nowStatus) return;
+//    _hingeStatus = nowStatus;
+//    
+//    // 铰链变化，外屏和内屏分屏时不做处理
+//    if (_displayMode == EnvDisplayMode_OuterPortrait ||
+//        _displayMode == EnvDisplayMode_InnerSplitLeft ||
+//        _displayMode == EnvDisplayMode_InnerSplitRight) return;
+//    
+//    // 只对开放状态之间的切换（对折开<->全展开）做布局刷新
+//    if ((nowStatus == EnvHingeStatus_PartiallyOpen && (oldStatus == EnvHingeStatus_FullyOpen || oldStatus == EnvHingeStatus_Unknown)) ||
+//        (oldStatus == EnvHingeStatus_PartiallyOpen && nowStatus == EnvHingeStatus_FullyOpen)) {
+//        [self updateLayoutWithDuration:duration];
+//    }
+//}
 
 - (void)updateLayoutWithDuration:(NSTimeInterval)duration {
     CGRect sceneBounds = [Environmenter sceneBounds];
@@ -816,8 +817,8 @@ static UIViewController *tmpVC_;
         safeAreaInsets.right = 20;
     }
     
-    BOOL isHingeActive = [Environmenter isHingeActive];
-    duration = isHingeActive ? 0 : duration;
+//    BOOL isHingeActive = [Environmenter isHingeActive];
+//    duration = isHingeActive ? 0 : duration;
     
     CGFloat backBtnTop = safeAreaInsets.top;
     CGFloat backBtnLeft = safeAreaInsets.left;
@@ -877,7 +878,8 @@ static UIViewController *tmpVC_;
         case EnvDisplayMode_InnerLandscapeFull: // 内屏横屏满屏
             landscapePriority = 999;
             
-            CGFloat leftW = viewFrame.size.width * (isHingeActive ? 0.5 : 0.3);
+//            CGFloat leftW = viewFrame.size.width * (isHingeActive ? 0.5 : 0.3);
+            CGFloat leftW = viewFrame.size.width * 0.3;
             
             bottomBtnWidth = (viewFrame.size.width * 0.4 - PortraitHorBtnSpace * 3) / 4.0;
             bottomViewTop = JPHalfOfDiff(viewFrame.size.height, ButtonHeight * 8 + LandscapeVerBtnSpace * 7);
@@ -899,7 +901,8 @@ static UIViewController *tmpVC_;
             backBtnLeft = topViewRight = bottomViewLeft = resizeBtnRight = viewFrame.size.width * 0.2;
             bottomBtnWidth = (viewFrame.size.width * 0.6 - PortraitHorBtnSpace * 3) / 4.0;
             
-            CGFloat bottomH = viewFrame.size.height * (isHingeActive ? 0.5 : 0.3);
+//            CGFloat bottomH = viewFrame.size.height * (isHingeActive ? 0.5 : 0.3);
+            CGFloat bottomH = viewFrame.size.height * 0.3;
             CGFloat btnsH = ButtonHeight + 15 + ButtonHeight * 2 + 15;
             backBtnTop = viewFrame.size.height - bottomH + JPHalfOfDiff(bottomH, btnsH);
             bottomViewBottom = JPHalfOfDiff(bottomH, btnsH);
@@ -965,7 +968,7 @@ static UIViewController *tmpVC_;
     if (duration > 0) {
         self.navigationController.view.clipsToBounds = NO;
         self.imageresizerView.clipsToBounds = NO;
-        [UIView animateWithDuration:0.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             [self.view layoutIfNeeded];
         } completion:^(BOOL finished) {
             self.navigationController.view.clipsToBounds = YES;
