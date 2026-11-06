@@ -9,7 +9,7 @@
 
 [Juejin](https://juejin.cn/post/6958761756978053150) | [Xiaohongshu-like App Cropping with Free-Angle Dragging](https://github.com/Rogue24/JPCrop)
 
-## Introduction (Current Version: 1.14.0)
+## Introduction (Current Version: 1.14.1)
 
 This is a dedicated library for cropping images, GIFs, and videos. It is easy to use and feature-rich (highly flexible parameters, rotation and mirror flipping, masks, compression, etc.), and can cover most cropping scenarios.
 
