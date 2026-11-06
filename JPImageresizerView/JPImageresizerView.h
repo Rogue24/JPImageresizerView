@@ -10,6 +10,11 @@
 #import "JPImageresizerConfigure.h"
 #import "JPImageresizerFrameView.h"
 #import "JPImageresizerResult.h"
+#import "JPImageresizerBlurView.h"
+#import "JPImageresizer+Extension.h"
+#import "JPImageresizerSlider.h"
+#import "JPImageresizerTool.h"
+#import "JPImageresizerVideoObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
