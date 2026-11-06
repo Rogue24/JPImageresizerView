@@ -52,7 +52,11 @@ This is a dedicated library for cropping images, GIFs, and videos. It is easy to
     1. Unified appearance configuration (crop border color, blur effect, background color, mask alpha);
     2. Added custom crop corner radius, and an option to hide corner radius only during editing while keeping rounded corners in final output;
     3. Added custom mask appearance configuration, and support for ignoring mask during crop;
-    4. When using mask or round crop, you can still set crop aspect ratio and whether free dragging is allowed.
+    4. When using mask or round crop, you can still set crop aspect ratio and whether free dragging is allowed;
+    5. Corrected crop layout and drag coordinates when the view size changes;
+    6. Fixed display issues when replacing mask images dynamically;
+    7. Improved iOS version compatibility for image type identifiers and cleaned up compiler warnings;
+    8. Completed public header imports to expose library APIs through SwiftPM.
 
 #### Added an iOS 26-style glass crop frame. You can select **Glass Style** in the Demo (see Demo for setup):
 
