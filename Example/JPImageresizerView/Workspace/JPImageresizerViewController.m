@@ -148,10 +148,17 @@
 }
 
 - (void)__setupImageresizerView {
+    @jp_weakify(self);
     self.configure.contentInsets = self.contentInsets;
     self.configure.viewFrame = [UIScreen mainScreen].bounds;
     
-    @jp_weakify(self);
+    // 蒙版图片处理
+    self.configure.maskImageDisplayHandler = ^UIImage *(UIImage *originMaskImage) {
+        @jp_strongify(self);
+        if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
+        return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
+    };
+    
     JPImageresizerView *imageresizerView = [JPImageresizerView imageresizerViewWithConfigure:self.configure imageresizerIsCanRecovery:^(BOOL isCanRecovery) {
         @jp_strongify(self);
         if (!self) return;
@@ -186,13 +193,6 @@
     
     // 配置重置按钮
     self.recoveryBtn.enabled = self.imageresizerView.isCanRecovery;
-    
-    // 蒙版图片处理
-    self.imageresizerView.maskImageDisplayHandler = ^UIImage *(UIImage *originMaskImage) {
-        @jp_strongify(self);
-        if (!self || self.isGlassMask) return originMaskImage; // 玻璃蒙版不处理
-        return [JPImageresizerTool convertToAlphaInvertedBlackMaskImage:originMaskImage];
-    };
 }
 
 #pragma mark - 监听屏幕旋转
