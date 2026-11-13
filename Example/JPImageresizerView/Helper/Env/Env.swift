@@ -587,6 +587,15 @@ extension Env {
 
 // MARK: - 状态栏/导航栏/TabBar
 extension Env {
+    /// 状态栏高度
+    static var statusBarH: CGFloat {
+        if isDuo {
+            return topMargin
+        } else {
+            return safeAreaInsets.top
+        }
+    }
+    
     /// 导航栏基本高度
     static var navBarH: CGFloat {
         if isLiquidGlassEnabled {
@@ -595,7 +604,19 @@ extension Env {
             return 44.0
         }
     }
-
+    
+    /// 状态栏+导航栏高度
+    static var statusNavBarH: CGFloat { statusBarH + navBarH }
+    
+    /// 没有状态栏+导航栏高度
+    static var noStatusNavBarH: CGFloat {
+        if isLiquidGlassEnabled {
+            return 10.0 + navBarH
+        } else {
+            return navBarH
+        }
+    }
+    
     /// tabBar基本高度
     static var tabBarBaseH: CGFloat { 49.0 }
     /// tabBar+底部安全间距
@@ -706,7 +727,9 @@ private extension Env {
     
     static func log_3(_ windowScene: UIWindowScene) {
 //        if #available(iOS 26.0, *) {
-//            print("jp_log Env.displayMode: \(self.displayMode.jp_log)")
+//            print("jp_log Env.displayMode: \(displayMode.jp_log)")
+//            print("jp_log Env.sceneBounds: \(sceneBounds)")
+//            print("jp_log Env.safeAreaInsets: \(safeAreaInsets)")
 //            print("jp_log Env.hingeFrame: \(self.hingeFrame)")
 //            if #available(iOS 27.1, *), let window = windowScene.windows.first {
 //                if let hinge = window.reservedRegions(kind: .division, options: .includeInactive).first {
