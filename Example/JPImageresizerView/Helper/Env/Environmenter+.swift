@@ -46,6 +46,16 @@ extension Environmenter {
     @objc static var hingeAngle: CGFloat { Env.hingeAngle }
     @objc static var isHingeActive: Bool { Env.isHingeActive }
     @objc static var hingeFrame: CGRect { Env.hingeFrame }
+    
+    @objc static var statusBarH: CGFloat { Env.statusBarH }
+    @objc static var navBarH: CGFloat { Env.navBarH }
+    @objc static var statusNavBarH: CGFloat { Env.statusNavBarH }
+    @objc static var noStatusNavBarH: CGFloat { Env.noStatusNavBarH }
+    @objc static var tabBarBaseH: CGFloat { Env.tabBarBaseH }
+    @objc static var tabBarFullH: CGFloat { Env.tabBarFullH }
+    @objc static var tabBarSize: CGFloat { Env.tabBarSize }
+    @objc static var tabBarInset: CGFloat { Env.tabBarInset }
+    @objc static var topMargin: CGFloat { Env.topMargin }
 }
 
 extension EnvDisplayMode {
